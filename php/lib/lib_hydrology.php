@@ -14564,6 +14564,9 @@ class droughtMonitor extends modelObject {
 
 }
 
+
+
+
 class hydroImpSmall extends hydroImpoundment {
    // this is a general purpose class for a simple flow-by
    // other, more complicated flow-bys will inherit this class
@@ -14589,7 +14592,6 @@ class hydroImpSmall extends hydroImpoundment {
    var $riser_enabled = 0;
    var $release = 0;
    var $text2table = '';
-   var $outlet_plugin = FALSE;
 
    // *************************************************
    // BEGIN - Special Parent Variable Setting Interface
@@ -14680,36 +14682,31 @@ class hydroImpSmall extends hydroImpoundment {
       $this->setSingleDataColumnType('riser_flow', 'float8',0);
       $this->setSingleDataColumnType('riser_head', 'float8',0);
       $this->setupMatrix();
-      $this->setupOutlet();
+      if (isset($this->processors['storage_stage_area'])) {
+          // must have the stage/storage/sarea dataMatrix for this to work
+          //if ($this->debug) {
+             $this->processors['storage_stage_area']->debug = 1;
+             $this->processors['storage_stage_area']->debugmode = 1;
+          //}
+          $this->processors['storage_stage_area']->lutype2 = 0; // a fix since this settign gets lost?
+          $this->riser_opening_elev = $this->processors['storage_stage_area']->evaluateMatrix($this->riser_opening_storage,'stage'); // find storage at riser opening stage
+          $riser_head = $stage - $this->riser_opening_elev;
+          error_log("RISER($this->state[runid] : Initial matrix " . print_r((array)$this->matrix,1));
+          error_log("RISER($this->state[runid] : Evaluating Riser Opening Elevation = $this->riser_opening_elev at S = $this->riser_opening_storage, riser_head = $riser_head ");
+             $this->processors['storage_stage_area']->debug = 0;
+             $this->processors['storage_stage_area']->debugmode = 0;
+      }
+      // set up the matrix for this element
+      // set up the data columns
       $this->initOnParent();
    } 
    
-  function setupOutlet() {
-    if (!$this->riser_enabled) {
-      return;
-    }
-    //@todo: replace this with proper plugin detection code
-    include_once("/var/www/html/om/plugins/omRuntime_HydroRiser.class.php");
-    $config = array(
-      'container' => &$this,
-      'storage_stage_area' => &$this->processors['storage_stage_area'],
-      'riser_opening_storage' => $this->riser_opening_storage,
-      'riser_length' =>  $this->riser_length,
-      'riser_pipe_flow_head' =>  $this->riser_pipe_flow_head,
-    );
-    $this->outlet_plugin = new HydroOutletRiser($config);
-    if (!this->outlet_plugin) {
-      $this->logDebug("Riser enabled TRUE but could not create object with " . print_r($config,1));
-    }
-  }
-
    function sleep() {
       parent::sleep();
       // set up the matrix for this element
       unset($this->storage_matrix);
       $this->storage_matrix = -1;
       $this->vars = array();
-      $this->outlet_plugin = FALSE;
    }
    
    function create() {
@@ -14801,31 +14798,26 @@ class hydroImpSmall extends hydroImpoundment {
    }
    
    function step() {
-      if (!$this->riser_enabled or !is_object($this->outlet_plugin)) {
+      if (!$this->riser_enabled) {
         parent::step();
         $this->value = $this->state['Qout'];
         $this->writeToParent();
         return;
       }
-      // ********************************************************************
+      
       // all step methods MUST call preStep(),execProcessors(), postStep()
-      // ********************************************************************
       $this->preStep();
       if ($this->debug) {
          $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
       }
       // execute sub-components
       $this->execProcessors();
+      
       if ($this->debug) {
          $this->logDebug("Step Begin state[] array contents " . print_r($this->state,1) . " <br>\n");
       }
+      //$this->debug = 1;
 
-      // ********************************************************************
-      // set up all quantities that plugins will use
-      // ********************************************************************
-      if ($this->debug) {
-         $this->logDebug("Step END state[] array contents " . print_r($this->state,1) . " <br>\n");
-      }
       $Uin = $this->state['Uin']; // heat in
       $U0 = $this->state['U']; // total heat in BTU/Kcal at previous timestep
       $T = $this->state['T']; // Temp at previous timestep
@@ -14852,10 +14844,28 @@ class hydroImpSmall extends hydroImpoundment {
       } else {
          $precip = $this->state['precip']; // assumed to be in inches/day
       }
-      
       // this checks to see if the user has subclassed the area and stage(depth) calculations
       // or if it is using the internal routines with the stage/storage/area table
-      $area = $this->state['area']; // area at the beginning of the timestep - assumed to be acres
+      if (isset($this->processors['area'])) {
+         $area = $this->state['area']; // area at the beginning of the timestep - assumed to be acres
+      } else {
+         // calculate area - in an ideal world, this would be solved simultaneously with the storage
+         if (isset($this->processors['storage_stage_area'])) {
+            // must have the stage/storage/sarea dataMatrix for this to work
+            if ($this->debug) {
+               $this->processors['storage_stage_area']->debug = 1;
+            }
+            $this->processors['storage_stage_area']->lutype2 = 0; // a fix
+            $stage = $this->processors['storage_stage_area']->evaluateMatrix($S0,'stage');
+            $area = $this->processors['storage_stage_area']->evaluateMatrix($S0,'surface_area');
+            if ($this->debug) {
+               $this->processors['storage_stage_area']->debug = 0;
+            }
+         } else {
+            $stage = 0;
+            $area = 0;
+         }
+      }
       $dt = $this->timer->dt; // timestep in seconds
       if (isset($this->processors['maxcapacity'])) {
          $max_capacity = $this->state['maxcapacity']; // we have sub-classed this with a stage-discharge relationship or other
@@ -14878,27 +14888,51 @@ class hydroImpSmall extends hydroImpoundment {
          $this->logDebug("Calculating P and ET: P) $precip_acfts = $area * $precip / 12.0 / 86400.0;  <br>\n ET: $evap_acfts = $area * $pan_evap / 12.0 / 86400.0;<br>\n");
       }
       $thisdate = $this->state['thisdate'];
-      
       // change in storage
       if ($this->debug) {
          $this->logDebug("Calculating Volume Change: storechange = S0 + ((Qin - flowby) * dt / 43560.0)+ (1.547 * refill * dt / 43560.0) - (1.547 * demand * dt /  43560.0) - (evap_acfts * dt) + (precip_acfts * dt); <br>\n");
          $this->logDebug(" :::: $S1 = $S0 + (($Qin - $flowby) * $dt / 43560.0)+ (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt); <br>\n");
       }
-      // ********************************************************************
-      // Call Plugins
-      // ********************************************************************
-      $this->outlet_plugin->evaluate();
-      $riser_flow = $this->outlet_plugin->value;
-      // ********************************************************************
-      // now calculate final state after plugins 
-      // ********************************************************************
-      $S1 = $S0 + (($Qin - $flowby - $riser_flow) * $dt / 43560.0) 
-        + (1.547 * $discharge * $dt / 43560.0) 
-        + (1.547 * $refill * $dt / 43560.0) 
-        - (1.547 * $demand * $dt /  43560.0) 
-        - ($evap_acfts * $dt) 
-        + ($precip_acfts * $dt)
-      ;
+      $S1 = $S0 + (($Qin - $flowby) * $dt / 43560.0) + (1.547 * $discharge * $dt / 43560.0)  + (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt);
+      if ($this->riser_enabled) {
+        if (isset($this->processors['storage_stage_area'])) {
+            // must have the stage/storage/sarea dataMatrix for this to work
+            if ($this->debug) {
+               $this->processors['storage_stage_area']->debug = 1;
+            }
+            $this->processors['storage_stage_area']->lutype2 = 0; // a fix
+            $stage = $this->processors['storage_stage_area']->evaluateMatrix($S1,'stage');
+            $riser_head = $stage - $this->riser_opening_elev;
+            error_log("RISER($this->state[runid] : Current stage: $stage, riser_head: $this->riser_head, Riser Opening S = $this->riser_opening_storage, Current S1 = $S1");
+        } else {
+          $riser_head = 0;
+          error_log("No storage_stage_area table on $this->name");
+        }
+        //error_log("RISER($this->state[runid] : Riser Head: $riser_head, riser_pipe_flow_head: $this->riser_pipe_flow_head, Riser Opening S = $this->riser_opening_storage");
+        if ($riser_head > 0) {
+          // we can iterate through solving for S1 and riser_head 
+          // determining which orifice equation to use depending on riser_head
+          // when we get to 2 consecutive riser_head results within a given error tolerance
+          // we have solved succesfully
+          // riser_flow cannot exceed amount of flow required to empty below riser opening in a single timestep
+          if ($riser_head > $this->riser_pipe_flow_head) {
+            // pipe flow
+            $riser_flow = 0.6 * $this->riser_length * $this->riser_diameter * sqrt(2.0 * 32.2 * ($riser_head - $this->riser_length));
+          } else {
+            // weir flow 
+            $riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
+          }
+          $S1 = $S0 + (($Qin - $flowby - $riser_flow) * $dt / 43560.0) + (1.547 * $discharge * $dt / 43560.0)  + (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt);
+          if ($S1 < $this->riser_opening_storage) {
+            $S00 = $S0 + (($Qin - $flowby) * $dt / 43560.0) + (1.547 * $discharge * $dt / 43560.0)  + (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt);
+            $riser_flow = ($S00 - $this->riser_opening_storage) * 43560.0 / $dt;
+            if ($riser_flow < 0 ) {
+              $riser_flow = 0;
+            }
+            $S1 = $S0 + (($Qin - $flowby - $riser_flow) * $dt / 43560.0) + (1.547 * $discharge * $dt / 43560.0)  + (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt);
+          }
+        }
+      }
       
       if ($S1 < 0) {
          // what to do with flowby & wd?
@@ -14929,24 +14963,8 @@ class hydroImpSmall extends hydroImpoundment {
       if ($Storage < 0.0) {
          $Storage = 0.0;
       }
-      if (isset($this->processors['stage'])) {
-        $stage = $this->processors['stage']->value;
-      } else {
-        if (isset($this->processors['storage_stage_area'])) {
-          $stage = $this->processors['storage_stage_area']->evaluateMatrix($Storage,'stage');
-        } else {
-          $stage = 0;
-        }
-      }
-      if (isset($this->processors['area'])) {
-         $area = $this->state['area']; // area at the beginning of the timestep - assumed to be acres
-      } else {
-         // calculate area - in an ideal world, this would be solved simultaneously with the storage
-         if (isset($this->processors['storage_stage_area'])) {
-           $area = $this->processors['storage_stage_area']->evaluateMatrix($Storage,'surface_area');
-         } else {
-           $area = 0;
-         }
+      if (isset($this->processors['storage_stage_area'])) {
+        $stage = $this->processors['storage_stage_area']->evaluateMatrix($Storage,'stage');
       }
       // sub-classing is disabled here
       //if (isset($this->processors['Qout'])) {
@@ -14988,7 +15006,7 @@ class hydroImpSmall extends hydroImpoundment {
       $this->state['storage_mg'] = $Storage / 3.07;
       $this->state['lake_elev'] = $stage;
       $this->state['riser_flow'] = $riser_flow;
-      $this->state['riser_head'] = $riser_head;
+      $this->state['riser_flow'] = $riser_head;
       $this->state['refill_full_mgd'] = (($max_capacity - $Storage) / 3.07) * (86400.0 / $dt);
       
       // now calculate heat flux
@@ -15023,6 +15041,9 @@ class hydroImpSmall extends hydroImpoundment {
       $this->totalinflow += (1.547 * $refill + $Qin) * $dt;
       $this->totalwithdrawn += $demand * $dt;
       
+      if ($this->debug) {
+         $this->logDebug("Step END state[] array contents " . print_r($this->state,1) . " <br>\n");
+      }
       $this->value = $this->state['Qout'];
       $this->writeToParent();
    }
