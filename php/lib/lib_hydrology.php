@@ -14689,7 +14689,7 @@ class hydroImpSmall extends hydroImpoundment {
       return;
     }
     //@todo: replace this with proper plugin detection code
-    include_once("/var/www/html/d.bet/modules/om/lib/plugins/omRuntime_HydroRiser.class.php");
+    include_once("/var/www/html/om/plugins/omRuntime_HydroRiser.class.php");
     $config = array(
       'container' => &$this,
       'storage_stage_area' => &$this->processors['storage_stage_area'],
