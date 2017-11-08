@@ -9117,10 +9117,15 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
    if ($runid <> -1) {
       if (isset($unserobjects[$elementid])) {
          $rfilename = $unserobjects[$elementid]->logfile;
+         $dfilename = $outdir . "/" . $unserobjects[$elementid]->debugfile;
       } else {
          $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
+         $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
       }
+      $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
       copy($cfilename, $rfilename);
+      copy($dfilename, $rdfilename);
+      error_log("Model Run Debug Data Copied from $dfilename, $rdfilename ");
       // we want to store this output as a specific run, in addition to the default "last run" code 
       $listobject->querystring = "  delete from scen_model_run_elements ";
       $listobject->querystring .= " where elementid = $elementid ";
@@ -9133,11 +9138,11 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $elementid . ".log";
       $listobject->querystring = "  insert into scen_model_run_elements ";
       $listobject->querystring .= " (runid,starttime, endtime, elem_xml,";
-      $listobject->querystring .= "  elementid, output_file, remote_url, ";
+      $listobject->querystring .= "  elementid, output_file, remote_url, debugfile,";
       $listobject->querystring .= "  run_date, host, exec_time_mean, elemoperators)";
       $listobject->querystring .= " select $runid, '$startdate', ";
       $listobject->querystring .= " '$enddate', a.elem_xml, ";
-      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', ";
+      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', ";
       $listobject->querystring .= " '$run_date', '$serverip', $meanexectime, a.elemoperators ";
       $listobject->querystring .= " from scen_model_element as a ";
       $listobject->querystring .= " where elementid = $elementid ";
@@ -10689,7 +10694,7 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
       } else {
          $session_table = $sessionid . "_$elementid";
       }
-      $listobject->querystring = "  select output_file, remote_url, host, run_date from scen_model_run_elements where runid = $runid and elementid = $elementid";
+      $listobject->querystring = "  select output_file, debugfile, remote_url, host, run_date from scen_model_run_elements where runid = $runid and elementid = $elementid";
       //$innerHTML .= "$listobject->querystring .<br>";
       //error_log("Session Query: " . $listobject->querystring);
       $listobject->performQuery();
@@ -10701,6 +10706,7 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
          } else {
             $filename = $listobject->getRecordValue(1,'output_file');
          }
+         $debug_file = $listobject->getRecordValue(1,'debugfile');
          $innerHTML .= "This IP: $serverip, file IP: $file_host ...";
          $run_date = $listobject->getRecordValue(1,'run_date');
       } else {
@@ -10711,7 +10717,7 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
       }
    }
    
-   return array('tablename'=>$session_table, 'filename'=>$filename, 'innerHTML'=>$innerHTML, 'run_date' => $run_date, 'record_missing'=>$rm, 'remote' => $remote);
+   return array('tablename'=>$session_table, 'debug_file' => $debug_file, 'filename'=>$filename, 'innerHTML'=>$innerHTML, 'run_date' => $run_date, 'record_missing'=>$rm, 'remote' => $remote);
 }
 
 function checkSessionTable($thisobject, $elementid, $runid = -1, $data_element = '') {
@@ -10820,6 +10826,7 @@ function loadSessionTable($thisobject, $elementid, $runid = -1, $data_element = 
    error_log("Data types:" . print_r($dbcoltypes, 1));
    //$lobj['innerHTML'] .= print_r($dbcoltypes, 1) . "<br>";
    $lobj['innerHTML'] .= "Selected $filename (run on $run_date) <br>";
+   $lobj['innerHTML'] .= "Debug Info: " . $sinfo['debug_file'] . "<br>";
    if ($loadtable) {
       $dbcoltypes = $thisobject->dbcolumntypes;
       $lobj['innerHTML'] .= "Loading $filename  <br>";
