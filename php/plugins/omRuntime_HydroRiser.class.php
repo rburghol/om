@@ -98,7 +98,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         // pipe flow
         $riser_flow = 0.6 * $this->riser_length 
           * $this->riser_diameter 
-          * sqrt(2.0 * 32.2 * ($riser_head - $this->riser_length))
+          * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
         ;
         $riser_mode = 'pipe';
       } else {
