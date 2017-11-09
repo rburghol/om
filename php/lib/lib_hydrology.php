@@ -4447,7 +4447,7 @@ class dataMatrix extends modelSubObject {
       // has occured.  This happens automatically when the step() method is called, as well as the evaluate() method,
       // so it will occur during any reasonable invocation.  Other methods that call this dynamically, need to make sure 
       // that step() or evaluate(), or formatMatrix() has been called before calling evaluateMatrix()
-      error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
+      //error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
       if ($this->debug) {
          error_log("RISER evaluateMatrix() called on $this->name, lookup-type = $this->lutype1, value-type = $this->valuetype with keys: '$key1' and '$key2' <br>");
          $this->logDebug("evaluateMatrix() called on $this->name with keys: '$key1' and '$key2' <br>");
@@ -14598,7 +14598,7 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_flow', 'riser_diameter');
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter');
       
       $this->initOnParent();
    }
@@ -14671,12 +14671,13 @@ class hydroImpSmall extends hydroImpoundment {
 
    function wake() {
       parent::wake();
-      $this->setSingleDataColumnType('riser_diameter', 'float8',0);
+      $this->setSingleDataColumnType('riser_diameter', 'float8',$this->riser_diameter);
       $this->setSingleDataColumnType('riser_shape', 'varchar(32)',$this->riser_shape);
+      $this->setSingleDataColumnType('riser_mode', 'varchar(32)','');
       $this->setSingleDataColumnType('riser_pipe_flow_head', 'float8',0);
       $this->setSingleDataColumnType('riser_opening_elev', 'float8',0);
-      $this->setSingleDataColumnType('riser_length', 'float8',0);
-      $this->setSingleDataColumnType('riser_enabled', 'integer',0);
+      $this->setSingleDataColumnType('riser_length', 'float8',$this->riser_length);
+      $this->setSingleDataColumnType('riser_enabled', 'integer',$this->riser_enabled);
       $this->setSingleDataColumnType('riser_flow', 'float8',0);
       $this->setSingleDataColumnType('riser_head', 'float8',0);
       $this->setupMatrix();
@@ -14695,10 +14696,11 @@ class hydroImpSmall extends hydroImpoundment {
       'storage_stage_area' => &$this->processors['storage_stage_area'],
       'riser_opening_storage' => $this->riser_opening_storage,
       'riser_length' =>  $this->riser_length,
+      'riser_diameter' =>  $this->riser_diameter,
       'riser_pipe_flow_head' =>  $this->riser_pipe_flow_head,
     );
-    $this->outlet_plugin = new HydroOutletRiser($config);
-    if (!this->outlet_plugin) {
+    $this->outlet_plugin = new omRuntime_HydroRiser($config);
+    if (!$this->outlet_plugin) {
       $this->logDebug("Riser enabled TRUE but could not create object with " . print_r($config,1));
     }
   }
@@ -14887,8 +14889,11 @@ class hydroImpSmall extends hydroImpoundment {
       // ********************************************************************
       // Call Plugins
       // ********************************************************************
+      // plugins operate more intimately because they have access to this objects state array
+      // outlet plugin sets variables riser_flow and riser_head state values
       $this->outlet_plugin->evaluate();
-      $riser_flow = $this->outlet_plugin->value;
+      $riser_flow = $this->state['riser_flow'];
+      $riser_head = $this->state['riser_head'];
       // ********************************************************************
       // now calculate final state after plugins 
       // ********************************************************************
@@ -14956,7 +14961,7 @@ class hydroImpSmall extends hydroImpoundment {
       //}
       //error_log("RISER($this->state[runid] : S0 = $S0, S1 = $S1, Storage = $Storage ");
       //error_log("RISER($this->state[runid] : Qout = spill + flowby + riser_flow;");
-      //error_log("RISER($this->state[runid] : $Qout = $spill + $flowby + $riser_flow;");
+      //error_log("RISER($this->state[runid] : $Qout = $Qin - $spill + $flowby + $riser_flow;");
       
       // local unit conversion dealios
       $this->state['evap_mgd'] = $evap_acfts * 28157.7;
@@ -14987,8 +14992,6 @@ class hydroImpSmall extends hydroImpoundment {
       $this->state['evap_acfts'] = $evap_acfts;
       $this->state['storage_mg'] = $Storage / 3.07;
       $this->state['lake_elev'] = $stage;
-      $this->state['riser_flow'] = $riser_flow;
-      $this->state['riser_head'] = $riser_head;
       $this->state['refill_full_mgd'] = (($max_capacity - $Storage) / 3.07) * (86400.0 / $dt);
       
       // now calculate heat flux
