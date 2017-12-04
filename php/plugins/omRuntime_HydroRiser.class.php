@@ -107,36 +107,72 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         $riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
         //error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
         $riser_mode = 'weir';
-      }
-      //error_log("Qin = $Qin : (Calc riser_flow = $riser_flow)"); 
-      $S1 = $S0 
-        + (($Qin - $flowby - $riser_flow) * $dt / 43560.0) 
-        + (1.547 * $discharge * $dt / 43560.0)  
-        + (1.547 * $refill * $dt / 43560.0) 
-        - (1.547 * $demand * $dt /  43560.0) 
-        - ($evap_acfts * $dt) 
-        + ($precip_acfts * $dt)
-      ;
-      //error_log("Qin - flowby - riser_flow = ($Qin - $flowby - $riser_flow)"); 
-      if ($S1 < $this->riser_opening_storage) {
-        // calculate intermediate value to see what riser flow WOULD be to make S1 = riser_opening_storage
-        $S00 = $S0 
-          + (($Qin - $flowby) * $dt / 43560.0) 
-          + (1.547 * $discharge * $dt / 43560.0)  
-          + (1.547 * $refill * $dt / 43560.0) 
-          - (1.547 * $demand * $dt /  43560.0) 
-          - ($evap_acfts * $dt) 
-          + ($precip_acfts * $dt)
-        ;
-        $riser_flow = ($S00 - $this->riser_opening_storage) * 43560.0 / $dt;
-        //error_log("(Adjusted riser_flow = $riser_flow)"); 
-        if ($riser_flow < 0 ) {
-          $riser_flow = 0;
-        }
-      }
-    } else {
+      } } else {
       $riser_flow = 0.0;
     }
+	}
+	$x = 0//Need a loop counter
+	//Establish a guess iterators
+	$Si = 0;
+	$Si2 = 0;
+	$S1 = ($S1+$Si)/2;
+	$riserP = 0;
+	while ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
+	$x = x+1;
+    // calculate riser_head at this storage
+    $this->storage_stage_area->lutype2 = 0; // a fix
+    $stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
+    $riser_head = $stage - $this->riser_opening_elev;
+    //error_log("RISER($this->state[runid] : Current stage: $stage, riser_head: $riser_head, Riser Opening S = $this->riser_opening_storage (elev: $this->riser_opening_elev), Current S1 = $S1");
+    //error_log("RISER($this->state[runid] : Riser Head: $riser_head, riser_pipe_flow_head: $this->riser_pipe_flow_head, Riser Opening S = $this->riser_opening_storage");
+    // Now, if max possible riser_head > 0 then we have at least some flow out of riser
+    //error_log("S0 ($S0) + Qin ($Qin) = $S1"); 
+    if ($riser_head > 0) {
+      // determine which orifice equation to use depending on riser_head
+      if ($riser_head > $this->riser_pipe_flow_head) {
+        //error_log("Head = $riser_head - Pipe Flow");
+        // pipe flow
+        $riser_flow = 0.6 * $this->riser_length 
+          * $this->riser_diameter 
+          * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
+        ;
+        $riser_mode = 'pipe';
+      } else {
+        //error_log("Head = $riser_head - Weir Flow");
+        // weir flow 
+        $riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
+        //error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
+        $riser_mode = 'weir';
+      }
+	}
+	if ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
+		if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
+		$Si2 = $S1;
+		$S1 = ($S1-$Si)/2;
+		$Si = $Si2;
+		} else {
+		if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) > ($Qin*$dt/43560)) {
+		$Si = $S1;
+		$S1 = 0.9*$S1;
+		} 
+		if (($S1+$riser_flow*$dt/43560) < ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
+		$Si = $S1;
+		$S1 = 1.1*$S1;
+		}
+		if (($S1+$riser_flow*$dt/43560) == ($Qin*$dt/43560) {
+		break;
+		}
+	$riserP = $this->riser_flow;
+	}
+	} else {
+	break;
+	}
+	if($x>500){
+	$this->riser_flow=$Qin;
+	$S1=$S0;
+	break;
+	}
+	}//end loop
     // store this in both places, the 'value' property is assumed for subcomps and others are for state 
     $this->riser_flow = $riser_flow;
     $this->riser_head = $riser_head;
