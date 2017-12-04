@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 class omRuntime_SubComponent {
@@ -102,84 +101,85 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
           * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
         ;
         $riser_mode = 'pipe';
-		} else {
-			//error_log("Head = $riser_head - Weir Flow");
-			// weir flow 
-			$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
-			//error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
-			$riser_mode = 'weir';
+      } else {
+        //error_log("Head = $riser_head - Weir Flow");
+        // weir flow 
+        $riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
+        //error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
+        $riser_mode = 'weir';
+      }
 		} else {
 			$riser_flow = 0.0;
 		}
-	}
-    $x = 0//Need a loop counter
-	//Establish a guess iterators
-	$Si = 0;
-	$Si2 = 0;
-	$S1 = ($S1+$Si)/2;
-	$riserP = 0;
-	while ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
-		$x = x+1;//Count loops
-		// calculate riser_head at this storage
-		$this->storage_stage_area->lutype2 = 0; // a fix
-		$stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
-		$riser_head = $stage - $this->riser_opening_elev;
-		if ($riser_head > 0) {
-			// determine which orifice equation to use depending on riser_head
-			if ($riser_head > $this->riser_pipe_flow_head) {
-				//error_log("Head = $riser_head - Pipe Flow");
-				// pipe flow
-				$riser_flow = 0.6 * $this->riser_length 
-				* $this->riser_diameter 
-				* sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
-				;
-				$riser_mode = 'pipe';
-			} else {
-				//error_log("Head = $riser_head - Weir Flow");
-				// weir flow 
-				$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
-				//error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
-				$riser_mode = 'weir';
-			} else {
-				$riser_flow = 0;
-			}
-		}//Need to now check if storage and flow are reasonable compared to Qin such that Storage+outflow*dt=inflow*dt.
-		//Then a solution can be found with the bisection method
-		if ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
-			if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
-				//Is the last estimate and this estimate of opposite sign?
-				$Si2 = $S1;
-				$S1 = ($S1-$Si)/2;//Find the bisection of the two and store it for next loop
-				$Si = $Si2;//Store this loops guess
-			} else {
-				if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) > ($Qin*$dt/43560)) {
-					//Is this guess and the last both positive? We need to slowly decrease storage until it switches signs
-					$Si = $S1;
-					$S1 = 0.9*$S1;
-				} 
-				if (($S1+$riser_flow*$dt/43560) < ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
-					//Is this guess and the last both negative? We need to slowly increment storage until it switches signs
-					$Si = $S1;
-					$S1 = 1.1*$S1;
-				}
-				if (($S1+$riser_flow*$dt/43560) == ($Qin*$dt/43560) {
-					//Already equal, solution found
-					break;
-				}
-				//Store this flow for the next loop
-				$riserP = $this->riser_flow;
-			}
-		} else {
-			//Tolerance achieved, solution found
-			break;
-		}
-		if($x>500){
-			//To save time and prevent looping, a counter check
-			$this->riser_flow=$Qin;
-			$S1=$S0;
-			break;
-		}
-	}//end loop
+    $x = 0; //Need a loop counter
+    //Establish a guess iterators
+    $Si = 0;
+    $Si2 = 0;
+    $S1 = ($S1+$Si)/2;
+    $riserP = 0;
+    while ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
+      $x = $x+1;//Count loops
+      // calculate riser_head at this storage
+      $this->storage_stage_area->lutype2 = 0; // a fix
+      $stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
+      $riser_head = $stage - $this->riser_opening_elev;
+      if ($riser_head > 0) {
+        // determine which orifice equation to use depending on riser_head
+        if ($riser_head > $this->riser_pipe_flow_head) {
+          //error_log("Head = $riser_head - Pipe Flow");
+          // pipe flow
+          $riser_flow = 0.6 * $this->riser_length 
+          * $this->riser_diameter 
+          * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
+          ;
+          $riser_mode = 'pipe';
+        } else {
+          //error_log("Head = $riser_head - Weir Flow");
+          // weir flow 
+          $riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5);
+          //error_log("$riser_flow = 3.1 * $this->riser_diameter * pow($riser_head, 1.5)");
+          $riser_mode = 'weir';
+        }
+      } else {
+        $riser_flow = 0;
+      }
+      //Need to now check if storage and flow are reasonable compared to Qin such that Storage+outflow*dt=inflow*dt.
+      //Then a solution can be found with the bisection method
+      if ((abs($S1+$riser_flow*$dt/43560)-($Qin*$dt/43560))/($Qin*$dt/43560) > 0.01){
+        if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
+          //Is the last estimate and this estimate of opposite sign?
+          $Si2 = $S1;
+          $S1 = ($S1-$Si)/2;//Find the bisection of the two and store it for next loop
+          $Si = $Si2;//Store this loops guess
+        } else {
+          if (($S1+$riser_flow*$dt/43560) > ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) > ($Qin*$dt/43560)) {
+            //Is this guess and the last both positive? We need to slowly decrease storage until it switches signs
+            $Si = $S1;
+            $S1 = 0.9*$S1;
+          } 
+          if (($S1+$riser_flow*$dt/43560) < ($Qin*$dt/43560) and ($Si+$riserP*$dt/43560) < ($Qin*$dt/43560)) {
+            //Is this guess and the last both negative? We need to slowly increment storage until it switches signs
+            $Si = $S1;
+            $S1 = 1.1*$S1;
+          }
+          if (($S1+$riser_flow*$dt/43560) == ($Qin*$dt/43560)) {
+            //Already equal, solution found
+            break;
+          }
+          //Store this flow for the next loop
+          $riserP = $this->riser_flow;
+        }
+      } else {
+        //Tolerance achieved, solution found
+        break;
+      }
+      if($x>500){
+        //To save time and prevent looping, a counter check
+        $this->riser_flow=$Qin;
+        $S1=$S0;
+        break;
+      }
+    }//end loop
     // store this in both places, the 'value' property is assumed for subcomps and others are for state 
     $this->riser_flow = $riser_flow;
     $this->riser_head = $riser_head;
