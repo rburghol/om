@@ -101,7 +101,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     //error_log("S0 ($S0) + Qin ($Qin) = $S1"); 
     if ($riser_head > 0) {
       // determine which orifice equation to use depending on riser_head
-      if ($riser_head > $this->riser_pipe_flow_head and $riser_emerg_elev < 0) {
+      if ($riser_head > $this->riser_pipe_flow_head and $riser_emerg_head < 0) {
         //error_log("Head = $riser_head - Pipe Flow");
         // pipe flow
         $riser_flow = 0.6 * $this->riser_length 
@@ -109,7 +109,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
           * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length)))
         ;
         $riser_mode = 'pipe';
-      } elseif ($riser_emerg_elev > 0){
+      } elseif ($riser_emerg_head >= 0){
 			$riser_flow = (0.6 * $this->riser_length 
           * $this->riser_diameter 
           * sqrt(2.0 * 32.2 * ($riser_head - (0.5 * $this->riser_length))))
@@ -148,13 +148,10 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         if ($riser_flow < 0 ) {
           $riser_flow = 0;
         }
-		} else {
-			$riser_flow = 0.0;
-		}
+	  }
 	} else {
 		$riser_flow = 0.0;
 	}
-   
     // store this in both places, the 'value' property is assumed for subcomps and others are for state 
     $this->riser_flow = $riser_flow;
     $this->riser_head = $riser_head;
