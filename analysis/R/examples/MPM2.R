@@ -1,12 +1,12 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+SS<-read.csv("C:/Users/connor/Desktop/GitHub/om/analysis/R/examples/SS.csv")
 diameter<-13.1
 height<-2
 NS<-5.7124
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connor/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
 runid<-99997
@@ -60,8 +60,15 @@ for (i in 2:length(dat$impoundment_Qin)){
   Si<-0#Minimuim storage for use in bisection method
   Sn<-S1#A storage to be iterated within the below while loop
   #Begin a loop that continuously computes the MPM equation until tolerance is achieved
+  x<-1
   while (abs((Sn-S0+riser_flow*dt/43560)-(Qin*dt/43560)) > 0.0001){
+    x<-x+1
     #Check the conditional statement in the while loop to break the loop before computation
+    if (x>500){
+      break
+      Sn<-S0
+      riser_flow<-Qin
+    }
     if (abs((Sn-S0+riser_flow*dt/43560)-(Qin*dt/43560)) > 0.0001){
       #If tolerance has not been achieved, use the bisection method to find S and Q
       Sn<-(S1+Si)/2#New storage computed from the midpoint of max and min storage, S1 and Si respectivley
@@ -87,7 +94,7 @@ for (i in 2:length(dat$impoundment_Qin)){
   dat$MPMQout[i]<-riser_flow
   dat$MPMStage[i]<-approx(x=SS$Storage,y=SS$Stage,xout=S1,rule=1)$y
 }
-
+par(mar=c(5,6,2,4))
 plot(
 #  dat$timestamp,
   as.numeric(dat$MPMStage),
@@ -121,7 +128,7 @@ lines(
 #  lty=3
 #)
 
-legend('topleft',c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
+legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
 
 
 # Just show a specific design storm 
