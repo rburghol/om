@@ -1,12 +1,5 @@
 <?php
 
-class omRuntime_SubComponent {
-  var $value;
-  function __construct($options) {
-    return TRUE;
-  }
-}
-
 class omRuntime_HydroRiser extends omRuntime_SubComponent {
   var $storage_stage_area = FALSE;
   var $riser_opening_elev = FALSE;
