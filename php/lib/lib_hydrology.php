@@ -16186,8 +16186,6 @@ function add_one($x_off)
     return (x_off + 1.0);
 }
 
-?>
-
 
 class omRuntime_SubComponent {
   var $value;
@@ -16195,3 +16193,5 @@ class omRuntime_SubComponent {
     return TRUE;
   }
 }
+?>
+
