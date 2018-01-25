@@ -7635,11 +7635,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
 
    if ($elementid > 0) {
       if ($cached) {
-        error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
-         $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
+        //error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
+        $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-         error_log("Calling getObjectXML(listobject, $elementid) ");
-         $qresult = getObjectXML($listobject, $elementid);
+        //error_log("Calling getObjectXML(listobject, $elementid) ");
+        $qresult = getObjectXML($listobject, $elementid);
       }
       $record = $qresult['record'];
       $returnArray['error'] .= " Retreiving object $elementid : " . $qresult['query'] . " ; <br>";

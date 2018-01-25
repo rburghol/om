@@ -2519,7 +2519,7 @@ class wsp_vpdesvwuds extends timeSeriesInput {
    var $vwuds_username = 'wsp_ro';
    var $vwuds_password = '314159';
    var $vwuds_dbname = 'vwuds';
-   var $vwuds_host = '128.173.217.26';
+   var $vwuds_host = '192.168.0.21';
    var $vwuds_port = 5432;
    var $intmethod = 1; // use previous value method or monthly observed withdrawals
    // vpdes database connection info
@@ -2586,7 +2586,9 @@ class wsp_vpdesvwuds extends timeSeriesInput {
    
    function closeDBConns() {
       // close all non-needed connections
-      pg_close($this->vpdes_db->dbconn);
+      if ($this->discharge_enabled) {
+        pg_close($this->vpdes_db->dbconn);
+      }
       pg_close($this->vwuds_db->dbconn);
       $this->vpdes_db = NULL;
       $this->vwuds_db = NULL;
@@ -2655,10 +2657,11 @@ class wsp_vpdesvwuds extends timeSeriesInput {
          error_log("Connection status bad (PG CONNECTION STRING (for $this->name) : host=$this->vwuds_host port=$this->vwuds_port dbname=$this->vwuds_dbname user=$this->vwuds_username password=$this->vwuds_password)");
      }
      */
-   
-      $this->vpdes_db = new pgsql_QueryObject;
-      $this->vpdes_db->dbconn = pg_connect("host=$this->vpdes_host port=$this->vpdes_port dbname=$this->vpdes_dbname user=$this->vpdes_username password=$this->vpdes_password");
-      
+      if ($this->discharge_enabled) {
+        $this->vpdes_db = new pgsql_QueryObject;
+        $this->vpdes_db->dbconn = pg_connect("host=$this->vpdes_host port=$this->vpdes_port dbname=$this->vpdes_dbname user=$this->vpdes_username password=$this->vpdes_password");
+      }
+        
       /*
      $stat = pg_connection_status($this->vpdes_db->dbconn);
      if ($stat === PGSQL_CONNECTION_OK) {
@@ -3083,6 +3086,9 @@ class wsp_vpdesvwuds extends timeSeriesInput {
    }
    
    function getVPDESInfo() {
+      if (!$this->discharge_enabled) {
+        return;
+      }
       //get any VPDES point source records associated with this MP
       if ( strlen($this->vpdes_permitno) > 0) {
          $this->vpdes_db->querystring = "  select vpdes_permit_no, outfall_no, facility_name, ";
@@ -3325,7 +3331,9 @@ class wsp_vpdesvwuds extends timeSeriesInput {
    
    
    function getHistoricDischarges() {
-      $this->getVPDESInfo();
+      if ($this->discharge_enabled) {
+        $this->getVPDESInfo();
+      }
       $vpidlist = "'" . join("','", explode(",",$this->vpdes_permitno)) . "'";
    }
    
@@ -3369,7 +3377,10 @@ class wsp_vpdesvwuds extends timeSeriesInput {
 
    
    function loadVPDESData() {
-   
+     
+      if (!$this->discharge_enabled) {
+        return;
+      }
       if (is_object($this->timer)) {
          if (is_object($this->timer->thistime)) {
             $startdate = $this->timer->thistime->format('Y-m-d');
