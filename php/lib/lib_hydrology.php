@@ -16187,3 +16187,11 @@ function add_one($x_off)
 }
 
 ?>
+
+
+class omRuntime_SubComponent {
+  var $value;
+  function __construct($options) {
+    return TRUE;
+  }
+}
