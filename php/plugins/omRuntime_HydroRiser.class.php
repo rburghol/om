@@ -127,7 +127,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $x = 0; //Need a loop counter
     $Si = 0;//A lower bound storage estimate
     $Sn = $S1;//A storage iterator for within the loop
-    $riserP = 0;//A reference to previous riser flow
+    $riserP = empty($this->riser_flow) ? 0.0 : $this->riser_flow;//A reference to previous riser flow
     while (abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560)) > 0.0001){
       $x += 1;
       #Check the conditional statement in the while loop to break the loop before computation
