@@ -63,10 +63,10 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $head = $stage - $this->riser_opening_elev;
     if($head <= 0) {
       $riser_flow = 0;
-    } else if ($ head> 0 and $head < $height){
-        $riser_flow = $this->weir($head, $diameter);
-    } else if ($head > 0 and $head >= $height) {
-      $riser_flow = $this->pipe($head, $diameter, $height);
+    } else if ($head > 0 and $head < $this->riser_length){
+        $riser_flow = $this->weir($head, $this->riser_diameter);
+    } else if ($head > 0 and $head >= $this->riser_length) {
+      $riser_flow = $this->pipe($head, $this->riser_diameter, $this->riser_length);
     } else {
       $riser_flow = 0;
     }
