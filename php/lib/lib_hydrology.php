@@ -14599,7 +14599,7 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd');
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its');
       
       $this->initOnParent();
    }
@@ -14681,6 +14681,7 @@ class hydroImpSmall extends hydroImpoundment {
       $this->setSingleDataColumnType('riser_enabled', 'integer',$this->riser_enabled);
       $this->setSingleDataColumnType('riser_flow', 'float8',0);
       $this->setSingleDataColumnType('riser_head', 'float8',0);
+      $this->setSingleDataColumnType('its', 'float8',0);
       $this->setupMatrix();
       $this->setupOutlet();
       $this->initOnParent();
