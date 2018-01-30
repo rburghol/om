@@ -164,4 +164,8 @@ lines(
   type='o'
 )
 
-check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$impoundment_Storage,dat$MPMQout,dat$impoundment_Qout)
+check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$impoundment_Storage,dat$MPMQout,dat$impoundment_Qout,dat$impoundment_its)
+for (i in 3:length(check2$dat.impoundment_Qin)){
+  check2$myCheck[i]<-abs(check2$dat.MPMStorage[i]-check2$dat.MPMStorage[i-1]+(check2$dat.MPMQout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
+  check2$VAHCheck[i]<-abs(check2$dat.impoundment_Storage[i]-check2$dat.impoundment_Storage[i-1]+(check2$dat.impoundment_Qout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
+}
