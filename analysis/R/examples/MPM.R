@@ -1,14 +1,14 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/usr/local/home/git/vahydro/om/R/examples/SS.csv")
-diameter<-7.9
+SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+diameter<-13.1
 height<-2
-NS<-4.6635
+NS<-5.7124
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/usr/local/home/git/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-9997
+runid<-99997
 elid<-340136
 dat<-fn_get_runfile(elid, runid)
 S<-dat$impoundment_Storage[1]#Input base storage
@@ -70,12 +70,12 @@ for (i in 2:length(dat$impoundment_Qin)){
 plot(
 #  dat$timestamp,
   as.numeric(dat$MPMStage),
-  type='o',
+  type='l',
   col='blue',
   lwd=2,
   cex.lab=2,
   cex.axis=2,
-  ylim=c(0,200),
+#  ylim=c(0,200),
   xlab='Time',
   ylab='Stage (ft)'
 )
@@ -95,7 +95,7 @@ lines(
   dat$impoundment_lake_elev,
   col='red',
   lwd=2,
-  type='o'
+  type='l'
 )
 
 legend('topleft',c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
@@ -132,3 +132,5 @@ lines(
   lwd=2,
   type='o'
 )
+
+#check<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$MPMQout,dat$MPMStage)

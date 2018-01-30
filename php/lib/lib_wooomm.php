@@ -785,6 +785,7 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
       }
       $listobject->querystring .= " ) ";
       error_log($listobject->querystring);
+      error_log("PG Error: $listobject->error");
       $listobject->performQuery();
    }
 }
