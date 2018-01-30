@@ -60,15 +60,22 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     return $riser_flow;
   }
 
+  function emerg($head,$emerg_diameter) {
+	$riser_flow = 3.1*$emerg_diameter*pow($head,1.5);
+  }
+  
   function discharge($stage) {
     $head = $stage - $this->riser_opening_elev;
     if($head <= 0) {
       $riser_flow = 0;
     } else if ($head > 0 and $head < $this->riser_length){
         $riser_flow = $this->weir($head, $this->riser_diameter);
-    } else if ($head > 0 and $head >= $this->riser_length) {
+    } else if ($head > 0 and $head >= $this->riser_length and head < ($riser_emerg_elev - $this->riser_opening_elev)) {
       $riser_flow = $this->pipe($head, $this->riser_diameter, $this->riser_length);
-    } else {
+    } else if (($head > 0 and $head >= $this->riser_length and head >= ($riser_emerg_elev - $this->riser_opening_elev)){
+		$riser_emerg_head = $stage - $this->riser_emerg_elev;
+		$riser_flow = $this->pipe($head, $this->riser_diameter, $this->riser_length)+$this->emerg($riser_emerg_head, $this->riser_emerg_diameter);
+	}else {
       $riser_flow = 0;
     }
     return $riser_flow;
@@ -119,7 +126,6 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
     $riser_head = $stage - $this->riser_opening_elev;
     // @todo: add emergency spillway handling
-    $riser_emerg_head = $stage - $this->riser_emerg_elev;
     //error_log("RISER($this->state[runid] : Current stage: $stage, riser_head: $riser_head, Riser Opening S = $this->riser_opening_storage (elev: $this->riser_opening_elev), Current S1 = $S1");
     //error_log("RISER($this->state[runid] : Riser Head: $riser_head, riser_pipe_flow_head: $this->riser_pipe_flow_head, Riser Opening S = $this->riser_opening_storage");
     // Now, if max possible riser_head > 0 then we have at least some flow out of riser

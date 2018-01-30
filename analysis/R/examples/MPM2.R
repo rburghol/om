@@ -1,16 +1,16 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/connor/Desktop/GitHub/om/analysis/R/examples/SS.csv")
-diameter<-13.1
+SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+diameter<-2.2
 height<-2
-NS<-5.7124
+NS<-6.3258
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/connor/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-99997
-elid<-340136
+runid<-99998
+elid<-340243
 dat<-fn_get_runfile(elid, runid)
 S<-dat$impoundment_Storage[1]#Input base storage
 
@@ -46,12 +46,12 @@ Solver<-function(Storage){
 }
 
 #Create empty columns to store data. initialize with above boundary conditions
-dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S
+dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S;dat$MPMStorage[2]<-S
 dat$MPMQout<-numeric(length(dat$impoundment_Qin))
-dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
+dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y;dat$MPMStage[2]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
 #loop that looks at each inflow and calculates storage and outflow simealtaneously by creating a function to 
 #find S such that dS=Qin-Qout (MPM equation)
-for (i in 2:length(dat$impoundment_Qin)){
+for (i in 3:length(dat$impoundment_Qin)){
   S0<-dat$MPMStorage[i-1]#Stores previous timestep storage for easy reference
   Qin<-as.numeric(dat$impoundment_Qin[i])#Stores inflow for easy reference
   S1<-S0+(Qin*3600/43560)#Maximum possible storage
@@ -97,7 +97,7 @@ for (i in 2:length(dat$impoundment_Qin)){
 par(mar=c(5,6,2,4))
 plot(
 #  dat$timestamp,
-  as.numeric(dat$MPMStage),
+  as.numeric(dat$MPMStage[3100:4000]),
   type='l',
   col='blue',
   lwd=2,
@@ -108,11 +108,12 @@ plot(
   ylab='Stage (ft)'
 )
 lines(
-  dat$impoundment_lake_elev,
+  dat$impoundment_lake_elev[3100:4000],
   col='red',
   lwd=2,
   type='l'
 )
+lines(dat$MPMStage,col='blue',lwd=2)
 #lines(
 #  as.numeric(dat$impoundment_Qin),
 #  col='green',
@@ -163,4 +164,4 @@ lines(
   type='o'
 )
 
-#check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$MPMQout,dat$MPMStage)
+check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$impoundment_Storage,dat$MPMQout,dat$impoundment_Qout)
