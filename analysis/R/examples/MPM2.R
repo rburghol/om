@@ -12,6 +12,7 @@ source(paste(fxn_locations,"fn_iha.R", sep = "/"))
 runid<-99998
 elid<-340243
 dat<-fn_get_runfile(elid, runid)
+dat<-dat[order(as.POSIXct(dat$timestamp)),]
 S<-dat$impoundment_Storage[1]#Input base storage
 
 #Function to calculate flow from weir stage of our orifice
@@ -96,8 +97,8 @@ for (i in 3:length(dat$impoundment_Qin)){
 }
 par(mar=c(5,6,2,4))
 plot(
-#  dat$timestamp,
-  as.numeric(dat$MPMStage[3100:4000]),
+  as.POSIXct(dat$timestamp),
+  as.numeric(dat$MPMStage),
   type='l',
   col='blue',
   lwd=2,
@@ -108,28 +109,35 @@ plot(
   ylab='Stage (ft)'
 )
 lines(
-  dat$impoundment_lake_elev[3100:4000],
+  as.POSIXct(dat$timestamp),
+  dat$impoundment_lake_elev,
   col='red',
   lwd=2,
   type='l'
 )
-lines(dat$MPMStage,col='blue',lwd=2)
-#lines(
-#  as.numeric(dat$impoundment_Qin),
-#  col='green',
-#  lwd=2,
-#  type='l',
-#  lty=3
-#)
-#lines(
-#  as.numeric(dat$MPMQout),
-#  col='black',
-#  lwd=2,
-#  type='l',
-#  lty=3
-#)
-
+lines(as.POSIXct(dat$timestamp),dat$MPMStage,col='blue',lwd=2)
 legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
+
+par(mar=c(5,6,2,4))
+plot(
+  #  dat$timestamp,
+  as.numeric(dat$MPMQout),
+  type='l',
+  col='blue',
+  lwd=2,
+  cex.lab=2,
+  cex.axis=2,
+  #ylim=c(0,200),
+  xlab='Time',
+  ylab='Discharge (cfs)'
+)
+lines(
+  dat$impoundment_Qout,
+  col='red',
+  lwd=2,
+  type='l'
+)
+lines(dat$MPMQout,col='blue',lwd=2)
 
 
 # Just show a specific design storm 
