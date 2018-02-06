@@ -119,7 +119,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
       - ($demand) 
       - ($evap_acfts * 43560) 
       + ($precip_acfts * 43560);
-	$S1 = $S0;
+    $S1 = $S0 + $Qin;
     // calculate riser_head at this storage
     $this->storage_stage_area->lutype2 = 0; // a fix
     $stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
