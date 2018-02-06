@@ -113,14 +113,13 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     // this initial guess assumes 0 outflow through riser, so is max possible head to start
     // ********************************************
     // guess S1
-    $S1 = $S0 
-      + (($Qin - $flowby) * $dt / 43560.0) 
-      + (1.547 * $discharge * $dt / 43560.0) 
-      + (1.547 * $refill * $dt / 43560.0) 
-      - (1.547 * $demand * $dt /  43560.0) 
-      - ($evap_acfts * $dt) 
-      + ($precip_acfts * $dt)
-    ;
+    $Qin = (($Qin - $flowby)) 
+      + ($discharge) 
+      + ($refill) 
+      - ($demand) 
+      - ($evap_acfts * 43560) 
+      + ($precip_acfts * 43560);
+	$S1 = $S0;
     // calculate riser_head at this storage
     $this->storage_stage_area->lutype2 = 0; // a fix
     $stage = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
@@ -131,13 +130,13 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     // Now, if max possible riser_head > 0 then we have at least some flow out of riser
     //error_log("S0 ($S0) + Qin ($Qin) = $S1"); 
     
-    $x = 0; //Need a loop counter
-    $Si = 0;//A lower bound storage estimate
+    $x = 0.0; //Need a loop counter
+    $Si = 0.0;//A lower bound storage estimate
     $Sn = $S1;//A storage iterator for within the loop
     $diff = 1.0; // initial difference value to force into while loop
     $riserP = empty($this->riser_flow) ? 0 : $this->riser_flow;//A reference to previous riser flow
     $riser_flow = empty($this->riser_flow) ? 0 : $Qin;
-    $initial = abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560));
+    $initial = abs(($Sn-$S0+$riser_flow*$dt/43560.0)-($Qin*$dt/43560.0));
     //error_log("$initial = (abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560)) > $this->tolerance)");
     while ($diff > $this->tolerance){
       $x += 1;
@@ -159,9 +158,9 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         //the current riser_flow for future reference in solving the MPM for S1
         if (
           (
-            ( ($Sn-$S0+$riser_flow*$dt/43560) - ($Qin*$dt/43560.0) )
-            * ( ($S1-$S0+$riserP*$dt/43560) - ($Qin*$dt/43560.0) )
-          ) < 0
+            ( ($Sn-$S0+$riser_flow*$dt/43560.0) - ($Qin*$dt/43560.0) )
+            * ( ($S1-$S0+$riserP*$dt/43560.0) - ($Qin*$dt/43560.0) )
+          ) < 0.0
         ) {
           $Si = $Sn;
         } else {
@@ -173,7 +172,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         //Tolerance achieved, solution found
         break;
       }
-      $diff = abs(($Sn - $S0 + $riser_flow*$dt/43560)-($Qin*$dt/43560));
+      $diff = abs(($Sn - $S0 + $riser_flow*$dt/43560.0)-($Qin*$dt/43560.0));
     }//end loop
     // store this in both places, the 'value' property is assumed for subcomps and others are for state 
     $this->riser_flow = $riser_flow;
