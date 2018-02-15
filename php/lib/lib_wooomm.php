@@ -285,9 +285,8 @@ function getComponentCustom($listobject, $scenarioid, $custom1 = '', $custom2 = 
 }
 
 function getRunFile($listobject, $elementid, $runid, $debug = 0) {
-   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified from scen_model_element as a, scen_model_run_elements as b ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified, b.remote_url from scen_model_element as a, scen_model_run_elements as b ";
    $listobject->querystring .= " where b.elementid = $elementid and a.elementid = b.elementid and b.runid = $runid ";
-   
    if ($debug) {
       error_log("$listobject->querystring\n");
    }
@@ -1604,11 +1603,8 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       }
       // stash the run info and create summary files for the desired dynamics:
       if ($cache_runid <> $runid) {
-         // cache only the object of interest and the parent object
-         //createModelRunSummaryFiles($listobject, array_merge(array($elementid), $dyna_cache));
          // create a cache entry for all objects in this simulation, whether they ran live or cached
          $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
-         
       } else {
          //error_log("($cache_runid <> $runid)");
          $summarize = $dyna_cache;
@@ -1616,7 +1612,9 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       }
       //error_log("Creating run summary files for " . print_r($summarize,1));
       if (!$test_only) {
-         createModelRunSummaryFiles($listobject, $summarize);
+         // cache only the object of interest and the parent object
+         // @todo: this was disabled for some reason?
+         createModelRunSummaryFiles($listobject, $summarize, $runid);
       }
       return;
    }
@@ -1752,22 +1750,22 @@ function shakeTreeCached($listobject, $sip, $num_sim, $recid, $run_id, $startdat
    
 }
 
-function createModelRunSummaryFiles($listobject, $elementlist) {
+function createModelRunSummaryFiles($listobject, $elementlist, $runid = -1) {
    global $unserobjects;
    foreach ($elementlist as $thisel) { 
       if (isset($unserobjects[$thisel])) {
          $thisobject = $unserobjects[$thisel];
-         createSingleModelRunSummaryFile($listobject, $thisobject, $thisel);
+         createSingleModelRunSummaryFile($listobject, $thisobject, $thisel, $runid);
       }
    }
 }
 
-function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid) {
+function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid, $runid = -1) {
    global $outdir, $outurl;
    if (is_object($thisobject)) {
       $debugstring = '';
-      //error_log("Assembling Panels.");
-      $runlog .= $thisobject->outstring . " <br>";
+      error_log("Assembling Panels.");
+      $report = $thisobject->outstring . " <br>";
       $errorlog .= '<b>Model Execution Errors:</b>' . $thisobresult['error'] . " <br>";
       if (strlen($thisobject->errorstring) <= 4096) {
          $errorlog .= $thisobject->errorstring . " <br>";
@@ -1782,27 +1780,20 @@ function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid) {
          fwrite($fp, $thisobject->errorstring . " <br>");
          $errorlog .= "<a href='$furl' target=_new>Click Here to Download Model Error Info</a>";
       }
-      if (strlen($thisobject->reportstring) <= 4096) {
-         $reports .= "Component Logging Info: <br>";
-         $reports .= $thisobject->reportstring . " <br>";
-      } else {
-         error_log("Writing reports to file.");
-         # stash the debugstring in a file, give a link to download it
-         $fname = 'report' . $thisobject->componentid . ".html";
-         $floc = $outdir . '/' . $fname;
-         $furl = $outurl . '/' . $fname;
-         $fp = fopen ($floc, 'w');
-         fwrite($fp, "Component Logging Info: <br>");
-         fwrite($fp, $thisobject->reportstring . " <br>");
-         $reports .= "<a href='$furl' target=_new>Click Here to Download Model Reporting Info</a>";
-      }
-
+      $report .= "Component Logging Info: <br>";
+      $report .= $thisobject->reportstring . " <br>";
+      # stash the debugstring in a file, give a link to download it
+      $report .= "Finished.";
+      $fname = 'report' . $thisobject->componentid . "-$runid" . ".log";
+      $floc = $outdir . '/' . $fname;
+      error_log("Writing reports to file $floc ");
+      $furl = $outurl . '/' . $fname;
+      $fp = fopen ($floc, 'w');
+      fwrite($fp, "Component Logging Info:\n");
+      fwrite($fp, $report . "\n");
+      
       $debuglog .= $thisobresult['debug'] . " <br>";
       $debuglog .= $thisobject->debugstring . '<br>';
-
-
-      $runlog .= "Finished.<br>";
-      error_log("Creating output in html form.");
       // need to generate the tabbed list view in a subroutine
       $innerHTML = "Results Pending";
       $innerHTML = createHTMLModelRunSummary($listobject, $thisobject);
@@ -2756,10 +2747,10 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
          }
          foreach ($thisobject->processors as $thisproc) {
             # compact up processors if they are valid
-            if ($debug) {
-               $innerHTML .= "Trying to save processor: " . $thisproc->name . " <br>";
-            }
             if (is_object($thisproc)) {
+              if ($debug) {
+                 $innerHTML .= "Trying to save processor: " . $thisproc->name . " <br>";
+              }
                $sct = get_class($thisproc);
                $whoprops = getWHOXML($sct);
                //error_log("Handling type: $sct <br>");
@@ -2830,11 +2821,11 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
                } else {
                   $innerHTML .= "Problem storing $procname <br>";
                }
+              $k++;
             } else {
-               $innerHTML .= "$thisprocname is not an object <br>";
+               $innerHTML .= "$thisprocname not an object <br>";
             }
 
-            $k++;
          }
       }
       $innerHTML .= "$k procs stored <br>";
@@ -4506,9 +4497,9 @@ error_log("AddElementFormPanel Called ");
    $taboutput->tab_HTML['errorlog'] .= "<b>Error Log:</b><br>";
    $taboutput->tab_HTML['debug'] .= "<b>Debugging Information:</b><br>";
 
-   if ($debug) {
+   //if ($debug) {
       $timer->startSplit();
-   }
+   //}
 
    #$debug = 1;
    #print_r($formValues);
@@ -4578,6 +4569,7 @@ error_log("AddElementFormPanel Called ");
       $geomx = $formValues['geomx'];
       $geomy = $formValues['geomy'];
    }
+    $taboutput->tab_HTML['debug'] .= "Parsing data and get geom: " . round($timer->startSplit(),5) . " <br>";
    #if ($debug) {
       $taboutput->tab_HTML['debug'] .= "Geometry Set to: $geomx - $geomy <br>";
    #}
@@ -4603,6 +4595,7 @@ error_log("Action type: $actiontype ");
          }
          #$debug = 0;
          $elem_xml = '';
+        $taboutput->tab_HTML['debug'] .= "Deleting took: " . round($timer->startSplit(),5) . " <br>";
       break;
 
       case 'clone':
@@ -4620,6 +4613,7 @@ error_log("Action type: $actiontype ");
             $taboutput->tab_HTML['debug'] .= $cloneresult['innerHTML'];
          }
          #$debug = 0;
+        $taboutput->tab_HTML['debug'] .= "Cloning took: " . round($timer->startSplit(),5) . " <br>";
       break;
 
       case 'newcontainer':
@@ -4627,15 +4621,10 @@ error_log("Action type: $actiontype ");
       break;
    }
 
-   if ($showtime) {
-      $innerHTML .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
-   }
+
    # show the hierarchcial element browsing tree
    //$innerHTML .= showElementBrowser($formValues);
 
-   if ($showtime) {
-      $innerHTML .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
-   }
 
    //$innerHTML .= "<table>";
    //$innerHTML .= "<tr>";
@@ -4663,7 +4652,7 @@ error_log("Action type: $actiontype ");
 
    $elem_xml = '';
    // dump the result
-   $taboutput->tab_HTML['debug'] .= "Getting WHO props for: $elemtype <br>";
+   $taboutput->tab_HTML['debug'] .= "Getting getWHOXML props for: $elemtype <br>";
    $whoprops = getWHOXML($elemtype);
    if ( count($whoprops) > 0 ) {
       // create object
@@ -4673,10 +4662,8 @@ error_log("Action type: $actiontype ");
    }
       $taboutput->tab_HTML['debug'] .= "Parent type: $parenttype <br>";
 
-   if ($debug) {
-      $split = $timer->startSplit();
-      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
-   }
+
+  $taboutput->tab_HTML['debug'] .= "getWHOXML took: " . round($timer->startSplit(),5) . " <br>";
 
    if (isset($formValues['elementid']) and ($actiontype <> 'delete') ) {
       $elementid = $formValues['elementid'];
@@ -4729,6 +4716,8 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       }
       $taboutput->tab_HTML['debug'] .= "<br>Initial Object Sub-components:<br>" . print_r(array_keys($thisobject->processors),1) . "<br>";
    }
+  $taboutput->tab_HTML['debug'] .= "Unserializing object took: " . round($timer->startSplit(),5) . " <br>";
+
    //error_log("Object Returned ");
    # now, we have our object instantiated, and populated with its changed data, we will call the create() method
    # if requested in the form
@@ -4741,6 +4730,8 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
          saveObjectSubComponents($listobject, $thisobject, $elementid);
          //error_log("Sub-components Saved");
       }
+      $taboutput->tab_HTML['debug'] .= "Create() method took: " . round($timer->startSplit(),5) . " <br>";
+
    }
    # include debugging information
    if (isset($thisobject->debugstring)) {
@@ -4751,6 +4742,7 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $newprops = getWHOXML($newelemtype);
       $elem_xml = $newprops['xml'];
       $innerHTML .= "Type Change requested to $newelemtype .<br>";
+     $taboutput->tab_HTML['debug'] .= "type change getWHOXML() method took: " . round($timer->startSplit(),5) . " <br>";
    }
 
    # if we are creating a new container, set the appropriate type
@@ -4758,12 +4750,9 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $newprops = getWHOXML('modelContainer');
       $elem_xml = $newprops['xml'];
       $innerHTML .= "Creating New Model Container .<br>";
+     $taboutput->tab_HTML['debug'] .= "new container getWHOXML() method took: " . round($timer->startSplit(),5) . " <br>";
    }
 
-   if ($debug) {
-      $split = $timer->startSplit();
-      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
-   }
 
    if (strlen($elem_xml) > 0) {
       $options = array("complexType" => "object");
@@ -4788,16 +4777,13 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $taboutput->tab_HTML['debug'] .= $modelFormArray['debug'];
       $thisobject = $modelFormArray['object'];
       $taboutput->tab_HTML['debug'] .= "<br>Object Sub-components after showModelElementForm():<br>" . print_r(array_keys($thisobject->processors),1) . "<br>";
+     $taboutput->tab_HTML['debug'] .= "showModelEditForm() method took: " . round($timer->startSplit(),5) . " <br>";
 
 
    } else {
       $elemform = '';
    }
 
-   if ($debug) {
-      $split = $timer->startSplit();
-      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
-   }
 
    # show object type browser, to reset object type, or load the blank form for the requested type
    $whosql = "(select classname as elemname, classname as elemtype from who_xmlobjects where type <> 2 order by upper(classname), classname) as whofoo ";
@@ -4852,9 +4838,7 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    $taboutput->tab_HTML['generalprops'] .=  showGenericButton('docreate', 'Run Create Functions', "document.forms[\"addelement\"].elements.callcreate.value = 1; xajax_showAddElementResult(xajax.getFormValues(\"addelement\"))", 1);
    $taboutput->tab_HTML['generalprops'] .=  "<hr>";
 
-   if ($debug or $showtime) {
-      $taboutput->tab_HTML['generalprops'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
-   }
+   $taboutput->tab_HTML['debug'] .= "generalprops render method took: " . round($timer->startSplit(),5) . " <br>";
 
    #################################################################################
    ###                     END Panel 1 - General Properties                      ###
@@ -4903,6 +4887,7 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    if ($showtime) {
       $taboutput->tab_HTML['inputs'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
+   $taboutput->tab_HTML['debug'] .= "linked render method took: " . round($timer->startSplit(),5) . " <br>";
 
    #################################################################################
    ###                      END Panel 2 - Linked Properties                      ###
@@ -4968,6 +4953,7 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    if ($showtime) {
       $taboutput->tab_HTML['remoteinputs'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
+   $taboutput->tab_HTML['debug'] .= "remote links render method took: " . round($timer->startSplit(),5) . " <br>";
    
 
    #################################################################################
@@ -5031,6 +5017,7 @@ if (is_object($thisobject)) {
       $taboutput->tab_HTML['processors'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
    $taboutput->tab_HTML['processors'] .= "</td></tr></table>";
+   $taboutput->tab_HTML['debug'] .= "sub-comps render method took: " . round($timer->startSplit(),5) . " <br>";
    #################################################################################
    ###                  END Panel 4 - Sub-components (processors)                ###
    #################################################################################
@@ -5048,6 +5035,7 @@ if (is_object($thisobject)) {
    $taboutput->tab_HTML['analysis'] .= "</div>";
    
    $taboutput->tab_HTML['analysis'] .= "</td></tr></table>";
+   $taboutput->tab_HTML['debug'] .= "analysis render method took: " . round($timer->startSplit(),5) . " <br>";
    
    
    #################################################################################
@@ -7641,6 +7629,9 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
          error_log("Calling getObjectXML(listobject, $elementid) ");
          $qresult = getObjectXML($listobject, $elementid);
       }
+      if ($qresult['error']) {
+        return FALSE;
+      }
       $record = $qresult['record'];
       $returnArray['error'] .= " Retreiving object $elementid : " . $qresult['query'] . " ; <br>";
       $returnArray['record'] = $record;
@@ -8876,9 +8867,11 @@ function selectChildCacheModelControlForm($formVars) {
    # a re-draw is requested
    $controlHTML .= showHiddenField('redraw', 0, 1);
    $controlHTML .= showHiddenField('showcached', 0, 1);
+   $controlHTML .= "<br><b>Generic Model Run with Child Element Cache Control:</b>";
    $controlHTML .= "<br><i>Base Model Scenario to use:</i> elementid = ". $formVars['elementid'] . showActiveList($listobject, 'cache_runid', 'scen_model_run_elements', 'runid', 'runid', " elementid = ". $formVars['elementid'] , $formVars['cache_runid'], "", 'runid', $debug, 1, 0);
    
    $last_run_info = getRunFile($listobject, $formVars['elementid'], -1);
+   $controlHTML .= "<br><i>Last Run File Details:</i>" . print_r($last_run_info,1);
    if (!$last_run_info) {
       $startdate = '';
       $enddate = '';
@@ -8965,6 +8958,7 @@ function covaWSPModelControlForm($formVars) {
    # a re-draw is requested
    $controlHTML .= showHiddenField('redraw', 0, 1);
    $controlHTML .= showHiddenField('showcached', 0, 1);
+   $controlHTML .= "<br><b>WSP Model Run with Child Element Cache Control:</b>";
    if (isset($props['locid'])) {
       $formVars['parentid'] = preg_replace("/[^0-9]/", "", $props['locid']);
       $controlHTML .= "<br><i>Base Model Scenario to use:</i> " . showActiveList($listobject, 'cache_runid', 'scen_model_run_elements', 'runid', 'runid', " elementid = ". $formVars['parentid'] , $formVars['cache_runid'], "", 'runid', $debug, 1, 0);
@@ -9408,6 +9402,7 @@ function showCachedModelOutput($elementid) {
    $listobject->querystring .= " where elementid = $elementid ";
    $listobject->performQuery();
    $innerHTML = $listobject->getRecordValue(1,'output_cache');
+   $innerHTML .= $listobject->querystring;
 
    return $innerHTML;
 }
@@ -10022,7 +10017,7 @@ function getUserObjectTypes($listobject, $userid, $scenarioid = -1, $objectclass
 function copyModelGroupFull($formValues, $debug = 0) {
    global $listobject, $projectid, $scenarioid, $userid, $usergroupids, $adminsetuparray;
    $innerHTML = "";
-   
+   error_log("copyModelGroupFull() called with " . print_r($formValues, 1));
    $projectid = $formValues['projectid'];
    $scenarioid = $formValues['scenarioid'];
    $dest_scenarioid = $formValues['dest_scenarioid'];

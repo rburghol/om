@@ -2110,15 +2110,21 @@ class modelObject {
 
       $dependents = array();
       $independents = array();
+      $sub_queue = array();
       $execlist = array();
       # compile a list of independent and dependent variables
+      // @todo: rvars on subcomps are explicit independent inputs to subcomps that are not yet handled
+      //        wvars also shou;d be added to the independents list.
       foreach (array_keys($this->processors) as $thisinput) {
-         $independents = array_merge($independents, $this->processors[$thisinput]->vars);
-         array_push($dependents, $thisinput);
+        foreach ($this->processors[$thisinput]->wvars as $wv) {
+          $independents[$this->processors[$thisinput]->getParentVarName($wv)] = $thisinput;
+        }
+        array_push($dependents, $thisinput);
       }
       if ($this->debug) {
-         $this->logDebug("<b>Ordering Operations</b><br> ");
+         $this->logDebug("<b>Ordering Operations for $this->name</b><br> ");
       }
+      $this->outstring .= "Ordering Operations for $this->name\n";
       # now check the list of independent variables for each processor,
       # if none of the variables are in the current list of dependent variables
       # put it into the execution stack, remove from queue
@@ -2150,15 +2156,21 @@ class modelObject {
       asort($postexec);
       $postexec = array_keys($postexec);
       $queue = $nonhier;
-      
+      $this->logDebug("Beginning Queue \n");
+      $this->logDebug($queue);
+      $this->logDebug("Beginning independents \n");
+      $this->logDebug($independents);
       $i = 0;
+      $this->debug = 1;
       while (count($queue) > 0) {
          $thisdepend = array_shift($queue);
          $pvars = $this->processors[$thisdepend]->vars;
+         //$watchlist = array('impoundment', 'local_channel');
+         //$this->debug = in_array( $this->processors[$depend]->name, $watchlist) ? 1 : 0;
          if ($this->debug) {
-            $this->logDebug("Checking $thisdepend variables ");
+            $this->logDebug("Checking $thisdepend variables \n");
             $this->logDebug($pvars);
-            $this->logDebug(" <br>\nin ");
+            $this->logDebug(" <br>\n in ");
             $this->logDebug($queue);
             $this->logDebug("<br>\n");
          }
@@ -2168,6 +2180,10 @@ class modelObject {
             $i = 0;
             if ($this->debug) {
                $this->logDebug("Not found, adding $thisdepend to execlist.<br>\n");
+            }
+            // remove it from the derived var list if it exists there 
+            while ($dkey = array_search($thisdepend, $independents)) {
+              unset($independents[$dkey]);
             }
          } else {
             # put it back on the end of the stack
@@ -2243,14 +2259,28 @@ class modelObject {
             }
          }
       }
+      $this->debug = 0;
       $hiersort = array_merge($preexec, $execlist, $postexec);
-      if ($this->debug) {
-         $this->logDebug("<br>Pre-exec list: " . print_r($preexec,1) );
-         $this->logDebug("<br>To Be ordered: " . print_r($nonhier,1) );
-         $this->logDebug("<br>Dependency ordered: " . print_r($execlist,1) );
-         $this->logDebug("<br>Post-exec list: " . print_r($postexec,1) );
-         $this->logDebug("<br>Sorted: " . print_r($hiersort,1) );
-      }
+      
+      
+      $this->logDebug("Final Queue \n");
+      $this->logDebug($queue);
+      $this->logDebug("Final independents \n");
+      $this->logDebug($independents);
+      $this->logDebug("Pre-exec list: \n");
+      $this->logDebug($preexec);
+      $this->logDebug("Dependency ordered: \n");
+      $this->logDebug($hiersort);
+      $this->logDebug("Post-exec list:  \n");
+      $this->logDebug($postexec);
+      
+      $this->outstring .= "Ordering Operations\n";
+      $this->outstring .= "Independents Remaining: " . print_r($independents,1) . "\n";
+      $this->outstring .= "Pre-exec list: " . print_r($preexec,1) . "\n";
+      $this->outstring .= "To Be ordered: " . print_r($nonhier,1) . "\n";
+      $this->outstring .= "Dependency ordered: " . print_r($execlist,1) . "\n";
+      $this->outstring .= "Post-exec list: " . print_r($postexec,1) . "\n";
+      $this->outstring .= "Sorted: " . print_r($hiersort,1) . "\n";
       $this->execlist = $hiersort;
    }
 
@@ -3192,19 +3222,19 @@ class modelContainer extends modelObject {
       if ($this->debug) {
          $this->logDebug("Initializing components<br>");
       }
-      $this->outstring .= "<b>Components included in model run:</b><ul>";
+      $this->outstring .= "Components included in model run:\n";
       foreach($this->compexeclist as $thiscompid) {
          $thiscomp = $this->components[$thiscompid];
          if ($this->debug) {
             $this->logDebug($this->name . " Initializing component $thiscomp->name <br>");
          }
-         $this->systemLog(" Initializing component $thiscomp->name <br>");
-         $this->outstring .= "<li> $thiscomp->name </li>";
+         $this->systemLog(" Initializing component $thiscomp->name \n");
+         $this->outstring .= "* $thiscomp->name \n";
          $thiscomp->setProp('sessionid', $this->sessionid);
          $thiscomp->parentHub = $this->childHub;
          $thiscomp->init();
       }
-      $this->outstring .= "</ul>";
+      $this->outstring .= "\n";
       $this->syslogrec = -1;
       $this->compexectimes = array();
    }
@@ -3354,7 +3384,7 @@ class modelContainer extends modelObject {
 
    function finish() {
       $max_used = memory_get_usage(true) / (1024.0 * 1024.0);
-      $this->outstring .= " Memory use at simulation end: $max_used Mb / Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . " <br>\n";
+      $this->outstring .= " Memory use at simulation end: $max_used Mb / Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . "\n";
       $outmesg = "Calling finish() Method on contained model components.";
       //error_log($outmesg);
       $this->systemLog($outmesg);
@@ -3410,7 +3440,7 @@ class modelContainer extends modelObject {
          // stash the report of average time of execution in the outstring on this parent object
          //$avgexec = $this->compexectimes[$thiscomp] / $this->timer->steps;
          $avgexec = $this->components[$thiscomp]->meanexectime;
-         $this->outstring .= "Component $thisname ($thiscomp) avg. exec time: $avgexec <br>";
+         $this->outstring .= "Component $thisname ($thiscomp) avg. exec time: $avgexec \n";
 
          # now get reporting data from any contained components
          # check for report files
@@ -3534,9 +3564,9 @@ class modelContainer extends modelObject {
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
       }
-      $this->outstring .= "<b>Beginning Model Run at:</b> " . date('r') . "<br>";
-      $this->outstring .= "<b>Model Time Span Set:</b> " . $this->starttime . " to " . $this->endtime . "<br>";
-      $this->outstring .= "<b>Setting Component Session ID to:</b> " . $this->sessionid . "<br>";
+      $this->outstring .= "\n\nBeginning Model Run at: " . date('r') . "\n";
+      $this->outstring .= "Model Time Span Set:" . $this->starttime . " to " . $this->endtime . "\n";
+      $this->outstring .= "Setting Component Session ID to: " . $this->sessionid . "\n";
       if ($this->cascadedebug) {
          //error_log("<b>Setting Debug Mode on all children<br>");
          foreach($this->components as $thiscomp) {
@@ -3547,7 +3577,7 @@ class modelContainer extends modelObject {
       //error_log("<b>Initializing components<br>");
       $this->setSessionID();
       $this->systemLog("<b>Initializing components<br>");
-      $this->outstring .= "<b>Initializing model components at:</b> " . date('r') . "<br>";
+      $this->outstring .= "Initializing model components at: " . date('r') . "\n";
       $this->init();
       $i = 0;
 
@@ -3558,13 +3588,13 @@ class modelContainer extends modelObject {
          $this->setBuffer(0);
          //error_log("Database log queries will be sent synchronously (non-buffered).");
       }
-      $this->outstring .= "<b>Stepping through model execution at:</b> " . date('r') . "<br>";
+      $this->outstring .= "Stepping through model execution at: " . date('r') . "\n";
       error_log("<b>Iterating through timesteps<br>");
       while (!$this->timer->finished) {
          if (intval($i / $this->outputinterval) == ($i / $this->outputinterval)) {
             $ts = $this->timer->thistime->format('r');
             $outmesg = "Executing step $i @ time: $ts";
-            $this->outstring .= $outmesg . "<br>";
+            $this->outstring .= $outmesg . "\n";
             $this->systemLog($outmesg);
          }
          // moved this to eliminate over-stepping
@@ -3844,9 +3874,9 @@ class modelContainer extends modelObject {
          $this->logDebug($this->compexeclist);
          $this->logDebug("<br>\n");
       }
-      $this->outstring .= "<br>\nExecution list: ";
+      $this->outstring .= "\n\nExecution list: ";
       $this->outstring .= print_r($this->compexeclist,1);
-      $this->outstring .= "<br>\n";
+      $this->outstring .= "\n\n";
    }
 
 }
@@ -14599,7 +14629,7 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd');
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its');
       
       $this->initOnParent();
    }
@@ -14681,6 +14711,7 @@ class hydroImpSmall extends hydroImpoundment {
       $this->setSingleDataColumnType('riser_enabled', 'integer',$this->riser_enabled);
       $this->setSingleDataColumnType('riser_flow', 'float8',0);
       $this->setSingleDataColumnType('riser_head', 'float8',0);
+      $this->setSingleDataColumnType('its', 'float8',0);
       $this->setupMatrix();
       $this->setupOutlet();
       $this->initOnParent();
@@ -16184,6 +16215,13 @@ class textField extends modelSubObject {
 function add_one($x_off)
 {
     return (x_off + 1.0);
+}
+
+class omRuntime_SubComponent {
+  var $value;
+  function __construct($options) {
+    return TRUE;
+  }
 }
 
 ?>
