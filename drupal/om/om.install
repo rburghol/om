@@ -1,0 +1,49 @@
+<?php
+
+function om_schema() {
+
+  // Table Desc for: Object-oriented Meta-models
+  $schema['om'] = array (
+  );  
+  return $schema;
+}
+
+/**
+ * Implements hook_field_schema().
+ */
+function om_field_schema($field) {
+  $columns = array(
+    'config' => array(
+      'type' => 'text',
+      'size' => 'big',
+      'not null' => FALSE,
+    ),
+    'object_class' => array(
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => FALSE,
+    ),
+    'value' => array(
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => FALSE,
+    ),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => array(
+      'object_class' => array('object_class'),
+    ),
+  );
+}
+
+function om_install() {
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function om_uninstall () {
+}
+
+?>

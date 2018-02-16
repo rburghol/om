@@ -1,0 +1,14 @@
+name = Object-oriented Meta-model Module
+description = Adds support for dynamic time series modeling via object-oriented components.
+core = 7.x
+php = 5.3.0
+
+; 
+dependencies[] = ctools
+dependencies[] = field
+
+files[] = om.admin.inc
+;files[] = views/om.views_default.inc
+files[] = views/handlers/views_handler_relationship_attributable.inc
+
+version = "7.x-1.0"
