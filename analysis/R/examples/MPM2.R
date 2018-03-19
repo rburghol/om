@@ -1,12 +1,12 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/conno/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
 diameter<-8.95
 height<-2
 NS<-7.406753
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/conno/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
 runid<-7999
@@ -110,7 +110,8 @@ plot(
   cex.axis=2,
   #ylim=c(0,200),
   xlab='Time',
-  ylab='Stage (ft)'
+  ylab='Stage (ft)',
+  ylim=c(min(dat$impoundment_lake_elev),max(dat$impoundment_lake_elev))
 )
 lines(
   as.POSIXct(dat$timestamp),
@@ -119,5 +120,8 @@ lines(
   lwd=2,
   type='l'
 )
-points(as.POSIXct(dat$timestamp[dat$its>500&dat$impoundment_riser_head>0]),dat$impoundment_lake_elev[dat$its>500&dat$impoundment_riser_head>0])
+points(as.POSIXct(dat$timestamp[dat$impoundment_its>500&dat$impoundment_riser_head>0]),dat$impoundment_lake_elev[dat$impoundment_its>500&dat$impoundment_riser_head>0])
+par(new=T)
+plot(dat$timestamp,dat$impoundment_Qin,type='l',lty=3,ann=F,axes=F)
+
 legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
