@@ -1,16 +1,16 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
-diameter<-2.2
+SS<-read.csv("C:/Users/conno/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+diameter<-8.95
 height<-2
-NS<-6.3258
+NS<-7.406753
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/conno/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-99998
-elid<-340243
+runid<-7999
+elid<-340298
 dat<-fn_get_runfile(elid, runid)
 dat<-dat[order(as.POSIXct(dat$timestamp)),]
 S<-dat$impoundment_Storage[1]#Input base storage
@@ -47,12 +47,13 @@ Solver<-function(Storage){
 }
 
 #Create empty columns to store data. initialize with above boundary conditions
-dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S;dat$MPMStorage[2]<-S
+dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S
 dat$MPMQout<-numeric(length(dat$impoundment_Qin))
-dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y;dat$MPMStage[2]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
+dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y;
+dat$its<-numeric(length(dat$impoundment_Qin))
 #loop that looks at each inflow and calculates storage and outflow simealtaneously by creating a function to 
 #find S such that dS=Qin-Qout (MPM equation)
-for (i in 3:length(dat$impoundment_Qin)){
+for (i in 2:length(dat$impoundment_Qin)){
   S0<-dat$MPMStorage[i-1]#Stores previous timestep storage for easy reference
   Qin<-as.numeric(dat$impoundment_Qin[i])#Stores inflow for easy reference
   S1<-S0+(Qin*3600/43560)#Maximum possible storage
@@ -66,9 +67,10 @@ for (i in 3:length(dat$impoundment_Qin)){
     x<-x+1
     #Check the conditional statement in the while loop to break the loop before computation
     if (x>500){
-      break
       Sn<-S0
       riser_flow<-Qin
+      break
+
     }
     if (abs((Sn-S0+riser_flow*dt/43560)-(Qin*dt/43560)) > 0.0001){
       #If tolerance has not been achieved, use the bisection method to find S and Q
@@ -94,7 +96,9 @@ for (i in 3:length(dat$impoundment_Qin)){
   dat$MPMStorage[i]<-Sn
   dat$MPMQout[i]<-riser_flow
   dat$MPMStage[i]<-approx(x=SS$Storage,y=SS$Stage,xout=S1,rule=1)$y
+  dat$its[i]<-x
 }
+
 par(mar=c(5,6,2,4))
 plot(
   as.POSIXct(dat$timestamp),
@@ -115,65 +119,5 @@ lines(
   lwd=2,
   type='l'
 )
-lines(as.POSIXct(dat$timestamp),dat$MPMStage,col='blue',lwd=2)
+points(as.POSIXct(dat$timestamp[dat$its>500&dat$impoundment_riser_head>0]),dat$impoundment_lake_elev[dat$its>500&dat$impoundment_riser_head>0])
 legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
-
-par(mar=c(5,6,2,4))
-plot(
-  #  dat$timestamp,
-  as.numeric(dat$MPMQout),
-  type='l',
-  col='blue',
-  lwd=2,
-  cex.lab=2,
-  cex.axis=2,
-  #ylim=c(0,200),
-  xlab='Time',
-  ylab='Discharge (cfs)'
-)
-lines(
-  dat$impoundment_Qout,
-  col='red',
-  lwd=2,
-  type='l'
-)
-lines(dat$MPMQout,col='blue',lwd=2)
-
-
-# Just show a specific design storm 
-destorm <- window(
-  dat, 
-  start = as.POSIXct("1996-05-06 16:00"), 
-  end = as.POSIXct("1996-05-07 0:00")
-);
-
-plot(
-  #  dat$timestamp,
-  as.numeric(destorm$MPMStage),
-  type='o',
-  col='blue',
-  lwd=2,
-  cex.lab=2,
-  cex.axis=2,
-  ylim=c(0,200),
-  xlab='Time',
-  ylab='Stage (ft)'
-)
-lines(
-  as.numeric(destorm$impoundment_Qin),
-  col='red',
-  lwd=2,
-  type='o'
-)
-lines(
-  as.numeric(destorm$MPMQout),
-  col='green',
-  lwd=2,
-  type='o'
-)
-
-check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$impoundment_Storage,dat$MPMQout,dat$impoundment_Qout,dat$impoundment_its)
-for (i in 3:length(check2$dat.impoundment_Qin)){
-  check2$myCheck[i]<-abs(check2$dat.MPMStorage[i]-check2$dat.MPMStorage[i-1]+(check2$dat.MPMQout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
-  check2$VAHCheck[i]<-abs(check2$dat.impoundment_Storage[i]-check2$dat.impoundment_Storage[i-1]+(check2$dat.impoundment_Qout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
-}

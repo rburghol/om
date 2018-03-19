@@ -138,42 +138,46 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $riser_flow = empty($this->riser_flow) ? 0 : $Qin;
     $initial = abs(($Sn-$S0+$riser_flow*$dt/43560.0)-($Qin*$dt/43560.0));
     //error_log("$initial = (abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560)) > $this->tolerance)");
-    while ($diff > $this->tolerance){
-      $x += 1;
-      #Check the conditional statement in the while loop to break the loop before computation
-      if ($x > 500) {
-        $Sn = $S0;
-        $riser_flow = $Qin;
-        break;
-      }
-      if ($diff > $this->tolerance){
-        //If tolerance has not been achieved, use the bisection method to find S and Q
-        $Sn = ($S1+$Si)/2.0; //New storage computed from the midpoint of max and min storage, S1 and Si respectivley
-        $riser_flow = $this->solver($Sn); //Corresponding outflow
-        error_log("$riser_flow = this->solver($Sn)");
-        //Now that flow has been calculated, the bisection method can be continued. Need to shorten interval with guess Sn
-        //Compute the MPM equation for S1 (maximum storage) and Sn (current iterator). If product is negative, they are of
-        //opposite sign. Thus, a solution for S and Q are contained within this new interval, replace Si with Sn. Otherwise,
-        //if they are of the same sign, assign Sn as S1 to serve as the new maximum storage value. Then replace riserP with 
-        //the current riser_flow for future reference in solving the MPM for S1
-        if (
-          (
-            ( ($Sn-$S0+$riser_flow*$dt/43560.0) - ($Qin*$dt/43560.0) )
-            * ( ($S1-$S0+$riserP*$dt/43560.0) - ($Qin*$dt/43560.0) )
-          ) < 0.0
-        ) {
-          $Si = $Sn;
-        } else {
-          $S1 = $Sn;
-          $riserP = $riser_flow;
-        }
-        //error_log("$riser_flow = this->solver($Sn)");
-      } else {
-        //Tolerance achieved, solution found
-        break;
-      }
-      $diff = abs(($Sn - $S0 + $riser_flow*$dt/43560.0)-($Qin*$dt/43560.0));
-    }//end loop
+
+	while ($diff > $this->tolerance){
+	  $x += 1;
+	  #Check the conditional statement in the while loop to break the loop before computation
+	  if ($x > 500) {
+		$Sn = $S0;
+		$riser_flow = $Qin;
+		break;
+	  }
+	  if ($diff > $this->tolerance){
+		//If tolerance has not been achieved, use the bisection method to find S and Q
+		$Sn = ($S1+$Si)/2.0; //New storage computed from the midpoint of max and min storage, S1 and Si respectivley
+		$riser_flow = $this->solver($Sn); //Corresponding outflow
+		error_log("$riser_flow = this->solver($Sn)");
+		//Now that flow has been calculated, the bisection method can be continued. Need to shorten interval with guess Sn
+		//Compute the MPM equation for S1 (maximum storage) and Sn (current iterator). If product is negative, they are of
+		//opposite sign. Thus, a solution for S and Q are contained within this new interval, replace Si with Sn. Otherwise,
+		//if they are of the same sign, assign Sn as S1 to serve as the new maximum storage value. Then replace riserP with 
+		//the current riser_flow for future reference in solving the MPM for S1
+		if (
+		  (
+			( ($Sn-$S0+$riser_flow*$dt/43560.0) - ($Qin*$dt/43560.0) )
+			* ( ($S1-$S0+$riserP*$dt/43560.0) - ($Qin*$dt/43560.0) )
+		  ) < 0.0
+		) {
+		  $Si = $Sn;
+		} else {
+		  $S1 = $Sn;
+		  $riserP = $riser_flow;
+		}
+		//error_log("$riser_flow = this->solver($Sn)");
+	  } else {
+		//Tolerance achieved, solution found
+		break;
+	  }
+	  $diff = abs(($Sn - $S0 + $riser_flow*$dt/43560.0)-($Qin*$dt/43560.0));
+	}//end loop
+	if ($riser_head<0){
+		$riser_flow=0.0 //If head is not positive, than no flow occurs and S = S1
+	}
     // store this in both places, the 'value' property is assumed for subcomps and others are for state 
     $this->riser_flow = $riser_flow;
     $this->riser_head = $riser_head;
