@@ -134,7 +134,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $initial = abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560));
     //error_log("$initial = (abs(($Sn-$S0+$riser_flow*$dt/43560)-($Qin*$dt/43560)) > $this->tolerance)");
     if($riser_head <= 0){
-      $riser_flow = 0.0
+      $riser_flow = 0.0;
     } else {
       while ($diff > $this->tolerance){
         $x += 1;
