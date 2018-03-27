@@ -1,5 +1,5 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/conno/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+SS<-read.csv("C:/usr/local/home/git/om-github/om/analysis/R/examples/SS.csv")
 diameter<-8.95
 height<-2
 NS<-7.406753
@@ -9,7 +9,7 @@ dt<-3600
 fxn_locations = 'C:/Users/conno/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-7999
+runid<-7997
 elid<-340298
 dat<-fn_get_runfile(elid, runid)
 dat<-dat[order(as.POSIXct(dat$timestamp)),]
@@ -111,7 +111,7 @@ plot(
   #ylim=c(0,200),
   xlab='Time',
   ylab='Stage (ft)',
-  ylim=c(min(dat$impoundment_lake_elev),max(dat$impoundment_lake_elev))
+  ylim=c(as.numeric(min(dat$impoundment_lake_elev)),as.numeric(max(dat$impoundment_lake_elev)))
 )
 lines(
   as.POSIXct(dat$timestamp),
