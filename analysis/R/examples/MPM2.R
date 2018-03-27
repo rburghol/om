@@ -1,17 +1,18 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
-SS<-read.csv("C:/Users/connor/Desktop/GitHub/om/analysis/R/examples/SS.csv")
-diameter<-13.1
+SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
+diameter<-2.2
 height<-2
-NS<-5.7124
+NS<-6.3258
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/connor/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-99997
-elid<-340136
+runid<-99998
+elid<-340243
 dat<-fn_get_runfile(elid, runid)
+dat<-dat[order(as.POSIXct(dat$timestamp)),]
 S<-dat$impoundment_Storage[1]#Input base storage
 
 #Function to calculate flow from weir stage of our orifice
@@ -46,12 +47,12 @@ Solver<-function(Storage){
 }
 
 #Create empty columns to store data. initialize with above boundary conditions
-dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S
+dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S;dat$MPMStorage[2]<-S
 dat$MPMQout<-numeric(length(dat$impoundment_Qin))
-dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
+dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y;dat$MPMStage[2]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
 #loop that looks at each inflow and calculates storage and outflow simealtaneously by creating a function to 
 #find S such that dS=Qin-Qout (MPM equation)
-for (i in 2:length(dat$impoundment_Qin)){
+for (i in 3:length(dat$impoundment_Qin)){
   S0<-dat$MPMStorage[i-1]#Stores previous timestep storage for easy reference
   Qin<-as.numeric(dat$impoundment_Qin[i])#Stores inflow for easy reference
   S1<-S0+(Qin*3600/43560)#Maximum possible storage
@@ -96,7 +97,7 @@ for (i in 2:length(dat$impoundment_Qin)){
 }
 par(mar=c(5,6,2,4))
 plot(
-#  dat$timestamp,
+  as.POSIXct(dat$timestamp),
   as.numeric(dat$MPMStage),
   type='l',
   col='blue',
@@ -108,27 +109,35 @@ plot(
   ylab='Stage (ft)'
 )
 lines(
+  as.POSIXct(dat$timestamp),
   dat$impoundment_lake_elev,
   col='red',
   lwd=2,
   type='l'
 )
-#lines(
-#  as.numeric(dat$impoundment_Qin),
-#  col='green',
-#  lwd=2,
-#  type='l',
-#  lty=3
-#)
-#lines(
-#  as.numeric(dat$MPMQout),
-#  col='black',
-#  lwd=2,
-#  type='l',
-#  lty=3
-#)
-
+lines(as.POSIXct(dat$timestamp),dat$MPMStage,col='blue',lwd=2)
 legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
+
+par(mar=c(5,6,2,4))
+plot(
+  #  dat$timestamp,
+  as.numeric(dat$MPMQout),
+  type='l',
+  col='blue',
+  lwd=2,
+  cex.lab=2,
+  cex.axis=2,
+  #ylim=c(0,200),
+  xlab='Time',
+  ylab='Discharge (cfs)'
+)
+lines(
+  dat$impoundment_Qout,
+  col='red',
+  lwd=2,
+  type='l'
+)
+lines(dat$MPMQout,col='blue',lwd=2)
 
 
 # Just show a specific design storm 
@@ -163,4 +172,8 @@ lines(
   type='o'
 )
 
-#check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$MPMQout,dat$MPMStage)
+check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$impoundment_Storage,dat$MPMQout,dat$impoundment_Qout,dat$impoundment_its)
+for (i in 3:length(check2$dat.impoundment_Qin)){
+  check2$myCheck[i]<-abs(check2$dat.MPMStorage[i]-check2$dat.MPMStorage[i-1]+(check2$dat.MPMQout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
+  check2$VAHCheck[i]<-abs(check2$dat.impoundment_Storage[i]-check2$dat.impoundment_Storage[i-1]+(check2$dat.impoundment_Qout[i]-check2$dat.impoundment_Qin[i])*dt/43560)
+}
