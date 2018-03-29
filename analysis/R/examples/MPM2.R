@@ -9,7 +9,7 @@ dt<-3600
 fxn_locations = 'C:/Users/conno/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-7997
+runid<-7998
 elid<-340298
 dat<-fn_get_runfile(elid, runid)
 dat<-dat[order(as.POSIXct(dat$timestamp)),]
@@ -59,6 +59,8 @@ for (i in 2:length(dat$impoundment_Qin)){
   ET<-dat$et_in[i]/12/24
   P<-dat$precip_in[i]/12/24
   SA<-approx(x=SS$Storage,y=SS$SA,xout=S0,rule=1)$y
+  ET_imp<-ET*SA
+  P_imp<-P*SA
   S1<-S0+(Qin*3600/43560)-(ET_imp-P_imp)#Maximum possible storage
   riser_flow<-Solver(S1)#Maximum possible outflow
   riserP<-riser_flow#Maximum interval outflow for use in bisection method
@@ -74,11 +76,22 @@ for (i in 2:length(dat$impoundment_Qin)){
       x<-x+1
       #Check the conditional statement in the while loop to break the loop before computation
       if (x>500){
+        SA<-approx(x=SS$Storage,y=SS$SA,xout=S0,rule=1)$y
+        ET_imp<-ET*SA
+        P_imp<-P*SA
         Sn<-S0-(ET_imp-P_imp)
         riser_flow<-Qin
+        SA1<-approx(x=SS$Storage,y=SS$SA,xout=S1,rule=1)$y
+        ET_imp1<-ET*SA1
+        P_imp1<-P*SA1
+        diff<-(S1-S0+(ET_imp1-P_imp1)+riserP*dt/43560)-(Qin*dt/43560)
+        if(round(Si,9)==round(S1,9)&diff>0.0001){
+          Sn<-S1
+          riser_flow<-((S1-S0+(ET_imp1-P_imp1))-(Qin*dt/43560))*43560/-dt
+        }
         break
       }
-      diff<-abs((Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560))
+      diff<-(Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560)
       if (abs((Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560)) > 0.0001){
         #If tolerance has not been achieved, use the bisection method to find S and Q
         Sn<-(S1+Si)/2#New storage computed from the midpoint of max and min storage, S1 and Si respectivley
