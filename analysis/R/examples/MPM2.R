@@ -17,7 +17,8 @@ S<-dat$impoundment_Storage[1]#Input base storage
 
 #Function to calculate flow from weir stage of our orifice
 weir<-function(head,diameter=d){
-  riser_flow<-3.1*diameter*head^1.5
+  coeff<-0.6*sqrt(32.2)
+  riser_flow<-coeff*diameter*head^1.5
   return(riser_flow)
 }
 #Function to calculate flow from pipe stage of our orifice
@@ -81,14 +82,6 @@ for (i in 2:length(dat$impoundment_Qin)){
         P_imp<-P*SA
         Sn<-S0-(ET_imp-P_imp)
         riser_flow<-Qin
-        SA1<-approx(x=SS$Storage,y=SS$SA,xout=S1,rule=1)$y
-        ET_imp1<-ET*SA1
-        P_imp1<-P*SA1
-        diff<-(S1-S0+(ET_imp1-P_imp1)+riserP*dt/43560)-(Qin*dt/43560)
-        if(round(Si,9)==round(S1,9)&diff>0.0001){
-          Sn<-S1
-          riser_flow<-((S1-S0+(ET_imp1-P_imp1))-(Qin*dt/43560))*43560/-dt
-        }
         break
       }
       diff<-(Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560)
