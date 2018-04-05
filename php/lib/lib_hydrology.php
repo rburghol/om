@@ -140,6 +140,7 @@ class modelObject {
       if ($this->debug) {
          $this->logDebug("Initializing $this->name <br>");
       }
+      //error_log("Initializing $this->name ");
       $this->setState();
       $this->subState();
       # set up state variables for any public vars that are not already instantiated
@@ -2114,7 +2115,10 @@ class modelObject {
       $execlist = array();
       # compile a list of independent and dependent variables
       // @todo: rvars on subcomps are explicit independent inputs to subcomps that are not yet handled
-      //        wvars also shou;d be added to the independents list.
+      //        wvars are explicit outputs from subcomps that are often used by other comps
+      //        We also need to check to see if we are putting things in vars that should not be?
+      //        vars is a catchall used by equations which is equivalent to rvars but I *think*
+      //        vars has become a place for both rvars and wvars which might lead to unpredictable behavior
       foreach (array_keys($this->processors) as $thisinput) {
         foreach ($this->processors[$thisinput]->wvars as $wv) {
           $independents[$this->processors[$thisinput]->getParentVarName($wv)] = $thisinput;
@@ -3217,7 +3221,9 @@ class modelContainer extends modelObject {
    function init() {
       parent::init();
       $this->setSessionID();
+      //error_log("$this->name orderOperations() ");
       $this->orderOperations();
+      //error_log("$this->name orderComponents() ");
       $this->orderComponents();
       if ($this->debug) {
          $this->logDebug("Initializing components<br>");
@@ -3229,6 +3235,7 @@ class modelContainer extends modelObject {
             $this->logDebug($this->name . " Initializing component $thiscomp->name <br>");
          }
          $this->systemLog(" Initializing component $thiscomp->name \n");
+         //error_log(" Initializing component $thiscomp->name ");
          $this->outstring .= "* $thiscomp->name \n";
          $thiscomp->setProp('sessionid', $this->sessionid);
          $thiscomp->parentHub = $this->childHub;
@@ -3237,6 +3244,7 @@ class modelContainer extends modelObject {
       $this->outstring .= "\n";
       $this->syslogrec = -1;
       $this->compexectimes = array();
+    //error_log("$this->name finished init()");
    }
    
    function setSessionID() {
@@ -3559,7 +3567,7 @@ class modelContainer extends modelObject {
       $this->starttime = $newtimer->thistime->format('Y-m-d H:i:s');
       $this->endtime = $newtimer->endtime->format('Y-m-d H:i:s');
       #$this->logDebug($newtimer);
-      //error_log("<b>Setting Timer<br>");
+      error_log("<b>Setting Timer<br>");
       $this->setSimTimer( $newtimer);
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
@@ -3568,13 +3576,13 @@ class modelContainer extends modelObject {
       $this->outstring .= "Model Time Span Set:" . $this->starttime . " to " . $this->endtime . "\n";
       $this->outstring .= "Setting Component Session ID to: " . $this->sessionid . "\n";
       if ($this->cascadedebug) {
-         //error_log("<b>Setting Debug Mode on all children<br>");
+         error_log("<b>Setting Debug Mode on all children<br>");
          foreach($this->components as $thiscomp) {
             $thiscomp->setDebug($this->debug, $this->debugmode);
             $thiscomp->runid = $this->runid;
          }
       }
-      //error_log("<b>Initializing components<br>");
+      error_log("<b>Initializing components<br>");
       $this->setSessionID();
       $this->systemLog("<b>Initializing components<br>");
       $this->outstring .= "Initializing model components at: " . date('r') . "\n";
@@ -13364,8 +13372,8 @@ class HSPFWDM extends modelObject {
       if ( count($dsn) > 0) {
          $crit = array('DSN' => $dsn);
       }
-      if ($this->debug) error_log("loadDataSetMemory Called for file " . $this->filepath . "<br>\n");
-      if ($this->debug) error_log("Exporting WDM " . $this->filepath . "<br>\n");
+      //error_log("loadDataSetMemory Called for file " . $this->filepath . "<br>\n");
+      //error_log("Exporting WDM " . $this->filepath . "<br>\n");
       
       $expfile = $this->exportWDM('','',0,$dsn);
 
@@ -13373,6 +13381,7 @@ class HSPFWDM extends modelObject {
       
       $stashdebug = $this->debug;
       //$this->debug = 1;
+      error_log("Calling this->parseEXPFile($expfile, 'DSN' => $dsn, $this->startdate, $this->enddate)");;
       $dsn_recs = $this->parseEXPFile($expfile, $crit, $this->startdate, $this->enddate);
 
       return $dsn_recs;
@@ -13527,6 +13536,7 @@ class HSPFWDM extends modelObject {
       }
       $outmesg = "Trying to import EXP data from file " . $expfile . "<br>\n";
       //error_log($outmesg);
+      //error_log("Using format: " . print_r($this->ereg_format,1));
 
       $ss = '';
       $es = '';
@@ -13553,20 +13563,20 @@ class HSPFWDM extends modelObject {
       $wholefile = file($expfile);
 #      while ($thisline = fgets($fhandle,255) ) {
       #foreach ($wholefile as $thisline ) {
-      if ($this->debug) error_log("File $expfile has " . count($wholefile) . " lines");
+      //error_log("File $expfile has " . count($wholefile) . " lines");
       $lastk = -1;
       for ($k=0; $k < count($wholefile); $k++) {
          $thisline = $wholefile[$k];
          if (($k >= ($lastk + 999)) or ($lastk == -1)) {
             $outmesg = "Parsing Line $k <br>\n";
-            if ($this->debug) {
+            //if ($this->debug) {
                $this->logDebug($outmesg);
-            }
+            //}
             $lastk = $k;
          }
 
          if ($in_dsn) {
-            #print("DSN LINE: $thisline<br>\n");
+            //error_log("DSN LINE: $thisline<br>\n");
             # we are inside a DSN block, look for data line
             if ($in_data) {
                # check for data end
@@ -14091,7 +14101,7 @@ class HSPFWDM extends modelObject {
       if ($this->debug) {
          $this->logDebug("Calling $this->wdimex_exe <br>\n");
       }
-      error_log("Calling $this->wdimex_exe <br>\n");
+      //error_log("Calling $this->wdimex_exe <br>\n");
       $process = proc_open($this->wdimex_exe, $descriptorspec, $pipes, $cwd, $env);
 
       if (is_resource($process)) {
@@ -14621,6 +14631,7 @@ class hydroImpSmall extends hydroImpoundment {
    var $release = 0;
    var $text2table = '';
    var $outlet_plugin = FALSE;
+   var $log_solution_problems = FALSE;
 
    // *************************************************
    // BEGIN - Special Parent Variable Setting Interface
@@ -14629,7 +14640,7 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its');
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill');
       
       $this->initOnParent();
    }
@@ -14749,7 +14760,7 @@ class hydroImpSmall extends hydroImpoundment {
    function create() {
       parent::create();
       if ($this->debug) error_log("Create routine called on $this->name with $this->text2table");
-      error_log("Create routine called on $this->name with $this->text2table");
+      //error_log("Create routine called on $this->name with $this->text2table");
       $this->matrix = array();
       $this->setupMatrix($this->text2table);
       // check to see if the text2table field has anything in it
@@ -14911,6 +14922,9 @@ class hydroImpSmall extends hydroImpoundment {
       if ($this->debug) {
          $this->logDebug("Calculating P and ET: P) $precip_acfts = $area * $precip / 12.0 / 86400.0;  <br>\n ET: $evap_acfts = $area * $pan_evap / 12.0 / 86400.0;<br>\n");
       }
+      // the riser routine needs this 
+      $this->state['evap_acfts'] = $evap_acfts;
+      $this->state['precip_acfts'] = $precip_acfts;
       $thisdate = $this->state['thisdate'];
       
       // change in storage
@@ -15093,6 +15107,7 @@ class hydroImpSmall extends hydroImpoundment {
       $innerHTML .= "<br><b>Riser Opening Storage (ac-ft):</b> " . $formatted->formpieces['fields']['riser_opening_storage'];
       $innerHTML .= "<br><b>Pipe Flow Head (ft above opening):</b> " . $formatted->formpieces['fields']['riser_pipe_flow_head'] . " (below this head flow is modeled as weir)";
       $innerHTML .= "<br><b>Riser Length (ft):</b> " . $formatted->formpieces['fields']['riser_length'];
+      $innerHTML .= "<br><b>Log Failed Solutions?:</b> " . $formatted->formpieces['fields']['log_solution_problems'];
       $innerHTML .= "</td>";
       return $innerHTML;
    }
