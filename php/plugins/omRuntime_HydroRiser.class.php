@@ -111,7 +111,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     }
     $ET = $et_in * $dt * 12.0 / 86400;
     $P = $precip_in * $dt * 12.0 / 86400;
-    $SA = floatval($this->storage_stage_area->evaluateMatrix($S1,'surface_area'));
+    $SA = floatval($this->storage_stage_area->evaluateMatrix($S0,'surface_area'));
     $ET_imp = $SA * $ET;
     $P_imp = $SA * $P; 
     // ********************************************
@@ -158,7 +158,10 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
         $x += 1;
         #Check the conditional statement in the while loop to break the loop before computation
         if ($x > 500) {
-          $Sn = $S0;
+		  $SA = floatval($this->storage_stage_area->evaluateMatrix($S0,'surface_area'));
+          $ET_imp = $SA * $ET;
+          $P_imp = $SA * $P; 
+		  $Sn = $S0-ET_imp+P_imp;
           $riser_flow = $Qin;
           break;
         }
