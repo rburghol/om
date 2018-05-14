@@ -1,6 +1,6 @@
 #Load in a stage storage table and input orifice height, diameter, and normal stage
 SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
-diameter<-5
+diameter<-1
 height<-2
 NS<-7.406753
 dt<-3600
@@ -9,7 +9,7 @@ dt<-3600
 fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
-runid<-7996
+runid<-7999
 elid<-340298
 dat<-fn_get_runfile(elid, runid)
 #dat<-read.csv("D:/TestingPondMay89.csv")
@@ -43,8 +43,19 @@ discharge<-function(stage){
 }
 #Function to calculate discharge from a given storage
 Solver<-function(Storage){
-  Stg<-approx(x=SS$Storage,y=SS$Stage,xout=Storage,rule=1)$y
-  riser_flow<-discharge(Stg)
+  if(Storage<max(SS$Storage)){ 
+    Stg<-approx(x=SS$Storage,y=SS$Stage,xout=Storage,rule=1)$y
+    riser_flow<-discharge(Stg)
+  }else{
+    #If overtopping occurs, discharge water from the orifice at max stage
+    #then spill all remainder
+    riser_flow<-discharge(max(SS$Stage))
+    leftover<-Storage-(riser_flow*3600/43560)
+    leftover<-leftover-max(SS$Storage)
+    if(leftover>0){
+      riser_flow<-riser_flow+(leftover*43560/3600)
+    }
+  }
   return(riser_flow)
 }
 
@@ -63,11 +74,17 @@ for (i in 2:length(dat$impoundment_Qin)){
   SA<-approx(x=SS$Storage,y=SS$SA,xout=S0,rule=1)$y
   ET_imp<-ET*SA
   P_imp<-P*SA
-  S1<-S0+(Qin*3600/43560)-(ET_imp-P_imp)#Maximum possible storage
+  S1<-1.25*(S0+(Qin*3600/43560)+P_imp)#Maximum possible storage, to be truncated if overtopping occurs
   riser_flow<-Solver(S1)#Maximum possible outflow
   riserP<-riser_flow#Maximum interval outflow for use in bisection method
+  SU<-S1#Create an upper bounds for a bisection method that will not be truncated
+  if(S1>max(SS$Storage)){
+    S1<-max(SS$Storage)
+  }
   Si<-0#Minimuim storage for use in bisection method
-  Sn<-S1#A storage to be iterated within the below while loop
+  SL<-0#Minimum boundary without truncation
+  Sn<-S1#A storage to be iterated within the below while loop that is subject to truncation if overtopping occurs
+  SC<-Sn#The actual storage in the current loop
   SA<-approx(x=SS$Storage,y=SS$SA,xout=Sn,rule=1)$y
   ET_imp<-ET*SA
   P_imp<-P*SA
@@ -96,8 +113,16 @@ for (i in 2:length(dat$impoundment_Qin)){
       diff<-(Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560)
       if (abs((Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560)) > 0.0001){
         #If tolerance has not been achieved, use the bisection method to find S and Q
-        Sn<-(S1+Si)/2#New storage computed from the midpoint of max and min storage, S1 and Si respectivley
+        #New storage computed from the midpoint of max and min storage, S1 and Si respectivley
+        #This will be equal to (S1+Si)/2 if both S1 and Si are below maximum storage
+        Sn<-(SU+SL)/2
+        SC<-Sn#By tracking SC separatley from Sn, we can truncate Sn to maximum storage upon overtopping
+              #for comparison in the MPM formula but still track the actual storage value SC for use in the bisection routine
+              #This is useful to generate accurate values near the overtopping threshold
         riser_flow<-Solver(Sn)#Corresponding outflow
+        if(Sn>max(SS$Storage)){
+          Sn<-max(SS$Storage)
+        }
         SA<-approx(x=SS$Storage,y=SS$SA,xout=Sn,rule=1)$y
         ET_imp<-ET*SA
         P_imp<-P*SA
@@ -110,9 +135,9 @@ for (i in 2:length(dat$impoundment_Qin)){
         ET_imp1<-ET*SA1
         P_imp1<-P*SA1
         if(((Sn-S0+(ET_imp-P_imp)+riser_flow*dt/43560)-(Qin*dt/43560))*((S1-S0+(ET_imp1-P_imp1)+riserP*dt/43560)-(Qin*dt/43560))<0){
-          Si<-Sn
+          SL<-SC
         } else {
-          S1<-Sn
+          SU<-SC
           riserP<-riser_flow
         }
       } else {
