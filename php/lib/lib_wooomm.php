@@ -784,6 +784,7 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
       }
       $listobject->querystring .= " ) ";
       error_log($listobject->querystring);
+      error_log("PG Error: $listobject->error");
       $listobject->performQuery();
    }
 }
@@ -7623,11 +7624,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
 
    if ($elementid > 0) {
       if ($cached) {
-        error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
-         $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
+        //error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
+        $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-         error_log("Calling getObjectXML(listobject, $elementid) ");
-         $qresult = getObjectXML($listobject, $elementid);
+        //error_log("Calling getObjectXML(listobject, $elementid) ");
+        $qresult = getObjectXML($listobject, $elementid);
       }
       if ($qresult['error']) {
         return FALSE;

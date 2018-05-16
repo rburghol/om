@@ -2,24 +2,21 @@
 SS<-read.csv("C:/Users/connorb5/Desktop/GitHub/om/analysis/R/examples/SS.csv")
 diameter<-1
 height<-2
-NS<-7.406753
+NS<-5.7124
 dt<-3600
 
 #Load in inflow data (as well as other model data)
-fxn_locations = 'C:/Users/connorb5/Desktop/GitHub/r-dh-ecohydro/Analysis'
+fxn_locations = 'C:/Users/connor/Desktop/GitHub/r-dh-ecohydro/Analysis'
 source(paste(fxn_locations,"fn_vahydro-1.0.R", sep = "/"))
 source(paste(fxn_locations,"fn_iha.R", sep = "/"))
 runid<-7999
 elid<-340298
 dat<-fn_get_runfile(elid, runid)
-#dat<-read.csv("D:/TestingPondMay89.csv")
-dat<-dat[order(as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00')),]
 S<-dat$impoundment_Storage[1]#Input base storage
 
 #Function to calculate flow from weir stage of our orifice
 weir<-function(head,diameter=d){
-  coeff<-0.6*sqrt(32.2)
-  riser_flow<-coeff*diameter*head^1.5
+  riser_flow<-3.1*diameter*head^1.5
   return(riser_flow)
 }
 #Function to calculate flow from pipe stage of our orifice
@@ -33,14 +30,14 @@ discharge<-function(stage){
   if(head<0){
     riser_flow<-0
   } else if (head>0&head<height){
-    riser_flow<-weir(head,diameter)
+      riser_flow<-weir(head,diameter)
   } else if (head>0&head>=height){
     riser_flow<-pipe(head,diameter,height)
   } else {
     riser_flow<-0
   }
   return(riser_flow)
-}
+  }
 #Function to calculate discharge from a given storage
 Solver<-function(Storage){
   if(Storage<max(SS$Storage)){ 
@@ -62,8 +59,7 @@ Solver<-function(Storage){
 #Create empty columns to store data. initialize with above boundary conditions
 dat$MPMStorage<-numeric(length(dat$impoundment_Qin));dat$MPMStorage[1]<-S
 dat$MPMQout<-numeric(length(dat$impoundment_Qin))
-dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y;
-dat$its<-numeric(length(dat$impoundment_Qin))
+dat$MPMStage<-numeric(length(dat$impoundment_Qin));dat$MPMStage[1]<-approx(x=SS$Storage,y=SS$Stage,xout=S,rule=1)$y
 #loop that looks at each inflow and calculates storage and outflow simealtaneously by creating a function to 
 #find S such that dS=Qin-Qout (MPM equation)
 for (i in 2:length(dat$impoundment_Qin)){
@@ -141,21 +137,22 @@ for (i in 2:length(dat$impoundment_Qin)){
           riserP<-riser_flow
         }
       } else {
-        #Tolerance achieved, solution found
-        break
+        S1<-Sn
+        riserP<-riser_flow
       }
+    } else {
+      #Tolerance achieved, solution found
+      break
     }
   }
   #Store stage, storage, and outflow calculated from the MPM method for plotting
   dat$MPMStorage[i]<-Sn
   dat$MPMQout[i]<-riser_flow
-  dat$MPMStage[i]<-approx(x=SS$Storage,y=SS$Stage,xout=Sn,rule=1)$y
-  dat$its[i]<-x
+  dat$MPMStage[i]<-approx(x=SS$Storage,y=SS$Stage,xout=S1,rule=1)$y
 }
-
 par(mar=c(5,6,2,4))
 plot(
-  as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00'),
+#  dat$timestamp,
   as.numeric(dat$MPMStage),
   type='l',
   col='blue',
@@ -164,28 +161,62 @@ plot(
   cex.axis=2,
   #ylim=c(0,200),
   xlab='Time',
-  ylab='Stage (ft)',
-  ylim=c(min(dat$impoundment_lake_elev),max(dat$impoundment_lake_elev))
+  ylab='Stage (ft)'
 )
 lines(
-  as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00'),
   dat$impoundment_lake_elev,
   col='red',
   lwd=2,
   type='l'
 )
-points(as.POSIXct(dat$timestamp[dat$impoundment_its>500&dat$impoundment_riser_head>0]),dat$impoundment_lake_elev[dat$impoundment_its>500&dat$impoundment_riser_head>0],pch=19,cex=3)
-par(new=T)
-plot(dat$timestamp,dat$impoundment_Qin,type='l',lty=3,ann=F,axes=F)
-legend('top',c('MPM stage','VA Hydro stage','Inflow'),col=c('blue','red','black'),lty=c(1,1,3),lwd=4,cex=2,bty='n',y.intersp = 0.5,x.intersp = 0.5,seg.len=0.75)
+#lines(
+#  as.numeric(dat$impoundment_Qin),
+#  col='green',
+#  lwd=2,
+#  type='l',
+#  lty=3
+#)
+#lines(
+#  as.numeric(dat$MPMQout),
+#  col='black',
+#  lwd=2,
+#  type='l',
+#  lty=3
+#)
 
-par(mar=c(5,6,2,4))
-plot(as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00'),as.numeric(dat$MPMQout),type='l', col='blue',lwd=2,cex.lab=2,cex.axis=2,
-     #ylim=c(0,200),
-     xlab='Time',
-     ylab='Discharge (cfs)',
-     ylim=c(min(dat$Qout),max(dat$Qout))
+legend(x=5250,y=9.25,c('MPM','VA Hydro'),col=c('blue','red'),lwd=2,pch=1,cex=2,bty='n',y.intersp = 0.5)
+
+
+# Just show a specific design storm 
+destorm <- window(
+  dat, 
+  start = as.POSIXct("1996-05-06 16:00"), 
+  end = as.POSIXct("1996-05-07 0:00")
+);
+
+plot(
+  #  dat$timestamp,
+  as.numeric(destorm$MPMStage),
+  type='o',
+  col='blue',
+  lwd=2,
+  cex.lab=2,
+  cex.axis=2,
+  ylim=c(0,200),
+  xlab='Time',
+  ylab='Stage (ft)'
 )
-lines(as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00'),dat$Qout,col='red',lwd=2)
-lines(as.POSIXct(dat$timestamp,origin='1970-01-01 00:00:00'),dat$impoundment_Qin,lwd=2,lty=3)
-legend('top',c('MPM Qout','VA Hydro Qout','Inflow'),col=c('blue','red','black'),lty=c(1,1,3),lwd=4,cex=2,bty='n',y.intersp = 0.5,x.intersp = 0.5,seg.len=0.75)
+lines(
+  as.numeric(destorm$impoundment_Qin),
+  col='red',
+  lwd=2,
+  type='o'
+)
+lines(
+  as.numeric(destorm$MPMQout),
+  col='green',
+  lwd=2,
+  type='o'
+)
+
+#check2<-data.frame(dat$impoundment_Qin,dat$MPMStorage,dat$MPMQout,dat$MPMStage)
