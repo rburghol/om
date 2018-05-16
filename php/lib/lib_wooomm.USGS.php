@@ -41,7 +41,7 @@ class USGSGageObject extends timeSeriesInput {
    var $stat_dbtblname = '';
    // widget to obtain station information
 //   var $xml_station_info_url = "http://deq1.bse.vt.edu/wooommdev/remote/xml_usgs_basin.php";
-   var $xml_station_info_url = "http://deq1.bse.vt.edu/wooommdev/remote/xml_usgs_basin.php";
+   var $xml_station_info_url = "http://deq2.bse.vt.edu/wooommdev/remote/xml_usgs_basin.php";
    var $usgsdb = -1;
    var $usgs_host = 'gradlab4.bse.vt.edu';
    var $usgs_port = 5432;
@@ -1149,6 +1149,7 @@ class USGSChannelGeomObject_sub extends USGSChannelGeomObject {
       $this->wvars[] = 'Qout';
       $this->wvars[] = 'area';
       $this->wvars[] = 'demand';
+      $this->wvars[] = 'its';
       $this->rvars[] = $this->q_var;
       $this->rvars[] = $this->r_var;
       $this->rvars[] = $this->w_var;

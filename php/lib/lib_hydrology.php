@@ -6656,7 +6656,7 @@ class channelObject extends hydroObject {
          # now execute any operations
          #$this->execProcessors();
          # re-calculate the channel flow parameters, if any other operations have altered the flow:
-         list($Vout, $Qout, $depth, $Storage) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
+         list($Vout, $Qout, $depth, $Storage, $its) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
          if ( ($I1 > 0) and ($I2 > 0) and ($demand < $I1) and ($demand < $I2) and ($Qout == 0) ) {
             // numerical error, adjust
             $Qout = (($I1 + $I2) / 2.0) - $demand;
@@ -6686,6 +6686,7 @@ class channelObject extends hydroObject {
       $this->state['Storage'] = $Storage;
       $this->state['last_demand'] = $demand;
       $this->state['last_discharge'] = $discharge;
+      $this->state['its'] = $its;
 
       if($this->debug) {
          $this->logDebug("Qout = $Qout <br>\n");
@@ -14632,6 +14633,23 @@ class hydroImpSmall extends hydroImpoundment {
    var $text2table = '';
    var $outlet_plugin = FALSE;
    var $log_solution_problems = FALSE;
+   var $tmpfile = '';
+   
+   function writeToParent($vars = array(), $verbose = 0) {
+     // @todo: eliminate this after debugging is finished
+      parent::writeToParent($vars, $verbose);
+      if ($this->log_solution_problems) {
+        $ts = $this->this->timer->timestamp;
+        $storage = $this->parentobject->state[$this->getParentVarName("Storage")];
+        $riser_head = $this->parentobject->state[$this->getParentVarName("riser_head")];
+        $riser_flow = $this->parentobject->state[$this->getParentVarName("riser_flow")];
+        $its = $this->parentobject->state[$this->getParentVarName("its")];
+        if ($this->timer->steps == 0) {
+          fwrite($this->tmpfile, "timestamp,storage,riser_head,riser_flow,its\n");
+        }
+        fwrite($this->tmpfile, "$ts,$storage,$riser_head,$riser_flow,$its\n");
+      }
+   }
 
    // *************************************************
    // BEGIN - Special Parent Variable Setting Interface
@@ -14640,7 +14658,7 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill');
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_stage', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill');
       
       $this->initOnParent();
    }
@@ -14706,9 +14724,11 @@ class hydroImpSmall extends hydroImpoundment {
    
    function init() {
       parent::init();
+      $this->setupOutlet();
       if ($this->debug) {
          $this->logDebug("init() method set variables to " . print_r($this->state,1) . "<br>");
       }
+      $this->tmpfile = fopen("/tmp/custom.$this->componentid" . ".log", 'w');
    }
 
    function wake() {
@@ -14722,9 +14742,9 @@ class hydroImpSmall extends hydroImpoundment {
       $this->setSingleDataColumnType('riser_enabled', 'integer',$this->riser_enabled);
       $this->setSingleDataColumnType('riser_flow', 'float8',0);
       $this->setSingleDataColumnType('riser_head', 'float8',0);
+      $this->setSingleDataColumnType('riser_storage_estimate', 'float8',0);
       $this->setSingleDataColumnType('its', 'float8',0);
       $this->setupMatrix();
-      $this->setupOutlet();
       $this->initOnParent();
    } 
    
@@ -14755,6 +14775,7 @@ class hydroImpSmall extends hydroImpoundment {
       $this->storage_matrix = -1;
       $this->vars = array();
       $this->outlet_plugin = FALSE;
+      fclose($this->tmpfile);
    }
    
    function create() {
@@ -14849,7 +14870,7 @@ class hydroImpSmall extends hydroImpoundment {
       if (!$this->riser_enabled or !is_object($this->outlet_plugin)) {
         parent::step();
         $this->value = $this->state['Qout'];
-        $this->writeToParent();
+        //$this->writeToParent();
         return;
       }
       // ********************************************************************
@@ -15005,9 +15026,11 @@ class hydroImpSmall extends hydroImpoundment {
       //} else {
          $Qout = $spill + $flowby + $riser_flow;
       //}
-      //error_log("RISER($this->state[runid] : S0 = $S0, S1 = $S1, Storage = $Storage ");
-      //error_log("RISER($this->state[runid] : Qout = spill + flowby + riser_flow;");
-      //error_log("RISER($this->state[runid] : $Qout = $Qin - $spill + $flowby + $riser_flow;");
+      if ($this->debug) {
+        error_log("RISER($this->state[runid] : S0 = $S0, S1 = $S1, Storage = $Storage ");
+        error_log("RISER($this->state[runid] : Qout = spill + flowby + riser_flow;");
+        error_log("RISER($this->state[runid] : $Qout = $Qin - $spill + $flowby + $riser_flow;");
+      }
       
       // local unit conversion dealios
       $this->state['evap_mgd'] = $evap_acfts * 28157.7;
@@ -15073,7 +15096,8 @@ class hydroImpSmall extends hydroImpoundment {
       $this->totalwithdrawn += $demand * $dt;
       
       $this->value = $this->state['Qout'];
-      $this->writeToParent();
+      //error_log("Iterations at main imp object = " . $this->state['its']);
+      //$this->writeToParent();
    }
    
    function showFormHeader($formatted,$formname, $disabled = 0) {
