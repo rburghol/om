@@ -140,7 +140,6 @@ class modelObject {
       if ($this->debug) {
          $this->logDebug("Initializing $this->name <br>");
       }
-      //error_log("Initializing $this->name ");
       $this->setState();
       $this->subState();
       # set up state variables for any public vars that are not already instantiated
@@ -269,7 +268,7 @@ class modelObject {
    
    function writeToParent($vars = array(), $verbose = 0) {
       if (count($vars) == 0) {
-         $vars = is_array($this->wvars) ? $this->wvars : array();
+         $vars = $this->wvars;
       }
       if ($this->debug) {
          $this->logDebug("writeToParent() called on $this->name ");
@@ -316,10 +315,7 @@ class modelObject {
       }
    }
 
-  function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
-    if ($this->debug) {
-      $this->logDebug("called: setSingleDataColumnType( $thiscol, type = $thistype , defaval = $defval, loggable = $loggable , $overwrite , $logformat)");
-    }
+   function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
       if (strtolower($thistype) == 'guess') {
          if (is_object($this->listobject)) {
             if (method_exists($this->listobject, 'guessDataType')) {
@@ -347,14 +343,11 @@ class modelObject {
       if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
          $this->data_cols = array();
       }
-      // added RWB 5/17/2015 - improve loading into session table by 
-      // setting the default
       if (!isset($this->column_defs[$thiscol]) or $overwrite) {
          $this->column_defs[$thiscol] = array(
             'log_format'=>$logformat,
             'loggable'=>$loggable,
-            'dbcolumntype'=>$thistype,
-            'default'=>$defval
+            'dbcolumntype'=>$thistype
          );
       }
       if (!isset($this->state[$thiscol]) or $overwrite) {
@@ -366,7 +359,7 @@ class modelObject {
             if ($loggable and (strlen($thistype) > 0) and (strtolower($thistype) <> 'null') ) {
                $this->data_cols[] = $thiscol;
                if ($this->debug) {
-                  $this->logDebug("Adding $thiscol to loggable columns on $this->name with type $thistype and default value $defval");
+                  $this->logDebug("Adding $thiscol to loggable columns on $this->name");
                }
             }
             $this->state[$thiscol] = $defval;
@@ -587,7 +580,6 @@ class modelObject {
    }
 
    function wake() {
-     $stime = microtime(true);
       if (!isset($this->processors)) {
          $this->processors = array();
       } else {
@@ -645,8 +637,6 @@ class modelObject {
       }
       $this->setState();
       $this->subState();
-     $etime = microtime(true);
-     $this->logDebug("$this->name wake() took " . round($etime - $stime, 5) . " seconds (prec=5)<br>");
    }
 
    function preProcess() {
@@ -1780,16 +1770,6 @@ class modelObject {
       } else {
          $logvars = array_keys($logsrc);
       }
-      // must intersect logsrc and logvars to avoid tons of warnings
-      // and let the user know they requested logging that cannot be logged
-      $logmissing = array_diff($logsrc, $logvars);
-      if (count($logmissing) > 0) {
-        if ($this->timer->steps <= 2) {
-           $this->logDebug("Unable to find requested logvariables: " . print_r($logmissing,1));
-           //error_log("Unable to find requested logvariables: " . print_r($logmissing,1));
-        }
-        $logvars = $logsrc;
-      }
       
       if ($this->timer->steps <= 2) {
         //error_log("Checking for strict_log setting (this->strict_log = $this->strict_log). ");
@@ -2001,10 +1981,8 @@ class modelObject {
    function setErrorFile() {
       $this->errorfile = 'errorlog.' . $this->sessionid . '.' . $this->componentid . '.log';
       $dfp = fopen($this->outdir . "/" . $this->debugfile,'w');
-      if ($dfp) { 
-        fwrite($dfp,"<html><body>");
-        fclose($dfp);
-      }
+      fwrite($dfp,"<html><body>");
+      fclose($dfp);
    }
 
    function execProcessors() {
@@ -2111,24 +2089,15 @@ class modelObject {
 
       $dependents = array();
       $independents = array();
-      $sub_queue = array();
       $execlist = array();
       # compile a list of independent and dependent variables
-      // @todo: rvars on subcomps are explicit independent inputs to subcomps that are not yet handled
-      //        wvars are explicit outputs from subcomps that are often used by other comps
-      //        We also need to check to see if we are putting things in vars that should not be?
-      //        vars is a catchall used by equations which is equivalent to rvars but I *think*
-      //        vars has become a place for both rvars and wvars which might lead to unpredictable behavior
       foreach (array_keys($this->processors) as $thisinput) {
-        foreach ($this->processors[$thisinput]->wvars as $wv) {
-          $independents[$this->processors[$thisinput]->getParentVarName($wv)] = $thisinput;
-        }
-        array_push($dependents, $thisinput);
+         $independents = array_merge($independents, $this->processors[$thisinput]->vars);
+         array_push($dependents, $thisinput);
       }
       if ($this->debug) {
-         $this->logDebug("<b>Ordering Operations for $this->name</b><br> ");
+         $this->logDebug("<b>Ordering Operations</b><br> ");
       }
-      $this->outstring .= "Ordering Operations for $this->name\n";
       # now check the list of independent variables for each processor,
       # if none of the variables are in the current list of dependent variables
       # put it into the execution stack, remove from queue
@@ -2160,21 +2129,15 @@ class modelObject {
       asort($postexec);
       $postexec = array_keys($postexec);
       $queue = $nonhier;
-      $this->logDebug("Beginning Queue \n");
-      $this->logDebug($queue);
-      $this->logDebug("Beginning independents \n");
-      $this->logDebug($independents);
+      
       $i = 0;
-      $this->debug = 1;
       while (count($queue) > 0) {
          $thisdepend = array_shift($queue);
          $pvars = $this->processors[$thisdepend]->vars;
-         //$watchlist = array('impoundment', 'local_channel');
-         //$this->debug = in_array( $this->processors[$depend]->name, $watchlist) ? 1 : 0;
          if ($this->debug) {
-            $this->logDebug("Checking $thisdepend variables \n");
+            $this->logDebug("Checking $thisdepend variables ");
             $this->logDebug($pvars);
-            $this->logDebug(" <br>\n in ");
+            $this->logDebug(" <br>\nin ");
             $this->logDebug($queue);
             $this->logDebug("<br>\n");
          }
@@ -2184,10 +2147,6 @@ class modelObject {
             $i = 0;
             if ($this->debug) {
                $this->logDebug("Not found, adding $thisdepend to execlist.<br>\n");
-            }
-            // remove it from the derived var list if it exists there 
-            while ($dkey = array_search($thisdepend, $independents)) {
-              unset($independents[$dkey]);
             }
          } else {
             # put it back on the end of the stack
@@ -2263,28 +2222,14 @@ class modelObject {
             }
          }
       }
-      $this->debug = 0;
       $hiersort = array_merge($preexec, $execlist, $postexec);
-      
-      
-      $this->logDebug("Final Queue \n");
-      $this->logDebug($queue);
-      $this->logDebug("Final independents \n");
-      $this->logDebug($independents);
-      $this->logDebug("Pre-exec list: \n");
-      $this->logDebug($preexec);
-      $this->logDebug("Dependency ordered: \n");
-      $this->logDebug($hiersort);
-      $this->logDebug("Post-exec list:  \n");
-      $this->logDebug($postexec);
-      
-      $this->outstring .= "Ordering Operations\n";
-      $this->outstring .= "Independents Remaining: " . print_r($independents,1) . "\n";
-      $this->outstring .= "Pre-exec list: " . print_r($preexec,1) . "\n";
-      $this->outstring .= "To Be ordered: " . print_r($nonhier,1) . "\n";
-      $this->outstring .= "Dependency ordered: " . print_r($execlist,1) . "\n";
-      $this->outstring .= "Post-exec list: " . print_r($postexec,1) . "\n";
-      $this->outstring .= "Sorted: " . print_r($hiersort,1) . "\n";
+      if ($this->debug) {
+         $this->logDebug("<br>Pre-exec list: " . print_r($preexec,1) );
+         $this->logDebug("<br>To Be ordered: " . print_r($nonhier,1) );
+         $this->logDebug("<br>Dependency ordered: " . print_r($execlist,1) );
+         $this->logDebug("<br>Post-exec list: " . print_r($postexec,1) );
+         $this->logDebug("<br>Sorted: " . print_r($hiersort,1) );
+      }
       $this->execlist = $hiersort;
    }
 
@@ -3009,7 +2954,7 @@ class broadCastObject extends modelSubObject {
                $this->logDebug("Looking for remote variable $remote <br>\n");
             }
             $local = $this->local_varname[$i];
-            $remote_array = is_array($thisclass[$remote]) ? $thisclass[$remote] : array();
+            $remote_array = $thisclass[$remote];
             if ($this->debug) {
                $this->logDebug("Found " . print_r($remote_array, 1) . "<br>\n");
             }
@@ -3221,30 +3166,26 @@ class modelContainer extends modelObject {
    function init() {
       parent::init();
       $this->setSessionID();
-      //error_log("$this->name orderOperations() ");
       $this->orderOperations();
-      //error_log("$this->name orderComponents() ");
       $this->orderComponents();
       if ($this->debug) {
          $this->logDebug("Initializing components<br>");
       }
-      $this->outstring .= "Components included in model run:\n";
+      $this->outstring .= "<b>Components included in model run:</b><ul>";
       foreach($this->compexeclist as $thiscompid) {
          $thiscomp = $this->components[$thiscompid];
          if ($this->debug) {
             $this->logDebug($this->name . " Initializing component $thiscomp->name <br>");
          }
-         $this->systemLog(" Initializing component $thiscomp->name \n");
-         //error_log(" Initializing component $thiscomp->name ");
-         $this->outstring .= "* $thiscomp->name \n";
+         $this->systemLog(" Initializing component $thiscomp->name <br>");
+         $this->outstring .= "<li> $thiscomp->name </li>";
          $thiscomp->setProp('sessionid', $this->sessionid);
          $thiscomp->parentHub = $this->childHub;
          $thiscomp->init();
       }
-      $this->outstring .= "\n";
+      $this->outstring .= "</ul>";
       $this->syslogrec = -1;
       $this->compexectimes = array();
-    //error_log("$this->name finished init()");
    }
    
    function setSessionID() {
@@ -3392,7 +3333,7 @@ class modelContainer extends modelObject {
 
    function finish() {
       $max_used = memory_get_usage(true) / (1024.0 * 1024.0);
-      $this->outstring .= " Memory use at simulation end: $max_used Mb / Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . "\n";
+      $this->outstring .= " Memory use at simulation end: $max_used Mb / Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . " <br>\n";
       $outmesg = "Calling finish() Method on contained model components.";
       //error_log($outmesg);
       $this->systemLog($outmesg);
@@ -3448,7 +3389,7 @@ class modelContainer extends modelObject {
          // stash the report of average time of execution in the outstring on this parent object
          //$avgexec = $this->compexectimes[$thiscomp] / $this->timer->steps;
          $avgexec = $this->components[$thiscomp]->meanexectime;
-         $this->outstring .= "Component $thisname ($thiscomp) avg. exec time: $avgexec \n";
+         $this->outstring .= "Component $thisname ($thiscomp) avg. exec time: $avgexec <br>";
 
          # now get reporting data from any contained components
          # check for report files
@@ -3567,25 +3508,25 @@ class modelContainer extends modelObject {
       $this->starttime = $newtimer->thistime->format('Y-m-d H:i:s');
       $this->endtime = $newtimer->endtime->format('Y-m-d H:i:s');
       #$this->logDebug($newtimer);
-      error_log("<b>Setting Timer<br>");
+      //error_log("<b>Setting Timer<br>");
       $this->setSimTimer( $newtimer);
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
       }
-      $this->outstring .= "\n\nBeginning Model Run at: " . date('r') . "\n";
-      $this->outstring .= "Model Time Span Set:" . $this->starttime . " to " . $this->endtime . "\n";
-      $this->outstring .= "Setting Component Session ID to: " . $this->sessionid . "\n";
+      $this->outstring .= "<b>Beginning Model Run at:</b> " . date('r') . "<br>";
+      $this->outstring .= "<b>Model Time Span Set:</b> " . $this->starttime . " to " . $this->endtime . "<br>";
+      $this->outstring .= "<b>Setting Component Session ID to:</b> " . $this->sessionid . "<br>";
       if ($this->cascadedebug) {
-         error_log("<b>Setting Debug Mode on all children<br>");
+         //error_log("<b>Setting Debug Mode on all children<br>");
          foreach($this->components as $thiscomp) {
             $thiscomp->setDebug($this->debug, $this->debugmode);
             $thiscomp->runid = $this->runid;
          }
       }
-      error_log("<b>Initializing components<br>");
+      //error_log("<b>Initializing components<br>");
       $this->setSessionID();
       $this->systemLog("<b>Initializing components<br>");
-      $this->outstring .= "Initializing model components at: " . date('r') . "\n";
+      $this->outstring .= "<b>Initializing model components at:</b> " . date('r') . "<br>";
       $this->init();
       $i = 0;
 
@@ -3596,13 +3537,13 @@ class modelContainer extends modelObject {
          $this->setBuffer(0);
          //error_log("Database log queries will be sent synchronously (non-buffered).");
       }
-      $this->outstring .= "Stepping through model execution at: " . date('r') . "\n";
+      $this->outstring .= "<b>Stepping through model execution at:</b> " . date('r') . "<br>";
       error_log("<b>Iterating through timesteps<br>");
       while (!$this->timer->finished) {
          if (intval($i / $this->outputinterval) == ($i / $this->outputinterval)) {
             $ts = $this->timer->thistime->format('r');
             $outmesg = "Executing step $i @ time: $ts";
-            $this->outstring .= $outmesg . "\n";
+            $this->outstring .= $outmesg . "<br>";
             $this->systemLog($outmesg);
          }
          // moved this to eliminate over-stepping
@@ -3882,9 +3823,9 @@ class modelContainer extends modelObject {
          $this->logDebug($this->compexeclist);
          $this->logDebug("<br>\n");
       }
-      $this->outstring .= "\n\nExecution list: ";
+      $this->outstring .= "<br>\nExecution list: ";
       $this->outstring .= print_r($this->compexeclist,1);
-      $this->outstring .= "\n\n";
+      $this->outstring .= "<br>\n";
    }
 
 }
@@ -4353,7 +4294,6 @@ class dataMatrix extends modelSubObject {
             $this->logDebug("Formatting matrix, with " . count($this->matrix) . " cells, and $this->numrows rows ($numcols columns). <br>\n");
          }
          for ($i = 0; $i < $this->numrows; $i++) {
-           $matrix_rowcol[$i] = array();
             for ($j = 0; $j < $numcols; $j++) {
                // old - did not consider if a value was a variable or not
                //$matrix_rowcol[$i][$j] = $this->matrix[$mindex];
@@ -4434,9 +4374,7 @@ class dataMatrix extends modelSubObject {
                }
             break;
          }
-         if (is_object($this->timer)) {
-           $this->lasteval_ts = $this->timer->timestamp;
-         }
+         $this->lasteval_ts = $this->timer->timestamp;
          $this->matrix_formatted = $matrix_formatted;
          $this->matrix_rowcol = $matrix_rowcol;
       }
@@ -4487,7 +4425,7 @@ class dataMatrix extends modelSubObject {
       // that step() or evaluate(), or formatMatrix() has been called before calling evaluateMatrix()
       //error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
       if ($this->debug) {
-         error_log("RISER evaluateMatrix() called on $this->name, lookup-type = $this->lutype1, value-type = $this->valuetype with keys: '$key1' and '$key2' <br>");
+         error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
          $this->logDebug("evaluateMatrix() called on $this->name with keys: '$key1' and '$key2' <br>");
          // go through the matrix rows, assign column names for each piece of data
          // column names will be the contents of the first row if a 2-column lookup, 
@@ -4505,6 +4443,8 @@ class dataMatrix extends modelSubObject {
             }
          }
       }
+            
+            
       // need to see if this is a normal array, 1 or 2 column lookup
       switch ($this->valuetype) {
          case 0:
@@ -4514,10 +4454,8 @@ class dataMatrix extends modelSubObject {
          
          case 1:
          // 1-column lookup
-            $luval = arrayLookup($this->matrix_formatted, $key1, $this->lutype1, $this->defaultval, $this->debug);
+            $luval = arrayLookup($this->matrix_formatted, $key1, $this->lutype1, $this->defaultval);
             if ($this->debug) {
-               error_log("Matrix = " . print_r($this->matrix_formatted,1) . "<br>");
-               error_log("Key = " . $key1 . " - Value: $luval<br>");
                $this->logDebug("Matrix = " . print_r($this->matrix_formatted,1) . "<br>");
                $this->logDebug("Key = " . $key1 . " - Value: $luval<br>");
             }
@@ -4665,7 +4603,6 @@ class dataMatrix extends modelSubObject {
 				case 'csv':
                $this->formatMatrix();
                //error_log("calling showCWSInfoView () ");
-               //return array2Delimited($this->matrix_rowcol, ',', 1,'unix');
                return array2Delimited($this->matrix_formatted, ',', 1,'unix');
 				break;
          }
@@ -6134,130 +6071,122 @@ class timeSeriesInput extends modelObject {
 }
 
 class timeSeriesFile extends timeSeriesInput {
-  // a static read-only file with time series values
-  var $cache_ts = 1;
-  var $location_type = 0; // 0 - local file system, 1 - http
-  var $remote_url = '';
+   // a static read-only file with time series values
+   var $cache_ts = 1;
+   var $location_type = 0; // 0 - local file system, 1 - http
+   var $remote_url = '';
 
-  function wake() {
-    parent::wake();
-    $fe = fopen($this->getFileName(),'r');
-    error_log("File open result: $fe ");
-    if ($fe) {
-      if ($this->location_type == 0) {
-        fclose($fe);
+   function wake() {
+      parent::wake();
+      $fe = fopen($this->getFileName(),'r');
+      error_log("File open result: $fe ");
+      if ($fe) {
+         if ($this->location_type == 0) {
+            fclose($fe);
+         }
+         $this->logDebug("Obtaining values from file: $this->filepath \n");
+         error_log("Obtaining values from file: $this->filepath \n");
+         $this->tsVarsFromFile();
+      } else {
+         $this->logDebug("Can not find file: $this->filepath \n");
       }
-      $this->logDebug("Obtaining values from file: $this->filepath \n");
-      error_log("Obtaining values from file: " . $this->getFileName);
-      $this->tsVarsFromFile();
-    } else {
-      $this->logDebug("Can not find file: $this->filepath \n");
-    }
-    error_log("File Variables loaded. wake() returning.");
-  }
-
-  function getFileName() {
-    // handles file movement in the background, choices among source types
-    switch ($this->location_type) {
-      case 0:
-      // local file system
-      $retfile = $this->filepath;
-      break;
-
-      case 1:
-      // http request
-      $retfile = $this->remote_url;
-      break;
-
-      default:
-      // local file system
-      $retfile = $this->filepath;
-      break;
-    
-    }
-    if (strlen(trim($retfile)) == 0) {
-      $retfile = null;
-    }
-    //error_log("Returning file name: $retfile ");
-    return $retfile;
-  }
-
-  function init() {
-    #$debug = 1;
-    $this->cache_ts = 1;
-    $fe = fopen($this->getFileName(),'r');
-    if ($this->debug) {
-      $this->logDebug("Opening for reading: " . $this->getFileName() . "<br>");
-    }
-    if ($fe) {
-      $this->tsfile = $this->getFileName();
-      if ($this->location_type == 0) {
-        fclose($fe);
+   }
+   
+   function getFileName() {
+      // handles file movement in the background, choices among source types
+      switch ($this->location_type) {
+         case 0:
+         // local file system
+         $retfile = $this->filepath;
+         break;
+         
+         case 1:
+         // http request
+         $retfile = $this->remote_url;
+         break;
+         
+         default:
+         // local file system
+         $retfile = $this->filepath;
+         break;
+      
       }
-    } else {
-      $this->logError("Failed to open " . $this->getFileName() . "<br>");
+      if (strlen(trim($retfile)) == 0) {
+         $retfile = null;
+      }
+      //error_log("Returning file name: $retfile ");
+      return $retfile;
+   }
+   
+   function init() {
+      #$debug = 1;
+      $this->cache_ts = 1;
+      $fe = fopen($this->getFileName(),'r');
       if ($this->debug) {
-        $this->logDebug("Failed to open " . $this->getFileName() . "<br>");
+         $this->logDebug("Opening for reading: " . $this->getFileName() . "<br>");
       }
-    }
-    parent::init();
-  }
+      if ($fe) {
+         $this->tsfile = $this->getFileName();
+         if ($this->location_type == 0) {
+            fclose($fe);
+         }
+      } else {
+         $this->logError("Failed to open " . $this->getFileName() . "<br>");
+         if ($this->debug) {
+            $this->logDebug("Failed to open " . $this->getFileName() . "<br>");
+         }
+      }
+      parent::init();
+   }
 
-  function finish() {
-    # disable this since we assume this is a read-only file
-    $this->cache_ts = 0;
-    parent::finish();
-  }
+   function finish() {
+      # disable this since we assume this is a read-only file
+      $this->cache_ts = 0;
+      parent::finish();
+   }
 
-  function tsVarsFromFile() {
-    # get the header line with variable names and the first line of values.
-    # 
-    if ($this->debug) {
-      $this->logDebug("Function tsVarsFromFile called. <br>");
-      $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
-    }
-    // set base types to avoid timestamp troubles
-    $this->setBaseTypes();
-    //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
-    error_log("Opening for reading: " . $this->getFileName() . "<br>");
-    $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    if ($this->debug) { 
-      $this->logDebug("First Line of $this->name : " . print_r($first2lines[0],1) . "<br>");
-      $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
-    }
-    $nb = 0;
-    foreach ($first2lines[0] as $thiskey => $thisvar) {
-error_log("Handling $thiskey - $thisvar ");
-       if (trim($thisvar) == '') {
-          $nb++;
-          $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       } else {
-          if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
-             if ($this->debug) {
-                $this->logDebug("$thisvar not in dbcolumntypes array <br>");
-             }
-             $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
-             if ($this->debug) {
-                $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
-             }
-             //$this->state[$thisvar] = $first2lines[1][$thiskey];
-          }
-          if ($this->debug) {
-             $this->logDebug("Column $thisvar found.<br>\n");
-          }
-       }
-       if ($nb > 0) {
-          $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       }
-    }
-  }
-  function showHTMLInfo() {
-    $htmlinfo = parent::showHTMLInfo();
-    $htmlinfo .= "<br><strong>Note: </strong>File must contain column 'timestamp' with format U (seconds since Unix Epoch)";
-    return $htmlinfo;
-  }
+   function tsVarsFromFile() {
+      # get the header line with variable names and the first line of values.
+      # 
+      if ($this->debug) {
+         $this->logDebug("Function tsVarsFromFile called. <br>");
+         $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
+      }
+      // set base types to avoid timestamp troubles
+      $this->setBaseTypes();
+      //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
+      $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
+      if ($this->debug) { 
+         $this->logDebug("First 2 Lines of $this->name : " . print_r($first2lines,1) . "<br>");
+      }
+      $nb = 0;
+      foreach ($first2lines[0] as $thiskey => $thisvar) {
+         if (trim($thisvar) == '') {
+            $nb++;
+            $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+         } else {
+            if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
+               if ($this->debug) {
+                  $this->logDebug("$thisvar not indbcolumntypes array <br>");
+               }
+               $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
+               //$this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[0][$thiskey]);
+               if ($this->debug) {
+                  $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
+               }
+               //$this->state[$thisvar] = $first2lines[1][$thiskey];
+            }
+            if ($this->debug) {
+               $this->logDebug("Column $thisvar found.<br>\n");
+            }
+         }
+         if ($nb > 0) {
+            $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+         }
+      }
+   }
+
+
 }
 
 class pumpObject extends hydroObject {
@@ -6656,7 +6585,7 @@ class channelObject extends hydroObject {
          # now execute any operations
          #$this->execProcessors();
          # re-calculate the channel flow parameters, if any other operations have altered the flow:
-         list($Vout, $Qout, $depth, $Storage, $its) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
+         list($Vout, $Qout, $depth, $Storage) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
          if ( ($I1 > 0) and ($I2 > 0) and ($demand < $I1) and ($demand < $I2) and ($Qout == 0) ) {
             // numerical error, adjust
             $Qout = (($I1 + $I2) / 2.0) - $demand;
@@ -6686,7 +6615,6 @@ class channelObject extends hydroObject {
       $this->state['Storage'] = $Storage;
       $this->state['last_demand'] = $demand;
       $this->state['last_discharge'] = $discharge;
-      $this->state['its'] = $its;
 
       if($this->debug) {
          $this->logDebug("Qout = $Qout <br>\n");
@@ -6868,8 +6796,6 @@ class hydroImpoundment extends hydroObject {
       $this->setSingleDataColumnType('days_remaining', 'float8',0);
       $this->setSingleDataColumnType('demand_met_mgd', 'float8',0);
       $this->setSingleDataColumnType('deficit_acft', 'float8',0);
-      $this->setSingleDataColumnType('maxcapacity', 'float8',0);
-      $this->setSingleDataColumnType('refill_full_mgd', 'float8',0);
    }
 
    function init() {
@@ -8247,7 +8173,7 @@ class dataConnectionObject extends timeSeriesInput {
    function getExtentWKT() {
       # grabs the extnet of this geometry
       if (is_object($this->listobject)) {
-         $this->listobject->querystring = "  select st_asText(st_extent( st_geomFromText('$this->the_geom',4326) )) as extent ";
+         $this->listobject->querystring = "  select asText(extent(GeomFromText('$this->the_geom',4326) )) as extent ";
          //error_log($this->listobject->querystring);
          $this->listobject->performQuery();
          return $this->listobject->getRecordValue(1,'extent');
@@ -8463,8 +8389,8 @@ class dataConnectionObject extends timeSeriesInput {
          $this->dbobject->querystring .= " where (1 = 1) ";
          if ($this->restrict_spatial and (strlen(trim($this->the_geom)) > 0) ) {
             $this->dbobject->querystring .= " and within( ";
-            $this->dbobject->querystring .= " st_geomFromText('POINT(' || $this->lon_col || ' ' || $this->lat_col || ' )', 4326 )";
-            $this->dbobject->querystring .= " , st_geomFromText('$this->the_geom',4326) ) ";
+            $this->dbobject->querystring .= "GeomFromText('POINT(' || $this->lon_col || ' ' || $this->lat_col || ' )', 4326 )";
+            $this->dbobject->querystring .= " ,GeomFromText('$this->the_geom',4326) ) ";
          }
          if ($this->single_datecol and is_object($this->timer) ) {
             $this->logDebug("Adding Timespan Restriction");
@@ -8533,7 +8459,7 @@ class dataConnectionObject extends timeSeriesInput {
             $this->logdebug(" Querying geometry area for this watershed.<br>");
          }
          // get the area of this geometry for later use
-         $this->dbobject->querystring = " select  st_area2d(  st_transform( st_geomFromText('$this->the_geom',4326),26918) ) ";
+         $this->dbobject->querystring = " select area2d( transform(GeomFromText('$this->the_geom',4326),26918) ) ";
          $this->dbobject->performQuery();
          if (count($this->dbobject->queryrecords) > 0) {
             $this->area_m = $this->dbobject->getRecordValue(1,'area2d');
@@ -8750,20 +8676,20 @@ class dataConnectionObject extends timeSeriesInput {
                $this->logDebug($this->listobject->querystring . " ;<br>");
             }
             $this->listobject->performQuery();
-            $this->listobject->querystring = " UPDATE $scratchname set the_geom =  st_geomFromText('POINT(' || $this->lon_col || ' ' || $this->lat_col || ' )', 4326 )";
+            $this->listobject->querystring = " UPDATE $scratchname set the_geom = GeomFromText('POINT(' || $this->lon_col || ' ' || $this->lat_col || ' )', 4326 )";
             if ($this->debug) {
                $this->logDebug($this->listobject->querystring . " ;<br>");
             }
             $this->listobject->performQuery();
             if ($this->debug) {
-               $this->listobject->querystring = " SELECT st_extent(the_geom) as geomext FROM $scratchname; ";
+               $this->listobject->querystring = " SELECT extent(the_geom) as geomext FROM $scratchname; ";
                $this->listobject->performQuery();
                $geomext = $this->listobject->getRecordValue(1,'geomext');
                $this->logDebug("Geometry extent: " . $geomext . " <br>");
             }
          }
          # get spatially overlapping records
-         $this->geomclause = " where within(the_geom,  st_geomFromText('$this->the_geom', 4326)) ";
+         $this->geomclause = " where within(the_geom, geomFromText('$this->the_geom', 4326)) ";
          if ($this->debug) {
             $this->logDebug($this->listobject->querystring . " ;<br>");
          }
@@ -8791,7 +8717,7 @@ class dataConnectionObject extends timeSeriesInput {
          $remotegeomclause = '';
 
          if ($geom <> '') {
-            $remotegeomclause = " where within(the_geom,  st_geomFromText('$geom', 4326)) ";
+            $remotegeomclause = " where within(the_geom, geomFromText('$geom', 4326)) ";
          }
 
          # get spatially overlapping records
@@ -9245,8 +9171,6 @@ class XMLDataConnection extends dataConnectionObject {
    
    function wake() {
       //parent::wake();
-      // added 6/5/2017 to see if we can get rid of some warnings
-      $this->localprocs = array();
       define('MAGPIE_CACHE_ON', TRUE);
       define('MAGPIE_FETCH_TIME_OUT', 240);
       define('MAGPIE_CACHE_DIR', $this->basedir . "/" . $this->cache);
@@ -9460,7 +9384,6 @@ class XMLDataConnection extends dataConnectionObject {
          
       } else {
          $this->logError("Error Retrieving Data: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
-         error_log("Error Retrieving Column Names: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
       }
       
       $this->dbobject->queryrecords = $retvals;
@@ -9537,8 +9460,6 @@ class XMLDataConnection extends dataConnectionObject {
          if ($this->debug) {
             $this->logDebug("Starting Data Inventory Address: $this->data_inventory_address <br>\n");
             $this->logDebug("Final Inventory Address: $this->final_data_inventory_address <br>\n");
-            error_log("Starting Data Inventory Address: $this->data_inventory_address <br>\n");
-            error_log("Final Inventory Address: $this->final_data_inventory_address <br>\n");
          }
          if (strlen(rtrim(ltrim($this->final_data_inventory_address))) > 0) {
             if ($this->debug) error_log("Calling fetch_rss($this->final_data_inventory_address) ");
@@ -9658,7 +9579,6 @@ class XMLDataConnection extends dataConnectionObject {
          }
       } else {
          $this->logError("Error Retrieving Column Names: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
-         error_log("Error Retrieving Column Names: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
       }
    }
    
@@ -9780,7 +9700,6 @@ class RSSDataConnection extends XMLDataConnection {
          
       } else {
          $this->logError("Error Retrieving Data: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
-         error_log("Error Retrieving Column Names: RSS Magpie function 'fetch_rss' is not defined - can not retrieve feed.");
       }
       
       $this->dbobject->queryrecords = array();
@@ -10025,6 +9944,573 @@ class CBPDataConnection extends dataConnectionObject {
       $this->logDebug("Columns for local query: $public_cols, $group_cols <br>\n");
       return array($public_cols, $group_cols);
    }
+}
+
+
+class CBPLandDataConnection extends XMLDataConnection {
+//class CBPLandDataConnection extends RSSDataConnection {
+//   var $feed_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=4';
+   var $feed_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=4';
+//   var $data_inventory_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=1'; 
+   var $data_inventory_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=1'; 
+   var $extra_variables = "startdate=[startdate]\nenddate=[enddate]"; // a list of key=value pairs entered in a text field, if there are carriage returns, it will concatenate them along URL lines with &
+
+
+   // element for connecting to land use parameters, and outputs, 
+   // with a facility for multiplying outputs by the land use areas DataMatrix
+   // for modeling the landuse change effects
+   var $lunames = array();
+   var $scid = -1;
+   var $id1 = 'land'; # model data class: river, land, or met
+   var $id2 = ''; # land segment: i.e., A24001
+   var $riverseg = ''; // optional, this will only be used during calls to "create()" method, restricting the historical land use to the given river and land segment intersection
+   var $max_memory_values = 500;
+   var $username = 'cbp_ro';
+   var $password = 'CbPF!v3';
+   var $dbname = 'cbp';
+   var $host = 'localhost';
+   var $locationid = -1;
+   var $conntype = 7;
+   var $romode = 'component';
+   var $hspf_timestep = 3600.0;
+   var $serialist = 'lunames';
+   var $datecolumn = 'thisdatetime';
+   var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
+   var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+  
+   function init() {
+      parent::init();
+      //$this->getLandUses();
+   }
+   function setState() {
+      parent::setState();
+      $this->state['Qout'] = 0.0;
+      $this->state['area_ac'] = 0.0;
+      $this->state['area_sqmi'] = 0.0;
+      $this->state['Qafps'] = 0.0;
+      $this->state['suro'] = 0.0;
+      $this->state['ifwo'] = 0.0;
+      $this->state['agwo'] = 0.0;
+      $this->state['in_ivld'] = 0.0;
+      $this->state['landuse_var'] = $this->landuse_var;
+   }
+   
+   function setDataColumnTypes() {
+      parent::setDataColumnTypes();
+      
+      $statenums = array('Qout','area_ac','Qafps', 'suro', 'ifwo', 'agwo', 'prec', 'area_sqmi', 'in_ivld');
+      foreach ($statenums as $thiscol) {
+         $this->setSingleDataColumnType($thiscol, 'float8', 0.0);
+         $this->logformats[$thiscol] = '%s';
+      }
+      $this->dbcolumntypes['substrateclass'] = 'varchar(2)';
+      $this->dbcolumntypes['landuse_var'] = 'varchar(255)';
+      
+   }
+   
+   function wake() {
+      $this->feed_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=4';
+      $this->data_inventory_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=1'; 
+      parent::wake();
+      $this->datatemp = 'tmp_crosstab' . $this->componentid;
+      $this->lunames = array();
+      if ($this->debug) error_log("Calling getLandUses()");
+      $this->getLandUses();
+   }
+
+   function step() {
+      // all step methods MUST call preStep(),execProcessors(), postStep()
+      $this->preStep();
+      if ($this->debug) {
+         $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
+      }
+      // execute sub-components
+      $this->execProcessors();
+      if ($this->debug) {
+         $this->logDebug("<b>$this->name Sub-processors executed at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . " week " . $this->state['week'] . " month " . $this->state['month'] . ".</b><br>\n");
+      }
+      // now do local flow routing manipulations
+      // need to multiply landuse matrix values by the appropriate ifow, agwo, and suro for that land use
+      // aggregate the results into a Qout variable or some area weighted value as well
+      // get landuse matrix
+      $Qout = 0.0;
+      $Qafps = 0.0;
+      $area_ac = 0.0;
+      $landuse_var = $this->state['landuse_var'];
+      $thisyear = $this->state['year'];
+      if (!($thisyear > 0)) {
+         if ($this->debug) {
+            $this->logDebug("Something is wrong with the year in the state array calling setStateTimerVars()<br>\n");
+         }
+         $this->setStateTimerVars();
+         $thisyear = $this->state['year'];
+      }
+      switch ($this->romode) {
+         case 'component':
+            $flow_comps = array('suro', 'ifwo', 'agwo');
+         break;
+         
+         case 'merged':
+            $flow_comps = array('in_ivld');
+         break;
+      }
+         
+      $other_comps = array('prec');
+      $comp_vals = array('suro'=>0.0, 'ifwo'=>0.0, 'agwo'=>0.0, 'prec'=>0.0, 'in_ivld'=>0.0);
+      /*
+      // test, if no 'landuse_current' sub-comp is set, draw from the landuse_historic matrix
+      // this doesn't work just yet
+      // schema should use "landusevar" and "landuseyear", where landusevar is the name of a matrix
+      // and landuseyear specifies either a static year, the model property "thisyear" or a reference 
+      // to another variable.
+      // if "landuseyear" variable is not set as a sub-component, can default to use prop "thisyear"
+      // if "landusevar" component is not set, default to "landuse_historic"
+      // landuse_year can be a matrix, keyed on run_mode, such that:
+      // 0 = some year in history (lets say 1850)
+      // 1 = thisyear
+      // 2 = some year representing current conditions (say 2005)
+      // if "landuse_historic" is not set, then we bail, otherwise we should be good to go
+      // this should maintain backward compatibility with previous incarnations of the model which 
+      // used separate landuse_var settings and matrices, but did not specify a landuse_year, 
+      // so long as landuse_year defaults to thisyear
+      
+      if ( isset($this->processors[$landuse_var]) or ( ($landuse_var == 'landuse_current') and isset($this->processors['landuse_historic']) ) ) {
+         // if the "current" land use is not set,  
+         if (($landuse_var == 'landuse_current') and !isset($this->processors['landuse_current']) ) {
+            $landuse_matrix = $this->processors['landuse_historic'];
+            $luyear = $this->current_lu_year;
+      */      
+      if ( isset($this->processors[$landuse_var]) ) {
+         $landuse_matrix = $this->processors[$landuse_var];
+         // get the values for the land uses
+         $landuse_matrix->formatMatrix();
+         if ($this->debug) {
+            $this->logDebug("Getting land use values for year $thisyear<br>\n");
+         }
+         $lumatrix = $landuse_matrix->matrix_formatted;
+         foreach ($lumatrix as $luname=>$values) {
+            $luarea = $landuse_matrix->evaluateMatrix($luname, $thisyear);
+            if (is_numeric($luarea)) {
+               if ($this->debug) {
+                  $this->logDebug("Found Land use $luname with area $luarea<br>\n");
+               }
+               $area_ac += $luarea;
+               // only evaluate this if the land use area is > 0.0
+               if ($luarea > 0) {
+                  foreach ($flow_comps as $thiscomp) {
+                     // this is the expected format of this variable, i.e. for_ifwo
+                     $lu_flowvar = $luname . '_' . $thiscomp;
+                     if ($this->debug) {
+                        $this->logDebug("Evaluating $lu_flowvar = " . $this->state[$lu_flowvar]);
+                        $this->logDebug("<br>\n");
+                     }
+                     if (isset($this->state[$lu_flowvar])) {
+                        // converts from watershed in/ivld to watershed ft/ivld (/12.0)
+                        // to acre-feet/ivld (* luarea)
+                        // to cubic-feet (* 43560 ft-per-acre)
+                        // to cfs (/timestep)
+                        $thisflow = ( ($this->state[$lu_flowvar]/12.0) * $luarea * 43560.0) / $this->hspf_timestep;
+                        $comp_vals[$thiscomp] += $thisflow;
+                        $Qout += $thisflow;
+                        if ($this->debug) {
+                           $this->logDebug("Adding $lu_flowvar @ $thisflow cfs to Qout ($Qout) ");
+                           $this->logDebug("<br>\n");
+                        }
+                     }
+                  }
+                  foreach ($other_comps as $thiscomp) {
+                     // this is the expected format of this variable, i.e. for_ifwo
+                     $lu_flowvar = $luname . '_' . $thiscomp;
+                     if (isset($this->state[$lu_flowvar])) {
+                        // converts from watershed in/ivld to watershed ft/ivld (/12.0)
+                        // to acre-feet/ivld (* luarea)
+                        // to cubic-feet (* 43560 ft-per-acre)
+                        // to cfs (/timestep)
+                        // weight this comp by the land use area, then later we will un-weight it when we store in the state var
+                        switch ($thiscomp) {
+                           case 'prec':
+                           // since precip is given as a rate in the model output, we have to convert it to a quantity
+                              $thisflow = $this->state[$lu_flowvar] * $luarea * ($this->timer->timestep / $this->hspf_timestep);
+                           break;
+
+                           default:                           
+                              $thisflow = $this->state[$lu_flowvar] * $luarea;
+                           break;
+                        }
+                        $comp_vals[$thiscomp] += $thisflow;
+                     }
+                  }
+               }
+            }
+         }
+         $Qafps = $Qout / ($area_ac * 43560.0);
+         if ($this->debug) {
+            $this->logdebug("Qout = $Qout <br>\n");
+            $this->logdebug("luarea = $luarea <br>\n");
+            $this->logdebug("Qafps = $Qout / ($area_ac * 43560.0) <br>\n");
+         }
+      } else {
+         if ($this->debug) {
+            $this->logdebug("landuse sub-component not found <br>\n");
+         }
+      }
+      $this->state['Qout'] = floatval($Qout);
+      $this->state['area_ac'] = floatval($area_ac);
+      $this->state['area_sqmi'] = floatval($area_ac) / 640.0;
+      $this->state['Qafps'] = floatval($Qafps);
+      $this->state['suro'] = floatval($comp_vals['suro']);
+      $this->state['agwo'] = floatval($comp_vals['agwo']);
+      $this->state['ifwo'] = floatval($comp_vals['ifwo']);
+      $this->state['in_ivld'] = floatval($comp_vals['in_ivld']);
+      foreach ($other_comps as $thiscomp) {
+         // un-weight these other components now, since we want raw, not converted values
+         $this->state[$thiscomp] = floatval($comp_vals[$thiscomp] / $area_ac);
+      }
+      
+      // log the results
+      if ($this->debug) {
+         $this->logDebug("$this->name Calling Logstate() thisdate = ");
+      }
+      $this->postStep();
+   }
+
+   function showHTMLInfo() {
+      $HTMLInfo = '';
+      $HTMLInfo .= parent::showHTMLInfo() . "<hr>";
+      if (is_object($this->dbobject)) {
+         $HTMLInfo .= "<b>DB Info: </b>" . $this->dbobject->dbconn . "<hr>";
+      //$this->getLandUses();
+      } else {
+         $HTMLInfo .= "<b>DB Error: </b> DB Object not valid <hr>";
+         $this->setupDBConn(1);
+      }
+      $HTMLInfo .= "<b>Land Uses: </b>" . print_r($this->lunames,1) . "<hr>";
+
+      if (isset($this->processors[$this->landuse_var])) {
+         if (is_object($this->processors[$this->landuse_var])) {
+            $HTMLInfo .= '<b>Land Use:</b><br>' . $this->processors[$this->landuse_var]->showHTMLInfo();
+            $check_sum = $this->processors[$this->landuse_var]->checkSumCols();
+            $HTMLInfo .= 'Check Sum: '. print_r($check_sum,1) . "<br>";
+         } else {
+            $HTMLInfo .= "Sub-component named 'landuse' is not an object.<br>";
+         }
+      } else {
+         $HTMLInfo .= "Unabled to find sub-component named '$landuse_var' in:<br>";
+         $HTMLInfo .= print_r(array_keys($this->processors),1) . "<br>";
+      }
+      
+      $seginfo = $this->getHistoricLandUses();
+      $HTMLInfo .= "<hr>Query:<br>" . $seginfo['debug'];
+      $this->dbobject->queryrecords = $seginfo['local_annual'];
+      $this->dbobject->show = 0;
+      $this->dbobject->showList();
+         
+      $HTMLInfo .= "<hr>Local Land Uses:<br>" . $this->dbobject->outstring;
+      return $HTMLInfo;
+   }
+   
+   function getHistoricLandUses() {
+      
+      if (!is_object($this->dbobject)) {
+         $this->conntype = 1; // set temporarily to pgsql
+         $this->setupDBConn(1);
+         $this->conntype = 7; // set temporarily to pgsql
+      }
+      if (is_object($this->dbobject)) {
+         if (strlen($this->riverseg) > 0) {
+            $riverseg = $this->riverseg;
+         } else {
+            $riverseg = NULL;
+         }
+         $seginfo = getCBPLandSegmentLanduse($this->dbobject, $this->scid, $this->id2 , $this->debug, $riverseg);
+         if ($this->debug) {
+            $this->logDebug($seginfo['debug']);
+         }
+      }
+      return $seginfo;
+   }
+   
+   function getModelOutputData($type = 'flowsum', $landuses = '') {
+      
+      if (!is_object($this->dbobject)) {
+         $this->conntype = 1; // set temporarily to pgsql
+         $this->setupDBConn(1);
+         $this->conntype = 7; // set temporarily to pgsql
+      }
+      if (is_object($this->dbobject)) {
+         if (strlen($this->riverseg) > 0) {
+            $riverseg = $this->riverseg;
+         } else {
+            $riverseg = NULL;
+         }
+         if (strlen($landuses) > 0) {
+            $lus = explode(',', $landuses);
+         } else {
+            $lus = $this->lunames;
+         }
+         
+         $seginfo = array();
+         $this->dbobject->querystring = '';
+         switch ($type) {
+            case 'flowsum':
+            sort($lus);
+            foreach ($lus as $thislu) {
+               $this->dbobject->querystring = $this->landSegOutputQuery('',$thislu);
+               if ($this->debug) {
+                  $this->logDebug($this->dbobject->querystring . "<br>");
+               }
+               $this->dbobject->performQuery();
+               $recs = $this->dbobject->queryrecords;
+               foreach ($recs as $thisrec) {
+                  $seginfo[$thisrec['thisyear']]['thisyear'] = $thisrec['thisyear'];
+                  $seginfo[$thisrec['thisyear']][$thislu . '_cfs'] = round($thisrec['ro_cfs'],2);
+               }
+            }
+            break;
+            
+            case 'runoffsum':
+            $q = $this->landSegOutputQuery('SURO');
+            $basetab = "( $q ) as foo ";
+            $this->dbobject->querystring = doGenericCrossTab ($dbobject, $basetab, 'lseg,thisyear', 'landuse', 'ro_cfs', 1, 0);
+            break;
+            
+            case 'baseflowsum':
+            $q = $this->landSegOutputQuery('AGWO');
+            $basetab = "( $q ) as foo ";
+            $this->dbobject->querystring = doGenericCrossTab ($dbobject, $basetab, 'lseg,thisyear', 'landuse', 'ro_cfs', 1, 0);
+            break;
+            
+            case 'interflowsum':
+            $q = $this->landSegOutputQuery('IFWO');
+            $basetab = "( $q ) as foo ";
+            $this->dbobject->querystring = doGenericCrossTab ($dbobject, $basetab, 'lseg,thisyear', 'landuse', 'ro_cfs', 1, 0);
+            break;
+            
+         }
+      }
+         
+      return $seginfo;
+   }
+
+   function landSegOutputQuery($flowparam = '', $luname = '') {
+      $query = "  select lseg, landuse, extract(year from thisday) as thisyear, ";
+      $query .= "    sum(thisvalue) as runoff, ";
+      $query .= "    (avg(thisvalue / 12.0 * 640.0 * 43560.0/3600.0)/24.0) as ro_cfs, ";
+      $query .= " sum(numrecs) ";
+      $query .= " from (";
+      $query .= "   select c.thisdate::date as thisday, b.location_id, b.id2 as lseg, ";
+      $query .= "      b.id3 as landuse, sum(c.thisvalue) as thisvalue, count(c.*) as numrecs ";
+      $query .= "   from cbp_model_location as b, cbp_scenario_output as c";
+      $query .= "      where ";
+      $query .= "       c.location_id = b.location_id";
+      // restrict land uses?
+      if (strlen($flowparam) > 0) {
+         $query .= "      and c.param_name in ( '" . implode("','",split(",", $flowparam)) . "') ";
+      } else {
+         $query .= "      and c.param_name in ( 'SURO' , 'IFWO', 'AGWO') ";
+      }
+      $query .= "      and b.id2 = '$this->id2' ";
+      // restrict land uses?
+      if (strlen($luname) > 0) {
+         $query .= "      and b.id3 in ( '" . implode("','",split(",", $luname)) . "') ";
+      }
+      $query .= "      and b.scenarioid = $this->scid ";
+      $query .= "   group by thisday, b.id2, b.location_id, b.id3 ";
+      $query .= "   order by thisday, b.id2, b.id3 ";
+      $query .= " ) as foo ";
+      $query .= " group by lseg, thisyear, landuse ";
+      $query .= " order by lseg, landuse, thisyear ";
+      return $query;
+   }
+
+   
+   function create() {
+      if ($this->debug) {
+         $this->logDebug("Processors on this object before create(): " . print_r(array_keys($this->processors),1) . " <br>");
+      }
+      parent::create();
+      if ($this->debug) {
+         $this->logDebug("Processors after parent create(): " . print_r(array_keys($this->processors),1) . " <br>");
+      }
+      // set default land use
+      // set basic data query
+      $this->logDebug("Create() function called <br>");
+      $this->lunames = array();
+      //return;
+      $this->getLandUses();
+      
+      if (count($this->lunames) == 0) {
+         // if there are none set, just hit some defaults
+         $this->lunames = array('for');
+      }
+      sort($this->lunames);
+      
+      $this->logDebug("Object landuses: " . print_r($this->lunames,1) . " <br>");
+      
+      if (isset($this->processors['landuse'])) {
+         unset($this->processors['landuse']);
+      }
+      // landuse subcomponent to allow users to simulate land use values
+      $ludef = new dataMatrix;
+      $ludef->listobject = $this->listobject;
+      $ludef->name = 'landuse';
+      $ludef->wake();
+      $ludef->numcols = 3;  
+      $ludef->valuetype = 2; // 2 column lookup (col & row)
+      $ludef->keycol1 = ''; // key for 1st lookup variable
+      $ludef->lutype1 = 0; // lookp type - exact match for land use name
+      $ludef->keycol2 = 'year'; // key for 2nd lookup variable
+      $ludef->lutype2 = 1; // lookup type - interpolated for year value
+      // add a row for the header line
+      $ludef->numrows = count($this->lunames) + 1;
+      // since these are stored as a single dimensioned array, regardless of their lookup type 
+      // (for compatibility with single dimensional HTML form variables)
+      // we set alternating values representing the 2 columns (luname - acreage)
+      $ludef->matrix[] = 'luname - year(acres)';
+      $ludef->matrix[] = 1980; // put this year in the date field as a default lower limit
+      $ludef->matrix[] = date('Y'); // put current year in the date field as a default upper limit
+      foreach ($this->lunames as $thisname) {
+         $ludef->matrix[] = $thisname;
+         $ludef->matrix[] = 0.0;
+         $ludef->matrix[] = 0.0;
+      }
+      if ($this->debug) {
+         $this->logDebug("Trying to add land use sub-component matrix with values: " . print_r($ludef->matrix,1) . " <br>");
+      }
+      $this->addOperator('landuse', $ludef, 0);
+      
+      // hiastoric landuse subcomponent to allow users access to model simulated land uses
+      $luhist = new dataMatrix;
+      $luhist->listobject = $this->listobject;
+      $luhist->name = 'landuse_historic';
+      $luhist->wake();
+      $luhist->valuetype = 2; // 2 column lookup (col & row)
+      $luhist->keycol1 = ''; // key for 1st lookup variable
+      $luhist->lutype1 = 0; // lookp type - exact match for land use name
+      $luhist->keycol2 = 'year'; // key for 2nd lookup variable
+      $luhist->lutype2 = 1; // lookup type - interpolated for year value
+      // add a row for the header line
+      $hist_result = $this->getHistoricLandUses();
+      $luhist->assocArrayToMatrix($hist_result['local_annual']);
+      if ($this->debug) {
+         $this->logDebug("Trying to add historic land use sub-component matrix with values: " . print_r($luhist->matrix,1) . " <br>");
+      }
+      $this->addOperator('landuse_historic', $luhist, 0);
+      if ($this->debug) {
+         $this->logDebug("Processors on this object: " . print_r(array_keys($this->processors),1) . " <br>");
+      }
+   }
+
+   function getData() {
+      // restrict the land uses to non-zero values set in the landuse DataMatrix if the use has not explicitly
+      // proceed with parent getData routine
+      parent::getData();
+   }
+   
+   function restrictLandUses() {
+      // check the extra_variables field for id3 (luname) parameter
+      // if this is NOT set by the user, then go ahead and look for non-zero entries 
+      // in the landuse DataMatrix and append the extra_variables field with a land use criteria 
+      // to only get non-zero land uses.  This should speed up the execution time of the XML data query
+      $extras = preg_split("/((\r(?!\n))|((?<!\r)\n)|(\r\n))/", $this->subLocalProperties($this->final_extra_variables));
+      $edel = ''; // assume no extras to start, if we have them then we will make this a carriage return
+      $e_keys = array(); // hold the keys for any extra variables here
+      foreach ($extras as $thisextra) {
+         list($key, $value) = explode("=", $thisextra);
+         $edel = "\n";
+         // stow the keys in the e_keys array for searching later
+         $e_keys[] = $key;
+      }
+      
+      if (!in_array('id3', $e_keys)) {
+         $nz_landuses = array();
+         // user has NOT asked for specific land uses, thus, restrict the query of land uses to our non-zero ones
+         // defined in the landuse DataMatrix
+         if (isset($this->processors['landuse'])) {
+            $landuse_matrix = $this->processors['landuse'];
+            // get the values for the land uses, if there are NO non-zero land uses, we will not retrieve data 
+            // call formatMatrix routine, then look in the rows for each land use for non-zero values
+            // WE Should look within the start and end dates of this simulation and ONLY retrieve values within 
+            // the current start and end dates, but for now, we will retrieve if ANY non-zero values occur
+            // later we can figure out a smart way to do this to improve efficiency
+            $landuse_matrix->formatMatrix();
+            $lumatrix = $landuse_matrix->matrix_formatted;
+            foreach ($lumatrix as $luname=>$values) {
+               foreach ($values as $year => $luarea) {
+                  if ($luarea > 0) {
+                     $nz_landuses[] = $luname;
+                  }
+               }
+            }
+         } else {
+            $this->logdebug("landuse sub-component not found <br>\n");
+         }
+         $rstring = 'id3=-1'; // send a dummy that will not match by default (no landuses)
+         if (count($nz_landuses) > 0) {
+            $rstring = $edel . 'id3=' . implode(",", $nz_landuses);
+         }
+         $this->final_extra_variables .= $edel . $rstring;
+         if ($this->debug) {
+            $this->logDebug("restricting land uses with $rstring <br>\n");
+         }
+      }
+         
+   }
+   
+   function getLandUses() {
+      
+      // the landuse_names are stashed in the retrieval 'feed_inventory' variable 
+      
+      if (isset($this->feed_inventory['landuse_names'])) {
+         $lu_csv = $this->feed_inventory['landuse_names'];
+         //error_log("Lu CSV: " . $lu_csv . "<br>\n");
+         //return;
+         foreach (explode(",",$lu_csv) as $thislu) {
+            if ( !in_array($thislu, $this->lunames) ) {
+               $this->lunames[] = $thislu;
+            }
+         }
+         //error_log("Lu Array: " . print_r($this->lunames,1) . "<br>\n");
+      }
+   }
+
+   
+   function processLocalExtras() {
+      // this will incorporate any local properties, and check to make sure that the url is formed OK,
+      // this needs to be slightly different from the parent finalizeFeedURLs() method, so we sub-class it 
+      // set our extra parameters, then call the parent method
+      if (!$this->urls_finalized) {
+         // final_extra_variables should be a copy of extra_variables, but if anything was appended priot, we will use it
+         $extra_variables = $this->final_extra_variables;
+         // check for extras, if we have some, append a newline, then the id1, and id2 props set in our object props
+         $extras = preg_split("/((\r(?!\n))|((?<!\r)\n)|(\r\n))/", $this->subLocalProperties($extra_variables));
+         $edel = '';
+         foreach ($extras as $thisextra) {
+            if (strlen(ltrim(rtrim($thisextra))) > 0) {
+               $edel = "\n";
+            }
+         }
+         // now append local properties
+         $extra_variables .= $edel . 'id1=' . $this->id1;
+         $edel = "\n";
+         $extra_variables .= $edel . 'id2=' . $this->id2;
+         $extra_variables .= $edel . 'timestep=' . $this->dt;
+         $extra_variables .= $edel . 'scenarioid=' . $this->scid;
+         $extra_variables .= $edel . 'romode=' . $this->romode;
+         // now, set the extra_variables property to this expanded version and call the parent routine
+         $this->final_extra_variables = $extra_variables;
+         if ($this->debug) {
+            $this->logDebug("Final Extra Variables: $extra_variables <br>\n");
+         }
+         //error_log("Final Query URL: $url <br>\n");
+         // adds our land uses to the extra_variables parameter
+         // this would speed things up, but unfortunately, we cannot do this because "landuse" is a sub-component
+         // and by definition cannot be awoken until AFTER the parent is awoken.  need to rethink this if 
+         // this causes a significant performance hit
+         //$this->restrictLandUses();
+      }
+   }
+
 }
 
 class CBPDataInsert extends modelObject {
@@ -11199,8 +11685,6 @@ class graphObject extends modelObject {
 
 
    function graphResults() {
-// RWB disabled until upgrade is complete
-return;
       if ($this->debug) {
          $this->logDebug("graphResults() called on $this->name<br>");
       }
@@ -11359,8 +11843,6 @@ class giniGraph extends graphObject {
    var $graphtype = 'line';
 
    function graphResults() {
-// RWB disabled until upgrade is complete
-return;
 
       # set up basic info
       $thisgraph = array();
@@ -11581,8 +12063,7 @@ class flowDurationGraph extends graphObject {
    var $graphtype = 'line';
 
    function graphResults() {
-// RWB disabled until upgrade is complete
-return;
+
       # set up basic info
       $thisgraph = array();
 
@@ -13373,8 +13854,8 @@ class HSPFWDM extends modelObject {
       if ( count($dsn) > 0) {
          $crit = array('DSN' => $dsn);
       }
-      //error_log("loadDataSetMemory Called for file " . $this->filepath . "<br>\n");
-      //error_log("Exporting WDM " . $this->filepath . "<br>\n");
+      if ($this->debug) error_log("loadDataSetMemory Called for file " . $this->filepath . "<br>\n");
+      if ($this->debug) error_log("Exporting WDM " . $this->filepath . "<br>\n");
       
       $expfile = $this->exportWDM('','',0,$dsn);
 
@@ -13382,7 +13863,6 @@ class HSPFWDM extends modelObject {
       
       $stashdebug = $this->debug;
       //$this->debug = 1;
-      error_log("Calling this->parseEXPFile($expfile, 'DSN' => $dsn, $this->startdate, $this->enddate)");;
       $dsn_recs = $this->parseEXPFile($expfile, $crit, $this->startdate, $this->enddate);
 
       return $dsn_recs;
@@ -13537,7 +14017,6 @@ class HSPFWDM extends modelObject {
       }
       $outmesg = "Trying to import EXP data from file " . $expfile . "<br>\n";
       //error_log($outmesg);
-      //error_log("Using format: " . print_r($this->ereg_format,1));
 
       $ss = '';
       $es = '';
@@ -13564,20 +14043,20 @@ class HSPFWDM extends modelObject {
       $wholefile = file($expfile);
 #      while ($thisline = fgets($fhandle,255) ) {
       #foreach ($wholefile as $thisline ) {
-      //error_log("File $expfile has " . count($wholefile) . " lines");
+      if ($this->debug) error_log("File $expfile has " . count($wholefile) . " lines");
       $lastk = -1;
       for ($k=0; $k < count($wholefile); $k++) {
          $thisline = $wholefile[$k];
          if (($k >= ($lastk + 999)) or ($lastk == -1)) {
             $outmesg = "Parsing Line $k <br>\n";
-            //if ($this->debug) {
+            if ($this->debug) {
                $this->logDebug($outmesg);
-            //}
+            }
             $lastk = $k;
          }
 
          if ($in_dsn) {
-            //error_log("DSN LINE: $thisline<br>\n");
+            #print("DSN LINE: $thisline<br>\n");
             # we are inside a DSN block, look for data line
             if ($in_data) {
                # check for data end
@@ -14102,7 +14581,6 @@ class HSPFWDM extends modelObject {
       if ($this->debug) {
          $this->logDebug("Calling $this->wdimex_exe <br>\n");
       }
-      //error_log("Calling $this->wdimex_exe <br>\n");
       $process = proc_open($this->wdimex_exe, $descriptorspec, $pipes, $cwd, $env);
 
       if (is_resource($process)) {
@@ -14125,9 +14603,9 @@ class HSPFWDM extends modelObject {
          // proc_close in order to avoid a deadlock
          $return_value = proc_close($process);
 
-         error_log("command returned $return_value\n");
+         //error_log("command returned $return_value\n");
       } else {
-         error_log("Process did not run");
+         //error_log("Process did not run");
       }
 
       if ($this->debug) {
@@ -14606,6 +15084,9 @@ class droughtMonitor extends modelObject {
 
 }
 
+
+
+
 class hydroImpSmall extends hydroImpoundment {
    // this is a general purpose class for a simple flow-by
    // other, more complicated flow-bys will inherit this class
@@ -14617,39 +15098,9 @@ class hydroImpSmall extends hydroImpoundment {
    var $refill = 0;
    var $et_in = 0;
    var $precip_in = 0;
-   // adding to form - must have 
-   // * state var set in wake() 
-   // * var must exist on class
-   // * var must exist in adminsetup
-   var $riser_shape = 'rectangular'; // @todo: add option for circular
-   var $riser_diameter = 0; // the width of the orifice opening, either rectangular or circular
-   var $riser_pipe_flow_head = 0; // the head above pipe opening when flow becomes actual pipe flow
-   var $riser_length = 0; // the full length of the pipe
-   var $riser_opening_elev = 0; // relative to stage in stage/storage table
-   var $riser_opening_storage = 0; // relative to stage in stage/storage table
    var $demand = 0;
-   var $riser_enabled = 0;
    var $release = 0;
    var $text2table = '';
-   var $outlet_plugin = FALSE;
-   var $log_solution_problems = FALSE;
-   var $tmpfile = '';
-   
-   function writeToParent($vars = array(), $verbose = 0) {
-     // @todo: eliminate this after debugging is finished
-      parent::writeToParent($vars, $verbose);
-      if ($this->log_solution_problems) {
-        $ts = $this->this->timer->timestamp;
-        $storage = $this->parentobject->state[$this->getParentVarName("Storage")];
-        $riser_head = $this->parentobject->state[$this->getParentVarName("riser_head")];
-        $riser_flow = $this->parentobject->state[$this->getParentVarName("riser_flow")];
-        $its = $this->parentobject->state[$this->getParentVarName("its")];
-        if ($this->timer->steps == 0) {
-          fwrite($this->tmpfile, "timestamp,storage,riser_head,riser_flow,its\n");
-        }
-        fwrite($this->tmpfile, "$ts,$storage,$riser_head,$riser_flow,$its\n");
-      }
-   }
 
    // *************************************************
    // BEGIN - Special Parent Variable Setting Interface
@@ -14657,8 +15108,8 @@ class hydroImpSmall extends hydroImpoundment {
    function setState() {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
-      // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_stage', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill');      
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable');
+      
       $this->initOnParent();
    }
 
@@ -14723,64 +15174,30 @@ class hydroImpSmall extends hydroImpoundment {
    
    function init() {
       parent::init();
-      $this->setupOutlet();
       if ($this->debug) {
          $this->logDebug("init() method set variables to " . print_r($this->state,1) . "<br>");
       }
-      $this->tmpfile = fopen("/tmp/custom.$this->componentid" . ".log", 'w');
    }
 
    function wake() {
       parent::wake();
-      $this->setSingleDataColumnType('riser_diameter', 'float8',$this->riser_diameter);
-      $this->setSingleDataColumnType('riser_shape', 'varchar(32)',$this->riser_shape);
-      $this->setSingleDataColumnType('riser_mode', 'varchar(32)','');
-      $this->setSingleDataColumnType('riser_pipe_flow_head', 'float8',0);
-      $this->setSingleDataColumnType('riser_opening_elev', 'float8',0);
-      $this->setSingleDataColumnType('riser_length', 'float8',$this->riser_length);
-      $this->setSingleDataColumnType('riser_enabled', 'integer',$this->riser_enabled);
-      $this->setSingleDataColumnType('riser_flow', 'float8',0);
-      $this->setSingleDataColumnType('riser_head', 'float8',0);
-      $this->setSingleDataColumnType('riser_storage_estimate', 'float8',0);
-      $this->setSingleDataColumnType('its', 'float8',0);
       $this->setupMatrix();
+      // set up the matrix for this element
+      // set up the data columns
       $this->initOnParent();
    } 
    
-  function setupOutlet() {
-    if (!$this->riser_enabled) {
-      return;
-    }
-    //@todo: replace this with proper plugin detection code
-    include_once("/var/www/html/om/plugins/omRuntime_HydroRiser.class.php");
-    $config = array(
-      'container' => &$this,
-      'storage_stage_area' => &$this->processors['storage_stage_area'],
-      'riser_opening_storage' => $this->riser_opening_storage,
-      'riser_length' =>  $this->riser_length,
-      'riser_diameter' =>  $this->riser_diameter,
-      'riser_pipe_flow_head' =>  $this->riser_pipe_flow_head,
-    );
-    $this->outlet_plugin = new omRuntime_HydroRiser($config);
-    if (!$this->outlet_plugin) {
-      $this->logDebug("Riser enabled TRUE but could not create object with " . print_r($config,1));
-    }
-  }
-
    function sleep() {
       parent::sleep();
       // set up the matrix for this element
       unset($this->storage_matrix);
       $this->storage_matrix = -1;
       $this->vars = array();
-      $this->outlet_plugin = FALSE;
-      fclose($this->tmpfile);
    }
    
    function create() {
       parent::create();
       if ($this->debug) error_log("Create routine called on $this->name with $this->text2table");
-      //error_log("Create routine called on $this->name with $this->text2table");
       $this->matrix = array();
       $this->setupMatrix($this->text2table);
       // check to see if the text2table field has anything in it
@@ -14824,7 +15241,6 @@ class hydroImpSmall extends hydroImpoundment {
          } else {
             $this->storage_matrix->matrix = $this->matrix;// map the text mo to a numerical description
             $this->storage_matrix->numrows = count($this->storage_matrix->matrix) / 3.0;
-            $this->storage_matrix->formatMatrix();
          }
       }
       
@@ -14866,237 +15282,9 @@ class hydroImpSmall extends hydroImpoundment {
    }
    
    function step() {
-      if (!$this->riser_enabled or !is_object($this->outlet_plugin)) {
-        parent::step();
-        $this->value = $this->state['Qout'];
-        //$this->writeToParent();
-        return;
-      }
-      // ********************************************************************
-      // all step methods MUST call preStep(),execProcessors(), postStep()
-      // ********************************************************************
-      $this->preStep();
-      if ($this->debug) {
-         $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
-      }
-      // execute sub-components
-      $this->execProcessors();
-      if ($this->debug) {
-         $this->logDebug("Step Begin state[] array contents " . print_r($this->state,1) . " <br>\n");
-      }
-
-      // ********************************************************************
-      // set up all quantities that plugins will use
-      // ********************************************************************
-      if ($this->debug) {
-         $this->logDebug("Step END state[] array contents " . print_r($this->state,1) . " <br>\n");
-      }
-      $Uin = $this->state['Uin']; // heat in
-      $U0 = $this->state['U']; // total heat in BTU/Kcal at previous timestep
-      $T = $this->state['T']; // Temp at previous timestep
-      $Q0 = $this->state['Qout']; // outflow during previous timestep
-      $S0 = $this->state['Storage']; // storage at end of previous timestep (ac-ft)
-      $Qin = $this->state['Qin'];
-      $demand = $this->state['demand']; // assumed to be in MGD
-      $refill = $this->state['refill']; // assumed to be in MGD
-      $discharge = $this->state['discharge']; // assumed to be in MGD
-      if ( isset($this->state['flowby']) and (is_numeric($this->state['flowby'])) ) {
-         $flowby = $this->state['flowby']; // assumed to be in cfs
-      } else {
-         $flowby = 0;
-      }
-      // maintain backward compatibility with old ET nomenclature
-      if (!($this->state['et_in'] === NULL)) {
-         $pan_evap = $this->state['et_in'];
-      } else {
-         $pan_evap = $this->state['pan_evap']; // assumed to be in inches/day
-      }
-      // maintain backward compatibility with old precip nomenclature
-      if (!($this->state['precip_in'] === NULL)) {
-         $precip = $this->state['precip_in']; // assumed to be in inches/day
-      } else {
-         $precip = $this->state['precip']; // assumed to be in inches/day
-      }
-      
-      // this checks to see if the user has subclassed the area and stage(depth) calculations
-      // or if it is using the internal routines with the stage/storage/area table
-      $area = $this->state['area']; // area at the beginning of the timestep - assumed to be acres
-      $dt = $this->timer->dt; // timestep in seconds
-      if (isset($this->processors['maxcapacity'])) {
-         $max_capacity = $this->state['maxcapacity']; // we have sub-classed this with a stage-discharge relationship or other
-      } else {
-         $max_capacity = $this->maxcapacity;
-      }
-      
-      // we need to include some ability to plug-and-play the evap and other routines to allow users to sub-class it
-      // or the components that go into it, such as the storage/depth/surface_area relationships
-      // could look at processors, and if any of the properties are sub-classed, just take them as they are
-      // also need inputs such as the pan_evap
-      // since the processors have already been exec'ed we could just take them, but we could also get fancier
-      // and look at each step in the process to see if it has been sub-classed and insert it in the proper place.
-      
-      // calculate evaporation during this time step - acre-feet per second
-      // need estimate of surface area.  SA will vary based on area, but we assume that area is same as last timestep area
-      $evap_acfts = $area * $pan_evap / 12.0 / 86400.0;
-      $precip_acfts = $area * $precip / 12.0 / 86400.0; 
-      if ($this->debug) {
-         $this->logDebug("Calculating P and ET: P) $precip_acfts = $area * $precip / 12.0 / 86400.0;  <br>\n ET: $evap_acfts = $area * $pan_evap / 12.0 / 86400.0;<br>\n");
-      }
-      // the riser routine needs this 
-      $this->state['evap_acfts'] = $evap_acfts;
-      $this->state['precip_acfts'] = $precip_acfts;
-      $thisdate = $this->state['thisdate'];
-      
-      // change in storage
-      if ($this->debug) {
-         $this->logDebug("Calculating Volume Change: storechange = S0 + ((Qin - flowby) * dt / 43560.0)+ (1.547 * refill * dt / 43560.0) - (1.547 * demand * dt /  43560.0) - (evap_acfts * dt) + (precip_acfts * dt); <br>\n");
-         $this->logDebug(" :::: $S1 = $S0 + (($Qin - $flowby) * $dt / 43560.0)+ (1.547 * $refill * $dt / 43560.0) - (1.547 * $demand * $dt /  43560.0) - ($evap_acfts * $dt) + ($precip_acfts * $dt); <br>\n");
-      }
-      // ********************************************************************
-      // Call Plugins
-      // ********************************************************************
-      // plugins operate more intimately because they have access to this objects state array
-      // outlet plugin sets variables riser_flow and riser_head state values
-      $this->outlet_plugin->evaluate();
-      $riser_flow = $this->state['riser_flow'];
-      $riser_head = $this->state['riser_head'];
-      // ********************************************************************
-      // now calculate final state after plugins 
-      // ********************************************************************
-      $S1 = $S0 + (($Qin - $flowby - $riser_flow) * $dt / 43560.0) 
-        + (1.547 * $discharge * $dt / 43560.0) 
-        + (1.547 * $refill * $dt / 43560.0) 
-        - (1.547 * $demand * $dt /  43560.0) 
-        - ($evap_acfts * $dt) 
-        + ($precip_acfts * $dt)
-      ;
-      
-      if ($S1 < 0) {
-         // what to do with flowby & wd?
-         // if storechange is less than zero, its magnitude represents the deficit of flowby+demand
-         // we can either choose to evenly distribute them or assume that demand wins
-         $deficit_acft = abs($S1);
-         $s_avail = (1.547 * $demand * $dt /  43560.0) + ($flowby * $dt /  43560.0) - $deficit_acft;
-         if ($s_avail <= (1.547 * $demand * $dt /  43560.0)) {
-            // no water available for flowby
-            $flowby = 0.0;
-            $demand_met_mgd = $s_avail * 43560.0 / (1.547 * $dt);
-         } else {
-            // flowby is remainder
-            $flowby = ($s_avail - (1.547 * $demand * $dt /  43560.0)) * 43560.0 / $dt;
-            $demand_met_mgd = $demand;
-         }
-         $S1 = 0;
-      } else {
-         $demand_met_mgd = $demand;
-         $deficit_acft = 0.0;
-      }
-      $Storage = min(array($S1, $max_capacity));
-      if ($S1 > $max_capacity) {
-         $spill = ($S1 - $max_capacity) * 43560.0 / $dt;
-      } else {
-         $spill = 0;
-      }
-      if ($Storage < 0.0) {
-         $Storage = 0.0;
-      }
-      if (isset($this->processors['stage'])) {
-        $stage = $this->processors['stage']->value;
-      } else {
-        if (isset($this->processors['storage_stage_area'])) {
-          $stage = $this->processors['storage_stage_area']->evaluateMatrix($Storage,'stage');
-        } else {
-          $stage = 0;
-        }
-      }
-      if (isset($this->processors['area'])) {
-         $area = $this->state['area']; // area at the beginning of the timestep - assumed to be acres
-      } else {
-         // calculate area - in an ideal world, this would be solved simultaneously with the storage
-         if (isset($this->processors['storage_stage_area'])) {
-           $area = $this->processors['storage_stage_area']->evaluateMatrix($Storage,'surface_area');
-         } else {
-           $area = 0;
-         }
-      }
-      // sub-classing is disabled here
-      //if (isset($this->processors['Qout'])) {
-      //   $Qout = $this->state['Qout']; // we have subclassed this witha stage-discharge relationship or oher
-      //} else {
-         $Qout = $spill + $flowby + $riser_flow;
-      //}
-      if ($this->debug) {
-        error_log("RISER($this->state[runid] : S0 = $S0, S1 = $S1, Storage = $Storage ");
-        error_log("RISER($this->state[runid] : Qout = spill + flowby + riser_flow;");
-        error_log("RISER($this->state[runid] : $Qout = $Qin - $spill + $flowby + $riser_flow;");
-      }
-      
-      // local unit conversion dealios
-      $this->state['evap_mgd'] = $evap_acfts * 28157.7;
-      $this->state['pct_use_remain'] = ($Storage - $this->state['unusable_storage']) / ($this->state['maxcapacity'] - $this->state['unusable_storage']);
-      $this->state['use_remain_mg'] = ($Storage - $this->state['unusable_storage']) / 3.07;
-      if ($this->state['use_remain_mg'] < 0) {
-         $this->state['use_remain_mg'] = 0;
-         $this->state['pct_use_remain'] = 0;
-      }
-      // days remaining
-      if ( ($demand > 0) and ($dt > 0)) {
-         $days_remaining = $this->state['use_remain_mg'] / ($demand);
-      } else {
-         $days_remaining = 0;
-      }
-
-      $this->state['days_remaining'] = $days_remaining;
-      $this->state['deficit_acft'] = $deficit_acft;
-      $this->state['demand_met_mgd'] = $demand_met_mgd;
-      $this->state['depth'] = $depth;
-      $this->state['Storage'] = $Storage;
-      $this->state['Vout'] = $Vout;
-      $this->state['Qout'] = $Qout;
-      $this->state['depth'] = $stage;
-      $this->state['Storage'] = $Storage;
-      $this->state['spill'] = $spill;
-      $this->state['area'] = $area;
-      $this->state['evap_acfts'] = $evap_acfts;
-      $this->state['storage_mg'] = $Storage / 3.07;
-      $this->state['lake_elev'] = $stage;
-      $this->state['refill_full_mgd'] = (($max_capacity - $Storage) / 3.07) * (86400.0 / $dt);
-      
-      // now calculate heat flux
-      // O1 is outflow at last time step, 
-      if ( ( $Qout * $dt + $Storage) > 0) {
-         $U = ($Storage * ($U0 + $Uin)) / ( $Qout * $dt + $Storage);
-      } else {
-         $U = 0.0;
-      }
-      switch ($this->units) {
-         case 1:
-         // SI
-         $T = $U / $Storage; // this is NOT right, don't know what units for storage would be in SI, since this is not really implemented
-         break;
-         
-         case 2:
-         // EE
-         $T = 32.0 + ($U / ($Storage * 7.4805)) * (1.0 / 8.34); // Storage - cubic feet, 7.4805 gal/ft^3
-         break;
-      }
-      // let's also assume that the water isn't frozen, so we limit this to zero
-      if ($T < 0) {
-         $T = 0;
-      }
-      $Uout = $U0 + $Uin - $U;
-      $this->state['U'] = $U;
-      $this->state['Uout'] = $Uout;
-      $this->state['T'] = $T;
-         
-      $this->postStep();
-      $this->totalflow += $Qout * $dt;
-      $this->totalinflow += (1.547 * $refill + $Qin) * $dt;
-      $this->totalwithdrawn += $demand * $dt;
-      
+      parent::step();
       $this->value = $this->state['Qout'];
-      //error_log("Iterations at main imp object = " . $this->state['its']);
-      //$this->writeToParent();
+      $this->writeToParent();
    }
    
    function showFormHeader($formatted,$formname, $disabled = 0) {
@@ -15124,13 +15312,6 @@ class hydroImpSmall extends hydroImpoundment {
       $innerHTML .= "<br><b>ET (in/day):</b> " . $formatted->formpieces['fields']['et_in'];
       $innerHTML .= "<br><b>Precip (in/day):</b> " . $formatted->formpieces['fields']['precip_in'];
       $innerHTML .= "<br><b>Release (cfs):</b> " . $formatted->formpieces['fields']['release'];
-      $innerHTML .= "<br><b>Use Riser Structure?:</b> " . $formatted->formpieces['fields']['riser_enabled'];
-      $innerHTML .= "<br><b>Riser Shape:</b> " . $this->riser_shape; // @todo: make selectable
-      $innerHTML .= "<br><b>Riser Diameter (ft):</b> " . $formatted->formpieces['fields']['riser_diameter'];
-      $innerHTML .= "<br><b>Riser Opening Storage (ac-ft):</b> " . $formatted->formpieces['fields']['riser_opening_storage'];
-      $innerHTML .= "<br><b>Pipe Flow Head (ft above opening):</b> " . $formatted->formpieces['fields']['riser_pipe_flow_head'] . " (below this head flow is modeled as weir)";
-      $innerHTML .= "<br><b>Riser Length (ft):</b> " . $formatted->formpieces['fields']['riser_length'];
-      $innerHTML .= "<br><b>Log Failed Solutions?:</b> " . $formatted->formpieces['fields']['log_solution_problems'];
       $innerHTML .= "</td>";
       return $innerHTML;
    }
@@ -16014,7 +16195,7 @@ class wsp_CumulativeImpactObject extends modelObject {
       
       $this->usgsdb->querystring = "  select river_basi, station_nu, drainage_a, asText(the_geom) as the_geom  ";
       $this->usgsdb->querystring .= " from usgs_drainage_dd  ";
-      $this->usgsdb->querystring .= " where st_contains(the_geom,  st_geomFromText('POINT( $lon $lat )',4326))  ";
+      $this->usgsdb->querystring .= " where contains(the_geom, geomfromtext('POINT( $lon $lat )',4326))  ";
       $this->usgsdb->querystring .= " order by drainage_a ";
       if ($this->usgs_maxrecs > 0) {
          $this->usgsdb->querystring .= " limit $this->usgs_maxrecs ";
@@ -16253,13 +16434,6 @@ class textField extends modelSubObject {
 function add_one($x_off)
 {
     return (x_off + 1.0);
-}
-
-class omRuntime_SubComponent {
-  var $value;
-  function __construct($options) {
-    return TRUE;
-  }
 }
 
 ?>

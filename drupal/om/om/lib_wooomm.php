@@ -54,7 +54,7 @@ function forkRun($formValues) {
          error_log( print_r($status_update,1) );
          return "Element $elementid is already running.  Will not fork a duplicate run.  Returning'";
       }
-      if (!empty($formValues['cache_runid'])) {
+      if (isset($formValues['cache_runid'])) {
          $cache_runid = $formValues['cache_runid'];
       } else {
          $cache_runid = -1;
@@ -183,19 +183,19 @@ function getChildComponentType($listobject, $elementid, $childtype = array(), $l
 function getElementInfo($listobject, $elementid, $debug = 0) {
    $listobject->querystring = "  select ownerid, elemname, elementid, scenarioid, objectclass, custom1, custom2, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN ( st_area2d( st_transform(poly_geom,26918)) * 0.38610 / 1000000.0) ";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN (area2d(transform(poly_geom,26918)) * 0.38610 / 1000000.0) ";
    $listobject->querystring .= "       ELSE 0.0 ";
    $listobject->querystring .= "    END as area_sqmi, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN st_x(st_centroid(poly_geom)) ";
-   $listobject->querystring .= "       WHEN geomtype = 2 THEN st_x(st_centroid(line_geom)) ";
-   $listobject->querystring .= "       WHEN geomtype = 1 THEN st_x(st_centroid(point_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN x(centroid(poly_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 2 THEN x(centroid(line_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 1 THEN x(centroid(point_geom)) ";
    $listobject->querystring .= "       ELSE NULL";
    $listobject->querystring .= "    END as lon_dd, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN st_y(st_centroid(poly_geom)) ";
-   $listobject->querystring .= "       WHEN geomtype = 2 THEN st_y(st_centroid(line_geom)) ";
-   $listobject->querystring .= "       WHEN geomtype = 1 THEN st_y(st_centroid(point_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN y(centroid(poly_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 2 THEN y(centroid(line_geom)) ";
+   $listobject->querystring .= "       WHEN geomtype = 1 THEN y(centroid(point_geom)) ";
    $listobject->querystring .= "       ELSE NULL";
    $listobject->querystring .= "    END as lat_dd ";
    $listobject->querystring .= " from scen_model_element ";
@@ -285,8 +285,9 @@ function getComponentCustom($listobject, $scenarioid, $custom1 = '', $custom2 = 
 }
 
 function getRunFile($listobject, $elementid, $runid, $debug = 0) {
-   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified, b.remote_url from scen_model_element as a, scen_model_run_elements as b ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified from scen_model_element as a, scen_model_run_elements as b ";
    $listobject->querystring .= " where b.elementid = $elementid and a.elementid = b.elementid and b.runid = $runid ";
+   
    if ($debug) {
       error_log("$listobject->querystring\n");
    }
@@ -338,7 +339,7 @@ function getCustom2($listobject, $elementid) {
 function getElementsContainingPoint($dummyobject, $scenarioid, $latdd, $londd, $debug = 0) {
    global $listobject;
    $listobject->querystring = "  select scenarioid, elemname, elementid, custom1, custom2, objectclass from scen_model_element ";
-   $listobject->querystring .= " where st_contains(poly_geom, st_setsrid(st_makePoint($londd, $latdd), 4326) ) ";
+   $listobject->querystring .= " where contains(poly_geom, setsrid(makePoint($londd, $latdd), 4326) ) ";
    $listobject->querystring .= "    and ( (scenarioid = $scenarioid) or ($scenarioid = -1) ) ";
    $listobject->performQuery();
    if ($debug) {
@@ -784,7 +785,6 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
       }
       $listobject->querystring .= " ) ";
       error_log($listobject->querystring);
-      error_log("PG Error: $listobject->error");
       $listobject->performQuery();
    }
 }
@@ -1000,7 +1000,7 @@ function loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input
    // *********************************
    
    // iterate through the objects that are requested to be cached and instantiate them
-   error_log("Checking the following objects for valid cache entries" . print_r($cache_list,1));
+   //error_log("Checking the following objects for valid cache entries" . print_r($cache_list,1));
    foreach ($cache_list as $thisel) {
       if (is_array($thisel)) {
          $elid = $thisel['elementid'];
@@ -1036,14 +1036,14 @@ function loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input
    // *********************************
    // then call the normal unserialize routine which will load remaining objects, 
    // using cached copies if they fit the normal criteria
-   error_log("Calling unSerializeModelObject($elementid, input_props, modeldb, $cache_level, $runid) ");
+   //error_log("Calling unSerializeModelObject($elementid, input_props, modeldb, $cache_level, $runid) ");
    $thisobresult = unSerializeModelObject($elementid, $input_props, $modeldb, $cache_level, $runid);
    $thisobject = $thisobresult['object'];
    $components = $thisobresult['complist'];
    $live = $thisobresult['live'];
    $cachedlist = array_merge($thisobresult['cached'], $cache_complete);
    $errorlog .= "<b>Model Unserialization Errors</b><br>" . $thisobresult['error'] . "<hr>";
-   error_log("Sub-Objects that were cached for this run: " . print_r($cachedlist, 1));
+   //error_log("Sub-Objects that were cached for this run: " . print_r($cachedlist, 1));
    //error_log("Sub-Objects that were instantiated for this run: " . print_r($live, 1));
    $retarr['object'] = $thisobject;
    $retarr['components'] = $components;
@@ -1530,7 +1530,7 @@ function runCiaWatershed ($prop_elid, $runid, $cache_runid, $startdate='', $endd
 }
 
 function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props = array(), $test_only = 0) {
-   global $modeldb, $listobject, $outdir;
+   global $modeldb, $listobject;
    $run_date = date('r');
    if (!is_array($cache_list)) {
       $cache_list = explode(',', $cache_list);
@@ -1545,8 +1545,6 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
    } else {
       $firstel = $elementid;
    }
-  $input_props['outdir'] = isset($input_props['outdir']) ? $input_props['outdir'] : $outdir;
-
    if ($elementid > 0) {
 
       if ( (strlen($startdate) > 0) and (strlen($enddate) > 0)) {
@@ -1555,7 +1553,7 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       }
       
       // load up all of the things that are in the base model, with caching specified
-      error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
+      //error_log("Calling loadModelUsingCached with cache_level = $cache_level");
       $model_elements = loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input_props, $cache_level, $cache_list, $run_date);
       $error = $model_elements['error'];
       $thisobject = $model_elements['object'];
@@ -1604,8 +1602,11 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       }
       // stash the run info and create summary files for the desired dynamics:
       if ($cache_runid <> $runid) {
+         // cache only the object of interest and the parent object
+         //createModelRunSummaryFiles($listobject, array_merge(array($elementid), $dyna_cache));
          // create a cache entry for all objects in this simulation, whether they ran live or cached
          $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
+         
       } else {
          //error_log("($cache_runid <> $runid)");
          $summarize = $dyna_cache;
@@ -1613,9 +1614,7 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       }
       //error_log("Creating run summary files for " . print_r($summarize,1));
       if (!$test_only) {
-         // cache only the object of interest and the parent object
-         // @todo: this was disabled for some reason?
-         createModelRunSummaryFiles($listobject, $summarize, $runid);
+         createModelRunSummaryFiles($listobject, $summarize);
       }
       return;
    }
@@ -1751,22 +1750,22 @@ function shakeTreeCached($listobject, $sip, $num_sim, $recid, $run_id, $startdat
    
 }
 
-function createModelRunSummaryFiles($listobject, $elementlist, $runid = -1) {
+function createModelRunSummaryFiles($listobject, $elementlist) {
    global $unserobjects;
    foreach ($elementlist as $thisel) { 
       if (isset($unserobjects[$thisel])) {
          $thisobject = $unserobjects[$thisel];
-         createSingleModelRunSummaryFile($listobject, $thisobject, $thisel, $runid);
+         createSingleModelRunSummaryFile($listobject, $thisobject, $thisel);
       }
    }
 }
 
-function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid, $runid = -1) {
+function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid) {
    global $outdir, $outurl;
    if (is_object($thisobject)) {
       $debugstring = '';
-      error_log("Assembling Panels.");
-      $report = $thisobject->outstring . " <br>";
+      //error_log("Assembling Panels.");
+      $runlog .= $thisobject->outstring . " <br>";
       $errorlog .= '<b>Model Execution Errors:</b>' . $thisobresult['error'] . " <br>";
       if (strlen($thisobject->errorstring) <= 4096) {
          $errorlog .= $thisobject->errorstring . " <br>";
@@ -1781,20 +1780,27 @@ function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid, $
          fwrite($fp, $thisobject->errorstring . " <br>");
          $errorlog .= "<a href='$furl' target=_new>Click Here to Download Model Error Info</a>";
       }
-      $report .= "Component Logging Info: <br>";
-      $report .= $thisobject->reportstring . " <br>";
-      # stash the debugstring in a file, give a link to download it
-      $report .= "Finished.";
-      $fname = 'report' . $thisobject->componentid . "-$runid" . ".log";
-      $floc = $outdir . '/' . $fname;
-      error_log("Writing reports to file $floc ");
-      $furl = $outurl . '/' . $fname;
-      $fp = fopen ($floc, 'w');
-      fwrite($fp, "Component Logging Info:\n");
-      fwrite($fp, $report . "\n");
-      
+      if (strlen($thisobject->reportstring) <= 4096) {
+         $reports .= "Component Logging Info: <br>";
+         $reports .= $thisobject->reportstring . " <br>";
+      } else {
+         error_log("Writing reports to file.");
+         # stash the debugstring in a file, give a link to download it
+         $fname = 'report' . $thisobject->componentid . ".html";
+         $floc = $outdir . '/' . $fname;
+         $furl = $outurl . '/' . $fname;
+         $fp = fopen ($floc, 'w');
+         fwrite($fp, "Component Logging Info: <br>");
+         fwrite($fp, $thisobject->reportstring . " <br>");
+         $reports .= "<a href='$furl' target=_new>Click Here to Download Model Reporting Info</a>";
+      }
+
       $debuglog .= $thisobresult['debug'] . " <br>";
       $debuglog .= $thisobject->debugstring . '<br>';
+
+
+      $runlog .= "Finished.<br>";
+      error_log("Creating output in html form.");
       // need to generate the tabbed list view in a subroutine
       $innerHTML = "Results Pending";
       $innerHTML = createHTMLModelRunSummary($listobject, $thisobject);
@@ -2284,10 +2290,10 @@ function getModelStatus($formValues) {
    }
    
    
-   $listobject->querystring = "  select elemname, st_xmin(st_extent($geomcol)) as x1, ";
-   $listobject->querystring .= "    st_ymin(st_extent($geomcol)) as y1, ";
-   $listobject->querystring .= "    st_xmax(st_extent($geomcol)) as x2, ";
-   $listobject->querystring .= "    st_ymax(st_extent($geomcol)) as y2 ";
+   $listobject->querystring = "  select elemname, xmin(extent($geomcol)) as x1, ";
+   $listobject->querystring .= "    ymin(extent($geomcol)) as y1, ";
+   $listobject->querystring .= "    xmax(extent($geomcol)) as x2, ";
+   $listobject->querystring .= "    ymax(extent($geomcol)) as y2 ";
    $listobject->querystring .= " FROM scen_model_element   ";
    $listobject->querystring .= " WHERE elementid = $containerid ";
    $listobject->querystring .= " group by elemname ";
@@ -2321,27 +2327,27 @@ function getModelStatus($formValues) {
          }
       }
    
-      $listobject->querystring = "  select st_xmin(st_extent(the_extent)) as x1, ";
-      $listobject->querystring .= "    st_ymin(st_extent(the_extent)) as y1, ";
-      $listobject->querystring .= "    st_xmax(st_extent(the_extent)) as x2, ";
-      $listobject->querystring .= "    st_ymax(st_extent(the_extent)) as y2 ";
+      $listobject->querystring = "  select xmin(extent(the_extent)) as x1, ";
+      $listobject->querystring .= "    ymin(extent(the_extent)) as y1, ";
+      $listobject->querystring .= "    xmax(extent(the_extent)) as x2, ";
+      $listobject->querystring .= "    ymax(extent(the_extent)) as y2 ";
       $listobject->querystring .= " FROM ";
       $listobject->querystring .= " (";
-      $listobject->querystring .= "    select st_extent(st_geomfromtext(the_extent)) as the_extent from (";
-      $listobject->querystring .= "    ( select st_astext(st_extent(poly_geom)) as the_extent ";
-      $listobject->querystring .= "      from scen_model_element where st_isvalid(poly_geom) ";
+      $listobject->querystring .= "    select extent(geomfromtext(the_extent)) as the_extent from (";
+      $listobject->querystring .= "    ( select astext(extent(poly_geom)) as the_extent ";
+      $listobject->querystring .= "      from scen_model_element where isvalid(poly_geom) ";
       $listobject->querystring .= "         AND elementid in (select src_id from map_model_linkages ";
       $listobject->querystring .= "                           where linktype = 1 and dest_id = $containerid ) ";
       $listobject->querystring .= "         )";
       $listobject->querystring .= "         UNION ";
-      $listobject->querystring .= "         ( select st_astext(st_extent(point_geom)) as the_extent ";
-      $listobject->querystring .= "           from scen_model_element where st_isvalid(point_geom) ";
+      $listobject->querystring .= "         ( select astext(extent(point_geom)) as the_extent ";
+      $listobject->querystring .= "           from scen_model_element where isvalid(point_geom) ";
       $listobject->querystring .= "         AND elementid in (select src_id from map_model_linkages ";
       $listobject->querystring .= "                           where linktype = 1 and dest_id = $containerid ) ";
       $listobject->querystring .= "         )";
       $listobject->querystring .= "         UNION ";
-      $listobject->querystring .= "         ( select st_astext(st_extent(line_geom)) as the_extent ";
-      $listobject->querystring .= "           from scen_model_element where st_isvalid(line_geom) ";
+      $listobject->querystring .= "         ( select astext(extent(line_geom)) as the_extent ";
+      $listobject->querystring .= "           from scen_model_element where isvalid(line_geom) ";
       $listobject->querystring .= "         AND elementid in (select src_id from map_model_linkages ";
       $listobject->querystring .= "                           where linktype = 1 and dest_id = $containerid ) ";
       $listobject->querystring .= "         )";
@@ -2565,10 +2571,10 @@ function showAddElementResult($formValues) {
 function getElementShape($elementid, $debug=0) {
    global $listobject;
    
-   $listobject->querystring = "  select CASE WHEN geomtype = 1 THEN st_astext(point_geom) ";
-   $listobject->querystring .= "     WHEN geomtype = 2 THEN st_astext(line_geom) ";
-   $listobject->querystring .= "     WHEN geomtype = 3 THEN st_astext(poly_geom) ";
-   $listobject->querystring .= "     ELSE st_astext(the_geom) ";
+   $listobject->querystring = "  select CASE WHEN geomtype = 1 THEN asText(point_geom) ";
+   $listobject->querystring .= "     WHEN geomtype = 2 THEN asText(line_geom) ";
+   $listobject->querystring .= "     WHEN geomtype = 3 THEN asText(poly_geom) ";
+   $listobject->querystring .= "     ELSE asText(the_geom) ";
    $listobject->querystring .= "  END as seg_geom ";
    $listobject->querystring .= "  from scen_model_element where elementid = $elementid ";
    if ($debug) {
@@ -2748,10 +2754,10 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
          }
          foreach ($thisobject->processors as $thisproc) {
             # compact up processors if they are valid
+            if ($debug) {
+               $innerHTML .= "Trying to save processor: " . $thisproc->name . " <br>";
+            }
             if (is_object($thisproc)) {
-              if ($debug) {
-                 $innerHTML .= "Trying to save processor: " . $thisproc->name . " <br>";
-              }
                $sct = get_class($thisproc);
                $whoprops = getWHOXML($sct);
                //error_log("Handling type: $sct <br>");
@@ -2822,11 +2828,11 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
                } else {
                   $innerHTML .= "Problem storing $procname <br>";
                }
-              $k++;
             } else {
-               $innerHTML .= "$thisprocname not an object <br>";
+               $innerHTML .= "$thisprocname is not an object <br>";
             }
 
+            $k++;
          }
       }
       $innerHTML .= "$k procs stored <br>";
@@ -2842,22 +2848,22 @@ function setElementGeometry($elid, $geomtype, $wkt_geom, $src_srid = 4326) {
    switch ($geomtype) {
       case 1:
          $geomcol = 'point_geom';
-         $geomexp = " st_geomfromtext('$wkt_geom', $src_srid) ";
+         $geomexp = " GeomFromText('$wkt_geom', $src_srid) ";
       break;
       
       case 2:
          $geomcol = 'line_geom';
-         $geomexp = " Multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
+         $geomexp = " Multi(GeomFromText('$wkt_geom', $src_srid)) ";
       break;
       
       case 3:
          $geomcol = 'poly_geom';
-         $geomexp = " Multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
+         $geomexp = " Multi(GeomFromText('$wkt_geom', $src_srid)) ";
       break;
       
    }
    
-   $listobject->querystring = "  update scen_model_element set geomtype = $geomtype, $geomcol = st_transform($geomexp,4326) ";
+   $listobject->querystring = "  update scen_model_element set geomtype = $geomtype, $geomcol = transform($geomexp,4326) ";
    $listobject->querystring .= " where elementid = $elid ";
    
    $listobject->performQuery();
@@ -2872,7 +2878,6 @@ function refreshWHOObjectsResult($formValues) {
    }
    include_once("who_xmlobjects.php");
    include_once("who_xmlobjects.usgs.php");
-   include_once("who_xmlobjects.frisk.php");
    $reload = 0;
    if (isset($formValues['reload'])) {
       $reload = $formValues['reload'];
@@ -4179,7 +4184,7 @@ function addElementForm($formValues, $who_xmlobjects) {
 /*
    if (!isset($formValues['geomx']) or ($formValues['geomx'] == '') ) {
       if (strlen($seglist) > 0) {
-         $listobject->querystring = "  select st_x(st_centroid(st_extent(the_geom))) as geomx, st_y(st_centroid(st_extent(the_geom))) as geomy ";
+         $listobject->querystring = "  select x(centroid(extent(the_geom))) as geomx, y(centroid(extent(the_geom))) as geomy ";
          $listobject->querystring .= " from proj_subsheds ";
          $listobject->querystring .= " where $sscond ";
          $listobject->querystring .= " and projectid = $projectid ";
@@ -4260,7 +4265,7 @@ function addElementForm($formValues, $who_xmlobjects) {
       $elementid = $formValues['elementid'];
       # this is an edit request for an existing object, get the data from the db
       $listobject->querystring = "  select elemname, elementid, elem_xml, elemcomponents, eleminputs, elemoperators, ";
-      $listobject->querystring .= "    st_x(the_geom) as gx, st_y(the_geom) as gy ";
+      $listobject->querystring .= "    x(the_geom) as gx, y(the_geom) as gy ";
       $listobject->querystring .= " from scen_model_element ";
       $listobject->querystring .= " where elementid = $elementid ";
       if ($debug) {
@@ -4498,9 +4503,9 @@ error_log("AddElementFormPanel Called ");
    $taboutput->tab_HTML['errorlog'] .= "<b>Error Log:</b><br>";
    $taboutput->tab_HTML['debug'] .= "<b>Debugging Information:</b><br>";
 
-   //if ($debug) {
+   if ($debug) {
       $timer->startSplit();
-   //}
+   }
 
    #$debug = 1;
    #print_r($formValues);
@@ -4557,7 +4562,7 @@ error_log("AddElementFormPanel Called ");
    }
 
    if (!isset($formValues['geomx']) or ($formValues['geomx'] == '') ) {
-      $listobject->querystring = "  select st_x(st_centroid(st_extent(the_geom))) as geomx, st_y(st_centroid(st_extent(the_geom))) as geomy ";
+      $listobject->querystring = "  select x(centroid(extent(the_geom))) as geomx, y(centroid(extent(the_geom))) as geomy ";
       $listobject->querystring .= " from proj_subsheds ";
       $listobject->querystring .= " where $sscond ";
       if ($debug) {
@@ -4570,7 +4575,6 @@ error_log("AddElementFormPanel Called ");
       $geomx = $formValues['geomx'];
       $geomy = $formValues['geomy'];
    }
-    $taboutput->tab_HTML['debug'] .= "Parsing data and get geom: " . round($timer->startSplit(),5) . " <br>";
    #if ($debug) {
       $taboutput->tab_HTML['debug'] .= "Geometry Set to: $geomx - $geomy <br>";
    #}
@@ -4596,7 +4600,6 @@ error_log("Action type: $actiontype ");
          }
          #$debug = 0;
          $elem_xml = '';
-        $taboutput->tab_HTML['debug'] .= "Deleting took: " . round($timer->startSplit(),5) . " <br>";
       break;
 
       case 'clone':
@@ -4614,7 +4617,6 @@ error_log("Action type: $actiontype ");
             $taboutput->tab_HTML['debug'] .= $cloneresult['innerHTML'];
          }
          #$debug = 0;
-        $taboutput->tab_HTML['debug'] .= "Cloning took: " . round($timer->startSplit(),5) . " <br>";
       break;
 
       case 'newcontainer':
@@ -4622,10 +4624,15 @@ error_log("Action type: $actiontype ");
       break;
    }
 
-
+   if ($showtime) {
+      $innerHTML .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
+   }
    # show the hierarchcial element browsing tree
    //$innerHTML .= showElementBrowser($formValues);
 
+   if ($showtime) {
+      $innerHTML .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
+   }
 
    //$innerHTML .= "<table>";
    //$innerHTML .= "<tr>";
@@ -4653,7 +4660,7 @@ error_log("Action type: $actiontype ");
 
    $elem_xml = '';
    // dump the result
-   $taboutput->tab_HTML['debug'] .= "Getting getWHOXML props for: $elemtype <br>";
+   $taboutput->tab_HTML['debug'] .= "Getting WHO props for: $elemtype <br>";
    $whoprops = getWHOXML($elemtype);
    if ( count($whoprops) > 0 ) {
       // create object
@@ -4663,14 +4670,16 @@ error_log("Action type: $actiontype ");
    }
       $taboutput->tab_HTML['debug'] .= "Parent type: $parenttype <br>";
 
-
-  $taboutput->tab_HTML['debug'] .= "getWHOXML took: " . round($timer->startSplit(),5) . " <br>";
+   if ($debug) {
+      $split = $timer->startSplit();
+      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
+   }
 
    if (isset($formValues['elementid']) and ($actiontype <> 'delete') ) {
       $elementid = $formValues['elementid'];
       # this is an edit request for an existing object, get the data from the db
       $listobject->querystring = "  select elemname, elementid, elem_xml, elemcomponents, eleminputs, elemoperators, ";
-      $listobject->querystring .= "    st_x(the_geom) as gx, st_y(the_geom) as gy, custom1, custom2 ";
+      $listobject->querystring .= "    x(the_geom) as gx, y(the_geom) as gy, custom1, custom2 ";
       $listobject->querystring .= " from scen_model_element ";
       $listobject->querystring .= " where elementid = $elementid ";
       if ($debug) {
@@ -4700,7 +4709,7 @@ error_log("Action type: $actiontype ");
       }
       #$innerHTML .= "Perm: $elemperms <br>";
       # pass the listobject to these object for their use
-error_log("Calling unserializeSingleModelObject($elementid); ");
+      //error_log("Calling unserializeSingleModelObject($elementid); ");
       $unser = unserializeSingleModelObject($elementid);
       $thisobject = $unser['object'];
       $thisobject->listobject = $listobject;
@@ -4717,8 +4726,6 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       }
       $taboutput->tab_HTML['debug'] .= "<br>Initial Object Sub-components:<br>" . print_r(array_keys($thisobject->processors),1) . "<br>";
    }
-  $taboutput->tab_HTML['debug'] .= "Unserializing object took: " . round($timer->startSplit(),5) . " <br>";
-
    //error_log("Object Returned ");
    # now, we have our object instantiated, and populated with its changed data, we will call the create() method
    # if requested in the form
@@ -4731,8 +4738,6 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
          saveObjectSubComponents($listobject, $thisobject, $elementid);
          //error_log("Sub-components Saved");
       }
-      $taboutput->tab_HTML['debug'] .= "Create() method took: " . round($timer->startSplit(),5) . " <br>";
-
    }
    # include debugging information
    if (isset($thisobject->debugstring)) {
@@ -4743,7 +4748,6 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $newprops = getWHOXML($newelemtype);
       $elem_xml = $newprops['xml'];
       $innerHTML .= "Type Change requested to $newelemtype .<br>";
-     $taboutput->tab_HTML['debug'] .= "type change getWHOXML() method took: " . round($timer->startSplit(),5) . " <br>";
    }
 
    # if we are creating a new container, set the appropriate type
@@ -4751,9 +4755,12 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $newprops = getWHOXML('modelContainer');
       $elem_xml = $newprops['xml'];
       $innerHTML .= "Creating New Model Container .<br>";
-     $taboutput->tab_HTML['debug'] .= "new container getWHOXML() method took: " . round($timer->startSplit(),5) . " <br>";
    }
 
+   if ($debug) {
+      $split = $timer->startSplit();
+      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
+   }
 
    if (strlen($elem_xml) > 0) {
       $options = array("complexType" => "object");
@@ -4778,13 +4785,16 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
       $taboutput->tab_HTML['debug'] .= $modelFormArray['debug'];
       $thisobject = $modelFormArray['object'];
       $taboutput->tab_HTML['debug'] .= "<br>Object Sub-components after showModelElementForm():<br>" . print_r(array_keys($thisobject->processors),1) . "<br>";
-     $taboutput->tab_HTML['debug'] .= "showModelEditForm() method took: " . round($timer->startSplit(),5) . " <br>";
 
 
    } else {
       $elemform = '';
    }
 
+   if ($debug) {
+      $split = $timer->startSplit();
+      $taboutput->tab_HTML['debug'] .= "<b>debug:</b> split time = $split <br>";
+   }
 
    # show object type browser, to reset object type, or load the blank form for the requested type
    $whosql = "(select classname as elemname, classname as elemtype from who_xmlobjects where type <> 2 order by upper(classname), classname) as whofoo ";
@@ -4839,7 +4849,9 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    $taboutput->tab_HTML['generalprops'] .=  showGenericButton('docreate', 'Run Create Functions', "document.forms[\"addelement\"].elements.callcreate.value = 1; xajax_showAddElementResult(xajax.getFormValues(\"addelement\"))", 1);
    $taboutput->tab_HTML['generalprops'] .=  "<hr>";
 
-   $taboutput->tab_HTML['debug'] .= "generalprops render method took: " . round($timer->startSplit(),5) . " <br>";
+   if ($debug or $showtime) {
+      $taboutput->tab_HTML['generalprops'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
+   }
 
    #################################################################################
    ###                     END Panel 1 - General Properties                      ###
@@ -4888,7 +4900,6 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    if ($showtime) {
       $taboutput->tab_HTML['inputs'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
-   $taboutput->tab_HTML['debug'] .= "linked render method took: " . round($timer->startSplit(),5) . " <br>";
 
    #################################################################################
    ###                      END Panel 2 - Linked Properties                      ###
@@ -4954,7 +4965,6 @@ error_log("Calling unserializeSingleModelObject($elementid); ");
    if ($showtime) {
       $taboutput->tab_HTML['remoteinputs'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
-   $taboutput->tab_HTML['debug'] .= "remote links render method took: " . round($timer->startSplit(),5) . " <br>";
    
 
    #################################################################################
@@ -5018,7 +5028,6 @@ if (is_object($thisobject)) {
       $taboutput->tab_HTML['processors'] .= "<b>debug:</b> split time = " . $timer->startSplit() . "<br>";
    }
    $taboutput->tab_HTML['processors'] .= "</td></tr></table>";
-   $taboutput->tab_HTML['debug'] .= "sub-comps render method took: " . round($timer->startSplit(),5) . " <br>";
    #################################################################################
    ###                  END Panel 4 - Sub-components (processors)                ###
    #################################################################################
@@ -5036,7 +5045,6 @@ if (is_object($thisobject)) {
    $taboutput->tab_HTML['analysis'] .= "</div>";
    
    $taboutput->tab_HTML['analysis'] .= "</td></tr></table>";
-   $taboutput->tab_HTML['debug'] .= "analysis render method took: " . round($timer->startSplit(),5) . " <br>";
    
    
    #################################################################################
@@ -5113,9 +5121,9 @@ function getSpatiallyContainedObjects($elementid, $params = array(), $use_spatia
    if ($use_spatial) {
       $listobject->querystring .= " and a.geomtype = 3 ";
       $listobject->querystring .= " and ( ";
-      $listobject->querystring .= "    (b.geomtype = 1 and st_contains(a.poly_geom, b.point_geom) ) ";
-      //$listobject->querystring .= "    or ( b.geomtype = 3 and st_contains(a.poly_geom, st_centroid(b.poly_geom)) ) ";
-      $listobject->querystring .= "    or ( b.geomtype = 3 and st_contains(a.poly_geom, ST_PointOnSurface(b.poly_geom)) ) ";
+      $listobject->querystring .= "    (b.geomtype = 1 and contains(a.poly_geom, b.point_geom) ) ";
+      //$listobject->querystring .= "    or ( b.geomtype = 3 and contains(a.poly_geom, centroid(b.poly_geom)) ) ";
+      $listobject->querystring .= "    or ( b.geomtype = 3 and contains(a.poly_geom, ST_PointOnSurface(b.poly_geom)) ) ";
       $listobject->querystring .= " ) ";
    }
    $listobject->querystring .= " $q ";
@@ -5513,6 +5521,7 @@ function compactSerializeObject($thisobject, $debug = 0) {
       if (property_exists($thisobject, 'name')) {
          $name = $thisobject->name;
       }
+      
       if ($debug) {
          error_log("Checking for presence of large data types.");
       }
@@ -6061,9 +6070,9 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
             } else {
                if ($wkt_type == 3) {
                   # may later have to add a similar transform for line strings
-                  $geomstring .= "st_Multi(st_geomfromtext('$wkt_geom', 4326)) ";
+                  $geomstring .= "Multi(GeomFromText('$wkt_geom', 4326)) ";
                } else {
-                  $geomstring .= "st_geomfromtext('$wkt_geom', 4326) ";
+                  $geomstring .= "GeomFromText('$wkt_geom', 4326) ";
                }
             }
             $innerHTML .= "geom SQL: \n" . $geomstring . "\n";
@@ -7372,7 +7381,7 @@ function addElementResult($formValues) {
          if (ltrim(rtrim($centroid_wkt)) == 'NULL') {
             $listobject->querystring .= "    NULL";
          } else {
-            $listobject->querystring .= "    st_geomfromtext('$centroid_wkt', 4326)";
+            $listobject->querystring .= "    GeomFromText('$centroid_wkt', 4326)";
          }
          $listobject->querystring .= "    ,geomtype = $wkt_type, $geomcol = ";
          if (ltrim(rtrim($wkt_geom)) == 'NULL') {
@@ -7380,9 +7389,9 @@ function addElementResult($formValues) {
          } else {
             if ($wkt_type == 3) {
                # may later have to add a similar transform for line strings
-               $listobject->querystring .= "st_Multi(st_geomfromtext('$wkt_geom', 4326)) ";
+               $listobject->querystring .= "Multi(GeomFromText('$wkt_geom', 4326)) ";
             } else {
-               $listobject->querystring .= "st_geomfromtext('$wkt_geom', 4326) ";
+               $listobject->querystring .= "GeomFromText('$wkt_geom', 4326) ";
             }
          }
       }
@@ -7484,7 +7493,7 @@ function addElementResult($formValues) {
          $listobject->querystring .= "    $operms, $gperms, $pperms, ";
          if (  (ltrim(rtrim($geomx)) <> '') and (ltrim(rtrim($geomy)) <> '') ) {
             $centroid_wkt = "POINT($geomx $geomy)";
-            $listobject->querystring .= " st_geomfromtext('$centroid_wkt', 4326), ";
+            $listobject->querystring .= " GeomFromText('$centroid_wkt', 4326), ";
          }
          $listobject->querystring .= "    '$inputs_xml', '$props_xml', $component_type, $userid ";
 
@@ -7493,9 +7502,9 @@ function addElementResult($formValues) {
             if ($wkt_geom <> 'NULL') {
                if ( $wkt_type == 3) {
                   # may later have to add a similar transform for line strings
-                  $listobject->querystring .= "Multi(st_geomfromtext('$wkt_geom', 4326)) ) ";
+                  $listobject->querystring .= "Multi(GeomFromText('$wkt_geom', 4326)) ) ";
                } else {
-                  $listobject->querystring .= "st_geomfromtext('$wkt_geom', 4326) ) ";
+                  $listobject->querystring .= "GeomFromText('$wkt_geom', 4326) ) ";
                }
             } else {
                $listobject->querystring .= "NULL ) ";
@@ -7592,6 +7601,7 @@ function unSerializeSingleModelObjectDB($dbobj, $elementid, $input_props = array
 
 function unSerializeSingleModelObject($elementid, $input_props = array(), $debug = 0, $runtime_db = FALSE, $cached = FALSE, $cache_runid = -2 ) {
    global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $basedir, $model_startdate, $model_enddate;
+   
    if (!is_object($runtime_db)) {
       //error_log("Custom model list object submitted for runtime data storage");
       $runtime_db = $listobject;
@@ -7625,13 +7635,10 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
    if ($elementid > 0) {
       if ($cached) {
         //error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
-        $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
+         $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-        //error_log("Calling getObjectXML(listobject, $elementid) ");
-        $qresult = getObjectXML($listobject, $elementid);
-      }
-      if ($qresult['error']) {
-        return FALSE;
+         //error_log("Calling getObjectXML(listobject, $elementid) ");
+         $qresult = getObjectXML($listobject, $elementid);
       }
       $record = $qresult['record'];
       $returnArray['error'] .= " Retreiving object $elementid : " . $qresult['query'] . " ; <br>";
@@ -7668,11 +7675,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
          $returnArray['debug'] .= "retrieving op $i<br>";
       }
       if ($cached) {
-         //error_log("Calling getCachedOperatorXML(listobject, $elementid, $i, $cache_runid)");
          $opresult = getCachedOperatorXML($listobject, $elementid, $i, $cache_runid);
+         //error_log("Calling getCachedOperatorXML(listobject, $elementid, $i, $cache_runid)");
       } else {
-        // error_log("Calling getOperatorXML(listobject, $elementid, $i)" );
          $opresult = getOperatorXML($listobject, $elementid, $i);
+        // error_log("Calling getOperatorXML(listobject, $elementid, $i)" );
       }
       $thisxml = $opresult['xml'];
       if (str_replace('"', '', $thisxml) <> '') {
@@ -7717,7 +7724,6 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
    if (is_object($returnArray['elemtype'])) {
       if (get_class($returnArray['elemtype']) == 'PEAR_Error') {
          error_log("PEAR Unserialize Error: " . $returnArray['elemtype']->message);
-         error_log("Called from unSerializeSingleModelObject($elementid, : " . print_r($input_props,1));
       }
    } else {
       if ($debug) {
@@ -7737,9 +7743,6 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
    # make sure this is a valid object
    if (!is_object($thisobject) or !($result === true)) {
       # problem re-serializing
-      if ($debug) {
-        error_log( "Problem Un-serializing object: $elemname, ID: $elementid <br>");
-      }
       $returnArray['error'] .= "Problem Un-serializing object: $elemname, ID: $elementid <br>";
       return $returnArray;
    }
@@ -7757,9 +7760,8 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
       $returnArray['debug'] .= print_r($oprops,1);
       $returnArray['debug'] .= "<br><b>Setting Transient properrties</b><br>";
    }
-  if ($debug) {
-    error_log("Setting Transient properrties on object");
-  }
+   //error_log("Setting Transient properrties on object");
+
    if (property_exists($thisobject, 'the_geom')) {
       if ($debug) {
          $returnArray['debug'] .= "Setting a geometry object on this object.<br>";
@@ -7817,14 +7819,12 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
       }
       $thisobject->ucitables = $ucitables;
    }
-  if ($debug) {
-    error_log("Setting Input properties on object");
-  }
+   //error_log("Setting Input properrties on object");
    foreach ($input_props as $this_propname => $this_propvalue) {
+      $thisobject->setProp($this_propname, $this_propvalue);
       if ($debug) {
          error_log("Setting $this_propname = $this_propvalue ");
       }
-      $thisobject->setProp($this_propname, $this_propvalue);
    }
    // disable this since this mode does not require a debugging function
    $enable_debug = 1;
@@ -7836,20 +7836,13 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
       $thisobject->logerrors = 0;
    }
    
-  if ($debug) {
-    error_log("Calling setup methods on object");
-  }
-
-  if (method_exists($thisobject, 'wake')) {
-    if ($debug) { 
-      error_log("Calling object wake() method");
-    }
-    $returnArray['debug'] .= "Calling Object wake() nmethod.<br>\n";
-    $thisobject->wake();
-    if ($debug) {
-      error_log("Finished Calling object wake() method");
-    }
-  }
+   //error_log("Calling setup methods on object");
+   //error_log("Calling object wake() method");
+   if (method_exists($thisobject, 'wake')) {
+      $returnArray['debug'] .= "Calling Object wake() nmethod.<br>\n";
+      $thisobject->wake();
+      //error_log("Finished Calling object wake() method");
+   }
    #$returnArray['debug'] .= "<b>Original object debug status: </b>" . $thisobject->debug . "<br>";
    #$thisobject->debug = $debug;
    $thisobject->outdir = $outdir;
@@ -7870,188 +7863,171 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
 
    #return $returnArray;
    $j = 0;
-  if ($debug) {
-    error_log("Setting up operators on object");
-  }
-  foreach ($opxmls as $thisop) {
-    // unserialize the object. Use "false" since this is not a document, "true" if it is a document
-    $dz = $j + 1;
-    if ($debug) {
-      error_log("Unserializing op $dz" );
-    }
-    $result = $unserializer->unserialize($thisop, false);
-    if ($debug) {
-      error_log("Successfully Unserialized op $dz of " . count($opxmls));
-      $returnArray['debug'] .= "<br><b>Result of Unserializing</b><br>";
-    }
-    if ($result === true) {
-      // dump the result
-      $opobject = $unserializer->getUnserializedData();
+   //error_log("Setting up operators on object");
+   foreach ($opxmls as $thisop) {
+      // unserialize the object. Use "false" since this is not a document, "true" if it is a document
+      $dz = $j + 1;
+      //error_log("Unserializing op $dz" );
+      $result = $unserializer->unserialize($thisop, false);
+      //error_log("Successfully Unserialized op $dz of " . count($opxmls));
       if ($debug) {
-        error_log("Op $dz has name " . $opobject->name);
+         $returnArray['debug'] .= "<br><b>Result of Unserializing</b><br>";
       }
-      if (property_exists($opobject, 'listobject')) {
-        if ($debug) {
-          $returnArray['debug'] .= "Setting a ucitables object on this object.<br>";
-        }
-        $opobject->listobject = $runtime_db;
+      if ($result === true) {
+         // dump the result
+         $opobject = $unserializer->getUnserializedData();
+         if (property_exists($opobject, 'listobject')) {
+            if ($debug) {
+               $returnArray['debug'] .= "Setting a ucitables object on this object.<br>";
+            }
+            $opobject->listobject = $runtime_db;
+         }
+         if (property_exists($opobject, 'master_db')) {
+            if ($debug) {
+               $returnArray['debug'] .= "Adding pointer to master list object on this object.<br>";
+            }
+            
+            $opobject->master_db = $listobject;
+         }
+         if (property_exists($opobject, 'ucitables')) {
+            if ($debug) {
+               $returnArray['debug'] .= "Setting a ucitables object on this object.<br>";
+            }
+            $opobject->ucitables = $ucitables;
+         }
+         // disable this since this mode does not require a debugging function
+         $enable_debug = 1;
+         if (isset($input_props['debug'])) {
+            $enable_debug = $input_props['debug'];
+         }
+         if ($enable_debug == 0) {
+            $opobject->debugmode = -1;
+            $opobject->logerrors = 0;
+         }
+         $opobject->parentobject = $thisobject;
+         // **************************************************
+         // MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
+         // **************************************************
+         /*
+         // now, get any properties from the parent that this subobject is supossed to see
+         if ($opobject->debug) {
+            error_log("Getting parent properties for adminsetup for $opobject->name ");
+         }
+         $adminsetuparray = getParentProps($opobject, $thisobject, $adminsetuparray);
+         $opobject->listobject->adminsetuparray = $adminsetuparray;
+         if (method_exists($opobject, 'wake')) {
+            $opobject->wake();
+         }
+         */
+         // **************************************************
+         // END - MODIFIED TO SHARE ALL SUB-COMP PROPERTIES
+         // **************************************************
+         $opobject->basedir = $basedir;
+         $opobject->outdir = $outdir;
+         $opobject->outurl = $outurl;
+         $opobject->goutdir = $goutdir;
+         $opobject->gouturl = $gouturl;
+         # manually set the componentid, since these do not have a db generated ID, and they only exist in
+         # a scope that is local to the containing object, set them to be a decimal on the parent elementid
+         $opobject->componentid = "$elementid" . "." . $j;
+         if ($debug) {
+            $returnArray['debug'] .= print_r($opobject,1);
+            $returnArray['debug'] .= "<br><b>Unserializing operators</b><br>";
+         }
+         $thisobject->addOperator($opobject->name, $opobject, $opobject->defaultval);
+         $j++;
       }
-      if (property_exists($opobject, 'master_db')) {
-        if ($debug) {
-          $returnArray['debug'] .= "Adding pointer to master list object on this object.<br>";
-        }
-        $opobject->master_db = $listobject;
-      }
-      if (property_exists($opobject, 'ucitables')) {
-        if ($debug) {
-          $returnArray['debug'] .= "Setting a ucitables object on this object.<br>";
-        }
-        $opobject->ucitables = $ucitables;
-      }
-      // disable this since this mode does not require a debugging function
-      $enable_debug = 1;
-      if (isset($input_props['debug'])) {
-        $enable_debug = $input_props['debug'];
-      }
-      if ($enable_debug == 0) {
-        $opobject->debugmode = -1;
-        $opobject->logerrors = 0;
-      }
-      $opobject->parentobject = $thisobject;
-      // **************************************************
-      // MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
-      // **************************************************
-      /*
-      // now, get any properties from the parent that this subobject is supossed to see
-      if ($opobject->debug) {
-         error_log("Getting parent properties for adminsetup for $opobject->name ");
-      }
-      $adminsetuparray = getParentProps($opobject, $thisobject, $adminsetuparray);
-      $opobject->listobject->adminsetuparray = $adminsetuparray;
-      if (method_exists($opobject, 'wake')) {
-         $opobject->wake();
-      }
-      */
-      // **************************************************
-      // END - MODIFIED TO SHARE ALL SUB-COMP PROPERTIES
-      // **************************************************
-      $opobject->basedir = $basedir;
-      $opobject->outdir = $outdir;
-      $opobject->outurl = $outurl;
-      $opobject->goutdir = $goutdir;
-      $opobject->gouturl = $gouturl;
-      # manually set the componentid, since these do not have a db generated ID, and they only exist in
-      # a scope that is local to the containing object, set them to be a decimal on the parent elementid
-      $opobject->componentid = "$elementid" . "." . $j;
-      if ($debug) {
-        $returnArray['debug'] .= print_r($opobject,1);
-        $returnArray['debug'] .= "<br><b>Unserializing operators</b><br>";
-      }
-      $thisobject->addOperator($opobject->name, $opobject, $opobject->defaultval);
-      $j++;
-    }
-  }
-  if ($debug) {
-    error_log("Finished adding $j propeties.");
-  }
-  // **************************************************
-  // MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
-  // **************************************************
-  // the next two foreach loops were added, to replace the above version of the second foreach loop
-  // first, set the parent props of all supcomps so that the parent knowledge of all exposed subcomp properties is perfect
-  //error_log($thisobject->name . ": setting the parent props of all supcomps so that the parent knowledge of all exposed subcomp properties is perfect");
-  //error_log("Calling operators initOnParent() methods on object");
-  foreach ($thisobject->processors as $thisproc) {
-    // now set the parent props for all subcomps, then
-    if ($debug) {
-      error_log("$thisobject->name checking $thisproc->name for method initOnParent() ");
-    }
-    if (method_exists($thisproc, 'initOnParent')) {
-      $thisproc->initOnParent();
+   }
+   // **************************************************
+   // MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
+   // **************************************************
+   // the next two foreach loops were added, to replace the above version of the second foreach loop
+   // first, set the parent props of all supcomps so that the parent knowledge of all exposed subcomp properties is perfect
+   //error_log($thisobject->name . ": setting the parent props of all supcomps so that the parent knowledge of all exposed subcomp properties is perfect");
+   //error_log("Calling operators initOnParent() methods on object");
+   foreach ($thisobject->processors as $thisproc) {
+      // now set the parent props for all subcomps, then
       if ($thisproc->debug) {
-        error_log("$thisobject->name calling initOnParent() on $thisproc->name ");
+         error_log("$thisobject->name checking $thisproc->name for method initOnParent() ");
       }
-    }
-  }
-  // then call the wake method for each subcomp
-  if ($debug) {
-    error_log($thisobject->name . ": calling the wake method for each subcomp");
-  }
-  foreach ($thisobject->processors as $thisproc) {
-    // now set the parent props for all subcomps, then
-    if ($debug) {
-      error_log("Sub-object $thisobject->name is class " . get_class($thisproc));
-      $thisproc->debug = $debug;
-      error_log("Getting parent properties for adminsetup for $thisproc->name ");
-    }
-    if ($debug) {
-      error_log("Calling getParentProps() for $thisproc->name ");
-    }
-    $adminsetuparray = getParentProps($thisproc, $thisobject, $adminsetuparray);
-    $thisproc->listobject->adminsetuparray = $adminsetuparray;
-    if ($debug) {
-      error_log("Calling wake() $thisproc->name ");
-    }
-    if (method_exists($thisproc, 'wake')) {
-      $thisproc->wake();
-    }
-    if ($debug) {
-      error_log("Finished wake()ing $thisproc->name ");
-    }
-  }
-  // maintain updated adminsetup array record on list object
-  //$listobject->adminsetuparray = $adminsetuparray;
-  // **************************************************
-  // END - MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
-  // **************************************************
-  # retrieve input linkages
-  $listobject->querystring = "  select src_id, src_prop, dest_prop ";
-  $listobject->querystring .= " from map_model_linkages ";
-  $listobject->querystring .= " where dest_id = $elementid ";
-  //$listobject->querystring .= "    and linktype = 2 ";
-  $listobject->querystring .= "    and linktype in ( 2, 3 ) ";
-  # screen out non-set objects so as to avoid an error
-  #$listobject->querystring .= "    and src_id <> -1 ";
-  if ($debug) {
-    $returnArray['debug'] .= " $listobject->querystring ; <br>";
-  }
-  $listobject->performQuery();
+      if (method_exists($thisproc, 'initOnParent')) {
+         $thisproc->initOnParent();
+         if ($thisproc->debug) {
+            error_log("$thisobject->name calling initOnParent() on $thisproc->name ");
+         }
+      }
+   }
+   // then call the wake method for each subcomp
+   //error_log($thisobject->name . ": calling the wake method for each subcomp");
+   foreach ($thisobject->processors as $thisproc) {
+      // now set the parent props for all subcomps, then
+      if ($thisproc->debug) {
+         error_log("Getting parent properties for adminsetup for $thisproc->name ");
+      }
+      //error_log("Calling getParentProps() for $thisproc->name ");
+      $adminsetuparray = getParentProps($thisproc, $thisobject, $adminsetuparray);
+      $thisproc->listobject->adminsetuparray = $adminsetuparray;
+      //error_log("Calling wake() $thisproc->name ");
+      if (method_exists($thisproc, 'wake')) {
+         $thisproc->wake();
+      }
+      //error_log("Finished wake()ing $thisproc->name ");
+   }
+   // maintain updated adminsetup array record on list object
+   //$listobject->adminsetuparray = $adminsetuparray;
+   // **************************************************
+   // END - MODIFIED TO CASCADE ALL SUB-COMP PROPERTIES:
+   // **************************************************
+   # retrieve input linkages
+   $listobject->querystring = "  select src_id, src_prop, dest_prop ";
+   $listobject->querystring .= " from map_model_linkages ";
+   $listobject->querystring .= " where dest_id = $elementid ";
+   //$listobject->querystring .= "    and linktype = 2 ";
+   $listobject->querystring .= "    and linktype in ( 2, 3 ) ";
+   # screen out non-set objects so as to avoid an error
+   #$listobject->querystring .= "    and src_id <> -1 ";
+   if ($debug) {
+      $returnArray['debug'] .= " $listobject->querystring ; <br>";
+   }
+   $listobject->performQuery();
 
-  $linkrecs = $listobject->queryrecords;
-  if ($debug) {
-    $returnArray['debug'] .= " Searching for Input objects in $thisobject->name <br>";
-  }
-  //error_log("Creating blank objects for linked siblings ");
-  foreach ($linkrecs as $thisrec) {
-    $src_id = $thisrec['src_id'];
-    $src_prop = $thisrec['src_prop'];
-    $dest_prop = $thisrec['dest_prop'];
-    if ($debug) {
-      $returnArray['debug'] .= " Searching for $src_id in " . print_r(array_keys($unserobject)) . '<br>';
-    }
-    if ($src_id <> -1) {
-      # need to insert a dummy object for this linkage
+   $linkrecs = $listobject->queryrecords;
+   if ($debug) {
+      $returnArray['debug'] .= " Searching for Input objects in $thisobject->name <br>";
+   }
+   //error_log("Creating blank objects for linked siblings ");
+   foreach ($linkrecs as $thisrec) {
+      $src_id = $thisrec['src_id'];
+      $src_prop = $thisrec['src_prop'];
+      $dest_prop = $thisrec['dest_prop'];
+      
       if ($debug) {
-        $returnArray['debug'] .= " Adding Input $linkobj->name : $src_prop -gt $dest_prop <br>";
+         $returnArray['debug'] .= " Searching for $src_id in " . print_r(array_keys($unserobject)) . '<br>';
       }
-      //error_log(" Adding Input $linkobj->name : $src_prop -gt $dest_prop ");
-      # insert a blank object here, since we really only need a placeholder
-      $linkobj = new modelObject;
-      $thisobject->addInput($dest_prop, $src_prop, $linkobj);
-    } else {
-      $linkerror = 'NULL Linkage found';
-      $linkdebug = 'NULL Linkage found';
-      $returnArray['debug'] .= $linkdebug;
-      $linkobj = NULL;
-    }
-  }
+      if ($src_id <> -1) {
+         # need to insert a dummy object for this linkage
+         if ($debug) {
+            $returnArray['debug'] .= " Adding Input $linkobj->name : $src_prop -gt $dest_prop <br>";
+         }
+         //error_log(" Adding Input $linkobj->name : $src_prop -gt $dest_prop ");
+         # insert a blank object here, since we really only need a placeholder
+         $linkobj = new modelObject;
+         $thisobject->addInput($dest_prop, $src_prop, $linkobj);
+      } else {
+         $linkerror = 'NULL Linkage found';
+         $linkdebug = 'NULL Linkage found';
+         $returnArray['debug'] .= $linkdebug;
+         $linkobj = NULL;
+      }
+   }
 
-  //error_log("Done initializing placeholders for links");
-  #$thisobject->setStateVar();
-  $returnArray['object'] = $thisobject;
-  #$debug = 0;
-  //error_log("Returning object results");
-  return $returnArray;
+   //error_log("Done initializing placeholders for links");
+   #$thisobject->setStateVar();
+   $returnArray['object'] = $thisobject;
+   #$debug = 0;
+   //error_log("Returning object results");
+   return $returnArray;
+
 }
 
 
@@ -8129,13 +8105,13 @@ function unSerializeParentObject($elementid, $debug = 0) {
 function getCachedObjectXML($listobject, $elementid, $runid) {
    error_log("Reached getCachedObjectXML ");
    $retarr = array('debug'=>'', 'query'=>'');
-   $listobject->querystring = "  select b.elem_xml, a.elemname, st_x(st_centroid(a.the_geom)) as xcoord, ";
+   $listobject->querystring = "  select b.elem_xml, a.elemname, x(centroid(a.the_geom)) as xcoord, ";
    $listobject->querystring .= "    a.groupid, a.operms, a.gperms, a.pperms, a.custom1, a.custom2, ";
-   $listobject->querystring .= "    st_y(st_centroid(a.the_geom)) as ycoord, array_dims(b.elemoperators) as adims, ";
+   $listobject->querystring .= "    y(centroid(a.the_geom)) as ycoord, array_dims(b.elemoperators) as adims, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN st_astext(a.poly_geom)";
-   $listobject->querystring .= "       WHEN geomtype = 2 THEN st_astext(a.line_geom)";
-   $listobject->querystring .= "       WHEN geomtype = 1 THEN st_astext(a.point_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN asText(a.poly_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 2 THEN asText(a.line_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 1 THEN asText(a.point_geom)";
    $listobject->querystring .= "    END as wkt_geom, a.geomtype, ";
    $listobject->querystring .= "    CASE ";
    $listobject->querystring .= "       WHEN geomtype = 1 THEN box2d(a.point_geom) ";
@@ -8166,19 +8142,19 @@ function getCachedObjectXML($listobject, $elementid, $runid) {
 
 function getObjectXML($listobject, $elementid) {
    $retarr = array('debug'=>'', 'query'=>'');
-   $listobject->querystring = "  select elem_xml, elemname, st_x(st_centroid(the_geom)) as xcoord, ";
+   $listobject->querystring = "  select elem_xml, elemname, x(centroid(the_geom)) as xcoord, ";
    $listobject->querystring .= "    groupid, operms, gperms, pperms, custom1, custom2, ";
-   $listobject->querystring .= "    st_y(st_centroid(the_geom)) as ycoord, array_dims(elemoperators) as adims, ";
+   $listobject->querystring .= "    y(centroid(the_geom)) as ycoord, array_dims(elemoperators) as adims, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN st_asText(poly_geom)";
-   $listobject->querystring .= "       WHEN geomtype = 2 THEN st_asText(line_geom)";
-   $listobject->querystring .= "       WHEN geomtype = 1 THEN st_asText(point_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN asText(poly_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 2 THEN asText(line_geom)";
+   $listobject->querystring .= "       WHEN geomtype = 1 THEN asText(point_geom)";
    $listobject->querystring .= "    END as wkt_geom, geomtype, ";
    $listobject->querystring .= "    CASE ";
-   $listobject->querystring .= "       WHEN geomtype = 1 THEN st_envelope(point_geom) ";
-   $listobject->querystring .= "       WHEN geomtype = 2 THEN st_envelope(line_geom) ";
-   $listobject->querystring .= "       WHEN geomtype = 3 THEN st_envelope(poly_geom) ";
-   $listobject->querystring .= "       ELSE st_envelope(the_geom) ";
+   $listobject->querystring .= "       WHEN geomtype = 1 THEN box2d(point_geom) ";
+   $listobject->querystring .= "       WHEN geomtype = 2 THEN box2d(line_geom) ";
+   $listobject->querystring .= "       WHEN geomtype = 3 THEN box2d(poly_geom) ";
+   $listobject->querystring .= "       ELSE box2d(the_geom) ";
    $listobject->querystring .= "    END as geom_extent ";
    $listobject->querystring .= " from scen_model_element ";
    $listobject->querystring .= " where elementid = $elementid ";
@@ -8366,7 +8342,7 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    $cacheable = $cache_res['cacheable'];
    $returnArray['error'] .= $cache_res['error'];
    //error_log("Element $elementid: Cache Type: $cache_type - Cacheable - $cacheable <br>");
-   //error_log("Element $elementid: Cache Settings: " . print_r($cache_res,1));
+   error_log("Element $elementid: Cache Settings: " . print_r($cache_res,1));
    
    if ( ($cache_type <> 'disabled') and (count($unserobjects) >= 1) ) {
 
@@ -8868,11 +8844,9 @@ function selectChildCacheModelControlForm($formVars) {
    # a re-draw is requested
    $controlHTML .= showHiddenField('redraw', 0, 1);
    $controlHTML .= showHiddenField('showcached', 0, 1);
-   $controlHTML .= "<br><b>Generic Model Run with Child Element Cache Control:</b>";
    $controlHTML .= "<br><i>Base Model Scenario to use:</i> elementid = ". $formVars['elementid'] . showActiveList($listobject, 'cache_runid', 'scen_model_run_elements', 'runid', 'runid', " elementid = ". $formVars['elementid'] , $formVars['cache_runid'], "", 'runid', $debug, 1, 0);
    
    $last_run_info = getRunFile($listobject, $formVars['elementid'], -1);
-   $controlHTML .= "<br><i>Last Run File Details:</i>" . print_r($last_run_info,1);
    if (!$last_run_info) {
       $startdate = '';
       $enddate = '';
@@ -8959,7 +8933,6 @@ function covaWSPModelControlForm($formVars) {
    # a re-draw is requested
    $controlHTML .= showHiddenField('redraw', 0, 1);
    $controlHTML .= showHiddenField('showcached', 0, 1);
-   $controlHTML .= "<br><b>WSP Model Run with Child Element Cache Control:</b>";
    if (isset($props['locid'])) {
       $formVars['parentid'] = preg_replace("/[^0-9]/", "", $props['locid']);
       $controlHTML .= "<br><i>Base Model Scenario to use:</i> " . showActiveList($listobject, 'cache_runid', 'scen_model_run_elements', 'runid', 'runid', " elementid = ". $formVars['parentid'] , $formVars['cache_runid'], "", 'runid', $debug, 1, 0);
@@ -9112,15 +9085,10 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
    if ($runid <> -1) {
       if (isset($unserobjects[$elementid])) {
          $rfilename = $unserobjects[$elementid]->logfile;
-         $dfilename = $outdir . "/" . $unserobjects[$elementid]->debugfile;
       } else {
          $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
-         $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
       }
-      $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
       copy($cfilename, $rfilename);
-      copy($dfilename, $rdfilename);
-      error_log("Model Run Debug Data Copied from $dfilename, $rdfilename ");
       // we want to store this output as a specific run, in addition to the default "last run" code 
       $listobject->querystring = "  delete from scen_model_run_elements ";
       $listobject->querystring .= " where elementid = $elementid ";
@@ -9133,11 +9101,11 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $elementid . ".log";
       $listobject->querystring = "  insert into scen_model_run_elements ";
       $listobject->querystring .= " (runid,starttime, endtime, elem_xml,";
-      $listobject->querystring .= "  elementid, output_file, remote_url, debugfile,";
+      $listobject->querystring .= "  elementid, output_file, remote_url, ";
       $listobject->querystring .= "  run_date, host, exec_time_mean, elemoperators)";
       $listobject->querystring .= " select $runid, '$startdate', ";
       $listobject->querystring .= " '$enddate', a.elem_xml, ";
-      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', ";
+      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', ";
       $listobject->querystring .= " '$run_date', '$serverip', $meanexectime, a.elemoperators ";
       $listobject->querystring .= " from scen_model_element as a ";
       $listobject->querystring .= " where elementid = $elementid ";
@@ -9403,7 +9371,6 @@ function showCachedModelOutput($elementid) {
    $listobject->querystring .= " where elementid = $elementid ";
    $listobject->performQuery();
    $innerHTML = $listobject->getRecordValue(1,'output_cache');
-   $innerHTML .= $listobject->querystring;
 
    return $innerHTML;
 }
@@ -9555,7 +9522,7 @@ function importModelElementResult($formValues) {
    }
 
    # get centroid of current group to set coordinates for imported elements
-   $listobject->querystring = "  select st_x(st_centroid(st_extent(the_geom))) as geomx, st_y(st_centroid(st_extent(the_geom))) as geomy ";
+   $listobject->querystring = "  select x(centroid(extent(the_geom))) as geomx, y(centroid(extent(the_geom))) as geomy ";
    $listobject->querystring .= " from proj_subsheds ";
    $listobject->querystring .= " where $sscond ";
    if ($debug) {
@@ -9578,7 +9545,7 @@ function importModelElementResult($formValues) {
          $innerHTML .= "New element id = $elementid. <br>";
          $innerHTML .= "Setting Geometry on $elementid to ($geomx , $geomy).<br>";
          $listobject->querystring = "  update scen_model_element ";
-         $listobject->querystring .= " set the_geom = st_geomfromtext('$centroid_wkt', 4326) ";
+         $listobject->querystring .= " set the_geom = GeomFromText('$centroid_wkt', 4326) ";
          $listobject->querystring .= " where elementid = $elementid ";
          $listobject->performQuery();
       }
@@ -10018,7 +9985,7 @@ function getUserObjectTypes($listobject, $userid, $scenarioid = -1, $objectclass
 function copyModelGroupFull($formValues, $debug = 0) {
    global $listobject, $projectid, $scenarioid, $userid, $usergroupids, $adminsetuparray;
    $innerHTML = "";
-   error_log("copyModelGroupFull() called with " . print_r($formValues, 1));
+   
    $projectid = $formValues['projectid'];
    $scenarioid = $formValues['scenarioid'];
    $dest_scenarioid = $formValues['dest_scenarioid'];
@@ -10690,7 +10657,7 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
       } else {
          $session_table = $sessionid . "_$elementid";
       }
-      $listobject->querystring = "  select output_file, debugfile, remote_url, host, run_date from scen_model_run_elements where runid = $runid and elementid = $elementid";
+      $listobject->querystring = "  select output_file, remote_url, host, run_date from scen_model_run_elements where runid = $runid and elementid = $elementid";
       //$innerHTML .= "$listobject->querystring .<br>";
       //error_log("Session Query: " . $listobject->querystring);
       $listobject->performQuery();
@@ -10702,7 +10669,6 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
          } else {
             $filename = $listobject->getRecordValue(1,'output_file');
          }
-         $debug_file = $listobject->getRecordValue(1,'debugfile');
          $innerHTML .= "This IP: $serverip, file IP: $file_host ...";
          $run_date = $listobject->getRecordValue(1,'run_date');
       } else {
@@ -10713,7 +10679,7 @@ function getSessionTableNames($thisobject, $elementid, $runid = -1, $data_elemen
       }
    }
    
-   return array('tablename'=>$session_table, 'debug_file' => $debug_file, 'filename'=>$filename, 'innerHTML'=>$innerHTML, 'run_date' => $run_date, 'record_missing'=>$rm, 'remote' => $remote);
+   return array('tablename'=>$session_table, 'filename'=>$filename, 'innerHTML'=>$innerHTML, 'run_date' => $run_date, 'record_missing'=>$rm, 'remote' => $remote);
 }
 
 function checkSessionTable($thisobject, $elementid, $runid = -1, $data_element = '') {
@@ -10758,8 +10724,6 @@ function loadSessionTable($thisobject, $elementid, $runid = -1, $data_element = 
          $thisobject->setDataColumnTypes();
       }
    }
-   $dbcoltypes = $thisobject->dbcolumntypes;
-   error_log("Data types:" . print_r($dbcoltypes, 1));
    $tableinfo = checkSessionTable($thisobject, $elementid, $runid, $data_element);
    $file_exists = $tableinfo['file_exists'];
    $remote_file = $tableinfo['remote'];
@@ -10806,10 +10770,6 @@ function loadSessionTable($thisobject, $elementid, $runid = -1, $data_element = 
             $session_db->performQuery();
             $session_db->querystring = " drop table \"$session_table\" ";
             $session_db->performQuery();
-            $skey = array_search($session_table, $session_db->temptables);
-            if (!($skey === FALSE)) {
-              unset($session_db->temptables[$skey]);
-            }
             $loadtable = 1;
          }
       } else {
@@ -10818,11 +10778,9 @@ function loadSessionTable($thisobject, $elementid, $runid = -1, $data_element = 
          $loadtable = 0;
       }
    }
-   $dbcoltypes = $thisobject->dbcolumntypes;
-   error_log("Data types:" . print_r($dbcoltypes, 1));
+      $dbcoltypes = $thisobject->dbcolumntypes;
    //$lobj['innerHTML'] .= print_r($dbcoltypes, 1) . "<br>";
    $lobj['innerHTML'] .= "Selected $filename (run on $run_date) <br>";
-   $lobj['innerHTML'] .= "Debug Info: " . $sinfo['debug_file'] . "<br>";
    if ($loadtable) {
       $dbcoltypes = $thisobject->dbcolumntypes;
       $lobj['innerHTML'] .= "Loading $filename  <br>";

@@ -585,7 +585,7 @@ class USGSGageObject extends timeSeriesInput {
          }
          if (!isset($gagedata[0]['site_no'])) {
             # we came up empty here, so let's insert a single zero value for all items
-            foreach (explode(',', $this->dataitems) as $dataitem) {
+            foreach (split(',', $this->dataitems) as $dataitem) {
                $dataname = $this->code_name[$dataitem];
                $gagedata[0][$dataname] = $this->datadefaults[$dataname];
             }
@@ -604,7 +604,7 @@ class USGSGageObject extends timeSeriesInput {
             $thisflag = '';
             # default to missing
             $thisval = 0.0;
-            foreach (explode(',', $this->dataitems) as $dataitem) {
+            foreach (split(',', $this->dataitems) as $dataitem) {
                $suffix = $this->code_suffix[$dataitem];
 
                foreach (array_keys($thisdata) as $thiscol) {
@@ -916,7 +916,7 @@ class USGSRecharge extends modelSubObject {
    }
    
    function appendStringArray($src, $var, $delim=',') {
-      $ar = explode($delim, $src);
+      $ar = split($delim, $src);
       $ar[] = $var;
       return join($delim, $ar);
    }
@@ -1149,7 +1149,6 @@ class USGSChannelGeomObject_sub extends USGSChannelGeomObject {
       $this->wvars[] = 'Qout';
       $this->wvars[] = 'area';
       $this->wvars[] = 'demand';
-      $this->wvars[] = 'its';
       $this->rvars[] = $this->q_var;
       $this->rvars[] = $this->r_var;
       $this->rvars[] = $this->w_var;

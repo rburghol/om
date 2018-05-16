@@ -1,0 +1,198 @@
+<?php
+
+//Implement hook_entity_info().
+
+function om_entity_info() {
+  // no new info here
+  // just a placeholder
+  $return = array();  
+  return $return;
+}
+
+/**
+ * Implements hook_field_info().
+ *
+ * Field settings:
+ *   none
+ * Instance settings:
+ *   - default_object_class: whether text input filters should be used.
+
+function om_field_info() {
+  return array(
+    'om_config' => array(
+      'label' => t('Object Model Config'),
+      'description' => t('This field stores configuration options in the database.'),
+      'instance_settings' => array('default_object_class' => 'blankShell'),
+      'default_widget' => 'om_default_widget,
+      'default_formatter' => 'om_default_formatter',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_validate().
+ */
+function om_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+  foreach ($items as $delta => $item) {
+    // @todo Length is counted separately for summary and value, so the maximum
+    //   length can be exceeded very easily.
+    if (isset($item['object_class'])) {
+      // instantiate the object class first
+    }
+    if (isset($item['config'])) {
+      // pass this to the class validation method
+      // since $errors is passed as &$errors
+      // we can just let the object_class handle it
+    }
+  }
+}
+
+/**
+ * Implements hook_field_is_empty().
+ */
+function om_field_is_empty($item, $field) {
+  // this can be handled by the object class
+  return FALSE;
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ *
+ * This should be handled by plugins, 
+ * the default is to just show model component info to admin,
+ * hidden from others
+ */
+function om_field_formatter_info() {
+  return array(
+    // This formatter just displays the hex value in the color indicated.
+    'om_default_formatter' => array(
+      'label' => t('Simple info formatter - viewable by admin'),
+      'field types' => array('om_config'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ * This should be handled by plugins, 
+ * the default is to just show model component info to admin,
+ * hidden from others
+ *
+ */
+function om_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    // This formatter simply outputs the field as text and with a color.
+    case 'om_default_formatter':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = array(
+          '#markup' => 'object_class: ' . $item['object_class'],
+        );
+      }
+    break;
+  }
+
+  return $element;
+}
+
+
+/**
+ * Implements hook_field_widget_info().
+ *
+ */
+function om_field_widget_info() {
+  return array(
+    'om_default_widget' => array(
+      'label' => t('OM Shell Object'),
+      'field types' => array('om_config'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_field_widget_form().
+ *
+ * hook_widget_form() is where Drupal tells us to create form elements for
+ * our field's widget.
+ *
+ * We provide one of three different forms, depending on the widget type of
+ * the Form API item provided.
+ *
+ * The 'field_example_colorpicker' and 'field_example_text' are essentially
+ * the same, but field_example_colorpicker adds a javascript colorpicker
+ * helper.
+ *
+ * field_example_3text displays three text fields, one each for red, green,
+ * and blue. However, the field type defines a single text column,
+ * rgb, which needs an HTML color spec. Define an element validate
+ * handler that converts our r, g, and b fields into a simulated single
+ * 'rgb' form element.
+ */
+function om_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $value = isset($items[$delta]['config']) ? $items[$delta]['config'] : '';
+
+  $widget = $element;
+  $widget['#delta'] = $delta;
+
+  switch ($instance['widget']['type']) {
+
+    case 'om_widget_default':
+      $widget += array(
+        '#type' => 'textfield',
+        '#default_value' => $value,
+        // Allow a slightly larger size that the field length to allow for some
+        // configurations where all characters won't fit in input field.
+        '#size' => 7,
+        '#maxlength' => 7,
+      );
+      break;
+
+  }
+
+  $element['config'] = $widget;
+  return $element;
+}
+
+function om_element_validate_alpha_string($element, &$form_state) {
+  $value = $element['#value'];
+  if(preg_match('/[^a-z_\-0-9]/i', $value)) {
+    form_error($element, t('%name must be an contain only letters, underscores, hyphens and numbers.', array('%name' => $element['#title'])));
+  }
+}
+// ***********************************************************
+// ***            Object Declarations                      ***
+// no declarations here, all classes handled as CTools plugins
+// ***********************************************************
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function om_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/' . $plugin_type;
+  }
+  // expose the primitive OM components from this base modules plugin dir
+  if ($owner == 'om' && $plugin_type == 'om_components') {
+    return 'plugins/' . $plugin_type;
+  }
+  
+  // entity reference plugin
+  if ($owner == 'entityreference') {
+    return "plugins/$owner/" . $plugin_type;
+  }
+  
+  if ($owner == 'dh' && $plugin_type == 'dh_variables') {
+    return 'plugins/' . $plugin_type;
+  }
+}
+
+function om_ctools_plugin_type() {
+  return array(
+    'om_components' => array(
+      'classes' => array('handler'),
+    ),
+  );
+}
