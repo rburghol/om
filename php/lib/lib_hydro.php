@@ -386,9 +386,8 @@ function storagerouting($I1, $I2, $O1, $W, $b, $Z, $ct, $S1, $slength, $slope, $
          }
       }
    }
-   error_log("Iterations: $i");
 
-   return array($V2, $O2, $d2, $S2, $i);
+   return array($V2, $O2, $d2, $S2);
 }
 
 

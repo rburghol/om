@@ -33,6 +33,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     //$this->riser_opening_elev->debug = TRUE;
     $this->riser_opening_elev = $this->storage_stage_area->evaluateMatrix($this->riser_opening_storage,'stage'); // find storage at riser opening stage
     $this->riser_emerg_elev = $this->storage_stage_area->evaluateMatrix($this->riser_emerg_storage,'stage'); // find storage at riser opening stage
+
     /*
     //error_log("Riser properties: 
       length: $this->riser_length
@@ -57,6 +58,7 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     $riser_flow = 0.6 * $height * $diameter*pow(2.0 * 32.2 * ($head - 0.5*$height), 0.5);
     return $riser_flow;
   }
+  
   function discharge($stage) {
     $head = $stage - $this->riser_opening_elev;
     if($head <= 0) {
