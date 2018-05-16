@@ -70,8 +70,8 @@ class omRuntime_HydroRiser extends omRuntime_SubComponent {
     }
     return $riser_flow;
   }
-  function solver($sto) {
-    $Stg = floatval($this->storage_stage_area->evaluateMatrix($sto,'stage'));
+  function solver($S1) {
+    $Stg = floatval($this->storage_stage_area->evaluateMatrix($S1,'stage'));
     $riser_flow = $this->discharge($Stg);
     return $riser_flow;
   }
