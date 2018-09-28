@@ -2543,7 +2543,7 @@ class wsp_vpdesvwuds extends timeSeriesInput {
    
    function wake() {
       parent::wake();
-      $this->setupDBConn();
+      //$this->setupDBConn();
       $this->prop_desc['wd_mgd'] = 'Current modeled withdrawal rate (mgd).';
       $this->prop_desc['historic_mgd'] = 'Historic Demand (mgd).';
       $this->prop_desc['current_mgd'] = 'Current Demand (mgd).';
@@ -2575,8 +2575,8 @@ class wsp_vpdesvwuds extends timeSeriesInput {
       // require some re-programming.  
       // get WD data, add to time series
       // get PS data, add to time series
-      $this->loadVPDESData();
-      $this->loadVWUDSData();
+      //$this->loadVPDESData();
+      //$this->loadVWUDSData();
       //$this->estimateCurrentWithdrawal();
       // now, close db connections to save memory/transaction loads.
       // cannot do this however, since multiple objects share a single connection
@@ -2847,12 +2847,12 @@ class wsp_vpdesvwuds extends timeSeriesInput {
       $this->logDebug("Create() function called <br>");
       // add use types
       $this->logDebug("Getting historic water withdrawals. <br>\n");
-      $this->getHistoricUse();
-      $this->addHistoricUseMatrices();
-      $this->getHistoricDischarges();
-      $this->addHistoricPSMatrices();
+      //$this->getHistoricUse();
+     // $this->addHistoricUseMatrices();
+      //$this->getHistoricDischarges();
+     // $this->addHistoricPSMatrices();
       // this must be done AFTER addHistoricUseMatrices, since it relies upon the matrix historic_annual
-      $this->estimateCurrentWithdrawal();
+      //$this->estimateCurrentWithdrawal();
       $this->logDebug("Processors on this object: " . print_r(array_keys($this->processors),1) . " <br>");
    }
 

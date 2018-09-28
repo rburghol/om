@@ -4,2766 +4,2779 @@ if (!function_exists('green_ampt')) {
 }
 
 class modelObject {
-   var $name = '';
-   var $componentid = 0; # to be set by a model container at run-time to provide a unique numerical identifier
-   var $scenarioid = -1; // a way of associating objects that exist in the same "world" - equiv to scenarioid in database
-   var $parentobject = -1; # link to parent, if this object is contained by another (for use by operators only)
-   var $description = '';
-   var $objectname = '';
-   var $disabled = 0;
-   var $vars = array();
-   var $setvarnames = array();
-   var $childstatus = array();
-   var $recreate_list = ''; // csv list that force an object create() call when changed
-   var $timer; /* Time Keeping object */
-   var $exectime = 0; // cumulative list of time to execute this component
-   var $meanexectime = 0; // cumulative divided by # of timesteps (done at finish() routine)
-   var $stepstart = 0; // pointer for calculating $exectime
-   var $thisdate = '';
-   var $inputs = array(); /* array containing object references for upland entities */
-   var $tsin = array(); /* array containing time series inputs */
-   var $logtable = array();
-   var $log_geom = 0; # save space in the log by NOT logging the geometry column
-   var $lookups = array();
-   var $processors = array();
-   var $execlist = array();
-   var $loglist = array();
-   var $column_defs = null;
-   var $data_cols = array(); // this will be used to populate the log list
-   var $arData = array(); # subs for state array in other objects (parent object)
-   # names of publicly accessible variables, to speed querying without having to reinstantiate the entire object
-   var $compnames = array();
-   var $inputnames = array();
-   var $procnames = array();
-   var $propnames = array();
-   # end publicly accessible variables
-   var $defaultval = 0;
-   # permissions
-   var $groupid = 2;
-   var $operms = 7;
-   var $gperms = 4;
-   var $pperms = 0;
-   # end permissions
-   var $nullvalue = NULL;
-   var $debug = 0;
-   var $debugmode = 0; # 0-store in string, 1-print debugging info to stderr, 2-print out to stdout, 3-spool to file
-   var $debugfile = '';
-   var $maxdebugfile = 20971520; // max size of 20Mb
-   var $cascadedebug = 0;
-   var $component_type = 1;
-   var $outdir = '.';
-   var $outurl = '';
-   var $imgurl = '';
-   var $logfile = '';
-   var $cache_log = 1; # store variable state log in an external file?  Defaults to 1 for graph and report objects, 0 for others
-   var $logLoaded = 0; # set after logging begins, or after log is restored from file/db
-   var $goutdir = '';
-   var $gouturl = '';
-   var $fileformat = 'unix';
-   var $strform = '"%s"';
-   var $numform = '%10.5f';
-   var $delimiter = ',';
-   var $logging = 1;
-   var $intmethod = 0; # interpolation method - 0 = linear, 1 - stair step
-   var $units = 2; # Units 1 - SI, 2 - EE
-   var $state = array(); /* holder for state variables */
-   var $the_geom = ''; # geography holder
-   var $geomtype = 1; # 1 - point, 2 - line, 3 - polygon
-   var $geomformat = 0; # 0 - WKT, 1 - WKB, 2 - file, 3 - KML
-   var $geomx = 0; # longitude
-   var $geomy = 0; # longitude
-   # date information for lookups, other conditional entities
-   var $year = 1970;
-   var $month = 1;
-   var $day = 1;
-   var $hour = 1;
-   var $weekday = 1;
-   var $dt = 60.0;
-   var $logerrors = 1;
-   var $errorstring = '';
-   var $errorfile = '';
-   var $debugstring = '';
-   var $outstring = '';
-   var $graphstring = '';
-   var $loggable = 0; // is this an entity with "loggable" data?  Only really relevant for sub-components
-   // set this to 0 if it is something like a QueryWizardComponent which has no data to log
-   var $strict_log = 1;
-   # this is only valid currently for the modelContainer, but may later be used for other types of modelObjects
-   var $components = array();
-   var $compexeclist = array();
-   # a db connection
-   var $listobject = -1;
-   // cache for formatted form variables
-   var $formvars = array();
-   var $rvars = 0;
-   var $wvars = 0;
-   
-   var $dbtblname = '';
-   var $tblprefix = 'tmp_';
-   var $is_datasource = 0; // by default, this will not act as data source when it is a subcomp
-   var $datasources = array();
-   var $dbcolumntypes = array();
-   var $logformats = array();
-   var $log2db = 1; # 0 - store log in memory, 1 - store log in temp db table (should save memory, but may slow things down due to frequent db writes)
-   # equation execution hierarchy, if conflict
-   # 0 is default, least favored, unlimited number
-   var $log_headers_sent = 0; // always zero at the beginning of the model run
-   var $bufferlog = 0; # allow list object to buffer log data sent during a run (1 will increase performance)
-   var $logRetrieved = 0; # this gets set to 1 after a retrieval from db to avoid redundant retrievals
-   var $exec_hierarch = 0;
-   # filenice object
-   var $fno = -1;
-   # temp file stuff
-   var $platform = 'unix'; # valid values are 'dos', 'unix'
-   var $tmpdir = '/tmp'; # path to the temporary dir writeable by this process
-   var $basedir = '';
-   var $tmp_files = array();
-   var $shellcopy = 'cp'; # the copy command to be used in the shell
-   var $sessionid = 0; # variable to use to set data for separate model runs, will be set to the id of the containing model
-   var $startdate = '';
-   var $enddate = '';
-   var $starttime = '';
-   var $endtime = '';
-   var $restrictdates = 0;
-   var $iscontainer = 0; # only true for objects of type "model container" or it's subclasses
-   # indicator of which variabels are to be serialized/unserialized when model is awakened/saved (CSV format)
-   var $serialist = '';
-   var $reportstring = '';
-   // property descriptions for viewing/editing components
-   var $prop_desc = array();
-   var $multivar = 0; // this is for sub-components, is the variable a "multivar", in other words, does it create more than one?
-   var $multivarnames = array(); // for use if multivar
-   var $run_mode = 0; // for modelControl broadcast, or linear linkage
-   var $cacheable = 1; 
+  // ******************************************
+  // ****** BEGIN - Settable Properties *******
+  // ******************************************
+  // object class settings
+  var $name = '';
+  var $nullvalue = NULL;
+  var $debug = 0;
+  var $debugmode = 0; // 0-store in string, 1-print debugging info to stderr, 2-print out to stdout, 3-spool to file
+  var $cascadedebug = 0;
+  var $disabled = 0;
+  var $description = '';
+  var $objectname = '';
+  var $defaultval = 0;
+  var $logging = 1;
+  var $intmethod = 0; // interpolation method - 0 = linear, 1 - stair step
+  var $units = 2; // Units 1 - SI, 2 - EE
+  var $component_type = 1;
+  var $cache_log = 1; // store variable state log in an external file?  Defaults to 1 for graph and report objects, 0 for others
+  var $the_geom = ''; // geography holder
+  var $geomtype = 1; // 1 - point, 2 - line, 3 - polygon
+  var $geomformat = 0; // 0 - WKT, 1 - WKB, 2 - file, 3 - KML
+  var $geomx = 0; // longitude
+  var $geomy = 0; // longitude
+  var $log2db = 1; 
+   // 0 - store log in memory, 1 - store log in temp db table (should save memory, but may slow things down due to frequent db writes)
+   // equation execution hierarchy, if conflict
+   // 0 is default, least favored, unlimited number
+  var $run_mode = 0; // for modelControl broadcast, or linear linkage
+  var $cacheable = 1; 
+  // ******************************************
+  // ******* END - Settable Properties ********
+  // ******************************************
+  // Runtime Settings
+  var $componentid = 0; // to be set by a model container at run-time to provide a unique numerical identifier
+  var $scenarioid = -1; // a way of associating objects that exist in the same "world" - equiv to scenarioid in database
+  var $parentobject = -1; // link to parent, if this object is contained by another (for use by operators only)
+  var $vars = array();
+  var $setvarnames = array();
+  var $childstatus = array();
+  var $recreate_list = ''; // csv list that force an object create() call when changed
+  var $timer; /* Time Keeping object */
+  var $exectime = 0; // cumulative list of time to execute this component
+  var $meanexectime = 0; // cumulative divided by # of timesteps (done at finish() routine)
+  var $stepstart = 0; // pointer for calculating $exectime
+  var $thisdate = '';
+  var $inputs = array(); /* array containing object references for upland entities */
+  var $tsin = array(); /* array containing time series inputs */
+  var $logtable = array();
+  var $log_geom = 0; // save space in the log by NOT logging the geometry column
+  var $lookups = array();
+  var $processors = array();
+  var $execlist = array();
+  var $loglist = array();
+  var $column_defs = null;
+  var $data_cols = array(); // this will be used to populate the log list
+  var $arData = array(); // subs for state array in other objects (parent object)
+  // names of publicly accessible variables, to speed querying without having to reinstantiate the entire object
+  var $compnames = array();
+  var $inputnames = array();
+  var $procnames = array();
+  var $propnames = array();
+  // end publicly accessible variables
+  // permissions
+  var $groupid = 2;
+  var $operms = 7;
+  var $gperms = 4;
+  var $pperms = 0;
+  // end permissions
+  var $debugfile = '';
+  var $maxdebugfile = 20971520; // max size of 20Mb
+  var $outdir = '.';
+  var $outurl = '';
+  var $imgurl = '';
+  var $logfile = '';
+  var $logLoaded = 0; // set after logging begins, or after log is restored from file/db
+  var $goutdir = '';
+  var $gouturl = '';
+  var $fileformat = 'unix';
+  var $strform = '"%s"';
+  var $numform = '%10.5f';
+  var $delimiter = ',';
+  var $state = array(); /* holder for state variables */
+  // date information for lookups, other conditional entities
+  var $year = 1970;
+  var $month = 1;
+  var $day = 1;
+  var $hour = 1;
+  var $weekday = 1;
+  var $dt = 60.0;
+  var $logerrors = 1;
+  var $errorstring = '';
+  var $errorfile = '';
+  var $debugstring = '';
+  var $outstring = '';
+  var $graphstring = '';
+  var $loggable = 0; // is this an entity with "loggable" data?  Only really relevant for sub-components
+  // set this to 0 if it is something like a QueryWizardComponent which has no data to log
+  var $strict_log = 1;
+  // this is only valid currently for the modelContainer, but may later be used for other types of modelObjects
+  var $components = array();
+  var $compexeclist = array();
+  // a db connection
+  var $listobject = -1;
+  // cache for formatted form variables
+  var $formvars = array();
+  var $rvars = 0;
+  var $wvars = 0;
 
-   function init() {
-      if ($this->debug) {
-         $this->logDebug("Initializing $this->name <br>");
-      }
-      //error_log("Initializing $this->name ");
-      $this->setState();
-      $this->subState();
-      # set up state variables for any public vars that are not already instantiated
-      foreach ($this->getPublicProps() as $thisvar) {
-         if (!in_array($thisvar, array_keys($this->state))) {
-            if ($this->debug) {
-               $this->logDebug("Adding $thisvar to viewable state variables.<br>");
-            }
-            if (property_exists(get_class($this), $thisvar)) {
-               $this->state[$thisvar] = $this->$thisvar;
-            }
-         }
-      }
-      if ($this->debug) {
-         $sv = $this->state;
-         if (isset($sv['the_geom'])) {
-            $sv['the_geom'] = substr($sv['the_geom'],0, 128);
-         }
-         $this->logDebug("PublicProps values initialized on $this->name: " . print_r($this->state,1) . " <br>");
-         $this->logDebug("Initializing processors on $this->name <br>");
-      }
-      
-      // set this before we initialize the processors, since they will rely upon it
-      // they wil call it transparently
-      $this->childHub = new broadCastHub;
-      $this->childHub->parentname = $this->name;
-      
-      foreach ($this->processors as $procname => $thisproc) {
-         # set state vars for this proc, so that it knows what it will be able to gain access to
-         $thisproc->arData = $this->state;
-         $thisproc->init();
-         # experiment
-      }
-      if (!is_object($this->parentobject)) {
-         // only do this for standalone objects, not sub-components
-         $mem_use = (memory_get_usage(true) / (1024.0 * 1024.0));
-         $mem_use_malloc = (memory_get_usage(false) / (1024.0 * 1024.0));
-         //error_log("Memory Use after init() on $this->name = $mem_use ( $mem_use_malloc )<br>\n");
-      }
+  var $dbtblname = '';
+  var $tblprefix = 'tmp_';
+  var $is_datasource = 0; // by default, this will not act as data source when it is a subcomp
+  var $datasources = array();
+  var $dbcolumntypes = array();
+  var $logformats = array();
+  var $log_headers_sent = 0; // always zero at the beginning of the model run
+  var $bufferlog = 0; // allow list object to buffer log data sent during a run (1 will increase performance)
+  var $logRetrieved = 0; // this gets set to 1 after a retrieval from db to avoid redundant retrievals
+  var $exec_hierarch = 0;
+  // filenice object
+  var $fno = -1;
+  // temp file stuff
+  var $platform = 'unix'; // valid values are 'dos', 'unix'
+  var $tmpdir = '/tmp'; // path to the temporary dir writeable by this process
+  var $basedir = '';
+  var $tmp_files = array();
+  var $shellcopy = 'cp'; // the copy command to be used in the shell
+  var $sessionid = 0; // variable to use to set data for separate model runs, will be set to the id of the containing model
+  var $startdate = '';
+  var $enddate = '';
+  var $starttime = '';
+  var $endtime = '';
+  var $restrictdates = 0;
+  var $iscontainer = 0; // only true for objects of type "model container" or it's subclasses
+  // indicator of which variabels are to be serialized/unserialized when model is awakened/saved (CSV format)
+  var $serialist = '';
+  var $reportstring = '';
+  // property descriptions for viewing/editing components
+  var $prop_desc = array();
+  var $multivar = 0; // this is for sub-components, is the variable a "multivar", in other words, does it create more than one?
+  var $multivarnames = array(); // for use if multivar
 
-      # set up data type for dbexpropt
-      # set a name for the temp table that will not hose the db
-      $targ = array(' ',':','-','.');
-      $repl = array('_', '_', '_', '_');
-      $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
-      $this->dbtblname = $this->tblprefix . 'datalog';
-      $this->setDataColumnTypes();
-
-      # order all operations on this entity
-      $this->orderOperations();
-      
-
-   }
-   function setPropDesc() {
-   }
-   
-   function addDataSource($procname) {
-      if (!in_array($procname, $this->datasources)) {
-         $this->datasources[] = $procname;
-      }
-   }
-   
-   function addSerialist($varname) {
-      $slist = explode(',', $this->serialist);
-      if (!in_array($varname, $slist)) {
-         $slist[] = $varname;
-      }
-      $this->serialist = implode(',', $slist);
-   }
-   
-   function evaluate() {
-   }
-   
-   function systemLog($mesg, $status_flag = 1) {
-      if (is_object($this->parentobject)) {
-         $this->parentobject->systemLog($mesg, $status_flag);
-      }
-   }
-      
-   function cleanUp() {
-      # remove all the temp tables associated with this object
-      if (is_object($this->listobject)) {
-         if ($this->listobject->tableExists($this->dbtblname)) {
-            $this->listobject->querystring = "  drop table $this->dbtblname ";
-            $this->listobject->performQuery();
-         }
-      }
-      
-      foreach ($this->processors as $thisproc) {
-         # clean up processors if they have the method
-         if (is_object($thisproc)) {
-            if (method_exists($thisproc, 'cleanUp')) {
-               $thisproc->cleanUp();
-               unset($thisproc);
-            }
-         }
-      }
-   }
-   
-   function varsToSetOnParent($format='vals') {
-      $vars = array();
-      foreach ($this->wvars as $thisvar) {
-         if ($this->debug) {
-            $this->logDebug("This var will create $this->name" . "_" . "$thisvar on parent.<br>\n");
-         }
-         switch ($format) {
-            case 'vals':
-            // return the values only
-            $vars[] = $this->getParentVarName($thisvar);
-            break;
-            
-            case 'map':
-            // return local names and parent names
-            $vars[$thisvar] = $this->getParentVarName($thisvar);
-            break;
-            
-            default:
-            // return the values only
-            $vars[] = $this->getParentVarName($thisvar);
-            break;
-         }
-         
-      }
-      return $vars;
-   }
-   
-   function writeToParent($vars = array(), $verbose = 0) {
-      if (count($vars) == 0) {
-         $vars = is_array($this->wvars) ? $this->wvars : array();
-      }
-      if ($this->debug) {
-         $this->logDebug("writeToParent() called on $this->name ");
-         //error_log("writeToParent() called on $this->name ");
-      }
-      if (is_object($this->parentobject)) {
-         foreach ($vars as $thisvar) {
-            if ($this->debug) {
-               $this->logDebug("Writing $thisvar on parent as " . $this->getParentVarName($thisvar) . " = " .  $this->state[$thisvar] . "<br>\n");
-               error_log("Writing $thisvar on parent as " . $this->getParentVarName($thisvar) . " = " .  $this->state[$thisvar] . "<br>\n");
-               $tstate = $this->state;
-               $tstate['the_geom'] = 'geom huidden';
-               error_log("State variables = " .  print_r($tstate,1) . "\n");
-            }
-            $this->parentobject->setStateVar($this->getParentVarName($thisvar), $this->state[$thisvar]);
-            if ($this->debug and $verbose) {
-               $this->logDebug(" $thisvar = " . $this->state[$thisvar] . "<br>\n");
-            }
-         }
-      }
-   }
-   
-   function initOnParent() {
-   //error_log("$this->name calling initOnParent() ");
-      if (is_object($this->parentobject)) {
-         //error_log("$this->name - parent exists - checking for varsToSetOnParent() ");
-         foreach ($this->varsToSetOnParent('map') as $thisvar => $parentvar) {
-            if (isset($this->column_defs[$thisvar])) {
-               $thistype = $this->column_defs[$thisvar]['dbcolumntype'];
-               $log_format = $this->column_defs[$thisvar]['log_format'];
-               $loggable = $this->column_defs[$thisvar]['loggable'];
-            } else {
-               $thistype = 'float8';
-               $log_format = '%s';
-               $loggable = 1;
-            }
-            //$this->parentobject->setSingleDataColumnType($parentvar, $thistype, NULL, $loggable, 1, $log_format);
-            $this->parentobject->setSingleDataColumnType($parentvar, $thistype, $this->getProp($thisvar), $loggable, 1, $log_format);
-            if ($this->debug) {
-               $this->logDebug("$this->name calling on parent - > setSingleDataColumnType($parentvar, $thistype, getProp($thisvar), $loggable, 1, $log_format)");
-               $this->logDebug("$this->name Setting $parentvar on parent as " . $this->getProp($thisvar));
-            }
-         }
-      }
-   }
-
-  function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
+  function init() {
     if ($this->debug) {
-      $this->logDebug("called: setSingleDataColumnType( $thiscol, type = $thistype , defaval = $defval, loggable = $loggable , $overwrite , $logformat)");
+       $this->logDebug("Initializing $this->name <br>");
     }
-      if (strtolower($thistype) == 'guess') {
-         if (is_object($this->listobject)) {
-            if (method_exists($this->listobject, 'guessDataType')) {
-               $guess = $this->listobject->guessDataType($defval);
-               $thistype = $guess['vtype'];
-            }
-         }
-      }
-      if (trim($thiscol) == '') {
-         error_log("Blank column name submitted for $this->name setSingleDataColumnType(thiscol = $thiscol, thistype = $thistype, defval = $defval, loggable = $loggable , overwrite = $overwrite , $logformat='%s'");
-         return;
-      }
-      # set up structure for local column storage
-      // this should take the place of all of these in the future: logformats, datacols, dbcolumntypes
-      if ( (!isset($this->column_defs)) or (!is_array($this->column_defs)) ) {
-         $this->column_defs = array();
-      }
-      # set up column formats for appropriate outputs to database
-      if ( (!isset($this->dbcolumntypes)) or (!is_array($this->dbcolumntypes)) ) {
-         $this->dbcolumntypes = array();
-      }
-      if ( (!isset($this->logformats)) or (!is_array($this->logformats)) ) {
-         $this->logformats = array();
-      }
-      if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
-         $this->data_cols = array();
-      }
-      // added RWB 5/17/2015 - improve loading into session table by 
-      // setting the default
-      if (!isset($this->column_defs[$thiscol]) or $overwrite) {
-         $this->column_defs[$thiscol] = array(
-            'log_format'=>$logformat,
-            'loggable'=>$loggable,
-            'dbcolumntype'=>$thistype,
-            'default'=>$defval
-         );
-      }
-      if (!isset($this->state[$thiscol]) or $overwrite) {
-         $this->setStateVar($thiscol, $defval);
-      }
-      if (!isset($this->dbcolumntypes[$thiscol]) or $overwrite) {
-         if (trim($thiscol) <> "") {
-            $this->dbcolumntypes[$thiscol] = $thistype;
-            if ($loggable and (strlen($thistype) > 0) and (strtolower($thistype) <> 'null') ) {
-               $this->data_cols[] = $thiscol;
-               if ($this->debug) {
-                  $this->logDebug("Adding $thiscol to loggable columns on $this->name with type $thistype and default value $defval");
-               }
-            }
-            $this->state[$thiscol] = $defval;
-            if ($overwrite and in_array($thiscol, $this->data_cols) and !$loggable) {
-               if ($this->debug) {
-                  $this->logDebug("Removing $thiscol from loggable columns on $this->name");
-               }
-               unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
-            }
-         }
-      }
-      if (!$loggable) {
-         if ($this->debug) {
-            $this->logDebug("Removing $thiscol from loggable columns on $this->name");
-         }
-         unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
-         unset($this->dbcolumntypes[$thiscol]);
-         unset($this->logformats[$thiscol]);
-      }
-   }
-   
-   function addDataColumnType($colname, $samplevalue = 0, $overwrite = 0, $forcetype = '') {
-      if (!(trim($colname) == '')) {
-         if (in_array($colname, $this->dbcolumntypes)) {
-            $exists = 1;
-         } else {
-            $exists = 0;
-         }
+    //error_log("Initializing $this->name ");
+    $this->setState();
+    $this->subState();
+    // set up state variables for any public vars that are not already instantiated
+    foreach ($this->getPublicProps() as $thisvar) {
+       if (!in_array($thisvar, array_keys($this->state))) {
+          if ($this->debug) {
+             $this->logDebug("Adding $thisvar to viewable state variables.<br>");
+          }
+          if (property_exists(get_class($this), $thisvar)) {
+             $this->state[$thisvar] = $this->$thisvar;
+          }
+       }
+    }
+    if ($this->debug) {
+       $sv = $this->state;
+       if (isset($sv['the_geom'])) {
+          $sv['the_geom'] = substr($sv['the_geom'],0, 128);
+       }
+       $this->logDebug("PublicProps values initialized on $this->name: " . print_r($this->state,1) . " <br>");
+       $this->logDebug("Initializing processors on $this->name <br>");
+    }
+    
+    // set this before we initialize the processors, since they will rely upon it
+    // they wil call it transparently
+    $this->childHub = new broadCastHub;
+    $this->childHub->parentname = $this->name;
+    
+    foreach ($this->processors as $procname => $thisproc) {
+       // set state vars for this proc, so that it knows what it will be able to gain access to
+       $thisproc->arData = $this->state;
+       $thisproc->init();
+       // experiment
+    }
+    if (!is_object($this->parentobject)) {
+       // only do this for standalone objects, not sub-components
+       $mem_use = (memory_get_usage(true) / (1024.0 * 1024.0));
+       $mem_use_malloc = (memory_get_usage(false) / (1024.0 * 1024.0));
+       //error_log("Memory Use after init() on $this->name = $mem_use ( $mem_use_malloc )<br>\n");
+    }
 
-         if ($exists and !$overwrite) {
-            return;
-         }
+    // set up data type for dbexpropt
+    // set a name for the temp table that will not hose the db
+    $targ = array(' ',':','-','.');
+    $repl = array('_', '_', '_', '_');
+    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+    $this->dbtblname = $this->tblprefix . 'datalog';
+    $this->setDataColumnTypes();
 
-         if (strlen($forcetype) > 0) {
-            // we have been given a type to make this, so do not guess
-            $type = $forcetype;
-         } else {
-            $type = 'varchar';
-         }
+    // order all operations on this entity
+    $this->orderOperations();
+    
 
-         $this->dbcolumntypes[$colname] = $type;
-         if ( (strlen($type) > 0) and (strtolower($type) <> 'null') ) {
-            $this->data_cols[] = $colname;
-            $this->logformats[$colname] = '%s';
-         }
-      }
-   }
-   
-   function setBaseTypes() {
-      # set up column formats for appropriate outputs to database
-      if ( (!isset($this->dbcolumntypes)) or (!is_array($this->dbcolumntypes)) ) {
-         $this->dbcolumntypes = array();
-      }
-      if ( (!isset($this->logformats)) or (!is_array($this->logformats)) ) {
-         $this->logformats = array();
-      }
+  }
+  function setPropDesc() {
+  }
 
-      $basetypes = array(
-               'name'=>'varchar(' . intval(2.0 * strlen($this->name) + 1) . ')',
-               'description'=>'varchar(' . intval(2.0 * strlen($this->description) + 1) . ')',
-            //   'objectname'=>'varchar(' . intval(2.0 * strlen($this->objectname) + 1) . ')',
-               'componentid'=>'varchar(128)',
-               'subshedid'=>'varchar(128)',
-               'dt'=>'float8',
-               'month'=>'float8',
-               'day'=>'float8',
-               'year'=>'float8',
-               'thisdate'=>'date',
-               'time'=>'timestamp',
-               'timestamp'=>'bigint',
-               'run_mode'=>'float8',
-               'season'=>'varchar(8)'
-      );
-      $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode');
-      foreach ($dcs as $thisdc) {
-         $this->data_cols[] = $thisdc;
-      }
-      
-      foreach($basetypes as $key=>$val) {   
-         $this->dbcolumntypes[$key] = $val;
-      } 
-      if ($this->debug) {
-         $this->logDebug("MERGE RESULT: " . print_r(array_merge($this->dbcolumntypes, $basetypes),1) . " <br>");
-         $this->logDebug("UNIQUE RESULT: " . print_r($thisarray,1) . " <br>");
-      }
+  function addDataSource($procname) {
+    if (!in_array($procname, $this->datasources)) {
+       $this->datasources[] = $procname;
+    }
+  }
 
-   }
-   function setDataColumnTypes() {
+  function addSerialist($varname) {
+    $slist = explode(',', $this->serialist);
+    if (!in_array($varname, $slist)) {
+       $slist[] = $varname;
+    }
+    $this->serialist = implode(',', $slist);
+  }
 
-      $this->setBaseTypes();
-      
-      $logtypes = array(
-               'name'=>'%s',
-               'description'=>'%s',
-             //  'objectname'=>'%s',
-               'componentid'=>'%u',
-               'dt'=>'%u',
-               'month'=>'%u',
-               'day'=>'%u',
-               'year'=>'%u',
-               'thisdate'=>'%s',
-               'time'=>'%s',
-               'timestamp'=>'%s',
-               'run_mode'=>'%u',
-               'season'=>'%u'
-      );
-      
-      // now, go through and see if any sub-components have db types set
-      foreach ($this->processors as $thisproc) {
-         
-         if (property_exists($thisproc, 'value_dbcolumntype')) {
-            // this does not work, since the logtypes is looking for string format, NOT a db column type
-            //$logtypes[$thisproc->name] = $thisproc->value_dbcolumntype;
-            // howwever, this should be OK
-            if (isset($thisproc->defaultval)) {
-               $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);
-            } else {
-               $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);
-            }
-         }
-         
-         
-         if (method_exists($thisproc, 'setDataColumnTypes')) {
-            $thisproc->setDataColumnTypes();
-         }
-         
-         if ( (!($thisproc->loggable === 0)) and !in_array($thisproc->name, $this->data_cols)  and !(trim($thisproc->name) == '')) {
-            
-            $this->data_cols[] = $thisproc->name;
-         }
-      }
-      $thisarray = array_unique(array_merge($this->logformats, $logtypes));
+  function evaluate() {
+  }
 
-      $this->logformats = $thisarray;
-      # log to postgres if connection is set
-      if (is_object($this->listobject) and ($this->log2db == 1)) {
-         if ($this->listobject->tableExists($this->dbtblname)) {
-            $this->listobject->querystring = "  drop table $this->dbtblname ";
-            $this->listobject->performQuery();
-         }
-      }
-      // clean up data_cols based on definitions in the column_defs array
-      if (is_array($this->column_defs)) {
-         foreach ($this->column_defs as $thiscol => $def) {
-            $loggable = $def['loggable'];
-            $dbcolumntype = $def['dbcolumntype'];
-            $logformat = $def['log_format'];
-            if (!$loggable) {
-               if (in_array($thiscol, $this->data_cols)) {
-                  //error_log("Removing $thiscol from loggable columns on $this->name");
-                  unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
-               }
-               if (in_array($thiscol, $this->logformats)) {
-                  //error_log("Removing $thiscol from log formats on $this->name");
-                  unset($this->logformats[array_search($thiscol, $this->logformats)]);
-               }
-               if (in_array($thiscol, $this->dbcolumntypes)) {
-                  //error_log("Removing $thiscol from db types on $this->name");
-                  unset($this->dbcolumntypes[array_search($thiscol, $this->dbcolumntypes)]);
-               }
-            } else {
-               $this->data_cols[] = $thiscol;
-               $this->log_formats[$thiscol] = $logformat;
-               $this->dbcolumntypes[$thiscol] = $dbcolumntype;
-            }
-         }
-      }
-   }
-   
-   function getParentVarName($thisvar) {
-      return $this->name . "_" . $thisvar;
-   }
+  function systemLog($mesg, $status_flag = 1) {
+    if (is_object($this->parentobject)) {
+       $this->parentobject->systemLog($mesg, $status_flag);
+    }
+  }
+    
+  function cleanUp() {
+    // remove all the temp tables associated with this object
+    if (is_object($this->listobject)) {
+       if ($this->listobject->tableExists($this->dbtblname)) {
+          $this->listobject->querystring = "  drop table $this->dbtblname ";
+          $this->listobject->performQuery();
+       }
+    }
+    
+    foreach ($this->processors as $thisproc) {
+       // clean up processors if they have the method
+       if (is_object($thisproc)) {
+          if (method_exists($thisproc, 'cleanUp')) {
+             $thisproc->cleanUp();
+             unset($thisproc);
+          }
+       }
+    }
+  }
 
-   function finish() {
-      # add post-processing functions here
-      
-      # iterate through each sub-processor stored in this object
-      if (is_array($this->processors)) {
-         foreach ($this->processors as $thisproc) {
-            if ($this->debug) {
-               $this->logDebug("Finishing $thisproc->name<br>\n");
-            }
-            if (is_object($thisproc)) {
-               if (method_exists($thisproc, 'finish')) {
-                  $thisproc->finish();
-               }
-            }
-            # show component output reports
-            if (strlen($thisproc->reportstring) > 0) {
-               $this->reportstring .= "<b>Reports for: </b>" . $thisproc->name . '<br>';
-               $this->reportstring .= $thisproc->description . "<br>" . $thisproc->reportstring . "<br>";
-               $thisproc->reportstring = '';
-            }
-            # show component error reports
-            if (strlen($thisproc->errorstring) > 0) {
-               $this->errorstring .= "<b>Errors for: </b>" . $thisproc->name . '<br>';
-               $this->errorstring .= $thisproc->description . "<br>" . $thisproc->errorstring . "<br>";
-               $thisproc->errorstring = '';
-            }
-         }
-         unset($thisproc);
-      }
-
-      if ($this->cache_log) {
-        # error_log("Ouputting log values to file for $this->name");
-         $this->log2file();
-      }
-      $this->logDebug("Finished $this->name");
-      if ($this->debugmode == 3) {
-         $this->debugstring .= "</body></html>";
-         $this->flushDebugToFile();
-         $this->debugstring = "<b>Debug File for $this->name:</b> <a href=" . $this->outurl . '/' . $this->debugfile . ">Click Here</a><br>";
-      }
-      if (is_object($this->timer)) {
-         $this->meanexectime = $this->exectime / $this->timer->steps;
-      }
-
-   }
-
-   function wake() {
-     $stime = microtime(true);
-      if (!isset($this->processors)) {
-         $this->processors = array();
-      } else {
-         // if this thing is already an array, we may be re-awakening, in which case we should NOT overwrite its contents
-         if (!is_array($this->processors)) {
-            $this->processors = array();
-         } else {
-            // should we call re-awakening on sub-components?
-            /*
-            foreach ($this->processors as $thisproc) {
-               $thisproc->wake();
-            }
-            */
-         }
-      }
-      if (!is_array($this->setvarnames)) {
-         $this->setvarnames = array();
-      }
-      if (!is_array($this->column_defs)) {
-         $this->column_defs = array();
-      }
-      $this->state = array();
-      $this->execlist = array();
-      $this->compexeclist = array();
-      $this->inputs = array();
-      $this->vars = array();
-      $this->logtable = array();
-      $this->lookups = array();
-      $this->loglist = array();
-      $this->datasources = array();
-      // set up property descriptions
-      $this->prop_desc = array();
-      $this->setPropDesc();
-      // end prop descriptions
-      $this->dbcolumntypes = array();
-      if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
-         $this->data_cols = array();
-      }
-      $this->logLoaded = 0;
-      # things to do before this goes away, or gets stored
-      $ser = explode(',', $this->serialist);
-      foreach ($ser as $thisvar) {
-         if (property_exists($this, $thisvar)) {
-            if (!is_array($this->$thisvar) and !is_object($this->$thisvar)) {
-               if (strlen($this->$thisvar) > 0) {
-                  $uvar = unserialize($this->$thisvar);
-                  $this->$thisvar = $uvar;
-                  if ($this->debug) {
-                     $this->logDebug("$thisvar unserialized to : " . print_r($uvar,1));
-                  }
-                  //error_log("$thisvar unserialized to : " . print_r($uvar,1));
-               }
-            }
-         }
-      }
-      $this->setState();
-      $this->subState();
-     $etime = microtime(true);
-     $this->logDebug("$this->name wake() took " . round($etime - $stime, 5) . " seconds (prec=5)<br>");
-   }
-
-   function preProcess() {
-      # do nothing here, this is sub-classed where necessary
-      foreach ($this->processors as $thisproc) {
-         # set state vars for this proc, so that it knows what it will be able to gain access to
-         $thisproc->arData = $this->state;
-         $thisproc->preProcess();
-      }
-   }
-
-   function create() {
-      # things to do when this object is first created
-      # it must be called AFTER the wake() method, but prior to the init() method
-      foreach ($this->processors as $thisproc) {
-         # set state vars for this proc, so that it knows what it will be able to gain access to
-         $thisproc->create();
-      }
-   }
-
-   function reCreate() {
-      # things to do if something on this object has changed and the user wishes to re-run the create routine
-      # defauls to simply calling the classes own create() method, but could perform other house-keeping functions
-      $this->create();
-   }
-
-   function sleep() {
-      # things to do before this goes away, or gets stored
-      $ser = explode(',', $this->serialist);
-      foreach ($ser as $thisvar) {
-         if (property_exists($this, $thisvar)) {
-            $this->$thisvar = serialize($this->$thisvar);
-         }
-      }
-      # blank out components and processors
-      $this->processors = array();
-      $this->components = array();
-      $this->formvars = array();
-      $this->inputs = array();
-      $this->state = array();
-      $this->datasources = array();
-      $this->setvarnames = array();
-      $this->errorstring = '';
-      $this->debugstring = '';
-      $this->column_defs = null;
-   }
-
-   function setDebug($thisdebug, $thisdebugmode = -1) {
-      $this->debug = $thisdebug;
-      if ($thisdebugmode <> -1) {
-         $this->debugmode = $thisdebugmode;
-      }
-      if ($this->cascadedebug) {
-         foreach($this->processors as $thisproc) {
-            $thisproc->setDebug($this->debug, $this->debugmode);
-         }
-      }
-   }
-
-   function setBuffer($bufferlog) {
-      $this->bufferlog = $bufferlog;
-      foreach($this->processors as $thisproc) {
-         if (method_exists($thisproc, 'setBuffer')) {
-            $thisproc->setBuffer($this->bufferlog);
-         }
-      }
-   }
-
-   function setSimTimer($thistimer) {
-      $this->timer = $thistimer;
-      $this->dt = $thistimer->dt;
-      $this->startdate = $thistimer->thistime->format('Y-m-d');
-      $this->enddate = $thistimer->endtime->format('Y-m-d');
-      // properly format start and end time
-      $this->starttime = $thistimer->thistime->format('Y-m-d H:i:s');
-      $this->endtime = $thistimer->endtime->format('Y-m-d H:i:s');
-      
-      if ($this->debug) {
-         $this->logDebug("Setting Timer for $this->name <br>");
-         #$this->logDebug($this->timer);
-         #$this->logDebug($thistimer);
-      }
-      #$this->logDebug("<br>");
-      $this->logDebug("Setting Timer for processors $this->name <br>");
-      #$this->logDebug($this->processors);
-      #$this->logDebug("<br>");
-      if (is_array($this->processors)) {
-         foreach ($this->processors as $thisop) {
-            $thisop->setSimTimer($thistimer);
-         }
-      }
-      if (is_array($this->components)) {
-         foreach ($this->components as $thisop) {
-            $thisop->setSimTimer($thistimer);
-         }
-      }
-   }
-
-   function setCompID($thisid) {
-      $this->componentid = $thisid;
-      # set a name for the temp table that will not hose the db
-      $targ = array(' ',':','-','.');
-      $repl = array('_', '_', '_', '_');
-      $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_" . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
-      $this->dbtblname = $this->tblprefix . 'datalog';
-   }
-
-   function setState() {
-      # initialize the state array
-      # any object properties that are to be visible to other components, or even to 
-      # sub-components on this object must be initialized in the state variable here
-      # unless they are explicitly set in a sub-component processor, otherwise, they will 
-      # be invisible and result as null
-      $this->state = array();
-      if (!is_array($this->wvars)) {
-         $this->wvars = array();
-      }
-      if (!is_array($this->rvars)) {
-         $this->rvars = array();
-      }
-
-      if (is_array($this->processors)) {
-         foreach (array_keys($this->processors) as $thisop) {
-            $this->state[$thisop] = $this->processors[$thisop]->defaultval;
-         }
-      } else {
-         $this->processors = array();
-      }
-      if (is_array($this->inputs)) {
-         foreach (array_keys($this->inputs) as $thisop) {
-            $this->state[$thisop] = @$this->$thisop;
-         }
-      } else {
-         $this->inputs = array();
-      }
-      
-   }
-   
-   function subState() {
-   // stub for sub-classes to to special operations within the setState() routine
-      $this->initOnParent();
-   }
-
-   function setStateVar($varname, $varvalue) {
-      if (!is_array($this->setvarnames)) {
-         $this->setvarnames = array();
-      }
-      # sets a specific state variable to a specific value
-      $this->state[$varname] = $varvalue;
-      // compile a list of all variables set by this method
-      if (!in_array($varname, $this->setvarnames)) {
-         $this->setvarnames[] = $varname;
-      }
-   }
-   
-
-   function appendStateVar($varname, $varvalues, $action = 'append', $method = 'guess') {
-      //error_log("appendStateVar($varname, $varvalues, $action = 'append', $method = 'guess') called");
-      if (!is_array($varvalues)) {
-         $varvalues = array($varvalues);
-      }
-      
-      if (!isset($this->state[$varname])) {
-         $this->state[$varname] = NULL;
-      }
-      
-      switch ($action) {
-         case 'refresh':
-            // means that we want to start with only the values passed at this time, so clear previous values
-            if (is_numeric($varvalues[0])) {
-               $this->state[$varname] = 0.0;
-            } else {
-               $this->state[$varname] = '';
-            }
-         break;
-      }
-      
-      // default method is ADD if numeric, replace if string
-      // user can set methods in function call
-      foreach ($varvalues as $inval) {
-         // the following cases assume that all variables are scalar.  
-         // we need to adjust this to work with array type variables as well.
-         // 
-         if (!($inval === NULL)) {
-            if ($method == 'guess') {
-               if (is_numeric($inval)) {
-                  if( $this->state[$varname] === NULL) {
-                     $this->state[$varname] = 0;
-                  }
-                  //error_log("Adding $inval to " . $this->state[$varname] );
-                  $this->state[$varname] += $inval;
-               } else {
-                  $this->state[$varname] = $inval;
-               }
-            } else {
-               switch ($method) {
-                  case 'replace':
-                     $this->state[$varname] = $inval;
-                  break;
-                  
-                  case 'stringappend':
-                     $this->state[$varname] .= $inval;
-                  break;
-                  
-                  case 'numappend':
-                     if( $this->state[$varname] === NULL) {
-                        $this->state[$varname] = 0;
-                     }
-                     $this->state[$varname] += $inval;
-                  break;
-               }
-            }
-         }
-         if ($this->debug) {
-            if (strlen($this->state[$varname]) < 200) {
-               $this->logDebug("updated $varname = " . $this->state[$varname] . " Appended from Inputs: " . print_r($varvalues,1) . "<br>\n");
-            }
-         }
-      }
-   }
-
-   function setProp($propname, $propvalue, $view = '') {
-      # sets a specific state variable to a specific value
-      if ($this->debug) {
-         $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
-      }
-      if (property_exists(get_class($this), $propname)) {
-         $this->$propname = $propvalue;
-         if ($this->debug) {
-            $this->logDebug("Setting $propname to $propvalue on " . $this->name);
-         }
-      } else {
-         if ($this->debug) {
-            $this->logDebug("Property $propname does not exist on class " . get_class($this));
-         }
-      }
-   }
-
-   function getProp($propname, $view = '') {
-      # sets a specific state variable to a specific value
-      if ($this->debug) {
-         //error_log("Trying to get $propname, $view from " . $this->name);
-      }
-      if (isset($this->processors[$propname])) {
-         if ($this->debug) {
-            $this->logDebug("Property defined sub-comp - checking Sub-component $propname : $view on " . $this->name);
-         }
-         return $this->processors[$propname]->getProp($propname, $view);
-         //return $this->processors[$propname]->getProp($view);
-      } else {
-         if (property_exists(get_class($this), $propname)) {
-            if ($this->debug) {
-               //error_log("Returning $this->name -> $propname = " . $this->$propname);
-            }
-            return $this->$propname;
-         } else {
-            // check to see if the view is the same as the property name
-            if (isset($this->state[$propname])) {
-               if ($this->debug) {
-                  error_log("Returning State Variable $propname " . $this->state[$propname]);
-               }
-               return $this->state[$propname];
-            }
-            if (property_exists(get_class($this), $view)) {
-               if ($this->debug) {
-                  error_log("Returning $this->name -> $view = " . $this->$view);
-               }
-               return $this->$view;
-            }
-            if ($this->debug) {
-               error_log("Property $this->name -> $propname does not exist on class " . get_class($this));
-            }
-            return FALSE;
-         }
-      }
-   }
-
-   function getObjectDependencies() {
-      // return a list of all known objects that supply information that this uses (for runtime hierarchy)
-      $dependencies = array();
-      if ($this->debug) {
-         $this->logDebug("<br>$this->name called getObjectDependencies <br>");
-      }
-      foreach (array_keys($this->inputs) as $thisinputname) {
-         if ($this->debug) {
-            $this->logDebug("Checking $thisinputname ");
-         }
-         if (trim($thisinputname) <> '') {
-            foreach ($this->inputs[$thisinputname] as $thisinput) {
-               $thisinobj = $thisinput['object'];
-               if ($this->debug) {
-                  $ci = $thisinobj->componentid;
-                  $this->logDebug(".. Adding $ci ");
-               }
-               $dependencies[] = $thisinobj->componentid;
-            }
-         } else {
-            if ($this->debug) {
-               $this->logDebug("<br>Null Input Found - will not process <br>");
-            }
-         }
-         if ($this->debug) {
-            $this->logDebug("<br>Finished checking $thisinputname <br>");
-         }
-      }
-      if ($this->debug) {
-         $this->logDebug("<br>Returning " . count($dependencies) . "from getObjectDependencies <br>");
-      }
-      // now, should check all broadcast hubs that I listen on for dependencies...
-      return array_unique($dependencies);
-   }
-   
-   function getLog($startdate = '', $enddate = '', $variables = array(), $scenario = -1) {
-      # gets all log values
-      
-      switch ($this->log2db) {
-         
-         case 0:
-         // do nothing, since the logtable is already there
-         break;
-         
-         case 1:
-         if (!$this->logRetrieved) {
-            // if logRetrieved is false, we have to actually grab it from the database log
-            // we also should check here for a desired scenario, and also specific variables
-            # must retrieve log from data table to array
-            $qs = " select * from $this->dbtblname ";
-            $this->logtable = array();
-            if ($this->restrictdates) {
-               # use only a narrow date field, also must have valid start and end dates set
-               if ( (strlen($this->startdate) > 0) and (strlen($this->enddate) > 0) ) {
-                  $qs .= " where thisdate >= '$this->startdate' and thisdate <= '$this->enddate' ";
-               }
-            }
-            if (is_object($this->listobject)) {
-               if ($this->listobject->tableExists($this->dbtblname)) {
-                  $this->listobject->querystring = $qs;
-                  if ($this->debug) {
-                     $this->logDebug($qs);
-                  }
-                  $this->listobject->performQuery();
-                  // sets 
-                  $this->logtable = $this->listobject->queryrecords;
-               }
-            }
-            $this->logRetrieved = 1;
-         }
-         break;
-         
-         case 2:
-         // flush the remnants of the memory log to the file, then retrieve the file
-         $this->flushMemoryLog2file();
-         $this->logFromFile();
-         $this->logRetrieved = 1;
-         break;
-      }
-
-      return $this->logtable;
-   }
-
-   function openTempFile($filename, $mode = 'a', $ftype = 'file', $platform='') {
-      if (strlen($filename) > 0) {
-
-         if ($platform == '') {
-            $platform = $this->platform;
-         }
-         $handle = fopen($filename, $mode);
-         $this->tmp_files[$filename]['filename'] = $filename;
-         $this->tmp_files[$filename]['handle'] = $handle;
-         $this->tmp_files[$filename]['type'] = $ftype;
-         $this->tmp_files[$filename]['platform'] = $platform;
-
-      }
-
-      return $handle;
-
-   }
-
-   function generateTempFileName($basename = 'tmp', $ext = 'tmp', $min = 0, $max = 32768) {
-
-      # generic routine to try to generate a random file and test to see if it is indeed unique in the temp directory
-      $filenum = rand($min, $max);
-      $filename = $this->tmpdir . "/$basename$filenum" . ".$ext";
-      if ($this->debug) {
-         $this->logDebug("Checking to see if random file exists: $filename <br>");
-      }
-      while (file_exists($filename)) {
-         $filenum = rand($min, $max);
-         $filename = $this->tmpdir . "/$filenum" . ".$ext";
-         if ($this->debug) {
-            $this->logDebug("Checking next random name: $filename <br>");
-         }
-      }
-      return $filename;
-   }
-
-   function copy2TempFile($filename, $tmpfilename = '', $platform='', $isPerm=0) {
-
-      if (strlen($platform) == 0) {
-         $platform = $this->platform;
-      }
-      if ($this->debug) {
-         $this->logDebug("Exporting $filename <br>");
-      }
-      # generate a tmp file name if there is none supplied
-      if (strlen($tmpfilename) == 0) {
-         if ($this->debug) {
-            $this->logDebug("No destination file given, generating one. <br>");
-         }
-         # if this is a dos platform, we need to try to keep a
-         $tmpfilename = $this->generateTempFileName();
-         if ($this->debug) {
-            $this->logDebug("Generated file name: $tmpfilename <br>");
-         }
-      }
-
-      if ( (strlen($filename) > 0) ) {
-         $result = copy($filename, $tmpfilename);
-         if ($this->debug) {
-            $this->logDebug("Trying: copy($filename $tmpfilename) <br>");
-         }
-         
-
-         if ($this->debug) {
-            $this->logDebug("Result: $result <br>");
-         }
-         if (!$isPerm) {
-            // stash it for later clean up unles we have been instructed to make it permananent
-            $this->tmp_files[$tmpfilename]['filename'] = $tmpfilename;
-            $this->tmp_files[$tmpfilename]['handle'] = -1;
-            $this->tmp_files[$tmpfilename]['type'] = 'file';
-            $this->tmp_files[$tmpfilename]['platform'] = $platform;
-            $this->tmp_files[$tmpfilename]['result'] = $result;
-         }
-      }
-      return $tmpfilename;
-   }
-
-   function closeTempFile($filename) {
-      if ( in_array($filename, array_keys($this->tmp_files)) ) {
-         $handle = $this->tmp_files[$filename]['handle'];
-         if ($handle <> -1) {
-            fclose($handle);
-         }
-         $this->tmp_files[$filename]['handle'] = -1;
-      }
-   }
-
-   function clearTempFiles($filenames = array()) {
-      # close and delete any temp files that have been opened in this sesion
-      # files to close
-      $files_to_close = array();
-      if (!is_array($filenames)) {
-         # make sure this is a valid file name
-         if (in_array($filenames, array_keys($this->tmp_files))) {
-            $files_to_close[$filenames] = $this->tmp_files[$filenames];
-         }
-      } else {
-         foreach ($filenames as $thisname) {
-            # make sure this is a valid file name
-            if (in_array($thisname, array_keys($this->tmp_files))) {
-               $files_to_close[$thisname] = $this->tmp_files[$thisname];
-            }
-         }
-      }
-      foreach ($this->tmp_files as $thisfile) {
-         $handle = $thisfile['handle'];
-         $fname = $thisfile['filename'];
-         $ftype = $thisfile['type']; # currently unused, but later may allow us to treat local files and streams robustly
-         if (file_exists($fname)) {
-            # close it if the file handle is still set (indicating that it is open)
-            if ($handle <> -1) {
-               fclose($handle);
-            }
-            # now, remove the file
-            shell_exec("rm $fname");
-            #print("rm $fname<br>");
-         }
-      }
-   }
-   
-   function getPropertySourceClass($propsource, $propclass) {
-      $returnprops = array();
-      switch ($propsource) {
-          case 'parent':
-          $returnprops = $this->getPropertyClass($propclass);
+  function varsToSetOnParent($format='vals') {
+    $vars = array();
+    foreach ($this->wvars as $thisvar) {
+       if ($this->debug) {
+          $this->logDebug("This var will create $this->name" . "_" . "$thisvar on parent.<br>\n");
+       }
+       switch ($format) {
+          case 'vals':
+          // return the values only
+          $vars[] = $this->getParentVarName($thisvar);
+          break;
+          
+          case 'map':
+          // return local names and parent names
+          $vars[$thisvar] = $this->getParentVarName($thisvar);
           break;
           
           default:
-          if (isset($this->processors[$propsource])) {
-             $this->processors[$propsource]->getPropertyClass($propclass);
-          }
+          // return the values only
+          $vars[] = $this->getParentVarName($thisvar);
           break;
        }
-      return $returnprops;
-   }
-
-   function getPropertyClass($propclass) {
-      # $propclass - array containing any of the following:
-      #              'publicprops', 'publicprocs', 'publicinputs', 'publicomps',
-      #              'privateprops', 'privateprocs', 'privateinputs', 'privatecomps'
-      # Sub-classing this function can add additional property classes to retrieve
-      # See example in HSPFContainer for plotgen, and wdm properties
-      $returnprops = array();
-      foreach ($propclass as $thisclass) {
-
-         switch ($thisclass) {
-
-            case 'publicprops':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPublicProps()));
-            break;
-
-            case 'publicprocs':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPublicProcs()));
-            break;
-
-            case 'publicinputs':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPublicInputs()));
-            break;
-
-            case 'publiccomps':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPublicComps()));
-            break;
-
-            case 'publicvars':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPublicVars()));
-            break;
-
-            case 'privatevars':
-            $returnprops = array_unique(array_merge($returnprops, $this->getPrivateProps()));
-            break;
-
-            case 'datasources':
-            $returnprops = array_unique(array_merge($returnprops, $this->getDataSources()));
-            break;
-
-         }
-      }
-      return $returnprops;
-   }
-   
-
-   function getPublicVars() {
-      # gets all viewable variables
-      $publix = array_unique(array_merge(array_keys($this->state), $this->setvarnames, $this->getPublicProps(), $this->getPublicProcs(), $this->getPublicInputs()));
-
-      return $publix;
-   }
-
-   function getLocalVars() {
-      # gets all viewable variables
-      $publix = array_unique(array_merge(array_keys($this->state), $this->getPublicProps(), $this->getPublicProcs(), $this->getPublicInputs()));
-
-      return $publix;
-   }
-
-   function getPublicProps() {
-      # gets only properties that are visible (must be manually defined for now, could allow this to be set later)
-      //$publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode');
-      $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
-
-      return $publix;
-   }
-
-   function getDataSources() {
-
-      return $this->datasources;
-   }
-
-   function getPublicProcs() {
-      # gets all viewable processors
-      $retarr = array();
-      if (is_array($this->procnames)) {
-         #$this->logDebug("Procs for $this->name: " . print_r($this->procnames,1));
-         //error_log("Procs for $this->name: " . print_r($this->procnames,1));
-         foreach ($this->procnames as $pn) {
-            $retarr[] = $pn;
-            // check for vars on proc, if set add names to the array to return
-            if (isset($this->processors[$pn])) {
-               if (is_object($this->processors[$pn])) {
-                  if (isset($this->processors[$pn]->vars)) {
-                     if (is_array($this->processors[$pn]->vars)) {
-                        foreach ($this->processors[$pn]->vars as $procvar) {
-                           if (!in_array($procvar, $retarr)) {
-                              $retarr[] = $procvar;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-      
-      return $retarr;
-   }
-
-   function getPublicInputs() {
-      # gets all viewable variables
-      if (is_array($this->inputnames)) {
-         return $this->inputnames;
-      } else {
-         return array();
-      }
-   }
-
-   function getPublicComponents() {
-      # gets all viewable variables
-      if (is_array($this->compnames)) {
-         return $this->compnames;
-      } else {
-         return array();
-      }
-   }
-
-   function getPrivateProps() {
-      # gets all viewable variables in the local context only
-      $privitz = array();
-
-      return $privitz;
-   }
-   
-   function setStateTimerVars() {
-
-      if (is_object($this->timer)) {
-         $this->state['thisdate'] = $this->timer->thistime->format('Y-m-d');
-         $this->state['year'] = $this->timer->thistime->format('Y');
-         $this->state['month'] = $this->timer->thistime->format('n');
-         $this->state['day'] = $this->timer->thistime->format('j');
-         $this->state['weekday'] = $this->timer->thistime->format('N');
-         $this->state['week'] = $this->timer->thistime->format('W');
-         $this->state['hour'] = $this->timer->thistime->format('G');
-         $this->state['modays'] = $this->timer->thistime->format('t');
-      } else {
-         if ($this->debug) {
-            $this->logDebug("<b>Error: </b>$this->name timer is NOT an object <br>\n");
-         }
-         $this->logError("<b>Error: </b>$this->name timer is NOT an object <br>\n");
-      }
-      if ($this->debug) {
-         $this->logDebug("<b>$this->name setStateTimerVars() method called at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . " week " . $this->state['week'] . " month " . $this->state['month'] . ".</b><br>\n");
-      }
-      $this->timer->timeSplit();
-      $this->stepstart = $this->timer->timestart;
-   }
-   
-   function readParentBroadCasts() {
-      if ($this->debug) {
-         $this->logDebug("Checking for parent read broadCastObjects on $this->name<br>\n");
-      }
-      # iterate through each equation stored in this object
-      foreach (array_values($this->execlist) as $thisvar) {
-         if (is_object($this->processors[$thisvar])) {
-            if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
-               if ( ($this->processors[$thisvar]->broadcast_mode == 'read') 
-                  and ($this->processors[$thisvar]->broadcast_hub == 'parent')
-               ) {
-                  # set all required inputs for the equation
-                  $this->processors[$thisvar]->arData = $this->state;
-                  # calls processor step method
-                  if (method_exists($this->processors[$thisvar], 'step')) {
-                     $this->processors[$thisvar]->step();
-                  }
-                  if ($this->processors[$thisvar]->debug) {
-                     $this->logDebug("Subcomp $thisvar debug output: <br>" . $this->processors[$thisvar]->debugstring);
-                     # reset debugging string for processor, since it is appended here
-                     $this->processors[$thisvar]->debugstring = '';
-                  }
-                  # evaluate the equation
-                  if ($this->debug) {
-                     $this->logDebug("Finished Evaluating $thisvar, parent read<br>\n");
-                  }
-               } // end is parent read
-            } // end get_class == broadCastObject
-            
-         } // end is_object()
-      }
-   }
-   
-   function sendParentBroadCasts() {
-      if ($this->debug) {
-         $this->logDebug("Checking for parent send broadCastObjects on $this->name<br>\n");
-      }
-      # iterate through each equation stored in this object
-      foreach (array_values($this->execlist) as $thisvar) {
-         if (is_object($this->processors[$thisvar])) {
-            if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
-               if ( ($this->processors[$thisvar]->broadcast_mode == 'cast') 
-                  and ($this->processors[$thisvar]->broadcast_hub == 'parent')
-               ) {
-                  # set all required inputs for the equation
-                  $this->processors[$thisvar]->arData = $this->state;
-                  # calls processor step method
-                  if (method_exists($this->processors[$thisvar], 'step')) {
-                     $this->processors[$thisvar]->step();
-                  }
-                  # evaluate the equation
-                  if ($this->debug) {
-                     $this->logDebug("Finished Evaluating $thisvar, parent send<br>\n");
-                  }
-               } // end is parent read
-            } // end get_class == broadCastObject
-            
-         } // end is_object()
-      }
-   }
-   
-   function readChildBroadCasts() {
-      if ($this->debug) {
-         $this->logDebug("Checking for child read broadCastObjects on $this->name<br>\n");
-      }
-      # iterate through each equation stored in this object
-      foreach (array_values($this->execlist) as $thisvar) {
-         if (is_object($this->processors[$thisvar])) {
-            if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
-               if ( ($this->processors[$thisvar]->broadcast_mode == 'read') 
-                  and ($this->processors[$thisvar]->broadcast_hub == 'child')
-               ) {
-                  # set all required inputs for the equation
-                  $this->processors[$thisvar]->arData = $this->state;
-                  # calls processor step method
-                  if (method_exists($this->processors[$thisvar], 'step')) {
-                     $this->processors[$thisvar]->step();
-                  }
-                  if ($this->processors[$thisvar]->debug) {
-                     $this->logDebug($this->processors[$thisvar]->debugstring);
-                     $this->logDebug("<br>\n");
-                     # reset debugging string for processor, since it is appended here
-                     $this->processors[$thisvar]->debugstring = '';
-                  }
-                  # evaluate the equation
-                  if ($this->debug) {
-                     $this->logDebug("Finished Evaluating $thisvar, child read<br>\n");
-                  }
-               } // end is parent read
-            } // end get_class == broadCastObject
-            
-         } // end is_object()
-      }
-   }
-   
-   function sendChildBroadCasts() {
-      # iterate through each equation stored in this object
-      if ($this->debug) {
-         $this->logDebug("Checking for child send broadCastObjects on $this->name<br>\n");
-      }
-      foreach (array_values($this->execlist) as $thisvar) {
-         if (is_object($this->processors[$thisvar])) {
-            if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
-               if ($this->debug) {
-                  $this->logDebug("Broadcast object $thisvar is mode= " . $this->processors[$thisvar]->broadcast_mode . " and hub= " . $this->processors[$thisvar]->broadcast_hub . "<br>\n");
-               }
-               if ( ($this->processors[$thisvar]->broadcast_mode == 'cast') 
-                  and ($this->processors[$thisvar]->broadcast_hub == 'child')
-               ) {
-                  # set all required inputs for the equation
-                  $this->processors[$thisvar]->arData = $this->state;
-                  # calls processor step method
-                  if (method_exists($this->processors[$thisvar], 'step')) {
-                     $this->processors[$thisvar]->step();
-                  }
-                  # evaluate the equation
-                  if ($this->debug) {
-                     $this->logDebug("Finished Evaluating $thisvar, child send<br>\n");
-                  }
-               } // end is parent read
-            } // end get_class == broadCastObject
-            
-         } // end is_object()
-      }
-   }
-   
-   function preStep() {
-      $this->setStateTimerVars();
-      # data aquisition first
-      $this->readParentBroadCasts();
-      // hard wired inputs override broadcasts
-      $this->getInputs();
-      $this->sendChildBroadCasts();
-   }
-   
-   function postStep() {
-      $this->writeToParent();
-      $this->sendParentBroadCasts();
-      $this->logstate();
-      $this->timer->timeSplit();
-      $this->exectime += ($this->timer->timeend - $this->stepstart);
-   }
-
-   function step() {
-      // many object classes will subclass this method.  
-      // all step methods MUST call preStep(),execProcessors(), postStep()
-      $this->preStep();
-      if ($this->debug) {
-         $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
-      }
-      // execute sub-components
-      $this->execProcessors();
-      if (method_exists($this, 'evaluate')) {
-         //error_log("Calling evaluate() method on $this->name");
-         $this->evaluate();
-      }
-      
-      // log the results
-      if ($this->debug) {
-         $this->logDebug("$this->name Calling Logstate() thisdate = ");
-      }
-      
-      $this->postStep();
-   }
-
-   function getCurrentValue($thisvar) {
-      # returns the current value of any state variable
-      return $this->state[$thisvar];
-   }
-
-   function getValue($thistime, $thisvar) {
-      # currrently, does nothing with the time, assumes that the input time is
-      # equal to the current modeled time and returns the current value
-      if ($this->debug) {
-         $sv = $this->state;
-         if (isset($sv['the_geom'])) {
-            $sv['the_geom'] = 'HIDDEN';
-         }
-         $this->logDebug("Variable $thisvar requested from $this->name, returning " . $sv[$thisvar] . " from " . print_r($sv,1) );
-      }
-     #error_log("Variable $thisvar requested from $this->name, returning " . $this->state[$thisvar] . " from " . print_r($this->state,1) );
-      if (in_array($thisvar, array_keys($this->state))) {
-         return $this->state[$thisvar];
-      } else {
-         return NULL;
-      }
-   }
-   
-   function setLogFileName() {
-      if (strlen($this->logfile) == 0) {
-         $this->logfile = 'objectlog.' . $this->sessionid . '.' . $this->componentid . '.log';
-         $log_headers_sent = false; // log headers can not have been sent if we don't have a file name yet
-      }
-   }
-
-   function log2file() {
-      # output the log to a text file
-      if (strlen($this->logfile) == 0) {
-         $this->setLogFileName();
-      }
-      //error_log("log2File() called on $this->name");
-      //error_log("Serial Log File set to: $this->logfile");
-      # get log from postgres if connection is set
-      if (is_object($this->listobject) and ($this->log2db == 1)) {
-         if ($this->listobject->tableExists($this->dbtblname)) {
-            $this->listobject->querystring = " select * from $this->dbtblname order by thisdate";
-            if ($this->debug) {
-               $this->logDebug("Retrieving log from db: " . $this->listobject->querystring . " <br>");
-            }
-            $this->listobject->performQuery();
-            $this->logtable = $this->listobject->queryrecords;
-            if ($this->debug) {
-               $this->logDebug("Retrieved " . count($this->logtable) . " records from run log table. <br>");
-               $this->logDebug("Sample, last log entry: " . print_r($this->logtable[count($this->logtable) - 1],1) . " records from run log table. <br>");
-            }
-
-            # create a serial file
-            $serialfile = $this->outdir . '/' . $this->logfile . ".serial";
-            $open = fopen($serialfile, 'w');
-            fwrite($open, serialize($this->logtable));
-            fclose($open);
-         }
-      }
-      
-      // now, send the logtable to a file
-      $filename = $this->flushMemoryLog2file();
-      // create a second copy of the file as most recent run for this object
-      $lastlog = $this->outdir . '/' . 'lastlog' . $this->componentid . '.log';
-      // if we give the copy2tempfile routine a file name, it will NOT put the name in the list of files to be cleaned up later
-      $this->copy2tempFile($filename, $lastlog, $this->platform, 1);
-      $this->logfile = $lastlog;
-      //error_log("Final Log File set to: $this->logfile");
-   }
-
-   function flushMemoryLog2file() {
-      # output the log to a text file -- appending to the file, and emptying the log array
-      if (strlen($this->logfile) == 0) {
-         $this->setLogFileName();
-      }
-      $filename = $this->outdir . '/' . $this->logfile;
-
-      # format for output
-      if ($this->debug) {
-         $this->logDebug("Flushing Log to File: $this->outdir / $this->logfile <br>");
-      }
-      //error_log("Flushing Log to File: $this->outdir / $this->logfile <br>");
-      
-      if (!$this->log_headers_sent) {
-         #$this->logDebug($outarr);
-         $colnames = array(array_keys($this->logtable[0]));
-         putDelimitedFile("$filename",$colnames,$this->translateDelim($this->delimiter),1,$this->fileformat);
-         $this->log_headers_sent = true;
-      }
-      
-      if (count($this->logtable) > 0) {
-         $outarr = $this->formatLogData();
-         // append the data to the file, then close the file
-         putArrayToFilePlatform("$filename", $outarr,0,$this->fileformat);
-         # clear log from memory 
-      }
-      $this->logtable = array();
-      $this->logRetrieved = 0;
-      return $filename;
-   }
-
-   function translateDelim($delimtext) {
-      switch ($delimtext) {
-         case 0:
-            $d = ',';
-         break;
-         case 1:
-            $d = "\t";
-         break;
-         
-         case 2:
-            $d = ' ';
-         break;
-         
-         case ',':
-            $d = ',';
-         break;
-         
-         case "\t":
-            $d = "\t";
-         break;
-         
-         case '|':
-            $d = '|';
-         break;
-         
-         default:
-         # by making the default a non-translation, we should preserve backward compatibility with the previous version
-            $d = $delimtext;
-         break;
-      }
-      
-      return $d;
-         
-   }
-   
-   function formatLogData() {
-      $fdel = '';
-      $outform = '';
-      foreach (array_keys($this->logtable[0]) as $thiskey) {
-         if (in_array($thiskey, array_keys($this->logformats))) {
-            # get the log file format from here, if it is set
-            if ($this->debug) {
-               $this->logDebug("Getting format for log table " . $thiskey . "\n");
-            }
-            $outform .= $fdel . $this->logformats[$thiskey];
-         } else {
-            if (is_numeric($this->logtable[0][$thiskey])) {
-               //$outform .= $fdel . $this->numform;
-               $outform .= $fdel . $this->strform;
-            } else {
-               $outform .= $fdel . $this->strform;
-            }
-         }
-         $fdel = ',';
-      }
-      $outarr = nestArraySprintf($outform, $this->logtable);
-      return $outarr;
-   }
-
-   function logFromFile() {
-      # check for a file, if set, use it to populate the log table
-      if ($this->debug) {
-         $this->logDebug("logFromFile method called on $this->name<br>");
-      }
-      //error_log("logFromFile method called on $this->name<br>");
-      if (strlen($this->logfile) == 0) {
-         $this->setLogFileName();
-      }
-      $filename = $this->outdir . '/' . $this->logfile;
-      if ($this->debug) {
-         $this->logDebug("Checking for $filename for object $this->name<br>");
-      }
-      if (file_exists($filename)) {
-         if ($this->debug) {
-            $this->logDebug("Loading data from $filename <br>");
-         }
-         # since this is from a log file that we generated, we can assume that it has the column headers
-         $tsvalues = readDelimitedFile($filename, $this->translateDelim($this->delimiter), 1);
-         $tcount = 0;
-         #$this->logDebug($tsvalues);
-         foreach ($tsvalues as $thisline) {
-            if (isset($thisline['thisdate'])) {
-               $this->logstate($thisline, 1);
-               #$this->logDebug("Adding Line");
-               #$this->logDebug($thisline);
-            } else {
-               if ($this->debug) {
-                  # only log this once
-                  if ($tcount == 0) {
-                     $this->logDebug("Date column not found in $this->logfile.<br>");
-                  }
-                  $tcount++;
-               }
-            }
-         }
-      } else {
-         if ($this->debug) {
-            $this->logDebug("Can not find log file $this->logfile <br>");
-         }
-      }
-      $this->logLoaded = 1;
-   }
-
-   function log2listobject($columns = array()) {
-      if ($this->listobject > 0) {
-         # format for output
-         if ($this->debug) {
-            $this->logDebug("Outputting Time Series to db: $tblname <br>");
-         }
-         $createsql = $this->listobject->array2tmpTable($this->logtable, $this->dbtblname, $columns, $this->dbcolumntypes, 1, $this->bufferlog);
-         if ( ($this->timer->steps <= 1) and $this->debug ) {
-            $this->logDebug("Table creatiopn SQL: " . $createsql . "<br>");
-         }
-      } else {
-         $this->logDebug("List object not set.<br>");
-      }
-   }
-
-   function list2file($listrecs, $filename='') {
-
-      if (strlen($filename) == 0) {
-         $filename = 'datafile.' . $this->componentid . '.csv';
-      }
-
-      $datafile = $this->outdir . '/' . $filename;
-      $colnames = array(array_keys($listrecs[0]));
-      putDelimitedFile($datafile,$colnames,$this->translateDelim($this->delimiter),1,'unix');
-
-      if (count($listrecs) > 0) {
-         if ($this->debug) {
-            $this->logDebug("Appending values to monthly $datafile<br>");
-         }
-         $fdel = '';
-         $outform = '';
-         foreach (array_keys($listrecs[0]) as $thiskey) {
-            if (in_array($thiskey, array_keys($this->logformats))) {
-               # get the log file format from here, if it is set
-               if ($this->debug) {
-                  $this->logDebug("Getting format for log table " . $thiskey . "\n");
-               }
-               $outform .= $fdel . $this->logformats[$thiskey];
-            } else {
-               if (is_numeric($listrecs[0][$thiskey])) {
-                  $outform .= $fdel . $this->numform;
-               } else {
-                  $outform .= $fdel . $this->strform;
-               }
-            }
-            $fdel = $this->translateDelim($this->delimiter);
-         }
-         # format for output if records exist for each year in the dataset
-         $outarr = nestArraySprintf($outform, $listrecs);
-         putArrayToFilePlatform("$datafile", $outarr,0,'unix');
-         #print_r($outarr);
-
-      }
-
-      return $filename;
-   }
-
-
-   //function logstate($logvalues = array(), $preserve_timestamp=0) {
-   function logstate($logvalues = array()) {
-
-      $thislog = array();
-
-      $logsrc = array();
-
-      # if an array of values is passed in, use these instead of our state array (used to pass child info upstream)
-      if (count($logvalues) > 0) {
-         $logsrc = $logvalues;
-      } else {
-         $logsrc = $this->state;
-      }
-
-      if (!isset($logsrc['thisdate'])) {
-         $logsrc['thisdate'] = $this->timer->thistime->format('Y-m-d');
-      }
-      if ($this->debug) {
-         $this->logDebug("Logging called - using thisdate = " . $logsrc['thisdate'] . "<br>");
-      }
-      if (!isset($logsrc['time'])) {
-         $logsrc['time'] = $this->timer->thistime->format('r');
-      }
-      if (!isset($logsrc['month'])) {
-         $logsrc['month'] = $this->timer->thistime->format('m');
-      }
-      if (!isset($logsrc['day'])) {
-         $logsrc['day'] = $this->timer->thistime->format('d');
-      }
-      if (!isset($logsrc['year'])) {
-         $logsrc['year'] = $this->timer->thistime->format('Y');
-      }
-      if (!isset($logsrc['week'])) {
-         $logsrc['week'] = $this->timer->thistime->format('W');
-      }
-      if (!(isset($logsrc['timestamp'])) or !$preserve_timestamp ) {
-         if (is_object($this->timer)) {
-            $logsrc['timestamp'] = $this->timer->thistime->format('U');
-         }
-      }
-      if ( ($logsrc['timestamp'] == '') or ($logsrc['timestamp'] === NULL)) {
-         $logsrc['timestamp'] = $this->timer->thistime->format('U');
-      }
-      /*
-      if (!isset($logsrc['timestamp'])) {
-         $logsrc['timestamp'] = $this->timer->thistime->format('U');
-      } else {
-         if ($logsrc['timestamp'] == '') {
-            $logsrc['timestamp'] = $this->timer->thistime->format('U');
-         }
-      }
-      */
-      // log the season
-      $seasons = array(1=>'winter',2=>'winter',3=>'winter',4=>'spring',5=>'spring',6=>'spring',7=>'summer',8=>'summer',9=>'summer',10=>'fall',11=>'fall',12=>'fall');
-      $logsrc['season'] = $seasons[$logsrc['month']];
-
-      if (count($this->loglist) > 0) {
-         $logvars = $this->loglist;
-      } else {
-         $logvars = array_keys($logsrc);
-      }
-      // must intersect logsrc and logvars to avoid tons of warnings
-      // and let the user know they requested logging that cannot be logged
-      $logmissing = array_diff($logsrc, $logvars);
-      if (count($logmissing) > 0) {
-        if ($this->timer->steps <= 2) {
-           $this->logDebug("Unable to find requested logvariables: " . print_r($logmissing,1));
-           //error_log("Unable to find requested logvariables: " . print_r($logmissing,1));
-        }
-        $logvars = $logsrc;
-      }
-      
-      if ($this->timer->steps <= 2) {
-        //error_log("Checking for strict_log setting (this->strict_log = $this->strict_log). ");
-      }
-      if ($this->strict_log and (count($this->data_cols) > 0)) {
-         $logvars = array_unique($this->data_cols);
-         if ($this->debug) {
-            if ($this->timer->steps <= 2) {
-               $this->logDebug("Using data_cols to restrict log variables. ");
-               error_log("$this->name Using data_cols to restrict log variables: " . print_r($logvars,1));
-            }
-         }
-      }
-//error_log(print_r($logvars, 1) );
-      foreach ($logvars as $thisvar) {
-         # eleminate the geometry column if log_geom is set to 0 (default)
-         if ( (strlen(trim($thisvar)) > 0) and ( ($this->log_geom == 1) or ($thisvar <> 'the_geom') ) ) {
-            $thislog[$thisvar] = $logsrc[$thisvar];
-         }
-      }
-
-      if ($this->debug) {
-         $this->logDebug("$this->name Logging Output at time-step " . $this->timer->steps . "<br>");
-         if ($this->timer->steps <= 2) {
-            $this->logDebug("DB Column formats: " . print_r($this->dbcolumntypes,1) . "<br>");
-            $this->logDebug("Logged Columns and Values: " . print_r($thislog,1) . "<br>");
-         }
-      }
-      
-      switch ($this->log2db) {
-
-         
-         case 0:
-         array_push($this->logtable, $thislog);
-         break;
-         
-         case 1:
-         # log to db object if connection is set
-         if (is_object($this->listobject)) {
-            if ($this->debug) {
-               $this->logDebug("$this->name Logging Output at time-step " . $this->timer->steps . "<br>");
-               if ($this->timer->steps <= 2) {
-                  $olddebug = $this->listobject->debug;
-                  // un-comment this to turn on debugging in listobject temporarily
-                  //$this->listobject->debug = 1;
-                  $this->logDebug("DB Column formats: " . print_r($this->dbcolumntypes,1));
-                  $this->logDebug("Logged Columns and Values: " . print_r($thislog,1));
-               }
-            }
-
-            $createsql = $this->listobject->array2tmpTable(array($thislog), $this->dbtblname, array_keys($thislog), $this->dbcolumntypes, 1, $this->bufferlog);
-
-            if ($this->debug) {
-               if ($this->timer->steps <= 1) {
-                  $lkl = 1;
-                  foreach (str_split($createsql, 128) as $csql) {
-                    $this->logDebug("Table creation SQL ($lkl): " . $csql . "<br>");                  
-                    $lkl++;
-                  }
-                  $this->listobject->debug = $olddebug;
-               }
-            }
-         } else {
-            // log to db requested, but no valid db object is set
-            if ($this->timer->steps <= 1) {
-               $this->logError("<b>Error: </b> Object $this->name log to db requested, but no valid db object is set.<br>\n");
-            }
-         }
-         break;
-
-         case 2:
-         // log to file
-         // if memory is at 85% of limit flush the log to the log file
-         // use the timer object to store the maximum memory value since all objects share access to the timer
-         array_push($this->logtable, $thislog);
-         if ($this->debug) {
-            $this->logDebug("Log Flush Requested <br>");
-            $this->logDebug("Log Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . " <br>");
-         }
-         $mem_use = (memory_get_usage(true) / (1024.0 * 1024.0));
-         $mem_use_malloc = (memory_get_usage(false) / (1024.0 * 1024.0));
-         $tstep = $this->timer->steps;
-         if ( ($this->timer->max_memory_mb * $this->timer->max_memory_pct) <= $mem_use ) {
-            if ($this->debug) {
-               $this->logDebug("Flush requested at $tstep on $this->name because memory usage is $mem_use ($mem_use_malloc)<br>\n");
-            }
-            //error_log("Flush requested at $tstep on $this->name because memory usage is $mem_use ($mem_use_malloc)<br>\n");
-            $this->flushMemoryLog2file();
-         }
-         
-         break;
-
-         default:
-         array_push($this->logtable, $thislog);
-         break;
-      }
- 
-      $this->logLoaded = 1;
-   }
-
-   function logDebug($debuginfo) {
-      if (is_array($debuginfo)) {
-         $debuginfo = print_r($debuginfo,1);
-      }
-
-      switch ($this->debugmode) {
-         case -1:
-            // ignore all calls to log errors
-         break;
-         
-         case 0:
-         # store in a string unless the log is too big, then put it in a file
-         $this->debugstring .= $debuginfo;
-         if (strlen($this->debugstring) > (1024 * 1024 * 5))  {
-            $this->flushDebugToFile();
-            $this->debugmode = 3;
-         }
-         break;
-
-         case 1:
-         # print to stderr - apache error log bites it if we give it too much data, so we truncate this if debug model is 1
-         if (strlen($debuginfo) > 512) {
-            $debuginfo = substr($debuginfo, 0, 511);
-         }
-         error_log($debuginfo);
-         break;
-
-         case 2:
-         # print to stdout
-         print($debuginfo);
-         break;
-
-         case 3:
-         # spool to a file
-         $this->debugstring .= $debuginfo;
-         // spool to file in 5Mb increments to keep write frequency low
-         if (strlen($this->debugstring) > (1024 * 1024 * 5))  {
-            $this->flushDebugToFile();
-         }
-         break;
-      }
-   }
-   
-   function flushDebugToFile() {
-      if ($this->debugfile == '') {
-         $this->setDebugFile();
-      }
-      if (filesize($this->outdir . "/" . $this->debugfile) >= $this->maxdebugfile) {
-         $this->debugstring .= "<br>Max debug file size of $this->maxdebugfile exceeded.  Debugging suspended.<br>";
-         $this->debug = 0;
-      }
-      $dfp = fopen($this->outdir . "/" . $this->debugfile,'a');
-      fwrite($dfp, $this->debugstring);
-      $this->debugstring = '';
-      fclose($dfp);
-   }
-   
-   function setDebugFile() {
-      $this->debugfile = 'debuglog.' . $this->sessionid . '.' . $this->componentid . '.log';
-      $dfp = fopen($this->outdir . "/" . $this->debugfile,'w');
-      if ($dfp) {
-         fwrite($dfp,"<html><body>");
-         fclose($dfp);
-      }
-   }
-
-   function logSysTemp($errorstring) {
-      if (isset($this->parentobject)) {
-         $this->parentobject->logSysTemp($errorstring);
-      } else {
-         if (is_array($errorstring)) {
-            $errorstring = print_r($errorstring,1);
-         }
-         $this->errorstring .= $errorstring;
-         // spool to file in 5Mb increments to keep write frequency low
-         if (strlen($this->errorstring) > (1024 * 1024 * 5))  {
-            $this->flushErrorToFile();
-         }
-      }
-   }
-
-   function logError($errorstring) {
-      if ($this->logerrors) {
-         if (is_array($errorstring)) {
-            $errorstring = print_r($errorstring,1);
-         }
-         $this->errorstring .= $errorstring;
-         // spool to file in 5Mb increments to keep write frequency low
-         if (strlen($this->errorstring) > (1024 * 1024 * 5))  {
-            $this->flushErrorToFile();
-         }
-      }
-   }
-
-   function flushErrorToFile() {
-      if ($this->errorfile == '') {
-         $this->setErrorFile();
-      }
-      if (filesize($this->outdir . "/" . $this->errorfile) >= $this->maxdebugfile) {
-         $this->errorstring .= "<br>Max error file size of $this->maxdebugfile exceeded.  Error logging suspended.<br>";
-         $this->logerrors = 0;
-      }
-      $dfp = fopen($this->outdir . "/" . $this->errorfile,'a');
-      fwrite($dfp, $this->errorstring);
-      $this->errorstring = '';
-      fclose($dfp);
-   }
-   
-   function setErrorFile() {
-      $this->errorfile = 'errorlog.' . $this->sessionid . '.' . $this->componentid . '.log';
-      $dfp = fopen($this->outdir . "/" . $this->debugfile,'w');
-      if ($dfp) { 
-        fwrite($dfp,"<html><body>");
-        fclose($dfp);
-      }
-   }
-
-   function execProcessors() {
-
-      if ($this->debug) {
-         $this->logDebug("Going through processors for $this->name.<br>\n");
-      }
-      # iterate through each equation stored in this object
-      foreach (array_values($this->execlist) as $thisvar) {
-         # evaluate the equation
-         if ($this->debug) {
-            $this->logDebug("Next subcomp: $thisvar<br>\n");
-         }
-         if (is_object($this->processors[$thisvar])) {
-            // broadcast components get executed in the preStep() and postStep() methods
-            if ( !(get_class($this->processors[$thisvar]) == 'broadCastObject') ) {
-               # set all required inputs for the equation
-               // if this is a sub-comp on a sub-comp, we need to merge arData arrays
-               if (is_array($this->arData)) {
-                  if ($this->processors[$thisvar]->debug) {
-                     $this->logDebug("Merging array this -> arData with internal state array <br>\n");
-                  }
-                  $statearr = array_merge($this->state,$this->arData);
-               } else {
-                  if ($this->processors[$thisvar]->debug) {
-                     $this->logDebug("this -> arData not an array - using internal state array only <br>\n");
-                  }
-                  $statearr = $this->state;
-               }
-               if ($this->processors[$thisvar]->debug) {
-                  if (isset($statearr['the_geom'])) {
-                     $statearr['the_geom'] = 'Truncated for debugging purposes';
-                  }
-                  $this->logDebug("Setting child $thisvar arData to: " . print_r($statearr,1) . " <br>\n");
-               }
-               $this->processors[$thisvar]->arData = $statearr;
-               if ($this->debug or $this->processors[$thisvar]->debug) {
-                  $this->logDebug("Checking Processor step() method on $thisvar<br>\n");
-               }
-               # calls processor step method
-               if (method_exists($this->processors[$thisvar], 'step')) {
-                  $this->processors[$thisvar]->step();
-                  //error_log("step() method called on $this->name -> $thisvar<br>\n");
-               }
-               # evaluate the equation
-               if ($this->debug or $this->processors[$thisvar]->debug) {
-                  $this->logDebug("Evaluating $thisvar<br>\n");
-               }
-               # if this processor is not transparent, it will evaluate and return a value, otherwise,
-               # we assume that it does not set a value
-               //error_log("Evaluating $this->name -> $thisvar<br>\n");
-               if (method_exists($this->processors[$thisvar], 'evaluate')) {
-                  //error_log("evaluate() method exists <br>\n");
-                  //$this->processors[$thisvar]->evaluate(); // this is now doen in the step() function
-                  if ($this->processors[$thisvar]->debug) {
-                     //error_log("Appending Subcomp $thisvar debug output: <br>" . $this->processors[$thisvar]->debugstring);
-                     $this->logDebug($this->processors[$thisvar]->debugstring);
-                     $this->logDebug("<br>\n");
-                     # reset debugging string for processor, since it is appended here
-                     $this->processors[$thisvar]->debugstring = '';
-                  }
-                  if ($this->debug) {
-                     $sv = $this->state;
-                     if (isset($sv['the_geom'])) {
-                        $sv['the_geom'] = 'HIDDEN';
-                     }
-                     $this->logDebug($sv);
-                     $this->logDebug("<br>\n");
-                  }
-                  //error_log("checking if this is multivar <br>\n");
-                  # set the state variable with the equation result
-                  switch ($this->processors[$thisvar]->multivar) {
-                     case 0:
-                        $this->state[$thisvar] = $this->processors[$thisvar]->result;
-                     break;
-
-                     case 1:
-                        foreach ($this->processors[$thisvar]->multivarnames as $mvname) {
-                           $this->state[$mvname] = $this->processors[$thisvar]->state[$mvname];
-                        }
-                     break;
-
-                     default:
-                        $this->state[$thisvar] = $this->processors[$thisvar]->result;
-                     break;
-                  }
-                  //error_log("Done. <br>\n");
-               }
-               # evaluate the equation
-               if ($this->debug) {
-                  $this->logDebug("Finished Evaluating $thisvar, Result = " . $this->state[$thisvar] . "<br>\n");
-               }
-            }
-         } else {
-            if ($this->debug) {
-               $this->logDebug("Error: Sub-component not set $thisvar<br>\n");
-            }
-         }
-      }
-      //error_log("Finished with processors on $this->name . <br>\n");
-   }
-
-   function orderOperations() {
-
-      $dependents = array();
-      $independents = array();
-      $sub_queue = array();
-      $execlist = array();
-      # compile a list of independent and dependent variables
-      // @todo: rvars on subcomps are explicit independent inputs to subcomps that are not yet handled
-      //        wvars are explicit outputs from subcomps that are often used by other comps
-      //        We also need to check to see if we are putting things in vars that should not be?
-      //        vars is a catchall used by equations which is equivalent to rvars but I *think*
-      //        vars has become a place for both rvars and wvars which might lead to unpredictable behavior
-      foreach (array_keys($this->processors) as $thisinput) {
-        foreach ($this->processors[$thisinput]->wvars as $wv) {
-          $independents[$this->processors[$thisinput]->getParentVarName($wv)] = $thisinput;
-        }
-        array_push($dependents, $thisinput);
-      }
-      if ($this->debug) {
-         $this->logDebug("<b>Ordering Operations for $this->name</b><br> ");
-      }
-      $this->outstring .= "Ordering Operations for $this->name\n";
-      # now check the list of independent variables for each processor,
-      # if none of the variables are in the current list of dependent variables
-      # put it into the execution stack, remove from queue
-      $queue = $dependents;
-      // sort those with non-zero hierarchy settings, placing all <0 hierarchy in order on the bottom of the queue (early)
-      // then place all of those later
-      $preexec = array();
-      $postexec = array();
-      $nonhier = array();
-      $hiersort = array();
-      foreach ($queue as $thisel) {
-         array_push($hiersort, $thisel);
-      }
-      sort($hiersort);
-      foreach ($hiersort as $thisel) {
-         $hier = $this->processors[$thisel]->exec_hierarch;
-         if ($hier < 0) {
-            $preexec[$thisel] = $hier;
-         } else {
-            if ($this->processors[$thisel]->exec_hierarch > 0) {
-               $postexec[$thisel] = $hier;
-            } else {
-               array_push($nonhier, $thisel);
-            }
-         }
-      }
-      asort($preexec);
-      $preexec = array_keys($preexec);
-      asort($postexec);
-      $postexec = array_keys($postexec);
-      $queue = $nonhier;
-      $this->logDebug("Beginning Queue \n");
-      $this->logDebug($queue);
-      $this->logDebug("Beginning independents \n");
-      $this->logDebug($independents);
-      $i = 0;
-      $this->debug = 1;
-      while (count($queue) > 0) {
-         $thisdepend = array_shift($queue);
-         $pvars = $this->processors[$thisdepend]->vars;
-         //$watchlist = array('impoundment', 'local_channel');
-         //$this->debug = in_array( $this->processors[$depend]->name, $watchlist) ? 1 : 0;
-         if ($this->debug) {
-            $this->logDebug("Checking $thisdepend variables \n");
-            $this->logDebug($pvars);
-            $this->logDebug(" <br>\n in ");
-            $this->logDebug($queue);
-            $this->logDebug("<br>\n");
-         }
-         $numdepend = $this->array_in_array($pvars, $queue);
-         if (!$numdepend) {
-            array_push($execlist, $thisdepend);
-            $i = 0;
-            if ($this->debug) {
-               $this->logDebug("Not found, adding $thisdepend to execlist.<br>\n");
-            }
-            // remove it from the derived var list if it exists there 
-            while ($dkey = array_search($thisdepend, $independents)) {
-              unset($independents[$dkey]);
-            }
-         } else {
-            # put it back on the end of the stack
-            if ($this->debug) {
-               $this->logDebug("Found.<br>\n");
-            }
-            array_push($queue, $thisdepend);
-         }
-         $i++;
-         # should try to sort them out by the number of unsatisfied dependencies,
-         # adding those with 1 dependency first
-         if ( ($i > count($queue)) and (count($queue) > 0)) {
-            # we have reached an impasse, since we cannot currently
-            # solve simultaneous variables, we just put all remaining on the
-            # execlist and hope for the best
-            # a more robust approach would be to determine which elements are in a circle,
-            # and therefore producing a bottleneck, as other variables may not be in a circle
-            # themselves, but may depend on the output of objects that are in a circle
-            # then, if we add the circular variables to the queue, we may be able to continue
-            # trying to order the remaining variables
-
-            # first, create a list of execution hierarchies and compids
-            $hierarchy = array();
-            foreach ($queue as $thisel) {
-               $hierarchy[$thisel] = $this->processors[$thisel]->exec_hierarch;
-            }
-            # sort in reverse order of hierarchy
-            # then, look at exec_hierarch property, if the first element is higher priority than the lowest in the stack
-            # pop it off the list, and add it to the queue
-            # then, after doing that, we can go back, set $i = 0, and try to loop through again,
-            arsort($hierarchy);
-            $keyar = array_keys($hierarchy);
-            if ($this->debug) {
-               $this->logDebug("Cannot determine sequence of remaining variables, searching manual execution hierarchy setting.<br>\n");
-            }
-            $firstid = $keyar[0];
-            $fh = $hierarchy[$firstid];
-            $mh = min(array_values($hierarchy));
-            if ($this->debug) {
-               $this->logDebug("Highest hierarchy value = $fh, Lowest = $mh.<br>\n");
-            }
-            if ($fh > $mh) {
-               # pop off and resume trying to sort them out
-               $newqueue = array_diff($queue, array($firstid) );
-               array_push($execlist, $firstid);
-               $i = 0;
-               if ($this->debug) {
-                  $this->logDebug("Elelemt " . $firstid . ", with hierarchy " . $hierarchy[$firstid] . " added to execlist.<br>\n");
-               }
-               $queue = $newqueue;
-            } else {
-
-               if ($this->debug) {
-                  $this->logDebug("Can not determine linear sequence for the remaining variables. <br>\n");
-                  $this->logDebug($queue);
-                  $this->logDebug("<br>\nDefaulting to order by number of unsatisfied dependencies.<br>\n");
-                  $this->logDebug("<br>\nHoping their execution order does not matter!.<br>\n");
-               }
-               foreach ($queue as $lastcheck) {
-                  $pvars = $this->processors[$lastcheck]->vars;
-                  $numdepend = $this->array_in_array($pvars, $queue);
-                  $dependsort[$lastcheck] = $numdepend;
-               }
-               asort($dependsort);
-               if ($this->debug) {
-                  $this->logDebug("Remaining variable sort order: \n");
-                  $this->logDebug($dependsort);
-               }
-               $numdepend = $this->array_in_array($pvars, array_keys($dependsort));
-               $newexeclist = array_merge($execlist, $queue);
-               $execlist = $newexeclist;
-               break;
-            }
-         }
-      }
-      $this->debug = 0;
-      $hiersort = array_merge($preexec, $execlist, $postexec);
-      
-      
-      $this->logDebug("Final Queue \n");
-      $this->logDebug($queue);
-      $this->logDebug("Final independents \n");
-      $this->logDebug($independents);
-      $this->logDebug("Pre-exec list: \n");
-      $this->logDebug($preexec);
-      $this->logDebug("Dependency ordered: \n");
-      $this->logDebug($hiersort);
-      $this->logDebug("Post-exec list:  \n");
-      $this->logDebug($postexec);
-      
-      $this->outstring .= "Ordering Operations\n";
-      $this->outstring .= "Independents Remaining: " . print_r($independents,1) . "\n";
-      $this->outstring .= "Pre-exec list: " . print_r($preexec,1) . "\n";
-      $this->outstring .= "To Be ordered: " . print_r($nonhier,1) . "\n";
-      $this->outstring .= "Dependency ordered: " . print_r($execlist,1) . "\n";
-      $this->outstring .= "Post-exec list: " . print_r($postexec,1) . "\n";
-      $this->outstring .= "Sorted: " . print_r($hiersort,1) . "\n";
-      $this->execlist = $hiersort;
-   }
-
-   function array_in_array($needle, $haystack) {
-       //Make sure $needle is an array for foreach
-       if(!is_array($needle)) $needle = array($needle);
-       $count = 0;
-       //For each value in $needle, return TRUE if in $haystack
-       foreach($needle as $pin)
-           //if(in_array($pin, $haystack)) return TRUE;
-           if(in_array($pin, $haystack)) $count++;
-       //Return FALSE if none of the values from $needle are found in $haystack
-       //return FALSE;
-       return $count;
-   }
-
-   function interpValue($thiskey, $lowkey, $lowvalue, $highkey, $highvalue) {
-
-      switch ($this->intmethod) {
-         case 0:
-            $retval = $lowvalue + ($highvalue - $lowvalue) * ( ($thiskey - $lowkey) / ($highkey - $lowkey) );
-         break;
-
-         case 1:
-            $retval = $tv;
-         break;
-
-      }
-      return $retval;
-   }
-
-   function addLookup($thisinput, $srcparam, $lutype, $lookuptable, $defaultval) {
-      # stashes the lookup table
-      $this->lookups[$thisinput]['default'] = $defaultval;
-      $this->lookups[$thisinput]['table'] = $lookuptable;
-      $this->lookups[$thisinput]['lutype'] = $lutype;
-      $this->lookups[$thisinput]['srcparam'] = $srcparam;
-      $this->lookups[$thisinput]['debug'] = 0;
-   }
-
-   function addOperator($statevar, $operator, $initval) {
-      if (!in_array($statevar, array_keys($this->state))) {
-         if ($this->debug) {
-            $this->errorstring .= "Adding state variable $statevar <br>\n";
-         }
-         # need to add this named input
-         $this->state[$statevar] = $initval;
-      }
-      $operator->name = $statevar;
-      # set link to operators parent (i.e., this containing object)
-      $operator->parentobject = $this;
-      $this->processors[$statevar] = $operator;
-      if ($this->debug) {
-         $this->errorstring .= "Adding operator $statevar<br>\n";
-         $this->logDebug("Adding operator $statevar<br>\n");
-      }
-      # add to exec list in order of creation, may later order by precedence with the
-      # function orderOperations()
-      array_push($this->execlist, $statevar);
-      $this->procnames = array_keys($this->processors);
-   }
-
-   function addInput($thisinput, $inputparam, $input_obj, $input_type = 'float8') {
-      $inkeys = array();
-      if (is_array($this->inputs)) {
-         $inkeys = array_keys($this->inputs);
-      }
-      if (!in_array($thisinput, $inkeys)) {
-         if ($this->debug) {
-            $this->logDebug("New Input $thisinput added. ");
-            #$this->logDebug(array_keys($this->inputs));
-         }
-         # need to add this named input
-         $this->inputs[$thisinput] = array();
-         # add db column setup info
-         if (strlen($input_type) > 0) {
-            $this->dbcolumntypes[$thisinput] = $input_type;
-            #error_log(print_r($this->dbcolumntypes,1));
-         }
-      }
-      // get some details about this input for messages/debugging
-      $iname = $input_obj->name;
-      $myname = $this->name;
-      if ($this->debug) {
-         $this->logDebug("Adding $iname -> $inputparam to $myname as $thisinput <br>\n");
-      }
-      // *** CHECK FOR UPDATE *** 
-      // we want to check to see if this object->param link has alrady been set, if so we overwrite so
-      // as not to add redundant links
-      $insert = 1;
-      foreach ($this->inputs[$thisinput] as $thislink) {
-         // this code does not yet work
-         
-      }
-      // *** END - CHECK FOR UPDATE
-      if ($insert) {
-         // this is a new input, not an update to an existing one, so we add it
-         array_push($this->inputs[$thisinput], array('param'=>$inputparam, 'objectname'=>$input_obj->name, 'object'=>$input_obj, 'value'=>NULL));
-      }
-      
-      // set the parent state for this array if it is not yet set
-      if (!(isset($this->state[$thisinput]))) {
-         $this->state[$thisinput] = 0.0;
-      }
-      // update the inputnames array
-      $this->inputnames = array_keys($this->inputs);
-      // add this to the loggable columns data_cols if we use strict logging
-      if (!in_array( $thisinput, $this->data_cols)) {
-         if ($this->debug) {
-            $this->logDebug("Adding $thisinput to loggable variables $myname <br>\n");
-         }
-         $this->data_cols[] = $thisinput;
-      }
-   }
-   
-   function clearInputs($toclear = array()) {
-      if (!is_array($toclear)) {
-         $toclear = array($toclear);
-      }
-      if (count($toclear) == 0) {
-         $this->inputnames = array();
-         $this->inputs = array();
-      } else {
-         foreach ($toclear as $thisone) {
-            unset($this->inputs[$thisone]);
-            unset($this->inputnames[array_search($this->inputnames,$thisone)]);
-         }
-      }
-   }
-
-   function getInputs() {
-      if ($this->debug) {
-         $this->logDebug("Getting Inputs for $this->name <br>");
-         $sv = $this->state;
-         if (isset($sv['the_geom'])) {
-            $sv['the_geom'] = 'HIDDEN';
-         }
-         $this->logDebug("Inputs Beginning State array: " . print_r($sv,1) . "\n<br>");
-      }
-      
-      // *****************************
-      // BEGIN - get Hard Wired Inputs
-      // *****************************
-      foreach (array_keys($this->inputs) as $varname) {
-         if ($this->debug) {
-            $this->logDebug("Getting Input $varname for $this->name <br>");
-         }
-         # reset each input param to 0.0 for the beginning of the timestep
-         $this->state[$varname] = 0.0;
-
-         $k = 0;
-         foreach ($this->inputs[$varname] as $thisin) {
-            $outparam = $thisin['param'];
-            $inobject = $thisin['object'];
-            $lv = $thisin['value'];
-            if ($this->debug) {
-               $iname = $inobject->name;
-               if ($varname <> 'the_geom') {
-                  $this->logDebug("Searching $iname ($outparam) for $varname - last value = $lv... ");
-               }
-            }
-            # accumulate inputs if they are numeric,
-            # since we may input to the same input multiple sources
-            $inval = $inobject->getValue($this->timer->timeseconds, $outparam);
-            $this->inputs[$varname][$k]['value'] = $inval;
-            # if the child object returns NULL, we don't use it
-            if (!($inval === NULL)) {
-               if (is_numeric($inval)) {
-                  $this->state[$varname] += $inval;
-               } else {
-                  $this->state[$varname] = $inval;
-               }
-               if ($this->debug) {
-                  $iname = $inobject->name;
-                  if ($varname <> 'the_geom') {
-                     $this->logDebug("updated with $outparam = $inval from Input: $iname, input total = " . $this->state[$varname] . "<br>\n");
-                  }
-               }
-            }
-            $thisin['value'] = $inval;
-            $k++;
-         }
-      }
-      // *****************************
-      // END - get Hard Wired Inputs
-      // *****************************
-      
-      if ($this->debug) {
-         $sv = $this->state;
-         if (isset($sv['the_geom'])) {
-            $sv['the_geom'] = 'HIDDEN';
-         }
-         $this->logDebug("Inputs gathered. State array: " . print_r($sv,1) . "\n<br>");
-      }
-      # now, process lookups, replaces lookup key with value in state variable
-      $this->doLookups();
-      if ($this->debug) {
-         $this->logDebug("Lookups calculated. State array: " . print_r($sv,1) . "\n<br>");
-      }
-
-   }
-
-   function doLookups() {
-      foreach(array_keys($this->lookups) as $thisl) {
-         $thistab = $this->lookups[$thisl]['table'];
-         $defval = $this->lookups[$thisl]['default'];
-         $lutype = $this->lookups[$thisl]['lutype'];
-         $srcparam = $this->lookups[$thisl]['srcparam'];
-         $curval = $this->state[$srcparam];
-         $luval = '';
-         switch ($lutype) {
-            case 0:
-            # exact match lookup table
-            if (in_array($curval, array_keys($thistab))) {
-               $luval = $thistab[$curval];
-            } else {
-               $luval = $defval;
-            }
-            if ($thisl->debug) {
-               $this->logDebug("$thisl: $curval, def: $defval, lookup: $luval <br>\n");
-               $this->logDebug($thistab);
-               $this->logDebug("<br>\n");
-            }
-            break;
-
-            case 1:
-            # interpolated lookup table
-            $lukeys = array_keys($thistab);
-            $luval = $defval;
-            for ($i=0; $i < (count($lukeys) - 1); $i++) {
-               $lokey = $lukeys[$i];
-               $hikey = $lukeys[$i+1];
-               $loval = $thistab[$lokey];
-               $hival = $thistab[$hikey];
-               $minkey = min(array($lokey,$hikey));
-               $maxkey = max(array($lokey,$hikey));
-               if ( ($minkey <= $curval) and ($maxkey >= $curval) ) {
-                  $luval = $this->interpValue($curval, $lokey, $loval, $hikey, $hival);
-                  if ($this->lookups[$thisl]['debug']) {
-                     $sv = $this->state;
-                     if (isset($sv['the_geom'])) {
-                        $sv['the_geom'] = 'HIDDEN';
-                     }
-                     $this->logDebug($sv);
-                     $this->logDebug("<br>\nLow: $lokey, Value: $curval, Hi: $hikey = $luval <br>\n");
-                  }
-               }
-            }
-            break;
-
-         }
-         $this->state[$thisl] = $luval;
-      }
-   }
-   
-   function showElementInfo($propname = '', $view = 'info', $params = array()) {
-   
-      $view = strtolower($view);
-      $output = '';
-      //error_log("showElementInfo($propname, $view) called on $this->name ");
-      
-      if ($propname == '') {
-         switch ($view) {
-
-            case 'info':
-            $output .= $this->showHTMLInfo();
-            break;
-
-            case 'initval':
-            $output .= $this->showInitialValues();
-            break;
-
-            case 'finalvalue':
-            $output .= $this->showFinalValues();
-            break;
-
-            case 'editform':
-            if (method_exists($this, 'showEditForm')) {
-               // $params[0] = form name, $params[1] = disabled? (0/1)
-               $editforminfo = $this->showEditForm($params[0], $params[1]);
-               if (is_array($editforminfo)) {
-                  $output .= $editforminfo['innerHTML'];
-               } else {
-                  $output .= $editforminfo;
-               }
-            } else {
-               $output .= $this->showFormVars();
-            }
-            break;
-
-         }
-      } else {
-      
-         if (isset($this->processors[$propname])) {
-            $output .= $this->processors[$propname]->showElementInfo('', $view, $params);
-            //error_log("Calling showElementInfo('', $view) on Processor $propname ");
-         } else {
-            if ($view == 'editform') {
-               $output .= $this->showFormVars(array($propname));
-            }
-         }
-      }
-      
-      return $output;
-   }
-   
-   function initFormVars() {
-      if (!is_object($this->formvars)) {
-         if (is_object($this->listobject)) {
-            // check for form display methods
-            if (function_exists('showFormVars')) {
-               //$myvars = (array)$this;
-               $myvars = $this->state;
-               if ($this->debug) {
-                  $this->logDebug("Creating form fields for " . print_r($myvars,1) . "<br>");
-               }
-               if (isset($this->listobject->adminsetuparray[get_class($this)])) {
-                  $aset = $this->listobject->adminsetuparray[get_class($this)];
-               } else {
-                  $aset = array();
-                  foreach ($myvars as $thisvar) {
-                     $aset['column info'][$thisvar] = array('type'=>1,'hidden'=>0,'readonly'=>0);
-                  }
-               }
-               $showlabels = 1;
-               $showmissing = 0;
-               $multiform = 0;
-               $this->formvars = showFormVars($this->listobject,$myvars,$aset,$showlabels, $showmissing, $this->debug, $multiform, 1, 0, -1, NULL, 1);
-               if ($this->debug) {
-                  if (is_object($this->formvars)) {
-                     $this->logDebug("Form object successfully created for $this->name <br>");
-                  } else {
-                     $this->logDebug("Form object creation unsuccessful for $this->name <br>");
-                  }
-               }
-               // now, check to see if we are subclassing any of our vars to sub-components
-               foreach ($myvars as $thisvar) {
-                  if (isset($this->processors[$thisvar])) {
-                     if (method_exists($this->processors[$thisvar], 'showFormVars')) {
-                        $this->formvars->formpieces['fields'][$thisvar] = $this->processors[$thisvar]->showFormVars(array($thisvar));
-                     }
-                  }
-               }
-            } else {
-               $this->logError(" Function 'showFormVars' is not defined, module db_functions.php required for this function.<br>");
-            }
-         } else {
-            $this->logError(" listobject is not defined on this object.<br>");
-         }
-      } else {
-         if ($this->debug) {
-            $this->logDebug("Form variables already initialized<br>");
-         }
-      }
-   }
-   
-   function showFormVars($vars = array()) {
-      $this->initFormVars();
-      $output = '';
-      
-      if (is_object($this->formvars)) {
-         if (count($vars) == 0) {
-            $output .= $outobject->innerHTML;
-         } else {
-            $del = '';
-            foreach ($vars as $thisvar) {
-               if (isset($this->formvars->formpieces['fields'][$thisvar])) {
-                  $output .= $del . $this->formvars->formpieces['fields'][$thisvar];
-                  $del = '<br>';
-               }
-            }
-         }
-      }
-      return $output;
-   
-   }
-   
-   function showInitialValues() {
-   
-      return $this->defaultval;
-   
-   }
-   
-   function showFinalValues() {
-   
-      return $this->result;
-   
-   }
-
-   function showHTMLInfo() {
-      # prints out information about this object.  Should sub-class to get in depth report
-
-      $props = $this->getPublicVars();
-      $HTMLInfo = '';
-      
-      // do those in prop_desc first, then those that are sub-components (and hence have a desc)
-      // then finally, those that do not have a description
-      $subs = array_keys($this->processors);
-      sort($subs);
-      
-      $HTMLInfo .= "<h3>Internal Properties:</h3><br>";
-      foreach ($this->prop_desc as $varname => $desc) {
-         if (!in_array($varname, $subs)) {
-            // will assume that it has been sub-classed if it is set as a user-defined property
-            $HTMLInfo .= "<b>$varname</b> - $desc <br> ";
-         }
-      }
-      $HTMLInfo .= "Un-described: ";
-      foreach ($props as $thisprop) {
-         if ( (!(in_array($thisprop, array_keys($this->prop_desc)))) and (!(in_array($thisprop, $subs))) ) {
-            $HTMLInfo .= "$thisprop ";
-         }
-      }
-      $HTMLInfo .= "<hr>";
-      $HTMLInfo .= "<h3>User-defined Sub-components:</h3><br>";
-      $undesc = '';
-      foreach ($subs as $thisproc) {
-         if (property_exists($this->processors[$thisproc], 'description')) {
-            if (strlen(trim($this->processors[$thisproc]->description)) > 0) {
-               $HTMLInfo .= "<b>$thisproc</b> - " . $this->processors[$thisproc]->description . " <br> ";
-            } else {
-               $undesc .= "$thisproc ";
-            }
-         } else {
-            $undesc .= "$thisproc ";
-         }
-      }
-      $HTMLInfo .= "Un-described: $undesc";
-
-      return $HTMLInfo;
-
-   }
-
-}
-
-class modelSubObject extends modelObject {
-   var $wvars = 0;
-
-   function wake() {
-      parent::wake();
-   }
        
-   function sleep() {
-      $this->wvars = 0;
-      $this->rvars = 0;
-      parent::sleep();
-   }
-   
-   function logState() {
-   
-      // logging will be done by the parent, so no need to waste memory and time with this
-   
-   }
+    }
+    return $vars;
+  }
 
-   function subState() {
-      parent::subState();
-   }
+  function writeToParent($vars = array(), $verbose = 0) {
+    if (count($vars) == 0) {
+       $vars = is_array($this->wvars) ? $this->wvars : array();
+    }
+    if ($this->debug) {
+       $this->logDebug("writeToParent() called on $this->name ");
+       //error_log("writeToParent() called on $this->name ");
+    }
+    if (is_object($this->parentobject)) {
+       foreach ($vars as $thisvar) {
+          if ($this->debug) {
+             $this->logDebug("Writing $thisvar on parent as " . $this->getParentVarName($thisvar) . " = " .  $this->state[$thisvar] . "<br>\n");
+             error_log("Writing $thisvar on parent as " . $this->getParentVarName($thisvar) . " = " .  $this->state[$thisvar] . "<br>\n");
+             $tstate = $this->state;
+             $tstate['the_geom'] = 'geom huidden';
+             error_log("State variables = " .  print_r($tstate,1) . "\n");
+          }
+          $this->parentobject->setStateVar($this->getParentVarName($thisvar), $this->state[$thisvar]);
+          if ($this->debug and $verbose) {
+             $this->logDebug(" $thisvar = " . $this->state[$thisvar] . "<br>\n");
+          }
+       }
+    }
+  }
 
-   function setDataColumnTypes() {
-      parent::setDataColumnTypes();
-      foreach ($this->wvars as $thisvar) {
-         if ($this->debug) {
-            $this->logDebug("Setting $this->name" . "_" . "$thisvar to type float8 on parent.<br>\n");
-            error_log("Setting $this->name" . "_" . "$thisvar to type float8 on parent.<br>\n");
-         }
-         if (is_object($this->parentobject)) {
-            if (method_exists($this->parentobject, 'setSingleDataColumnType')) {
-               $dval = $this->getProp($thisvar);
-               if (isset($this->dbcolumntypes[$thisvar])) {
-                  $this->parentobject->setSingleDataColumnType($this->name . "_" . $thisvar, $this->dbcolumntypes[$thisvar], $dval);
-               } else {
-                  $this->parentobject->setSingleDataColumnType($this->name . "_" . $thisvar, 'float8', $dval);
-               }
-            }
-         }
-         $this->vars[] = $this->name . "_" . $thisvar;
+  function initOnParent() {
+  //error_log("$this->name calling initOnParent() ");
+    if (is_object($this->parentobject)) {
+       //error_log("$this->name - parent exists - checking for varsToSetOnParent() ");
+       foreach ($this->varsToSetOnParent('map') as $thisvar => $parentvar) {
+          if (isset($this->column_defs[$thisvar])) {
+             $thistype = $this->column_defs[$thisvar]['dbcolumntype'];
+             $log_format = $this->column_defs[$thisvar]['log_format'];
+             $loggable = $this->column_defs[$thisvar]['loggable'];
+          } else {
+             $thistype = 'float8';
+             $log_format = '%s';
+             $loggable = 1;
+          }
+          //$this->parentobject->setSingleDataColumnType($parentvar, $thistype, NULL, $loggable, 1, $log_format);
+          $this->parentobject->setSingleDataColumnType($parentvar, $thistype, $this->getProp($thisvar), $loggable, 1, $log_format);
+          if ($this->debug) {
+             $this->logDebug("$this->name calling on parent - > setSingleDataColumnType($parentvar, $thistype, getProp($thisvar), $loggable, 1, $log_format)");
+             $this->logDebug("$this->name Setting $parentvar on parent as " . $this->getProp($thisvar));
+          }
+       }
+    }
+  }
+
+  function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
+  if ($this->debug) {
+    $this->logDebug("called: setSingleDataColumnType( $thiscol, type = $thistype , defaval = $defval, loggable = $loggable , $overwrite , $logformat)");
+  }
+    if (strtolower($thistype) == 'guess') {
+       if (is_object($this->listobject)) {
+          if (method_exists($this->listobject, 'guessDataType')) {
+             $guess = $this->listobject->guessDataType($defval);
+             $thistype = $guess['vtype'];
+          }
+       }
+    }
+    if (trim($thiscol) == '') {
+       error_log("Blank column name submitted for $this->name setSingleDataColumnType(thiscol = $thiscol, thistype = $thistype, defval = $defval, loggable = $loggable , overwrite = $overwrite , $logformat='%s'");
+       return;
+    }
+    // set up structure for local column storage
+    // this should take the place of all of these in the future: logformats, datacols, dbcolumntypes
+    if ( (!isset($this->column_defs)) or (!is_array($this->column_defs)) ) {
+       $this->column_defs = array();
+    }
+    // set up column formats for appropriate outputs to database
+    if ( (!isset($this->dbcolumntypes)) or (!is_array($this->dbcolumntypes)) ) {
+       $this->dbcolumntypes = array();
+    }
+    if ( (!isset($this->logformats)) or (!is_array($this->logformats)) ) {
+       $this->logformats = array();
+    }
+    if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
+       $this->data_cols = array();
+    }
+    // added RWB 5/17/2015 - improve loading into session table by 
+    // setting the default
+    if (!isset($this->column_defs[$thiscol]) or $overwrite) {
+       $this->column_defs[$thiscol] = array(
+          'log_format'=>$logformat,
+          'loggable'=>$loggable,
+          'dbcolumntype'=>$thistype,
+          'default'=>$defval
+       );
+    }
+    if (!isset($this->state[$thiscol]) or $overwrite) {
+       $this->setStateVar($thiscol, $defval);
+    }
+    if (!isset($this->dbcolumntypes[$thiscol]) or $overwrite) {
+       if (trim($thiscol) <> "") {
+          $this->dbcolumntypes[$thiscol] = $thistype;
+          if ($loggable and (strlen($thistype) > 0) and (strtolower($thistype) <> 'null') ) {
+             $this->data_cols[] = $thiscol;
+             if ($this->debug) {
+                $this->logDebug("Adding $thiscol to loggable columns on $this->name with type $thistype and default value $defval");
+             }
+          }
+          $this->state[$thiscol] = $defval;
+          if ($overwrite and in_array($thiscol, $this->data_cols) and !$loggable) {
+             if ($this->debug) {
+                $this->logDebug("Removing $thiscol from loggable columns on $this->name");
+             }
+             unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
+          }
+       }
+    }
+    if (!$loggable) {
+       if ($this->debug) {
+          $this->logDebug("Removing $thiscol from loggable columns on $this->name");
+       }
+       unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
+       unset($this->dbcolumntypes[$thiscol]);
+       unset($this->logformats[$thiscol]);
+    }
+  }
+
+  function addDataColumnType($colname, $samplevalue = 0, $overwrite = 0, $forcetype = '') {
+    if (!(trim($colname) == '')) {
+       if (in_array($colname, $this->dbcolumntypes)) {
+          $exists = 1;
+       } else {
+          $exists = 0;
+       }
+
+       if ($exists and !$overwrite) {
+          return;
+       }
+
+       if (strlen($forcetype) > 0) {
+          // we have been given a type to make this, so do not guess
+          $type = $forcetype;
+       } else {
+          $type = 'varchar';
+       }
+
+       $this->dbcolumntypes[$colname] = $type;
+       if ( (strlen($type) > 0) and (strtolower($type) <> 'null') ) {
+          $this->data_cols[] = $colname;
+          $this->logformats[$colname] = '%s';
+       }
+    }
+  }
+
+  function setBaseTypes() {
+    // set up column formats for appropriate outputs to database
+    if ( (!isset($this->dbcolumntypes)) or (!is_array($this->dbcolumntypes)) ) {
+       $this->dbcolumntypes = array();
+    }
+    if ( (!isset($this->logformats)) or (!is_array($this->logformats)) ) {
+       $this->logformats = array();
+    }
+
+    $basetypes = array(
+             'name'=>'varchar(' . intval(2.0 * strlen($this->name) + 1) . ')',
+             'description'=>'varchar(' . intval(2.0 * strlen($this->description) + 1) . ')',
+          //   'objectname'=>'varchar(' . intval(2.0 * strlen($this->objectname) + 1) . ')',
+             'componentid'=>'varchar(128)',
+             'subshedid'=>'varchar(128)',
+             'dt'=>'float8',
+             'month'=>'float8',
+             'day'=>'float8',
+             'year'=>'float8',
+             'thisdate'=>'date',
+             'time'=>'timestamp',
+             'timestamp'=>'bigint',
+             'run_mode'=>'float8',
+             'season'=>'varchar(8)'
+    );
+    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode');
+    foreach ($dcs as $thisdc) {
+       $this->data_cols[] = $thisdc;
+    }
+    
+    foreach($basetypes as $key=>$val) {   
+       $this->dbcolumntypes[$key] = $val;
+    } 
+    if ($this->debug) {
+       $this->logDebug("MERGE RESULT: " . print_r(array_merge($this->dbcolumntypes, $basetypes),1) . " <br>");
+       $this->logDebug("UNIQUE RESULT: " . print_r($thisarray,1) . " <br>");
+    }
+
+  }
+  function setDataColumnTypes() {
+
+    $this->setBaseTypes();
+    
+    $logtypes = array(
+             'name'=>'%s',
+             'description'=>'%s',
+           //  'objectname'=>'%s',
+             'componentid'=>'%u',
+             'dt'=>'%u',
+             'month'=>'%u',
+             'day'=>'%u',
+             'year'=>'%u',
+             'thisdate'=>'%s',
+             'time'=>'%s',
+             'timestamp'=>'%s',
+             'run_mode'=>'%u',
+             'season'=>'%u'
+    );
+    
+    // now, go through and see if any sub-components have db types set
+    foreach ($this->processors as $thisproc) {
+       
+       if (property_exists($thisproc, 'value_dbcolumntype')) {
+          // this does not work, since the logtypes is looking for string format, NOT a db column type
+          //$logtypes[$thisproc->name] = $thisproc->value_dbcolumntype;
+          // howwever, this should be OK
+          if (isset($thisproc->defaultval)) {
+             $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);
+             error_log("Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);");
+          } else {
+             $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);
+             error_log("No Default Value for $thisproc->name -- Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);");
+          }
+       }
+       
+       
+       if (method_exists($thisproc, 'setDataColumnTypes')) {
+          $thisproc->setDataColumnTypes();
+       }
+       
+       if ( (!($thisproc->loggable === 0)) and !in_array($thisproc->name, $this->data_cols)  and !(trim($thisproc->name) == '')) {
+          
+          $this->data_cols[] = $thisproc->name;
+       }
+    }
+    $thisarray = array_unique(array_merge($this->logformats, $logtypes));
+
+    $this->logformats = $thisarray;
+    // log to postgres if connection is set
+    if (is_object($this->listobject) and ($this->log2db == 1)) {
+       if ($this->listobject->tableExists($this->dbtblname)) {
+          $this->listobject->querystring = "  drop table $this->dbtblname ";
+          $this->listobject->performQuery();
+       }
+    }
+    // clean up data_cols based on definitions in the column_defs array
+    if (is_array($this->column_defs)) {
+       foreach ($this->column_defs as $thiscol => $def) {
+          $loggable = $def['loggable'];
+          $dbcolumntype = $def['dbcolumntype'];
+          $logformat = $def['log_format'];
+          if (!$loggable) {
+             if (in_array($thiscol, $this->data_cols)) {
+                //error_log("Removing $thiscol from loggable columns on $this->name");
+                unset($this->data_cols[array_search($thiscol, $this->data_cols)]);
+             }
+             if (in_array($thiscol, $this->logformats)) {
+                //error_log("Removing $thiscol from log formats on $this->name");
+                unset($this->logformats[array_search($thiscol, $this->logformats)]);
+             }
+             if (in_array($thiscol, $this->dbcolumntypes)) {
+                //error_log("Removing $thiscol from db types on $this->name");
+                unset($this->dbcolumntypes[array_search($thiscol, $this->dbcolumntypes)]);
+             }
+          } else {
+             $this->data_cols[] = $thiscol;
+             $this->log_formats[$thiscol] = $logformat;
+             $this->dbcolumntypes[$thiscol] = $dbcolumntype;
+          }
+       }
+    }
+  }
+
+  function getParentVarName($thisvar) {
+    return $this->name . "_" . $thisvar;
+  }
+
+  function finish() {
+  // add post-processing functions here
+
+  // iterate through each sub-processor stored in this object
+  if (is_array($this->processors)) {
+    foreach ($this->processors as $thisproc) {
+      if ($this->debug) {
+         $this->logDebug("Finishing $thisproc->name<br>\n");
       }
-   }
-   
+      if (is_object($thisproc)) {
+         if (method_exists($thisproc, 'finish')) {
+            $thisproc->finish();
+         }
+      }
+      // show component output reports
+      $this->reportstring .= "<b>Reports for: </b>" . $thisproc->name . " <br>\n";
+      $avgexec = $thisproc->meanexectime;
+      $this->reportstring .= "Avg. exec time: $avgexec \n";
+      if (strlen($thisproc->reportstring) > 0) {
+         $this->reportstring .= $thisproc->description . "<br>" . $thisproc->reportstring . "<br>";
+         $thisproc->reportstring = '';
+      }
+      // show component error reports
+      if (strlen($thisproc->errorstring) > 0) {
+         $this->errorstring .= "<b>Errors for: </b>" . $thisproc->name . '<br>';
+         $this->errorstring .= $thisproc->description . "<br>" . $thisproc->errorstring . "<br>";
+         $thisproc->errorstring = '';
+      }
+    }
+    unset($thisproc);
+  }
+
+  if ($this->cache_log) {
+    // error_log("Ouputting log values to file for $this->name");
+     $this->log2file();
+  }
+  $this->logDebug("Finished $this->name");
+  if ($this->debugmode == 3) {
+     $this->debugstring .= "</body></html>";
+     $this->flushDebugToFile();
+     $this->debugstring = "<b>Debug File for $this->name:</b> <a href=" . $this->outurl . '/' . $this->debugfile . ">Click Here</a><br>";
+  }
+  if (is_object($this->timer)) {
+     $this->meanexectime = $this->exectime / $this->timer->steps;
+  }
+
+  }
+
+  function wake() {
+   $stime = microtime(true);
+    if (!isset($this->processors)) {
+       $this->processors = array();
+    } else {
+       // if this thing is already an array, we may be re-awakening, in which case we should NOT overwrite its contents
+       if (!is_array($this->processors)) {
+          $this->processors = array();
+       } else {
+          // should we call re-awakening on sub-components?
+          /*
+          foreach ($this->processors as $thisproc) {
+             $thisproc->wake();
+          }
+          */
+       }
+    }
+    if (!is_array($this->setvarnames)) {
+       $this->setvarnames = array();
+    }
+    if (!is_array($this->column_defs)) {
+       $this->column_defs = array();
+    }
+    $this->state = array();
+    $this->execlist = array();
+    $this->compexeclist = array();
+    $this->inputs = array();
+    $this->vars = array();
+    $this->logtable = array();
+    $this->lookups = array();
+    $this->loglist = array();
+    $this->datasources = array();
+    // set up property descriptions
+    $this->prop_desc = array();
+    $this->setPropDesc();
+    // end prop descriptions
+    $this->dbcolumntypes = array();
+    if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
+       $this->data_cols = array();
+    }
+    $this->logLoaded = 0;
+    // things to do before this goes away, or gets stored
+    $ser = explode(',', $this->serialist);
+    foreach ($ser as $thisvar) {
+       if (property_exists($this, $thisvar)) {
+          if (!is_array($this->$thisvar) and !is_object($this->$thisvar)) {
+             if (strlen($this->$thisvar) > 0) {
+                $uvar = unserialize($this->$thisvar);
+                $this->$thisvar = $uvar;
+                if ($this->debug) {
+                   $this->logDebug("$thisvar unserialized to : " . print_r($uvar,1));
+                }
+                //error_log("$thisvar unserialized to : " . print_r($uvar,1));
+             }
+          }
+       }
+    }
+    $this->setState();
+    $this->subState();
+   $etime = microtime(true);
+   $this->logDebug("$this->name wake() took " . round($etime - $stime, 5) . " seconds (prec=5)<br>");
+  }
+
+  function preProcess() {
+    // do nothing here, this is sub-classed where necessary
+    foreach ($this->processors as $thisproc) {
+       // set state vars for this proc, so that it knows what it will be able to gain access to
+       $thisproc->arData = $this->state;
+       $thisproc->preProcess();
+    }
+  }
+
+  function create() {
+    // things to do when this object is first created
+    // it must be called AFTER the wake() method, but prior to the init() method
+    foreach ($this->processors as $thisproc) {
+       // set state vars for this proc, so that it knows what it will be able to gain access to
+       $thisproc->create();
+    }
+  }
+
+  function reCreate() {
+    // things to do if something on this object has changed and the user wishes to re-run the create routine
+    // defauls to simply calling the classes own create() method, but could perform other house-keeping functions
+    $this->create();
+  }
+
+  function sleep() {
+    // things to do before this goes away, or gets stored
+    $ser = explode(',', $this->serialist);
+    foreach ($ser as $thisvar) {
+       if (property_exists($this, $thisvar)) {
+          $this->$thisvar = serialize($this->$thisvar);
+       }
+    }
+    // blank out components and processors
+    $this->processors = array();
+    $this->components = array();
+    $this->formvars = array();
+    $this->inputs = array();
+    $this->state = array();
+    $this->datasources = array();
+    $this->setvarnames = array();
+    $this->errorstring = '';
+    $this->debugstring = '';
+    $this->column_defs = null;
+  }
+
+  function setDebug($thisdebug, $thisdebugmode = -1) {
+    $this->debug = $thisdebug;
+    if ($thisdebugmode <> -1) {
+       $this->debugmode = $thisdebugmode;
+    }
+    if ($this->cascadedebug) {
+       foreach($this->processors as $thisproc) {
+          $thisproc->setDebug($this->debug, $this->debugmode);
+       }
+    }
+  }
+
+  function setBuffer($bufferlog) {
+    $this->bufferlog = $bufferlog;
+    foreach($this->processors as $thisproc) {
+       if (method_exists($thisproc, 'setBuffer')) {
+          $thisproc->setBuffer($this->bufferlog);
+       }
+    }
+  }
+
+  function setSimTimer($thistimer) {
+    $this->timer = $thistimer;
+    $this->dt = $thistimer->dt;
+    $this->startdate = $thistimer->thistime->format('Y-m-d');
+    $this->enddate = $thistimer->endtime->format('Y-m-d');
+    // properly format start and end time
+    $this->starttime = $thistimer->thistime->format('Y-m-d H:i:s');
+    $this->endtime = $thistimer->endtime->format('Y-m-d H:i:s');
+    
+    if ($this->debug) {
+       $this->logDebug("Setting Timer for $this->name <br>");
+       #$this->logDebug($this->timer);
+       #$this->logDebug($thistimer);
+    }
+    #$this->logDebug("<br>");
+    $this->logDebug("Setting Timer for processors $this->name <br>");
+    #$this->logDebug($this->processors);
+    #$this->logDebug("<br>");
+    if (is_array($this->processors)) {
+       foreach ($this->processors as $thisop) {
+          $thisop->setSimTimer($thistimer);
+       }
+    }
+    if (is_array($this->components)) {
+       foreach ($this->components as $thisop) {
+          $thisop->setSimTimer($thistimer);
+       }
+    }
+  }
+
+  function setCompID($thisid) {
+    $this->componentid = $thisid;
+    // set a name for the temp table that will not hose the db
+    $targ = array(' ',':','-','.');
+    $repl = array('_', '_', '_', '_');
+    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_" . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+    $this->dbtblname = $this->tblprefix . 'datalog';
+  }
+
+  function setState() {
+    // initialize the state array
+    // any object properties that are to be visible to other components, or even to 
+    // sub-components on this object must be initialized in the state variable here
+    // unless they are explicitly set in a sub-component processor, otherwise, they will 
+    // be invisible and result as null
+    $this->state = array();
+    if (!is_array($this->wvars)) {
+       $this->wvars = array();
+    }
+    if (!is_array($this->rvars)) {
+       $this->rvars = array();
+    }
+
+    if (is_array($this->processors)) {
+       foreach (array_keys($this->processors) as $thisop) {
+          $this->state[$thisop] = $this->processors[$thisop]->defaultval;
+       }
+    } else {
+       $this->processors = array();
+    }
+    if (is_array($this->inputs)) {
+       foreach (array_keys($this->inputs) as $thisop) {
+          $this->state[$thisop] = @$this->$thisop;
+       }
+    } else {
+       $this->inputs = array();
+    }
+    
+  }
+
+  function subState() {
+  // stub for sub-classes to to special operations within the setState() routine
+    $this->initOnParent();
+  }
+
+  function setStateVar($varname, $varvalue) {
+    if (!is_array($this->setvarnames)) {
+       $this->setvarnames = array();
+    }
+    // sets a specific state variable to a specific value
+    $this->state[$varname] = $varvalue;
+    // compile a list of all variables set by this method
+    if (!in_array($varname, $this->setvarnames)) {
+       $this->setvarnames[] = $varname;
+    }
+  }
+
+
+  function appendStateVar($varname, $varvalues, $action = 'append', $method = 'guess') {
+    //error_log("appendStateVar($varname, $varvalues, $action = 'append', $method = 'guess') called");
+    if (!is_array($varvalues)) {
+       $varvalues = array($varvalues);
+    }
+    
+    if (!isset($this->state[$varname])) {
+       $this->state[$varname] = NULL;
+    }
+    
+    switch ($action) {
+       case 'refresh':
+          // means that we want to start with only the values passed at this time, so clear previous values
+          if (is_numeric($varvalues[0])) {
+             $this->state[$varname] = 0.0;
+          } else {
+             $this->state[$varname] = '';
+          }
+       break;
+    }
+    
+    // default method is ADD if numeric, replace if string
+    // user can set methods in function call
+    foreach ($varvalues as $inval) {
+       // the following cases assume that all variables are scalar.  
+       // we need to adjust this to work with array type variables as well.
+       // 
+       if (!($inval === NULL)) {
+          if ($method == 'guess') {
+             if (is_numeric($inval)) {
+                if( $this->state[$varname] === NULL) {
+                   $this->state[$varname] = 0;
+                }
+                //error_log("Adding $inval to " . $this->state[$varname] );
+                $this->state[$varname] += $inval;
+             } else {
+                $this->state[$varname] = $inval;
+             }
+          } else {
+             switch ($method) {
+                case 'replace':
+                   $this->state[$varname] = $inval;
+                break;
+                
+                case 'stringappend':
+                   $this->state[$varname] .= $inval;
+                break;
+                
+                case 'numappend':
+                   if( $this->state[$varname] === NULL) {
+                      $this->state[$varname] = 0;
+                   }
+                   $this->state[$varname] += $inval;
+                break;
+             }
+          }
+       }
+       if ($this->debug) {
+          if (strlen($this->state[$varname]) < 200) {
+             $this->logDebug("updated $varname = " . $this->state[$varname] . " Appended from Inputs: " . print_r($varvalues,1) . "<br>\n");
+          }
+       }
+    }
+  }
+
+  function setProp($propname, $propvalue, $view = '') {
+    // sets a specific state variable to a specific value
+    if ($this->debug) {
+       $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
+    }
+    if (property_exists(get_class($this), $propname)) {
+       $this->$propname = $propvalue;
+       if ($this->debug) {
+          $this->logDebug("Setting $propname to $propvalue on " . $this->name);
+       }
+    } else {
+       if ($this->debug) {
+          $this->logDebug("Property $propname does not exist on class " . get_class($this));
+       }
+    }
+  }
+
+  function getProp($propname, $view = '') {
+    // sets a specific state variable to a specific value
+    if ($this->debug) {
+       //error_log("Trying to get $propname, $view from " . $this->name);
+    }
+    if (isset($this->processors[$propname])) {
+       if ($this->debug) {
+          $this->logDebug("Property defined sub-comp - checking Sub-component $propname : $view on " . $this->name);
+       }
+       return $this->processors[$propname]->getProp($propname, $view);
+       //return $this->processors[$propname]->getProp($view);
+    } else {
+       if (property_exists(get_class($this), $propname)) {
+          if ($this->debug) {
+             //error_log("Returning $this->name -> $propname = " . $this->$propname);
+          }
+          return $this->$propname;
+       } else {
+          // check to see if the view is the same as the property name
+          if (isset($this->state[$propname])) {
+             if ($this->debug) {
+                error_log("Returning State Variable $propname " . $this->state[$propname]);
+             }
+             return $this->state[$propname];
+          }
+          if (property_exists(get_class($this), $view)) {
+             if ($this->debug) {
+                error_log("Returning $this->name -> $view = " . $this->$view);
+             }
+             return $this->$view;
+          }
+          if ($this->debug) {
+             error_log("Property $this->name -> $propname does not exist on class " . get_class($this));
+          }
+          return FALSE;
+       }
+    }
+  }
+
+  function getObjectDependencies() {
+    // return a list of all known objects that supply information that this uses (for runtime hierarchy)
+    $dependencies = array();
+    if ($this->debug) {
+       $this->logDebug("<br>$this->name called getObjectDependencies <br>");
+    }
+    foreach (array_keys($this->inputs) as $thisinputname) {
+       if ($this->debug) {
+          $this->logDebug("Checking $thisinputname ");
+       }
+       if (trim($thisinputname) <> '') {
+          foreach ($this->inputs[$thisinputname] as $thisinput) {
+             $thisinobj = $thisinput['object'];
+             if ($this->debug) {
+                $ci = $thisinobj->componentid;
+                $this->logDebug(".. Adding $ci ");
+             }
+             $dependencies[] = $thisinobj->componentid;
+          }
+       } else {
+          if ($this->debug) {
+             $this->logDebug("<br>Null Input Found - will not process <br>");
+          }
+       }
+       if ($this->debug) {
+          $this->logDebug("<br>Finished checking $thisinputname <br>");
+       }
+    }
+    if ($this->debug) {
+       $this->logDebug("<br>Returning " . count($dependencies) . "from getObjectDependencies <br>");
+    }
+    // now, should check all broadcast hubs that I listen on for dependencies...
+    return array_unique($dependencies);
+  }
+
+  function getLog($startdate = '', $enddate = '', $variables = array(), $scenario = -1) {
+    // gets all log values
+    
+    switch ($this->log2db) {
+       
+       case 0:
+       // do nothing, since the logtable is already there
+       break;
+       
+       case 1:
+       if (!$this->logRetrieved) {
+          // if logRetrieved is false, we have to actually grab it from the database log
+          // we also should check here for a desired scenario, and also specific variables
+          // must retrieve log from data table to array
+          $qs = " select * from $this->dbtblname ";
+          $this->logtable = array();
+          if ($this->restrictdates) {
+             // use only a narrow date field, also must have valid start and end dates set
+             if ( (strlen($this->startdate) > 0) and (strlen($this->enddate) > 0) ) {
+                $qs .= " where thisdate >= '$this->startdate' and thisdate <= '$this->enddate' ";
+             }
+          }
+          if (is_object($this->listobject)) {
+             if ($this->listobject->tableExists($this->dbtblname)) {
+                $this->listobject->querystring = $qs;
+                if ($this->debug) {
+                   $this->logDebug($qs);
+                }
+                $this->listobject->performQuery();
+                // sets 
+                $this->logtable = $this->listobject->queryrecords;
+             }
+          }
+          $this->logRetrieved = 1;
+       }
+       break;
+       
+       case 2:
+       // flush the remnants of the memory log to the file, then retrieve the file
+       $this->flushMemoryLog2file();
+       $this->logFromFile();
+       $this->logRetrieved = 1;
+       break;
+    }
+
+    return $this->logtable;
+  }
+
+  function openTempFile($filename, $mode = 'a', $ftype = 'file', $platform='') {
+    if (strlen($filename) > 0) {
+
+       if ($platform == '') {
+          $platform = $this->platform;
+       }
+       $handle = fopen($filename, $mode);
+       $this->tmp_files[$filename]['filename'] = $filename;
+       $this->tmp_files[$filename]['handle'] = $handle;
+       $this->tmp_files[$filename]['type'] = $ftype;
+       $this->tmp_files[$filename]['platform'] = $platform;
+
+    }
+
+    return $handle;
+
+  }
+
+  function generateTempFileName($basename = 'tmp', $ext = 'tmp', $min = 0, $max = 32768) {
+
+    // generic routine to try to generate a random file and test to see if it is indeed unique in the temp directory
+    $filenum = rand($min, $max);
+    $filename = $this->tmpdir . "/$basename$filenum" . ".$ext";
+    if ($this->debug) {
+       $this->logDebug("Checking to see if random file exists: $filename <br>");
+    }
+    while (file_exists($filename)) {
+       $filenum = rand($min, $max);
+       $filename = $this->tmpdir . "/$filenum" . ".$ext";
+       if ($this->debug) {
+          $this->logDebug("Checking next random name: $filename <br>");
+       }
+    }
+    return $filename;
+  }
+
+  function copy2TempFile($filename, $tmpfilename = '', $platform='', $isPerm=0) {
+
+    if (strlen($platform) == 0) {
+       $platform = $this->platform;
+    }
+    if ($this->debug) {
+       $this->logDebug("Exporting $filename <br>");
+    }
+    // generate a tmp file name if there is none supplied
+    if (strlen($tmpfilename) == 0) {
+       if ($this->debug) {
+          $this->logDebug("No destination file given, generating one. <br>");
+       }
+       // if this is a dos platform, we need to try to keep a
+       $tmpfilename = $this->generateTempFileName();
+       if ($this->debug) {
+          $this->logDebug("Generated file name: $tmpfilename <br>");
+       }
+    }
+
+    if ( (strlen($filename) > 0) ) {
+       $result = copy($filename, $tmpfilename);
+       if ($this->debug) {
+          $this->logDebug("Trying: copy($filename $tmpfilename) <br>");
+       }
+       
+
+       if ($this->debug) {
+          $this->logDebug("Result: $result <br>");
+       }
+       if (!$isPerm) {
+          // stash it for later clean up unles we have been instructed to make it permananent
+          $this->tmp_files[$tmpfilename]['filename'] = $tmpfilename;
+          $this->tmp_files[$tmpfilename]['handle'] = -1;
+          $this->tmp_files[$tmpfilename]['type'] = 'file';
+          $this->tmp_files[$tmpfilename]['platform'] = $platform;
+          $this->tmp_files[$tmpfilename]['result'] = $result;
+       }
+    }
+    return $tmpfilename;
+  }
+
+  function closeTempFile($filename) {
+    if ( in_array($filename, array_keys($this->tmp_files)) ) {
+       $handle = $this->tmp_files[$filename]['handle'];
+       if ($handle <> -1) {
+          fclose($handle);
+       }
+       $this->tmp_files[$filename]['handle'] = -1;
+    }
+  }
+
+  function clearTempFiles($filenames = array()) {
+    // close and delete any temp files that have been opened in this sesion
+    // files to close
+    $files_to_close = array();
+    if (!is_array($filenames)) {
+       // make sure this is a valid file name
+       if (in_array($filenames, array_keys($this->tmp_files))) {
+          $files_to_close[$filenames] = $this->tmp_files[$filenames];
+       }
+    } else {
+       foreach ($filenames as $thisname) {
+          // make sure this is a valid file name
+          if (in_array($thisname, array_keys($this->tmp_files))) {
+             $files_to_close[$thisname] = $this->tmp_files[$thisname];
+          }
+       }
+    }
+    foreach ($this->tmp_files as $thisfile) {
+       $handle = $thisfile['handle'];
+       $fname = $thisfile['filename'];
+       $ftype = $thisfile['type']; // currently unused, but later may allow us to treat local files and streams robustly
+       if (file_exists($fname)) {
+          // close it if the file handle is still set (indicating that it is open)
+          if ($handle <> -1) {
+             fclose($handle);
+          }
+          // now, remove the file
+          shell_exec("rm $fname");
+          #print("rm $fname<br>");
+       }
+    }
+  }
+
+  function getPropertySourceClass($propsource, $propclass) {
+    $returnprops = array();
+    switch ($propsource) {
+        case 'parent':
+        $returnprops = $this->getPropertyClass($propclass);
+        break;
+        
+        default:
+        if (isset($this->processors[$propsource])) {
+           $this->processors[$propsource]->getPropertyClass($propclass);
+        }
+        break;
+     }
+    return $returnprops;
+  }
+
+  function getPropertyClass($propclass) {
+    // $propclass - array containing any of the following:
+    //              'publicprops', 'publicprocs', 'publicinputs', 'publicomps',
+    //              'privateprops', 'privateprocs', 'privateinputs', 'privatecomps'
+    // Sub-classing this function can add additional property classes to retrieve
+    // See example in HSPFContainer for plotgen, and wdm properties
+    $returnprops = array();
+    foreach ($propclass as $thisclass) {
+
+       switch ($thisclass) {
+
+          case 'publicprops':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPublicProps()));
+          break;
+
+          case 'publicprocs':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPublicProcs()));
+          break;
+
+          case 'publicinputs':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPublicInputs()));
+          break;
+
+          case 'publiccomps':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPublicComps()));
+          break;
+
+          case 'publicvars':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPublicVars()));
+          break;
+
+          case 'privatevars':
+          $returnprops = array_unique(array_merge($returnprops, $this->getPrivateProps()));
+          break;
+
+          case 'datasources':
+          $returnprops = array_unique(array_merge($returnprops, $this->getDataSources()));
+          break;
+
+       }
+    }
+    return $returnprops;
+  }
+
+
+  function getPublicVars() {
+    // gets all viewable variables
+    $publix = array_unique(array_merge(array_keys($this->state), $this->setvarnames, $this->getPublicProps(), $this->getPublicProcs(), $this->getPublicInputs()));
+
+    return $publix;
+  }
+
+  function getLocalVars() {
+    // gets all viewable variables
+    $publix = array_unique(array_merge(array_keys($this->state), $this->getPublicProps(), $this->getPublicProcs(), $this->getPublicInputs()));
+
+    return $publix;
+  }
+
+  function getPublicProps() {
+    // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
+    //$publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode');
+    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
+
+    return $publix;
+  }
+
+  function getDataSources() {
+
+    return $this->datasources;
+  }
+
+  function getPublicProcs() {
+    // gets all viewable processors
+    $retarr = array();
+    if (is_array($this->procnames)) {
+       #$this->logDebug("Procs for $this->name: " . print_r($this->procnames,1));
+       //error_log("Procs for $this->name: " . print_r($this->procnames,1));
+       foreach ($this->procnames as $pn) {
+          $retarr[] = $pn;
+          // check for vars on proc, if set add names to the array to return
+          if (isset($this->processors[$pn])) {
+             if (is_object($this->processors[$pn])) {
+                if (isset($this->processors[$pn]->vars)) {
+                   if (is_array($this->processors[$pn]->vars)) {
+                      foreach ($this->processors[$pn]->vars as $procvar) {
+                         if (!in_array($procvar, $retarr)) {
+                            $retarr[] = $procvar;
+                         }
+                      }
+                   }
+                }
+             }
+          }
+       }
+    }
+    
+    return $retarr;
+  }
+
+  function getPublicInputs() {
+    // gets all viewable variables
+    if (is_array($this->inputnames)) {
+       return $this->inputnames;
+    } else {
+       return array();
+    }
+  }
+
+  function getPublicComponents() {
+    // gets all viewable variables
+    if (is_array($this->compnames)) {
+       return $this->compnames;
+    } else {
+       return array();
+    }
+  }
+
+  function getPrivateProps() {
+    // gets all viewable variables in the local context only
+    $privitz = array();
+
+    return $privitz;
+  }
+
+  function setStateTimerVars() {
+
+    if (is_object($this->timer)) {
+       $this->state['thisdate'] = $this->timer->thistime->format('Y-m-d');
+       $this->state['year'] = $this->timer->thistime->format('Y');
+       $this->state['month'] = $this->timer->thistime->format('n');
+       $this->state['day'] = $this->timer->thistime->format('j');
+       $this->state['weekday'] = $this->timer->thistime->format('N');
+       $this->state['week'] = $this->timer->thistime->format('W');
+       $this->state['hour'] = $this->timer->thistime->format('G');
+       $this->state['modays'] = $this->timer->thistime->format('t');
+    } else {
+       if ($this->debug) {
+          $this->logDebug("<b>Error: </b>$this->name timer is NOT an object <br>\n");
+       }
+       $this->logError("<b>Error: </b>$this->name timer is NOT an object <br>\n");
+    }
+    if ($this->debug) {
+       $this->logDebug("<b>$this->name setStateTimerVars() method called at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . " week " . $this->state['week'] . " month " . $this->state['month'] . ".</b><br>\n");
+    }
+    $this->timer->timeSplit();
+    $this->stepstart = $this->timer->timestart;
+  }
+
+  function readParentBroadCasts() {
+    if ($this->debug) {
+       $this->logDebug("Checking for parent read broadCastObjects on $this->name<br>\n");
+    }
+    // iterate through each equation stored in this object
+    foreach (array_values($this->execlist) as $thisvar) {
+       if (is_object($this->processors[$thisvar])) {
+          if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
+             if ( ($this->processors[$thisvar]->broadcast_mode == 'read') 
+                and ($this->processors[$thisvar]->broadcast_hub == 'parent')
+             ) {
+                // set all required inputs for the equation
+                $this->processors[$thisvar]->arData = $this->state;
+                // calls processor step method
+                if (method_exists($this->processors[$thisvar], 'step')) {
+                   $this->processors[$thisvar]->step();
+                }
+                if ($this->processors[$thisvar]->debug) {
+                   $this->logDebug("Subcomp $thisvar debug output: <br>" . $this->processors[$thisvar]->debugstring);
+                   // reset debugging string for processor, since it is appended here
+                   $this->processors[$thisvar]->debugstring = '';
+                }
+                // evaluate the equation
+                if ($this->debug) {
+                   $this->logDebug("Finished Evaluating $thisvar, parent read<br>\n");
+                }
+             } // end is parent read
+          } // end get_class == broadCastObject
+          
+       } // end is_object()
+    }
+  }
+
+  function sendParentBroadCasts() {
+    if ($this->debug) {
+       $this->logDebug("Checking for parent send broadCastObjects on $this->name<br>\n");
+    }
+    // iterate through each equation stored in this object
+    foreach (array_values($this->execlist) as $thisvar) {
+       if (is_object($this->processors[$thisvar])) {
+          if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
+             if ( ($this->processors[$thisvar]->broadcast_mode == 'cast') 
+                and ($this->processors[$thisvar]->broadcast_hub == 'parent')
+             ) {
+                // set all required inputs for the equation
+                $this->processors[$thisvar]->arData = $this->state;
+                // calls processor step method
+                if (method_exists($this->processors[$thisvar], 'step')) {
+                   $this->processors[$thisvar]->step();
+                }
+                // evaluate the equation
+                if ($this->debug) {
+                   $this->logDebug("Finished Evaluating $thisvar, parent send<br>\n");
+                }
+             } // end is parent read
+          } // end get_class == broadCastObject
+          
+       } // end is_object()
+    }
+  }
+
+  function readChildBroadCasts() {
+    if ($this->debug) {
+       $this->logDebug("Checking for child read broadCastObjects on $this->name<br>\n");
+    }
+    // iterate through each equation stored in this object
+    foreach (array_values($this->execlist) as $thisvar) {
+       if (is_object($this->processors[$thisvar])) {
+          if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
+             if ( ($this->processors[$thisvar]->broadcast_mode == 'read') 
+                and ($this->processors[$thisvar]->broadcast_hub == 'child')
+             ) {
+                // set all required inputs for the equation
+                $this->processors[$thisvar]->arData = $this->state;
+                // calls processor step method
+                if (method_exists($this->processors[$thisvar], 'step')) {
+                   $this->processors[$thisvar]->step();
+                }
+                if ($this->processors[$thisvar]->debug) {
+                   $this->logDebug($this->processors[$thisvar]->debugstring);
+                   $this->logDebug("<br>\n");
+                   // reset debugging string for processor, since it is appended here
+                   $this->processors[$thisvar]->debugstring = '';
+                }
+                // evaluate the equation
+                if ($this->debug) {
+                   $this->logDebug("Finished Evaluating $thisvar, child read<br>\n");
+                }
+             } // end is parent read
+          } // end get_class == broadCastObject
+          
+       } // end is_object()
+    }
+  }
+
+  function sendChildBroadCasts() {
+    // iterate through each equation stored in this object
+    if ($this->debug) {
+       $this->logDebug("Checking for child send broadCastObjects on $this->name<br>\n");
+    }
+    foreach (array_values($this->execlist) as $thisvar) {
+       if (is_object($this->processors[$thisvar])) {
+          if (get_class($this->processors[$thisvar]) == 'broadCastObject') {
+             if ($this->debug) {
+                $this->logDebug("Broadcast object $thisvar is mode= " . $this->processors[$thisvar]->broadcast_mode . " and hub= " . $this->processors[$thisvar]->broadcast_hub . "<br>\n");
+             }
+             if ( ($this->processors[$thisvar]->broadcast_mode == 'cast') 
+                and ($this->processors[$thisvar]->broadcast_hub == 'child')
+             ) {
+                // set all required inputs for the equation
+                $this->processors[$thisvar]->arData = $this->state;
+                // calls processor step method
+                if (method_exists($this->processors[$thisvar], 'step')) {
+                   $this->processors[$thisvar]->step();
+                }
+                // evaluate the equation
+                if ($this->debug) {
+                   $this->logDebug("Finished Evaluating $thisvar, child send<br>\n");
+                }
+             } // end is parent read
+          } // end get_class == broadCastObject
+          
+       } // end is_object()
+    }
+  }
+
+  function preStep() {
+    $this->setStateTimerVars();
+    // data aquisition first
+    $this->readParentBroadCasts();
+    // hard wired inputs override broadcasts
+    $this->getInputs();
+    $this->sendChildBroadCasts();
+  }
+
+  function postStep() {
+    $this->writeToParent();
+    $this->sendParentBroadCasts();
+    $this->logstate();
+    $this->timer->timeSplit();
+    $this->exectime += ($this->timer->timeend - $this->stepstart);
+  }
+
+  function step() {
+    // many object classes will subclass this method.  
+    // all step methods MUST call preStep(),execProcessors(), postStep()
+    $this->preStep();
+    if ($this->debug) {
+       $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
+    }
+    // execute sub-components
+    $this->execProcessors();
+    if (method_exists($this, 'evaluate')) {
+       //error_log("Calling evaluate() method on $this->name");
+       $this->evaluate();
+    }
+    
+    // log the results
+    if ($this->debug) {
+       $this->logDebug("$this->name Calling Logstate() thisdate = ");
+    }
+    
+    $this->postStep();
+  }
+
+  function getCurrentValue($thisvar) {
+    // returns the current value of any state variable
+    return $this->state[$thisvar];
+  }
+
+  function getValue($thistime, $thisvar) {
+    // currrently, does nothing with the time, assumes that the input time is
+    // equal to the current modeled time and returns the current value
+    if ($this->debug) {
+       $sv = $this->state;
+       if (isset($sv['the_geom'])) {
+          $sv['the_geom'] = 'HIDDEN';
+       }
+       $this->logDebug("Variable $thisvar requested from $this->name, returning " . $sv[$thisvar] . " from " . print_r($sv,1) );
+    }
+   //error_log("Variable $thisvar requested from $this->name, returning " . $this->state[$thisvar] . " from " . print_r($this->state,1) );
+    if (in_array($thisvar, array_keys($this->state))) {
+       return $this->state[$thisvar];
+    } else {
+       return NULL;
+    }
+  }
+
+  function setLogFileName() {
+    if (strlen($this->logfile) == 0) {
+       $this->logfile = 'objectlog.' . $this->sessionid . '.' . $this->componentid . '.log';
+       $log_headers_sent = false; // log headers can not have been sent if we don't have a file name yet
+    }
+  }
+
+  function log2file() {
+    // output the log to a text file
+    if (strlen($this->logfile) == 0) {
+       $this->setLogFileName();
+    }
+    //error_log("log2File() called on $this->name");
+    //error_log("Serial Log File set to: $this->logfile");
+    // get log from postgres if connection is set
+    if (is_object($this->listobject) and ($this->log2db == 1)) {
+       if ($this->listobject->tableExists($this->dbtblname)) {
+          $this->listobject->querystring = " select * from $this->dbtblname order by thisdate";
+          if ($this->debug) {
+             $this->logDebug("Retrieving log from db: " . $this->listobject->querystring . " <br>");
+          }
+          $this->listobject->performQuery();
+          $this->logtable = $this->listobject->queryrecords;
+          if ($this->debug) {
+             $this->logDebug("Retrieved " . count($this->logtable) . " records from run log table. <br>");
+             $this->logDebug("Sample, last log entry: " . print_r($this->logtable[count($this->logtable) - 1],1) . " records from run log table. <br>");
+          }
+
+          // create a serial file
+          $serialfile = $this->outdir . '/' . $this->logfile . ".serial";
+          $open = fopen($serialfile, 'w');
+          fwrite($open, serialize($this->logtable));
+          fclose($open);
+       }
+    }
+    
+    // now, send the logtable to a file
+    $filename = $this->flushMemoryLog2file();
+    // create a second copy of the file as most recent run for this object
+    $lastlog = $this->outdir . '/' . 'lastlog' . $this->componentid . '.log';
+    // if we give the copy2tempfile routine a file name, it will NOT put the name in the list of files to be cleaned up later
+    $this->copy2tempFile($filename, $lastlog, $this->platform, 1);
+    $this->logfile = $lastlog;
+    //error_log("Final Log File set to: $this->logfile");
+  }
+
+  function flushMemoryLog2file() {
+    // output the log to a text file -- appending to the file, and emptying the log array
+    if (strlen($this->logfile) == 0) {
+       $this->setLogFileName();
+    }
+    $filename = $this->outdir . '/' . $this->logfile;
+
+    // format for output
+    if ($this->debug) {
+       $this->logDebug("Flushing Log to File: $this->outdir / $this->logfile <br>");
+    }
+    //error_log("Flushing Log to File: $this->outdir / $this->logfile <br>");
+    
+    if (!$this->log_headers_sent) {
+       #$this->logDebug($outarr);
+       $colnames = array(array_keys($this->logtable[0]));
+       putDelimitedFile("$filename",$colnames,$this->translateDelim($this->delimiter),1,$this->fileformat);
+       $this->log_headers_sent = true;
+    }
+    
+    if (count($this->logtable) > 0) {
+       $outarr = $this->formatLogData();
+       // append the data to the file, then close the file
+       putArrayToFilePlatform("$filename", $outarr,0,$this->fileformat);
+       // clear log from memory 
+    }
+    $this->logtable = array();
+    $this->logRetrieved = 0;
+    return $filename;
+  }
+
+  function translateDelim($delimtext) {
+    switch ($delimtext) {
+       case 0:
+          $d = ',';
+       break;
+       case 1:
+          $d = "\t";
+       break;
+       
+       case 2:
+          $d = ' ';
+       break;
+       
+       case ',':
+          $d = ',';
+       break;
+       
+       case "\t":
+          $d = "\t";
+       break;
+       
+       case '|':
+          $d = '|';
+       break;
+       
+       default:
+       // by making the default a non-translation, we should preserve backward compatibility with the previous version
+          $d = $delimtext;
+       break;
+    }
+    
+    return $d;
+       
+  }
+
+  function formatLogData() {
+    $fdel = '';
+    $outform = '';
+    foreach (array_keys($this->logtable[0]) as $thiskey) {
+       if (in_array($thiskey, array_keys($this->logformats))) {
+          // get the log file format from here, if it is set
+          if ($this->debug) {
+             $this->logDebug("Getting format for log table " . $thiskey . "\n");
+          }
+          $outform .= $fdel . $this->logformats[$thiskey];
+       } else {
+          if (is_numeric($this->logtable[0][$thiskey])) {
+             //$outform .= $fdel . $this->numform;
+             $outform .= $fdel . $this->strform;
+          } else {
+             $outform .= $fdel . $this->strform;
+          }
+       }
+       $fdel = ',';
+    }
+    $outarr = nestArraySprintf($outform, $this->logtable);
+    return $outarr;
+  }
+
+  function logFromFile() {
+    // check for a file, if set, use it to populate the log table
+    if ($this->debug) {
+       $this->logDebug("logFromFile method called on $this->name<br>");
+    }
+    //error_log("logFromFile method called on $this->name<br>");
+    if (strlen($this->logfile) == 0) {
+       $this->setLogFileName();
+    }
+    $filename = $this->outdir . '/' . $this->logfile;
+    if ($this->debug) {
+       $this->logDebug("Checking for $filename for object $this->name<br>");
+    }
+    if (file_exists($filename)) {
+       if ($this->debug) {
+          $this->logDebug("Loading data from $filename <br>");
+       }
+       // since this is from a log file that we generated, we can assume that it has the column headers
+       $tsvalues = readDelimitedFile($filename, $this->translateDelim($this->delimiter), 1);
+       $tcount = 0;
+       #$this->logDebug($tsvalues);
+       foreach ($tsvalues as $thisline) {
+          if (isset($thisline['thisdate'])) {
+             $this->logstate($thisline, 1);
+             #$this->logDebug("Adding Line");
+             #$this->logDebug($thisline);
+          } else {
+             if ($this->debug) {
+                // only log this once
+                if ($tcount == 0) {
+                   $this->logDebug("Date column not found in $this->logfile.<br>");
+                }
+                $tcount++;
+             }
+          }
+       }
+    } else {
+       if ($this->debug) {
+          $this->logDebug("Can not find log file $this->logfile <br>");
+       }
+    }
+    $this->logLoaded = 1;
+  }
+
+  function log2listobject($columns = array()) {
+    if ($this->listobject > 0) {
+       // format for output
+       if ($this->debug) {
+          $this->logDebug("Outputting Time Series to db: $tblname <br>");
+       }
+       $createsql = $this->listobject->array2tmpTable($this->logtable, $this->dbtblname, $columns, $this->dbcolumntypes, 1, $this->bufferlog);
+       if ( ($this->timer->steps <= 1) and $this->debug ) {
+          $this->logDebug("Table creatiopn SQL: " . $createsql . "<br>");
+       }
+    } else {
+       $this->logDebug("List object not set.<br>");
+    }
+  }
+
+  function list2file($listrecs, $filename='') {
+
+    if (strlen($filename) == 0) {
+       $filename = 'datafile.' . $this->componentid . '.csv';
+    }
+
+    $datafile = $this->outdir . '/' . $filename;
+    $colnames = array(array_keys($listrecs[0]));
+    putDelimitedFile($datafile,$colnames,$this->translateDelim($this->delimiter),1,'unix');
+
+    if (count($listrecs) > 0) {
+       if ($this->debug) {
+          $this->logDebug("Appending values to monthly $datafile<br>");
+       }
+       $fdel = '';
+       $outform = '';
+       foreach (array_keys($listrecs[0]) as $thiskey) {
+          if (in_array($thiskey, array_keys($this->logformats))) {
+             // get the log file format from here, if it is set
+             if ($this->debug) {
+                $this->logDebug("Getting format for log table " . $thiskey . "\n");
+             }
+             $outform .= $fdel . $this->logformats[$thiskey];
+          } else {
+             if (is_numeric($listrecs[0][$thiskey])) {
+                $outform .= $fdel . $this->numform;
+             } else {
+                $outform .= $fdel . $this->strform;
+             }
+          }
+          $fdel = $this->translateDelim($this->delimiter);
+       }
+       // format for output if records exist for each year in the dataset
+       $outarr = nestArraySprintf($outform, $listrecs);
+       putArrayToFilePlatform("$datafile", $outarr,0,'unix');
+       #print_r($outarr);
+
+    }
+
+    return $filename;
+  }
+
+
+  //function logstate($logvalues = array(), $preserve_timestamp=0) {
+  function logstate($logvalues = array()) {
+
+    $thislog = array();
+
+    $logsrc = array();
+
+    // if an array of values is passed in, use these instead of our state array (used to pass child info upstream)
+    if (count($logvalues) > 0) {
+       $logsrc = $logvalues;
+    } else {
+       $logsrc = $this->state;
+    }
+
+    if (!isset($logsrc['thisdate'])) {
+       $logsrc['thisdate'] = $this->timer->thistime->format('Y-m-d');
+    }
+    if ($this->debug) {
+       $this->logDebug("Logging called - using thisdate = " . $logsrc['thisdate'] . "<br>");
+    }
+    if (!isset($logsrc['time'])) {
+       $logsrc['time'] = $this->timer->thistime->format('r');
+    }
+    if (!isset($logsrc['month'])) {
+       $logsrc['month'] = $this->timer->thistime->format('m');
+    }
+    if (!isset($logsrc['day'])) {
+       $logsrc['day'] = $this->timer->thistime->format('d');
+    }
+    if (!isset($logsrc['year'])) {
+       $logsrc['year'] = $this->timer->thistime->format('Y');
+    }
+    if (!isset($logsrc['week'])) {
+       $logsrc['week'] = $this->timer->thistime->format('W');
+    }
+    if (!(isset($logsrc['timestamp'])) or !$preserve_timestamp ) {
+       if (is_object($this->timer)) {
+          $logsrc['timestamp'] = $this->timer->thistime->format('U');
+       }
+    }
+    if ( ($logsrc['timestamp'] == '') or ($logsrc['timestamp'] === NULL)) {
+       $logsrc['timestamp'] = $this->timer->thistime->format('U');
+    }
+    /*
+    if (!isset($logsrc['timestamp'])) {
+       $logsrc['timestamp'] = $this->timer->thistime->format('U');
+    } else {
+       if ($logsrc['timestamp'] == '') {
+          $logsrc['timestamp'] = $this->timer->thistime->format('U');
+       }
+    }
+    */
+    // log the season
+    $seasons = array(1=>'winter',2=>'winter',3=>'winter',4=>'spring',5=>'spring',6=>'spring',7=>'summer',8=>'summer',9=>'summer',10=>'fall',11=>'fall',12=>'fall');
+    $logsrc['season'] = $seasons[$logsrc['month']];
+
+    if (count($this->loglist) > 0) {
+       $logvars = $this->loglist;
+    } else {
+       $logvars = array_keys($logsrc);
+    }
+    // must intersect logsrc and logvars to avoid tons of warnings
+    // and let the user know they requested logging that cannot be logged
+    $logmissing = array_diff($logsrc, $logvars);
+    if (count($logmissing) > 0) {
+      if ($this->timer->steps <= 2) {
+         $this->logDebug("Unable to find requested logvariables: " . print_r($logmissing,1));
+         //error_log("Unable to find requested logvariables: " . print_r($logmissing,1));
+      }
+      $logvars = $logsrc;
+    }
+    
+    if ($this->timer->steps <= 2) {
+      //error_log("Checking for strict_log setting (this->strict_log = $this->strict_log). ");
+    }
+    if ($this->strict_log and (count($this->data_cols) > 0)) {
+       $logvars = array_unique($this->data_cols);
+       if ($this->debug) {
+          if ($this->timer->steps <= 2) {
+             $this->logDebug("Using data_cols to restrict log variables. ");
+             error_log("$this->name Using data_cols to restrict log variables: " . print_r($logvars,1));
+          }
+       }
+    }
+  //error_log(print_r($logvars, 1) );
+    foreach ($logvars as $thisvar) {
+       // eleminate the geometry column if log_geom is set to 0 (default)
+       if ( (strlen(trim($thisvar)) > 0) and ( ($this->log_geom == 1) or ($thisvar <> 'the_geom') ) ) {
+          $thislog[$thisvar] = $logsrc[$thisvar];
+       }
+    }
+
+    if ($this->debug) {
+       $this->logDebug("$this->name Logging Output at time-step " . $this->timer->steps . "<br>");
+       if ($this->timer->steps <= 2) {
+          $this->logDebug("DB Column formats: " . print_r($this->dbcolumntypes,1) . "<br>");
+          $this->logDebug("Logged Columns and Values: " . print_r($thislog,1) . "<br>");
+       }
+    }
+    
+    switch ($this->log2db) {
+
+       
+       case 0:
+       array_push($this->logtable, $thislog);
+       break;
+       
+       case 1:
+       // log to db object if connection is set
+       if (is_object($this->listobject)) {
+          if ($this->debug) {
+             $this->logDebug("$this->name Logging Output at time-step " . $this->timer->steps . "<br>");
+             if ($this->timer->steps <= 2) {
+                $olddebug = $this->listobject->debug;
+                // un-comment this to turn on debugging in listobject temporarily
+                //$this->listobject->debug = 1;
+                $this->logDebug("DB Column formats: " . print_r($this->dbcolumntypes,1));
+                $this->logDebug("Logged Columns and Values: " . print_r($thislog,1));
+             }
+          }
+
+          $createsql = $this->listobject->array2tmpTable(array($thislog), $this->dbtblname, array_keys($thislog), $this->dbcolumntypes, 1, $this->bufferlog);
+
+          // always log table creation sql cause why not?
+          //if ($this->debug) {
+             if ($this->timer->steps <= 1) {
+                $lkl = 1;
+                foreach (str_split($createsql, 128) as $csql) {
+                  $this->logDebug("Table creation SQL ($lkl): " . $csql . "<br>");                  
+                  $lkl++;
+                }
+                $this->listobject->debug = $olddebug;
+             }
+          //}
+       } else {
+          // log to db requested, but no valid db object is set
+          if ($this->timer->steps <= 1) {
+             $this->logError("<b>Error: </b> Object $this->name log to db requested, but no valid db object is set.<br>\n");
+          }
+       }
+       break;
+
+       case 2:
+       // log to file
+       // if memory is at 85% of limit flush the log to the log file
+       // use the timer object to store the maximum memory value since all objects share access to the timer
+       array_push($this->logtable, $thislog);
+       if ($this->debug) {
+          $this->logDebug("Log Flush Requested <br>");
+          $this->logDebug("Log Flush Parameters: " . $this->timer->max_memory_mb . " * " . $this->timer->max_memory_pct . " <br>");
+       }
+       $mem_use = (memory_get_usage(true) / (1024.0 * 1024.0));
+       $mem_use_malloc = (memory_get_usage(false) / (1024.0 * 1024.0));
+       $tstep = $this->timer->steps;
+       if ( ($this->timer->max_memory_mb * $this->timer->max_memory_pct) <= $mem_use ) {
+          if ($this->debug) {
+             $this->logDebug("Flush requested at $tstep on $this->name because memory usage is $mem_use ($mem_use_malloc)<br>\n");
+          }
+          //error_log("Flush requested at $tstep on $this->name because memory usage is $mem_use ($mem_use_malloc)<br>\n");
+          $this->flushMemoryLog2file();
+       }
+       
+       break;
+
+       default:
+       array_push($this->logtable, $thislog);
+       break;
+    }
+
+    $this->logLoaded = 1;
+  }
+
+  function logDebug($debuginfo) {
+    if (is_array($debuginfo)) {
+       $debuginfo = print_r($debuginfo,1);
+    }
+
+    switch ($this->debugmode) {
+       case -1:
+          // ignore all calls to log errors
+       break;
+       
+       case 0:
+       // store in a string unless the log is too big, then put it in a file
+       $this->debugstring .= $debuginfo;
+       if (strlen($this->debugstring) > (1024 * 1024 * 5))  {
+          $this->flushDebugToFile();
+          $this->debugmode = 3;
+       }
+       break;
+
+       case 1:
+       // print to stderr - apache error log bites it if we give it too much data, so we truncate this if debug model is 1
+       if (strlen($debuginfo) > 512) {
+          $debuginfo = substr($debuginfo, 0, 511);
+       }
+       error_log($debuginfo);
+       break;
+
+       case 2:
+       // print to stdout
+       print($debuginfo);
+       break;
+
+       case 3:
+       // spool to a file
+       $this->debugstring .= $debuginfo;
+       // spool to file in 5Mb increments to keep write frequency low
+       if (strlen($this->debugstring) > (1024 * 1024 * 5))  {
+          $this->flushDebugToFile();
+       }
+       break;
+    }
+  }
+
+  function flushDebugToFile() {
+    if ($this->debugfile == '') {
+       $this->setDebugFile();
+    }
+    if (filesize($this->outdir . "/" . $this->debugfile) >= $this->maxdebugfile) {
+       $this->debugstring .= "<br>Max debug file size of $this->maxdebugfile exceeded.  Debugging suspended.<br>";
+       $this->debug = 0;
+    }
+    $dfp = fopen($this->outdir . "/" . $this->debugfile,'a');
+    fwrite($dfp, $this->debugstring);
+    $this->debugstring = '';
+    fclose($dfp);
+  }
+
+  function setDebugFile() {
+    $this->debugfile = 'debuglog.' . $this->sessionid . '.' . $this->componentid . '.log';
+    $dfp = fopen($this->outdir . "/" . $this->debugfile,'w');
+    if ($dfp) {
+       fwrite($dfp,"<html><body>");
+       fclose($dfp);
+    }
+  }
+
+  function logSysTemp($errorstring) {
+    if (isset($this->parentobject)) {
+       $this->parentobject->logSysTemp($errorstring);
+    } else {
+       if (is_array($errorstring)) {
+          $errorstring = print_r($errorstring,1);
+       }
+       $this->errorstring .= $errorstring;
+       // spool to file in 5Mb increments to keep write frequency low
+       if (strlen($this->errorstring) > (1024 * 1024 * 5))  {
+          $this->flushErrorToFile();
+       }
+    }
+  }
+
+  function logError($errorstring) {
+    if ($this->logerrors) {
+       if (is_array($errorstring)) {
+          $errorstring = print_r($errorstring,1);
+       }
+       $this->errorstring .= $errorstring;
+       // spool to file in 5Mb increments to keep write frequency low
+       if (strlen($this->errorstring) > (1024 * 1024 * 5))  {
+          $this->flushErrorToFile();
+       }
+    }
+  }
+
+  function flushErrorToFile() {
+    if ($this->errorfile == '') {
+       $this->setErrorFile();
+    }
+    if (filesize($this->outdir . "/" . $this->errorfile) >= $this->maxdebugfile) {
+       $this->errorstring .= "<br>Max error file size of $this->maxdebugfile exceeded.  Error logging suspended.<br>";
+       $this->logerrors = 0;
+    }
+    $dfp = fopen($this->outdir . "/" . $this->errorfile,'a');
+    fwrite($dfp, $this->errorstring);
+    $this->errorstring = '';
+    fclose($dfp);
+  }
+
+  function setErrorFile() {
+    $this->errorfile = 'errorlog.' . $this->sessionid . '.' . $this->componentid . '.log';
+    $dfp = fopen($this->outdir . "/" . $this->debugfile,'w');
+    if ($dfp) { 
+      fwrite($dfp,"<html><body>");
+      fclose($dfp);
+    }
+  }
+
+  function execProcessors() {
+
+    if ($this->debug) {
+       $this->logDebug("Going through processors for $this->name.<br>\n");
+    }
+    // iterate through each equation stored in this object
+    foreach (array_values($this->execlist) as $thisvar) {
+       // evaluate the equation
+       if ($this->debug) {
+          $this->logDebug("Next subcomp: $thisvar<br>\n");
+       }
+       if (is_object($this->processors[$thisvar])) {
+          // broadcast components get executed in the preStep() and postStep() methods
+          if ( !(get_class($this->processors[$thisvar]) == 'broadCastObject') ) {
+             // set all required inputs for the equation
+             // if this is a sub-comp on a sub-comp, we need to merge arData arrays
+             if (is_array($this->arData)) {
+                if ($this->processors[$thisvar]->debug) {
+                   $this->logDebug("Merging array this -> arData with internal state array <br>\n");
+                }
+                $statearr = array_merge($this->state,$this->arData);
+             } else {
+                if ($this->processors[$thisvar]->debug) {
+                   $this->logDebug("this -> arData not an array - using internal state array only <br>\n");
+                }
+                $statearr = $this->state;
+             }
+             if ($this->processors[$thisvar]->debug) {
+                if (isset($statearr['the_geom'])) {
+                   $statearr['the_geom'] = 'Truncated for debugging purposes';
+                }
+                $this->logDebug("Setting child $thisvar arData to: " . print_r($statearr,1) . " <br>\n");
+             }
+             $this->processors[$thisvar]->arData = $statearr;
+             if ($this->debug or $this->processors[$thisvar]->debug) {
+                $this->logDebug("Checking Processor step() method on $thisvar<br>\n");
+             }
+             // calls processor step method
+             if (method_exists($this->processors[$thisvar], 'step')) {
+                $this->processors[$thisvar]->step();
+                //error_log("step() method called on $this->name -> $thisvar<br>\n");
+             }
+             // evaluate the equation
+             if ($this->debug or $this->processors[$thisvar]->debug) {
+                $this->logDebug("Evaluating $thisvar<br>\n");
+             }
+             // if this processor is not transparent, it will evaluate and return a value, otherwise,
+             // we assume that it does not set a value
+             //error_log("Evaluating $this->name -> $thisvar<br>\n");
+             if (method_exists($this->processors[$thisvar], 'evaluate')) {
+                //error_log("evaluate() method exists <br>\n");
+                //$this->processors[$thisvar]->evaluate(); // this is now doen in the step() function
+                if ($this->processors[$thisvar]->debug) {
+                   //error_log("Appending Subcomp $thisvar debug output: <br>" . $this->processors[$thisvar]->debugstring);
+                   $this->logDebug($this->processors[$thisvar]->debugstring);
+                   $this->logDebug("<br>\n");
+                   // reset debugging string for processor, since it is appended here
+                   $this->processors[$thisvar]->debugstring = '';
+                }
+                if ($this->debug) {
+                   $sv = $this->state;
+                   if (isset($sv['the_geom'])) {
+                      $sv['the_geom'] = 'HIDDEN';
+                   }
+                   $this->logDebug($sv);
+                   $this->logDebug("<br>\n");
+                }
+                //error_log("checking if this is multivar <br>\n");
+                // set the state variable with the equation result
+                switch ($this->processors[$thisvar]->multivar) {
+                   case 0:
+                      $this->state[$thisvar] = $this->processors[$thisvar]->result;
+                   break;
+
+                   case 1:
+                      foreach ($this->processors[$thisvar]->multivarnames as $mvname) {
+                         $this->state[$mvname] = $this->processors[$thisvar]->state[$mvname];
+                      }
+                   break;
+
+                   default:
+                      $this->state[$thisvar] = $this->processors[$thisvar]->result;
+                   break;
+                }
+                //error_log("Done. <br>\n");
+             }
+             // evaluate the equation
+             if ($this->debug) {
+                $this->logDebug("Finished Evaluating $thisvar, Result = " . $this->state[$thisvar] . "<br>\n");
+             }
+          }
+       } else {
+          if ($this->debug) {
+             $this->logDebug("Error: Sub-component not set $thisvar<br>\n");
+          }
+       }
+    }
+    //error_log("Finished with processors on $this->name . <br>\n");
+  }
+
+  function orderOperations() {
+
+    $dependents = array();
+    $independents = array();
+    $sub_queue = array();
+    $execlist = array();
+    // compile a list of independent and dependent variables
+    // @todo: rvars on subcomps are explicit independent inputs to subcomps that are not yet handled
+    //        wvars are explicit outputs from subcomps that are often used by other comps
+    //        We also need to check to see if we are putting things in vars that should not be?
+    //        vars is a catchall used by equations which is equivalent to rvars but I *think*
+    //        vars has become a place for both rvars and wvars which might lead to unpredictable behavior
+    foreach (array_keys($this->processors) as $thisinput) {
+      foreach ($this->processors[$thisinput]->wvars as $wv) {
+        $independents[$this->processors[$thisinput]->getParentVarName($wv)] = $thisinput;
+      }
+      array_push($dependents, $thisinput);
+    }
+    if ($this->debug) {
+       $this->logDebug("<b>Ordering Operations for $this->name</b><br> ");
+    }
+    $this->outstring .= "Ordering Operations for $this->name\n";
+    // now check the list of independent variables for each processor,
+    // if none of the variables are in the current list of dependent variables
+    // put it into the execution stack, remove from queue
+    $queue = $dependents;
+    // sort those with non-zero hierarchy settings, placing all <0 hierarchy in order on the bottom of the queue (early)
+    // then place all of those later
+    $preexec = array();
+    $postexec = array();
+    $nonhier = array();
+    $hiersort = array();
+    foreach ($queue as $thisel) {
+       array_push($hiersort, $thisel);
+    }
+    sort($hiersort);
+    foreach ($hiersort as $thisel) {
+       $hier = $this->processors[$thisel]->exec_hierarch;
+       if ($hier < 0) {
+          $preexec[$thisel] = $hier;
+       } else {
+          if ($this->processors[$thisel]->exec_hierarch > 0) {
+             $postexec[$thisel] = $hier;
+          } else {
+             array_push($nonhier, $thisel);
+          }
+       }
+    }
+    asort($preexec);
+    $preexec = array_keys($preexec);
+    asort($postexec);
+    $postexec = array_keys($postexec);
+    $queue = $nonhier;
+    $this->logDebug("Beginning Queue \n");
+    $this->logDebug($queue);
+    $this->logDebug("Beginning independents \n");
+    $this->logDebug($independents);
+    $i = 0;
+    $this->debug = 1;
+    while (count($queue) > 0) {
+       $thisdepend = array_shift($queue);
+       $pvars = $this->processors[$thisdepend]->vars;
+       //$watchlist = array('impoundment', 'local_channel');
+       //$this->debug = in_array( $this->processors[$depend]->name, $watchlist) ? 1 : 0;
+       if ($this->debug) {
+          $this->logDebug("Checking $thisdepend variables \n");
+          $this->logDebug($pvars);
+          $this->logDebug(" <br>\n in ");
+          $this->logDebug($queue);
+          $this->logDebug("<br>\n");
+       }
+       $numdepend = $this->array_in_array($pvars, $queue);
+       if (!$numdepend) {
+          array_push($execlist, $thisdepend);
+          $i = 0;
+          if ($this->debug) {
+             $this->logDebug("Not found, adding $thisdepend to execlist.<br>\n");
+          }
+          // remove it from the derived var list if it exists there 
+          while ($dkey = array_search($thisdepend, $independents)) {
+            unset($independents[$dkey]);
+          }
+       } else {
+          // put it back on the end of the stack
+          if ($this->debug) {
+             $this->logDebug("Found.<br>\n");
+          }
+          array_push($queue, $thisdepend);
+       }
+       $i++;
+       // should try to sort them out by the number of unsatisfied dependencies,
+       // adding those with 1 dependency first
+       if ( ($i > count($queue)) and (count($queue) > 0)) {
+          # we have reached an impasse, since we cannot currently
+          # solve simultaneous variables, we just put all remaining on the
+          # execlist and hope for the best
+          # a more robust approach would be to determine which elements are in a circle,
+          # and therefore producing a bottleneck, as other variables may not be in a circle
+          # themselves, but may depend on the output of objects that are in a circle
+          # then, if we add the circular variables to the queue, we may be able to continue
+          # trying to order the remaining variables
+
+          # first, create a list of execution hierarchies and compids
+          $hierarchy = array();
+          foreach ($queue as $thisel) {
+             $hierarchy[$thisel] = $this->processors[$thisel]->exec_hierarch;
+          }
+          # sort in reverse order of hierarchy
+          # then, look at exec_hierarch property, if the first element is higher priority than the lowest in the stack
+          # pop it off the list, and add it to the queue
+          # then, after doing that, we can go back, set $i = 0, and try to loop through again,
+          arsort($hierarchy);
+          $keyar = array_keys($hierarchy);
+          if ($this->debug) {
+             $this->logDebug("Cannot determine sequence of remaining variables, searching manual execution hierarchy setting.<br>\n");
+          }
+          $firstid = $keyar[0];
+          $fh = $hierarchy[$firstid];
+          $mh = min(array_values($hierarchy));
+          if ($this->debug) {
+             $this->logDebug("Highest hierarchy value = $fh, Lowest = $mh.<br>\n");
+          }
+          if ($fh > $mh) {
+             # pop off and resume trying to sort them out
+             $newqueue = array_diff($queue, array($firstid) );
+             array_push($execlist, $firstid);
+             $i = 0;
+             if ($this->debug) {
+                $this->logDebug("Elelemt " . $firstid . ", with hierarchy " . $hierarchy[$firstid] . " added to execlist.<br>\n");
+             }
+             $queue = $newqueue;
+          } else {
+
+             if ($this->debug) {
+                $this->logDebug("Can not determine linear sequence for the remaining variables. <br>\n");
+                $this->logDebug($queue);
+                $this->logDebug("<br>\nDefaulting to order by number of unsatisfied dependencies.<br>\n");
+                $this->logDebug("<br>\nHoping their execution order does not matter!.<br>\n");
+             }
+             foreach ($queue as $lastcheck) {
+                $pvars = $this->processors[$lastcheck]->vars;
+                $numdepend = $this->array_in_array($pvars, $queue);
+                $dependsort[$lastcheck] = $numdepend;
+             }
+             asort($dependsort);
+             if ($this->debug) {
+                $this->logDebug("Remaining variable sort order: \n");
+                $this->logDebug($dependsort);
+             }
+             $numdepend = $this->array_in_array($pvars, array_keys($dependsort));
+             $newexeclist = array_merge($execlist, $queue);
+             $execlist = $newexeclist;
+             break;
+          }
+       }
+    }
+    $this->debug = 0;
+    $hiersort = array_merge($preexec, $execlist, $postexec);
+    
+    
+    $this->logDebug("Final Queue \n");
+    $this->logDebug($queue);
+    $this->logDebug("Final independents \n");
+    $this->logDebug($independents);
+    $this->logDebug("Pre-exec list: \n");
+    $this->logDebug($preexec);
+    $this->logDebug("Dependency ordered: \n");
+    $this->logDebug($hiersort);
+    $this->logDebug("Post-exec list:  \n");
+    $this->logDebug($postexec);
+    
+    $this->outstring .= "Ordering Operations\n";
+    $this->outstring .= "Independents Remaining: " . print_r($independents,1) . "\n";
+    $this->outstring .= "Pre-exec list: " . print_r($preexec,1) . "\n";
+    $this->outstring .= "To Be ordered: " . print_r($nonhier,1) . "\n";
+    $this->outstring .= "Dependency ordered: " . print_r($execlist,1) . "\n";
+    $this->outstring .= "Post-exec list: " . print_r($postexec,1) . "\n";
+    $this->outstring .= "Sorted: " . print_r($hiersort,1) . "\n";
+    $this->execlist = $hiersort;
+  }
+
+  function array_in_array($needle, $haystack) {
+     //Make sure $needle is an array for foreach
+     if(!is_array($needle)) $needle = array($needle);
+     $count = 0;
+     //For each value in $needle, return TRUE if in $haystack
+     foreach($needle as $pin)
+         //if(in_array($pin, $haystack)) return TRUE;
+         if(in_array($pin, $haystack)) $count++;
+     //Return FALSE if none of the values from $needle are found in $haystack
+     //return FALSE;
+     return $count;
+  }
+
+  function interpValue($thiskey, $lowkey, $lowvalue, $highkey, $highvalue) {
+
+    switch ($this->intmethod) {
+       case 0:
+          $retval = $lowvalue + ($highvalue - $lowvalue) * ( ($thiskey - $lowkey) / ($highkey - $lowkey) );
+       break;
+
+       case 1:
+          $retval = $tv;
+       break;
+
+    }
+    return $retval;
+  }
+
+  function addLookup($thisinput, $srcparam, $lutype, $lookuptable, $defaultval) {
+    # stashes the lookup table
+    $this->lookups[$thisinput]['default'] = $defaultval;
+    $this->lookups[$thisinput]['table'] = $lookuptable;
+    $this->lookups[$thisinput]['lutype'] = $lutype;
+    $this->lookups[$thisinput]['srcparam'] = $srcparam;
+    $this->lookups[$thisinput]['debug'] = 0;
+  }
+
+  function addOperator($statevar, $operator, $initval) {
+    if (!in_array($statevar, array_keys($this->state))) {
+       if ($this->debug) {
+          $this->errorstring .= "Adding state variable $statevar <br>\n";
+       }
+       # need to add this named input
+       $this->state[$statevar] = $initval;
+    }
+    $operator->name = $statevar;
+    # set link to operators parent (i.e., this containing object)
+    $operator->parentobject = $this;
+    $this->processors[$statevar] = $operator;
+    if ($this->debug) {
+       $this->errorstring .= "Adding operator $statevar<br>\n";
+       $this->logDebug("Adding operator $statevar<br>\n");
+    }
+    # add to exec list in order of creation, may later order by precedence with the
+    # function orderOperations()
+    array_push($this->execlist, $statevar);
+    $this->procnames = array_keys($this->processors);
+  }
+
+  function addInput($thisinput, $inputparam, $input_obj, $input_type = 'float8') {
+    $inkeys = array();
+    if (is_array($this->inputs)) {
+       $inkeys = array_keys($this->inputs);
+    }
+    if (!in_array($thisinput, $inkeys)) {
+       if ($this->debug) {
+          $this->logDebug("New Input $thisinput added. ");
+          #$this->logDebug(array_keys($this->inputs));
+       }
+       # need to add this named input
+       $this->inputs[$thisinput] = array();
+       # add db column setup info
+       if (strlen($input_type) > 0) {
+          $this->dbcolumntypes[$thisinput] = $input_type;
+          #error_log(print_r($this->dbcolumntypes,1));
+       }
+    }
+    // get some details about this input for messages/debugging
+    $iname = $input_obj->name;
+    $myname = $this->name;
+    if ($this->debug) {
+       $this->logDebug("Adding $iname -> $inputparam to $myname as $thisinput <br>\n");
+    }
+    // *** CHECK FOR UPDATE *** 
+    // we want to check to see if this object->param link has alrady been set, if so we overwrite so
+    // as not to add redundant links
+    $insert = 1;
+    foreach ($this->inputs[$thisinput] as $thislink) {
+       // this code does not yet work
+       
+    }
+    // *** END - CHECK FOR UPDATE
+    if ($insert) {
+       // this is a new input, not an update to an existing one, so we add it
+       array_push($this->inputs[$thisinput], array('param'=>$inputparam, 'objectname'=>$input_obj->name, 'object'=>$input_obj, 'value'=>NULL));
+    }
+    
+    // set the parent state for this array if it is not yet set
+    if (!(isset($this->state[$thisinput]))) {
+       $this->state[$thisinput] = 0.0;
+    }
+    // update the inputnames array
+    $this->inputnames = array_keys($this->inputs);
+    // add this to the loggable columns data_cols if we use strict logging
+    if (!in_array( $thisinput, $this->data_cols)) {
+       if ($this->debug) {
+          $this->logDebug("Adding $thisinput to loggable variables $myname <br>\n");
+       }
+       $this->data_cols[] = $thisinput;
+    }
+  }
+
+  function clearInputs($toclear = array()) {
+    if (!is_array($toclear)) {
+       $toclear = array($toclear);
+    }
+    if (count($toclear) == 0) {
+       $this->inputnames = array();
+       $this->inputs = array();
+    } else {
+       foreach ($toclear as $thisone) {
+          unset($this->inputs[$thisone]);
+          unset($this->inputnames[array_search($this->inputnames,$thisone)]);
+       }
+    }
+  }
+
+  function getInputs() {
+    if ($this->debug) {
+       $this->logDebug("Getting Inputs for $this->name <br>");
+       $sv = $this->state;
+       if (isset($sv['the_geom'])) {
+          $sv['the_geom'] = 'HIDDEN';
+       }
+       $this->logDebug("Inputs Beginning State array: " . print_r($sv,1) . "\n<br>");
+    }
+    
+    // *****************************
+    // BEGIN - get Hard Wired Inputs
+    // *****************************
+    foreach (array_keys($this->inputs) as $varname) {
+       if ($this->debug) {
+          $this->logDebug("Getting Input $varname for $this->name <br>");
+       }
+       # reset each input param to 0.0 for the beginning of the timestep
+       $this->state[$varname] = 0.0;
+
+       $k = 0;
+       foreach ($this->inputs[$varname] as $thisin) {
+          $outparam = $thisin['param'];
+          $inobject = $thisin['object'];
+          $lv = $thisin['value'];
+          if ($this->debug) {
+             $iname = $inobject->name;
+             if ($varname <> 'the_geom') {
+                $this->logDebug("Searching $iname ($outparam) for $varname - last value = $lv... ");
+             }
+          }
+          # accumulate inputs if they are numeric,
+          # since we may input to the same input multiple sources
+          $inval = $inobject->getValue($this->timer->timeseconds, $outparam);
+          $this->inputs[$varname][$k]['value'] = $inval;
+          # if the child object returns NULL, we don't use it
+          if (!($inval === NULL)) {
+             if (is_numeric($inval)) {
+                $this->state[$varname] += $inval;
+             } else {
+                $this->state[$varname] = $inval;
+             }
+             if ($this->debug) {
+                $iname = $inobject->name;
+                if ($varname <> 'the_geom') {
+                   $this->logDebug("updated with $outparam = $inval from Input: $iname, input total = " . $this->state[$varname] . "<br>\n");
+                }
+             }
+          }
+          $thisin['value'] = $inval;
+          $k++;
+       }
+    }
+    // *****************************
+    // END - get Hard Wired Inputs
+    // *****************************
+    
+    if ($this->debug) {
+       $sv = $this->state;
+       if (isset($sv['the_geom'])) {
+          $sv['the_geom'] = 'HIDDEN';
+       }
+       $this->logDebug("Inputs gathered. State array: " . print_r($sv,1) . "\n<br>");
+    }
+    # now, process lookups, replaces lookup key with value in state variable
+    $this->doLookups();
+    if ($this->debug) {
+       $this->logDebug("Lookups calculated. State array: " . print_r($sv,1) . "\n<br>");
+    }
+
+  }
+
+  function doLookups() {
+    foreach(array_keys($this->lookups) as $thisl) {
+       $thistab = $this->lookups[$thisl]['table'];
+       $defval = $this->lookups[$thisl]['default'];
+       $lutype = $this->lookups[$thisl]['lutype'];
+       $srcparam = $this->lookups[$thisl]['srcparam'];
+       $curval = $this->state[$srcparam];
+       $luval = '';
+       switch ($lutype) {
+          case 0:
+          # exact match lookup table
+          if (in_array($curval, array_keys($thistab))) {
+             $luval = $thistab[$curval];
+          } else {
+             $luval = $defval;
+          }
+          if ($thisl->debug) {
+             $this->logDebug("$thisl: $curval, def: $defval, lookup: $luval <br>\n");
+             $this->logDebug($thistab);
+             $this->logDebug("<br>\n");
+          }
+          break;
+
+          case 1:
+          # interpolated lookup table
+          $lukeys = array_keys($thistab);
+          $luval = $defval;
+          for ($i=0; $i < (count($lukeys) - 1); $i++) {
+             $lokey = $lukeys[$i];
+             $hikey = $lukeys[$i+1];
+             $loval = $thistab[$lokey];
+             $hival = $thistab[$hikey];
+             $minkey = min(array($lokey,$hikey));
+             $maxkey = max(array($lokey,$hikey));
+             if ( ($minkey <= $curval) and ($maxkey >= $curval) ) {
+                $luval = $this->interpValue($curval, $lokey, $loval, $hikey, $hival);
+                if ($this->lookups[$thisl]['debug']) {
+                   $sv = $this->state;
+                   if (isset($sv['the_geom'])) {
+                      $sv['the_geom'] = 'HIDDEN';
+                   }
+                   $this->logDebug($sv);
+                   $this->logDebug("<br>\nLow: $lokey, Value: $curval, Hi: $hikey = $luval <br>\n");
+                }
+             }
+          }
+          break;
+
+       }
+       $this->state[$thisl] = $luval;
+    }
+  }
+
+  function showElementInfo($propname = '', $view = 'info', $params = array()) {
+
+    $view = strtolower($view);
+    $output = '';
+    //error_log("showElementInfo($propname, $view) called on $this->name ");
+    
+    if ($propname == '') {
+       switch ($view) {
+
+          case 'info':
+          $output .= $this->showHTMLInfo();
+          break;
+
+          case 'initval':
+          $output .= $this->showInitialValues();
+          break;
+
+          case 'finalvalue':
+          $output .= $this->showFinalValues();
+          break;
+
+          case 'editform':
+          if (method_exists($this, 'showEditForm')) {
+             // $params[0] = form name, $params[1] = disabled? (0/1)
+             $editforminfo = $this->showEditForm($params[0], $params[1]);
+             if (is_array($editforminfo)) {
+                $output .= $editforminfo['innerHTML'];
+             } else {
+                $output .= $editforminfo;
+             }
+          } else {
+             $output .= $this->showFormVars();
+          }
+          break;
+
+       }
+    } else {
+    
+       if (isset($this->processors[$propname])) {
+          $output .= $this->processors[$propname]->showElementInfo('', $view, $params);
+          //error_log("Calling showElementInfo('', $view) on Processor $propname ");
+       } else {
+          if ($view == 'editform') {
+             $output .= $this->showFormVars(array($propname));
+          }
+       }
+    }
+    
+    return $output;
+  }
+
+  function initFormVars() {
+    if (!is_object($this->formvars)) {
+       if (is_object($this->listobject)) {
+          // check for form display methods
+          if (function_exists('showFormVars')) {
+             //$myvars = (array)$this;
+             $myvars = $this->state;
+             if ($this->debug) {
+                $this->logDebug("Creating form fields for " . print_r($myvars,1) . "<br>");
+             }
+             if (isset($this->listobject->adminsetuparray[get_class($this)])) {
+                $aset = $this->listobject->adminsetuparray[get_class($this)];
+             } else {
+                $aset = array();
+                foreach ($myvars as $thisvar) {
+                   $aset['column info'][$thisvar] = array('type'=>1,'hidden'=>0,'readonly'=>0);
+                }
+             }
+             $showlabels = 1;
+             $showmissing = 0;
+             $multiform = 0;
+             $this->formvars = showFormVars($this->listobject,$myvars,$aset,$showlabels, $showmissing, $this->debug, $multiform, 1, 0, -1, NULL, 1);
+             if ($this->debug) {
+                if (is_object($this->formvars)) {
+                   $this->logDebug("Form object successfully created for $this->name <br>");
+                } else {
+                   $this->logDebug("Form object creation unsuccessful for $this->name <br>");
+                }
+             }
+             // now, check to see if we are subclassing any of our vars to sub-components
+             foreach ($myvars as $thisvar) {
+                if (isset($this->processors[$thisvar])) {
+                   if (method_exists($this->processors[$thisvar], 'showFormVars')) {
+                      $this->formvars->formpieces['fields'][$thisvar] = $this->processors[$thisvar]->showFormVars(array($thisvar));
+                   }
+                }
+             }
+          } else {
+             $this->logError(" Function 'showFormVars' is not defined, module db_functions.php required for this function.<br>");
+          }
+       } else {
+          $this->logError(" listobject is not defined on this object.<br>");
+       }
+    } else {
+       if ($this->debug) {
+          $this->logDebug("Form variables already initialized<br>");
+       }
+    }
+  }
+
+  function showFormVars($vars = array()) {
+    $this->initFormVars();
+    $output = '';
+    
+    if (is_object($this->formvars)) {
+       if (count($vars) == 0) {
+          $output .= $outobject->innerHTML;
+       } else {
+          $del = '';
+          foreach ($vars as $thisvar) {
+             if (isset($this->formvars->formpieces['fields'][$thisvar])) {
+                $output .= $del . $this->formvars->formpieces['fields'][$thisvar];
+                $del = '<br>';
+             }
+          }
+       }
+    }
+    return $output;
+
+  }
+
+  function showInitialValues() {
+
+    return $this->defaultval;
+
+  }
+
+  function showFinalValues() {
+
+    return $this->result;
+
+  }
+
+  function showHTMLInfo() {
+    # prints out information about this object.  Should sub-class to get in depth report
+
+    $props = $this->getPublicVars();
+    $HTMLInfo = '';
+    
+    // do those in prop_desc first, then those that are sub-components (and hence have a desc)
+    // then finally, those that do not have a description
+    $subs = array_keys($this->processors);
+    sort($subs);
+    
+    $HTMLInfo .= "<h3>Internal Properties:</h3><br>";
+    foreach ($this->prop_desc as $varname => $desc) {
+       if (!in_array($varname, $subs)) {
+          // will assume that it has been sub-classed if it is set as a user-defined property
+          $HTMLInfo .= "<b>$varname</b> - $desc <br> ";
+       }
+    }
+    $HTMLInfo .= "Un-described: ";
+    foreach ($props as $thisprop) {
+       if ( (!(in_array($thisprop, array_keys($this->prop_desc)))) and (!(in_array($thisprop, $subs))) ) {
+          $HTMLInfo .= "$thisprop ";
+       }
+    }
+    $HTMLInfo .= "<hr>";
+    $HTMLInfo .= "<h3>User-defined Sub-components:</h3><br>";
+    $undesc = '';
+    foreach ($subs as $thisproc) {
+       if (property_exists($this->processors[$thisproc], 'description')) {
+          if (strlen(trim($this->processors[$thisproc]->description)) > 0) {
+             $HTMLInfo .= "<b>$thisproc</b> - " . $this->processors[$thisproc]->description . " <br> ";
+          } else {
+             $undesc .= "$thisproc ";
+          }
+       } else {
+          $undesc .= "$thisproc ";
+       }
+    }
+    $HTMLInfo .= "Un-described: $undesc";
+
+    return $HTMLInfo;
+
+  }
+
+  }
+
+  class modelSubObject extends modelObject {
+  var $wvars = 0;
+
+  function wake() {
+    parent::wake();
+  }
+     
+  function sleep() {
+    $this->wvars = 0;
+    $this->rvars = 0;
+    parent::sleep();
+  }
+
+  function logState() {
+
+    // logging will be done by the parent, so no need to waste memory and time with this
+
+  }
+
+  function subState() {
+    parent::subState();
+  }
+
+  function setDataColumnTypes() {
+    parent::setDataColumnTypes();
+    foreach ($this->wvars as $thisvar) {
+       if ($this->debug) {
+          $this->logDebug("Setting $this->name" . "_" . "$thisvar to type float8 on parent.<br>\n");
+          error_log("Setting $this->name" . "_" . "$thisvar to type float8 on parent.<br>\n");
+       }
+       if (is_object($this->parentobject)) {
+          if (method_exists($this->parentobject, 'setSingleDataColumnType')) {
+             $dval = $this->getProp($thisvar);
+             if (isset($this->dbcolumntypes[$thisvar])) {
+                $this->parentobject->setSingleDataColumnType($this->name . "_" . $thisvar, $this->dbcolumntypes[$thisvar], $dval);
+             } else {
+                $this->parentobject->setSingleDataColumnType($this->name . "_" . $thisvar, 'float8', $dval);
+             }
+          }
+       }
+       $this->vars[] = $this->name . "_" . $thisvar;
+    }
+  }
 }
    
 
@@ -3889,7 +3902,8 @@ class modelContainer extends modelObject {
 
 }
 
-class simTimer {
+class 
+ {
 
    var $thistime;
    var $debug = 0;
@@ -6613,6 +6627,22 @@ class channelObject extends hydroObject {
          $Qlocal += $Rin;
       }
       //error_log("I2 = this->state['Qin'] + Qlocal + discharge * 1.547 -> $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge * 1.547 ;");
+      
+      // track previous days mean flow
+      /*
+      $pjday = $this->state['prev_jday'];
+      if ( ( $pjday < ($jday -1)) or ( ($pjday == 365) and ($jday == 1 )) ) {
+        // need to re-up
+        $this->state['prevday_Qin'] = $this->state['prevday_Qin_count'] > 0 ? ($this->state['prevday_Qin_sum'] / $this->state['prevday_Qin_count']) : $this->state['prevday_Qin_sum'];
+        $this->state['prevday_Qin_count'] = 1;
+        $this->state['prevday_Qin_sum'] = $this->state['Qin'];
+      } else {
+        $this->state['prevday_Qin_count'] += 1;
+        $this->state['prevday_Qin_sum'] += $this->state['Qin'];        
+      }
+      
+      */
+      
       $I2 = $this->state['Qin'] + $Qlocal + $discharge * 1.547;
       if ($this->debug) {
          $this->logDebug("Final Inflows I2 : $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge <br>\n");
@@ -6868,6 +6898,7 @@ class hydroImpoundment extends hydroObject {
       $this->setSingleDataColumnType('days_remaining', 'float8',0);
       $this->setSingleDataColumnType('demand_met_mgd', 'float8',0);
       $this->setSingleDataColumnType('deficit_acft', 'float8',0);
+      $this->setSingleDataColumnType('release', 'float8',0);
       $this->setSingleDataColumnType('maxcapacity', 'float8',0);
       $this->setSingleDataColumnType('refill_full_mgd', 'float8',0);
    }
@@ -14611,7 +14642,7 @@ class hydroImpSmall extends hydroImpoundment {
    // other, more complicated flow-bys will inherit this class
    var $rvars = array();
    var $wvars = array();
-   var $storage_matrix = -1; // objecct shell for storage table
+   var $storage_matrix = -1; // object shell for storage table
    var $matrix = array(); // array shell for storage table
    var $serialist = 'rvars,wvars,matrix';
    var $refill = 0;
@@ -14658,7 +14689,8 @@ class hydroImpSmall extends hydroImpoundment {
       parent::setState();
       $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
       // since this is a subcomp need to explicitly declare which write on parent
-      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_stage', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill');      
+      $this->wvars = array('Qin', 'evap_mgd','Qout','lake_elev','Storage', 'refill_full_mgd', 'demand', 'use_remain_mg', 'days_remaining', 'max_usable', 'riser_stage', 'riser_head', 'riser_mode', 'riser_flow', 'riser_diameter', 'demand_met_mgd', 'its', 'spill', 'release');
+      
       $this->initOnParent();
    }
 
@@ -14863,6 +14895,7 @@ class hydroImpSmall extends hydroImpoundment {
       if ($this->debug) {
          $this->logDebug("Final variables on this object " . print_r($this->state,1) . "<br>");
       }
+      error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
    }
    
    function step() {
@@ -14972,9 +15005,13 @@ class hydroImpSmall extends hydroImpoundment {
       ;
       
       if ($S1 < 0) {
-         // what to do with flowby & wd?
+         // @todo: what to do with flowby & wd?
          // if storechange is less than zero, its magnitude represents the deficit of flowby+demand
-         // we can either choose to evenly distribute them or assume that demand wins
+         // 3 modes:
+         //   * Demand Wins - assume that demand wins, flowby gets any leftovers
+         //   * Flowby Wins - we can choose to meet the flowby, demand gets leftovers
+         //   * Weighted - we can choose to evenly distribute them based on weight 
+         // Currently this assumes mode 1 - Demand Wins
          $deficit_acft = abs($S1);
          $s_avail = (1.547 * $demand * $dt /  43560.0) + ($flowby * $dt /  43560.0) - $deficit_acft;
          if ($s_avail <= (1.547 * $demand * $dt /  43560.0)) {
@@ -15057,6 +15094,7 @@ class hydroImpSmall extends hydroImpoundment {
       $this->state['Storage'] = $Storage;
       $this->state['spill'] = $spill;
       $this->state['area'] = $area;
+      $this->state['release'] = $flowby;
       $this->state['evap_acfts'] = $evap_acfts;
       $this->state['storage_mg'] = $Storage / 3.07;
       $this->state['lake_elev'] = $stage;

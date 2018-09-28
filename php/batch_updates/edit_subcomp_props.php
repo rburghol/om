@@ -5,8 +5,8 @@
 $noajax = 1;
 $projectid = 3;
 $scid = 28;
-
-include_once('./xajax_modeling.element.php');
+#/var/www/html/om/xajax_modeling.common.php
+include_once('/var/www/html/om/xajax_modeling.element.php');
 $noajax = 1;
 $projectid = 3;
 error_reporting(E_ERROR);
