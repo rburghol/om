@@ -375,17 +375,24 @@ function getCOVAWithdrawals($listobject, $elementid, $criteria = array(), $debug
 }
 
 function getAtLargeWithdrawals($listobject, $elementid, $criteria, $debug) {
-   $children = array();
-   $child_types = array('wsp_waterUser','wsp_vpdesvwuds');
-   $tops = getChildComponentCustom1($listobject, $elementid, 'cova_pswd', $limit = -1);
-   foreach ($tops as $thistop) {
-      $gid = $thistop['elementid'];
-      $containers = getChildComponentCustom1($listobject, $gid, 'generic_water_user', -1, $debug);
-      foreach ($containers as $thisgroup) {
-         array_push($children, $thisgroup);
-      }
-   }
-   return $children;
+  $children = array();
+  $tops = getChildComponentCustom1($listobject, $elementid, 'cova_pswd', $limit = -1, $debug);
+  foreach ($tops as $thistop) {
+    $gid = $thistop['elementid'];
+    $child_types = array('wsp_waterUser','wsp_vpdesvwuds');
+    error_log("Getting At-Large withdrawals");
+    foreach ($child_types as $ct) {
+       $childrecs = getChildComponentType($listobject, $gid, $ct, -1, $debug);
+       foreach ($childrecs as $thischild) {
+          array_push($children, $thischild);
+       }
+    }
+    $generics = getChildComponentCustom1($listobject, $gid, 'generic_water_user', -1, $debug);
+    foreach ($generics as $thisgroup) {
+       array_push($children, $thisgroup);
+    }
+  }
+  return $children;
 }
 
 function deleteCOVAPointSources($listobject, $pscontid, $criteria = array(), $debug = 0) {
@@ -762,6 +769,20 @@ function getCOVADischarges($listobject, $scenarioid, $parentid, $criteria = arra
    }
    
    return $children;
+
+}
+
+function getCOVACBPSubnodal($listobject, $scenarioid, $riverseg) {
+
+   // retrfoieves the cova_channel sub-component
+   // when given the 'cova_runoff' containers ID
+   $elinfo = getComponentCustom($listobject, $scenarioid, 'cova_ws_subnodal', $riverseg);
+   if (count($elinfo) > 0) {
+      $elid = $elinfo[0]['elementid'];
+   } else {
+      $elid = -1;
+   }
+   return $elid;
 
 }
 

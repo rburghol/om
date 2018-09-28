@@ -784,7 +784,6 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
       }
       $listobject->querystring .= " ) ";
       error_log($listobject->querystring);
-      error_log("PG Error: $listobject->error");
       $listobject->performQuery();
    }
 }
@@ -2835,7 +2834,7 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
    return $innerHTML;
 }
 
-function setElementGeometry($elid, $geomtype, $wkt_geom, $src_srid = 4326) {
+function setElementGeometry($elid, $geomtype, $wkt_geom, $src_srid = 4326, $debug = 0) {
    global $listobject;
    # should auto-determine geom type if we pass -1 as geomtype (but I will do this later)
 
@@ -2847,19 +2846,21 @@ function setElementGeometry($elid, $geomtype, $wkt_geom, $src_srid = 4326) {
       
       case 2:
          $geomcol = 'line_geom';
-         $geomexp = " Multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
+         $geomexp = " st_multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
       break;
       
       case 3:
          $geomcol = 'poly_geom';
-         $geomexp = " Multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
+         $geomexp = " st_multi(st_geomfromtext('$wkt_geom', $src_srid)) ";
       break;
       
    }
    
-   $listobject->querystring = "  update scen_model_element set geomtype = $geomtype, $geomcol = st_transform($geomexp,4326) ";
+   $listobject->querystring = " update scen_model_element set geomtype = $geomtype, $geomcol = st_transform($geomexp,4326) ";
    $listobject->querystring .= " where elementid = $elid ";
-   
+   if ($debug) {
+     error_log($listobject->querystring);
+   }
    $listobject->performQuery();
    
 }
@@ -7624,11 +7625,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
 
    if ($elementid > 0) {
       if ($cached) {
-        //error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
-        $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
+        error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
+         $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-        //error_log("Calling getObjectXML(listobject, $elementid) ");
-        $qresult = getObjectXML($listobject, $elementid);
+         error_log("Calling getObjectXML(listobject, $elementid) ");
+         $qresult = getObjectXML($listobject, $elementid);
       }
       if ($qresult['error']) {
         return FALSE;

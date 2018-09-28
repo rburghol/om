@@ -1,7 +1,8 @@
 <?php
 
 $noajax = 1;
-include('./xajax_modeling.element.php');
+include_once('/var/www/html/om/xajax_modeling.element.php');
+
 if (count($argv) < 2) {
    print("USAGE: php fn_getNHDChannelInfo.php lat lon [debug=0]\n");
    die;

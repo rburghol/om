@@ -1,0 +1,5018 @@
+PHP Warning:  include(./private.info): failed to open stream: No such file or directory in /var/www/html/om/config.local.php on line 3
+PHP Warning:  include(): Failed opening './private.info' for inclusion (include_path='.:/usr/share/php') in /var/www/html/om/config.local.php on line 3
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Using development version of model
+Arguments: Array
+(
+    [0] => run_shakeTree.php
+    [1] => 4
+    [2] => OR2_8130_7900
+    [3] => 101
+    [4] => 1984-01-01
+    [5] => 1984-03-31
+    [6] => 2013-09-11
+    [7] => 0
+    [8] => 37
+    [9] => 0
+    [10] => 1
+)
+
+Using DBConn to 192.168.0.21 
+URL Params submitted: Array
+(
+)
+
+Run Order Submitted: 
+   Element List - OR2_8130_7900 
+   Run ID - 101 
+   Start date - 1984-01-01 
+   End date - 1984-03-31 
+   Sleep Factor - 40 
+   Overwrite? - 0 
+  select elementid from scen_model_element  where scenarioid = 37     and custom1 in ( 'cova_ws_container', 'cova_ws_subnodal' )     and custom2 = 'OR2_8130_7900'  
+Done.
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Using development version of model
+Arguments: Array
+(
+    [0] => run_shakeTree.php
+    [1] => 4
+    [2] => OR2_8130_7900
+    [3] => 101
+    [4] => 1984-01-01
+    [5] => 1984-03-31
+    [6] => 2013-09-11
+    [7] => 0
+    [8] => 37
+    [9] => 0
+    [10] => 1
+)
+
+Using DBConn to 192.168.0.21 
+URL Params submitted: Array
+(
+)
+
+Run Order Submitted: 
+   Element List - OR2_8130_7900 
+   Run ID - 101 
+   Start date - 1984-01-01 
+   End date - 1984-03-31 
+   Sleep Factor - 40 
+   Overwrite? - 0 
+  select elementid from scen_model_element  where scenarioid = 37     and custom1 in ( 'cova_ws_container', 'cova_ws_subnodal' )     and custom2 = 'OR2_8130_7900'  
+Tue, 04 Sep 2018 16:16:42 -0400 : Run  / , running 251491 
+Tue, 04 Sep 2018 16:16:42 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251517) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 251517 with params Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251517 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251517 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251517 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251517     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251517 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251517 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251517 Forked 
+With parameters: Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251517  ; 
+  delete from system_status  where runid = 101 and element_key = 251517  ; 
+Children of object 251511 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251517
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251517, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251517, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251517) 
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256687) 
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251623) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 251623 with params Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251623 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251623 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251623 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251623     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251623 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251623 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251623 Forked 
+With parameters: Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251623  ; 
+  delete from system_status  where runid = 101 and element_key = 251623  ; 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Children of object 251617 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Loading lib_batchmodel.php from /www/lib tree
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251623
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251623, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251623, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251623) 
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Calling getObjectXML(listobject, 256677) 
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 250547) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 250547 with params Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 250547 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 250547 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 250547 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 250547     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 250547 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 250547 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 250547 Forked 
+With parameters: Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 250547  ; 
+  delete from system_status  where runid = 101 and element_key = 250547  ; 
+Children of object 250541 currently running - returning 
+Children of object 250521 currently running - returning 
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250547
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 250547, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(250547, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 250547) 
+Calling getObjectXML(listobject, 256957) 
+Calling getObjectXML(listobject, 256959) 
+Feed_inventory is not array, gettype = object
+Calling getObjectXML(listobject, 256689) 
+Calling getObjectXML(listobject, 256691) 
+Feed_inventory is not array, gettype = object
+Calling getObjectXML(listobject, 256679) 
+Calling getObjectXML(listobject, 256681) 
+Feed_inventory is not array, gettype = object
+Calling getObjectXML(listobject, 256961) 
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+Tue, 04 Sep 2018 16:17:25 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 251511 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 251617 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 250541 currently running - returning 
+Children of object 250521 currently running - returning 
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+Tue, 04 Sep 2018 16:18:05 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 251511 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 251617 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Children of object 250541 currently running - returning 
+Children of object 250521 currently running - returning 
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+<b>Iterating through timesteps<br>
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.250547.log, /var/www/html/data/proj3/out/debuglog.101.250547.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report250547-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 250547 to /var/www/html/data/proj3/out/error250547.html / /data/proj3/out/error250547.html 
+Writing debug output to file.
+Debug File written for 250547 to /var/www/html/data/proj3/out/debug250547.html / /data/proj3/out/debug250547.html 
+Creating output in html form.
+Storing  model output in database
+Storing 250547 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250547
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+<b>Iterating through timesteps<br>
+<b>Iterating through timesteps<br>
+<b>Finished model interations -- starting post processing<br>
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251623.log, /var/www/html/data/proj3/out/debuglog.101.251623.log 
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251517.log, /var/www/html/data/proj3/out/debuglog.101.251517.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251517-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251517 to /var/www/html/data/proj3/out/error251517.html / /data/proj3/out/error251517.html 
+Writing debug output to file.
+Debug File written for 251517 to /var/www/html/data/proj3/out/debug251517.html / /data/proj3/out/debug251517.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251517 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251517
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251623-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251623 to /var/www/html/data/proj3/out/error251623.html / /data/proj3/out/error251623.html 
+Writing debug output to file.
+Debug File written for 251623 to /var/www/html/data/proj3/out/debug251623.html / /data/proj3/out/debug251623.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251623 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251623
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:18:46 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:16:44 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:16:45 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251525) 
+
+Branch 250547 time 2018-09-04 16:16:45 > root  (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251597) 
+
+Branch 250547 time 2018-09-04 16:16:45 > root  (251597) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251617) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251617 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250547 time 2018-09-04 16:16:45 > root  (251631) 
+
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250547 time 2018-09-04 16:16:45 > root  (250521) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250547 time 2018-09-04 16:16:45 > root  (250541) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 250541 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 250521) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 250521 with params Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 250521 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 250521 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 250521 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 250521     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 250521 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 250521 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 250521 Forked 
+With parameters: Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 250521  ; 
+  delete from system_status  where runid = 101 and element_key = 250521  ; 
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250521
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 250521, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(250521, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 250521) 
+Calling getObjectXML(listobject, 250523) 
+Calling getObjectXML(listobject, 250525) 
+Calling getObjectXML(listobject, 250527) 
+Calling getObjectXML(listobject, 250529) 
+Calling getObjectXML(listobject, 307900) 
+Calling getObjectXML(listobject, 250567) 
+Calling getObjectXML(listobject, 307902) 
+Calling getObjectXML(listobject, 250571) 
+Calling getObjectXML(listobject, 250541) 
+Calling getObjectXML(listobject, 250543) 
+Calling getObjectXML(listobject, 250545) 
+Calling getObjectXML(listobject, 250547) 
+File open result: Resource id #611 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.250547.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  0
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 250547 <br>
+cache info: Array
+(
+    [tablename] => -1_101_250547
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.250547.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:16:45
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 250551) 
+Calling getObjectXML(listobject, 250553) 
+Calling getObjectXML(listobject, 250555) 
+Calling getObjectXML(listobject, 250557) 
+Calling getObjectXML(listobject, 250559) 
+Calling getObjectXML(listobject, 250561) 
+Calling getObjectXML(listobject, 250563) 
+Calling getObjectXML(listobject, 326299) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 250547
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02052000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02052000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.250521.log, /var/www/html/data/proj3/out/debuglog.101.250521.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report250521-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 250521 to /var/www/html/data/proj3/out/error250521.html / /data/proj3/out/error250521.html 
+Writing reports to file.
+report File written for 250521 to /var/www/html/data/proj3/out/report250521.html / /data/proj3/out/report250521.html 
+Writing debug output to file.
+Debug File written for 250521 to /var/www/html/data/proj3/out/debug250521.html / /data/proj3/out/debug250521.html 
+Creating output in html form.
+Storing  model output in database
+Storing 250521 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250521
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:19:28 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:16:44 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250521 time 2018-09-04 16:18:48 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251525) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250521 time 2018-09-04 16:18:48 > root  (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251597) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250521 time 2018-09-04 16:18:48 > root  (251597) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:16:44 > root  (251617) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251617 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250529 time 2018-09-04 16:18:48 > root  (251631) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251631) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251631) 
+
+Branch 250521 time 2018-09-04 16:18:48 > root  (251631) 
+
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256957) 
+Calling getObjectXML(listobject, 256959) 
+Calling getObjectXML(listobject, 256961) 
+Calling getObjectXML(listobject, 250525) 
+Checking for A51063 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51063 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 0 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251631 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251597) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 251597 with params Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251597 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251597 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251597 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251597     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251597 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251597 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251597 Forked 
+With parameters: Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251597  ; 
+  delete from system_status  where runid = 101 and element_key = 251597  ; 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251597
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251597, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251597, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251597) 
+Calling getObjectXML(listobject, 251599) 
+Calling getObjectXML(listobject, 251601) 
+Calling getObjectXML(listobject, 251603) 
+Calling getObjectXML(listobject, 251605) 
+Calling getObjectXML(listobject, 306328) 
+Calling getObjectXML(listobject, 306330) 
+Calling getObjectXML(listobject, 306336) 
+Calling getObjectXML(listobject, 251641) 
+Calling getObjectXML(listobject, 306326) 
+Calling getObjectXML(listobject, 306332) 
+Calling getObjectXML(listobject, 251651) 
+Calling getObjectXML(listobject, 306334) 
+Calling getObjectXML(listobject, 251657) 
+Calling getObjectXML(listobject, 306338) 
+Calling getObjectXML(listobject, 306340) 
+Calling getObjectXML(listobject, 251663) 
+Calling getObjectXML(listobject, 318027) 
+Calling getObjectXML(listobject, 318029) 
+Calling getObjectXML(listobject, 318031) 
+Calling getObjectXML(listobject, 318033) 
+Calling getObjectXML(listobject, 318035) 
+Calling getObjectXML(listobject, 318037) 
+Calling getObjectXML(listobject, 318039) 
+Calling getObjectXML(listobject, 318041) 
+Calling getObjectXML(listobject, 318043) 
+Calling getObjectXML(listobject, 318045) 
+Calling getObjectXML(listobject, 318047) 
+Calling getObjectXML(listobject, 318049) 
+Calling getObjectXML(listobject, 318051) 
+Calling getObjectXML(listobject, 318053) 
+Calling getObjectXML(listobject, 318055) 
+Calling getObjectXML(listobject, 318057) 
+Calling getObjectXML(listobject, 318059) 
+Calling getObjectXML(listobject, 318061) 
+Calling getObjectXML(listobject, 318063) 
+Calling getObjectXML(listobject, 318065) 
+Calling getObjectXML(listobject, 318067) 
+Calling getObjectXML(listobject, 318069) 
+Calling getObjectXML(listobject, 318071) 
+Calling getObjectXML(listobject, 318073) 
+Calling getObjectXML(listobject, 318075) 
+Calling getObjectXML(listobject, 251617) 
+Calling getObjectXML(listobject, 251619) 
+Calling getObjectXML(listobject, 251621) 
+Calling getObjectXML(listobject, 251623) 
+File open result: Resource id #2390 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251623.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  0
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251623 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251623
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251623.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:16:44
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251627) 
+Calling getObjectXML(listobject, 251629) 
+Calling getObjectXML(listobject, 251631) 
+Calling getObjectXML(listobject, 250521) 
+File open result: Resource id #2569 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.250521.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  106.60109449264
+Handling 1 - wd_upstream_mgd 
+Calling setSingleDataColumnType(wd_upstream_mgd, 'guess',  0
+Handling 2 - ps_upstream_mgd 
+Calling setSingleDataColumnType(ps_upstream_mgd, 'guess',  0
+Handling 3 - Qreach 
+Calling setSingleDataColumnType(Qreach, 'guess',  0
+Handling 4 - Qlake 
+Calling setSingleDataColumnType(Qlake, 'guess',  0
+Handling 5 - imp_off 
+Calling setSingleDataColumnType(imp_off, 'guess',  1
+Handling 6 - wd_mgd 
+Calling setSingleDataColumnType(wd_mgd, 'guess',  0
+Handling 7 - ps_mgd 
+Calling setSingleDataColumnType(ps_mgd, 'guess',  0
+Handling 8 - ps_trib_mgd 
+Calling setSingleDataColumnType(ps_trib_mgd, 'guess',  0
+Handling 9 - wd_trib_mgd 
+Calling setSingleDataColumnType(wd_trib_mgd, 'guess',  0
+Handling 10 - name 
+Handling 11 - description 
+Handling 12 - componentid 
+Handling 13 - subshedid 
+Handling 14 - dt 
+Handling 15 - month 
+Handling 16 - day 
+Handling 17 - year 
+Handling 18 - thisdate 
+Handling 19 - time 
+Handling 20 - timestamp 
+Handling 21 - run_mode 
+Handling 22 - season 
+Handling 23 - ps_cumulative_mgd 
+Calling setSingleDataColumnType(ps_cumulative_mgd, 'guess',  0
+Handling 24 - wd_cumulative_mgd 
+Calling setSingleDataColumnType(wd_cumulative_mgd, 'guess',  0
+Handling 25 - flow_mode 
+Calling setSingleDataColumnType(flow_mode, 'guess',  0
+Handling 26 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 27 - Listen on Parent 
+Calling setSingleDataColumnType(Listen on Parent, 'guess',  0
+Handling 28 - Send to Children 
+Calling setSingleDataColumnType(Send to Children, 'guess',  0
+Handling 29 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 30 - Listen to Children 
+Calling setSingleDataColumnType(Listen to Children, 'guess',  0
+Handling 31 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 250521 <br>
+cache info: Array
+(
+    [tablename] => -1_101_250521
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.250521.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:18:48
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251633) 
+Calling getObjectXML(listobject, 251635) 
+Calling getObjectXML(listobject, 251637) 
+Calling getObjectXML(listobject, 251639) 
+Calling getObjectXML(listobject, 324395) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 251623
+    [1] => 250521
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02052000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02052000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251597.log, /var/www/html/data/proj3/out/debuglog.101.251597.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251597-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251597 to /var/www/html/data/proj3/out/error251597.html / /data/proj3/out/error251597.html 
+Writing reports to file.
+report File written for 251597 to /var/www/html/data/proj3/out/report251597.html / /data/proj3/out/report251597.html 
+Writing debug output to file.
+Debug File written for 251597 to /var/www/html/data/proj3/out/debug251597.html / /data/proj3/out/debug251597.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251597 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251597
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:20:14 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251491) 
+
+Branch 251605 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250521 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251597 time 2018-09-04 16:19:34 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:16:43 > root  (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251605 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 251623 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250547 time 2018-09-04 16:18:48 > root  (251525) 
+
+Branch 250521 time 2018-09-04 16:19:34 > root  (251525) 
+
+Branch 251597 time 2018-09-04 16:19:34 > root  (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256677) 
+Calling getObjectXML(listobject, 256679) 
+Calling getObjectXML(listobject, 256681) 
+Calling getObjectXML(listobject, 251601) 
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 0 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251525 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251491) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 251491 with params Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251491 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251491 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251491 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251491     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251491 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251491 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251491 Forked 
+With parameters: Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251491  ; 
+  delete from system_status  where runid = 101 and element_key = 251491  ; 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251491
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251491, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251491, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251491) 
+Calling getObjectXML(listobject, 251493) 
+Calling getObjectXML(listobject, 251495) 
+Calling getObjectXML(listobject, 251497) 
+Calling getObjectXML(listobject, 251499) 
+Calling getObjectXML(listobject, 328691) 
+Calling getObjectXML(listobject, 328693) 
+Calling getObjectXML(listobject, 328695) 
+Calling getObjectXML(listobject, 328697) 
+Calling getObjectXML(listobject, 328699) 
+Calling getObjectXML(listobject, 251545) 
+Calling getObjectXML(listobject, 318111) 
+Calling getObjectXML(listobject, 318113) 
+Calling getObjectXML(listobject, 251511) 
+Calling getObjectXML(listobject, 251513) 
+Calling getObjectXML(listobject, 251515) 
+Calling getObjectXML(listobject, 251517) 
+File open result: Resource id #977 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251517.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  0
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251517 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251517
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251517.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:16:43
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251521) 
+Calling getObjectXML(listobject, 251523) 
+Calling getObjectXML(listobject, 251525) 
+Calling getObjectXML(listobject, 251597) 
+File open result: Resource id #1271 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251597.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  255.38792284394
+Handling 1 - wd_upstream_mgd 
+Calling setSingleDataColumnType(wd_upstream_mgd, 'guess',  0
+Handling 2 - ps_upstream_mgd 
+Calling setSingleDataColumnType(ps_upstream_mgd, 'guess',  0
+Handling 3 - Qreach 
+Calling setSingleDataColumnType(Qreach, 'guess',  0
+Handling 4 - Qlake 
+Calling setSingleDataColumnType(Qlake, 'guess',  0
+Handling 5 - imp_off 
+Calling setSingleDataColumnType(imp_off, 'guess',  1
+Handling 6 - wd_mgd 
+Calling setSingleDataColumnType(wd_mgd, 'guess',  0
+Handling 7 - ps_mgd 
+Calling setSingleDataColumnType(ps_mgd, 'guess',  0
+Handling 8 - ps_trib_mgd 
+Calling setSingleDataColumnType(ps_trib_mgd, 'guess',  0
+Handling 9 - wd_trib_mgd 
+Calling setSingleDataColumnType(wd_trib_mgd, 'guess',  0
+Handling 10 - Qup 
+Calling setSingleDataColumnType(Qup, 'guess',  0
+Handling 11 - name 
+Handling 12 - description 
+Handling 13 - componentid 
+Handling 14 - subshedid 
+Handling 15 - dt 
+Handling 16 - month 
+Handling 17 - day 
+Handling 18 - year 
+Handling 19 - thisdate 
+Handling 20 - time 
+Handling 21 - timestamp 
+Handling 22 - run_mode 
+Handling 23 - season 
+Handling 24 - ps_cumulative_mgd 
+Calling setSingleDataColumnType(ps_cumulative_mgd, 'guess',  0
+Handling 25 - wd_cumulative_mgd 
+Calling setSingleDataColumnType(wd_cumulative_mgd, 'guess',  0
+Handling 26 - flow_mode 
+Calling setSingleDataColumnType(flow_mode, 'guess',  0
+Handling 27 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 28 - Listen on Parent 
+Calling setSingleDataColumnType(Listen on Parent, 'guess',  0
+Handling 29 - Send to Children 
+Calling setSingleDataColumnType(Send to Children, 'guess',  0
+Handling 30 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 31 - Listen to Children 
+Calling setSingleDataColumnType(Listen to Children, 'guess',  0
+Handling 32 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251597 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251597
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251597.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:19:34
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251527) 
+Calling getObjectXML(listobject, 251529) 
+Calling getObjectXML(listobject, 251531) 
+Calling getObjectXML(listobject, 251533) 
+Calling getObjectXML(listobject, 324401) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 251517
+    [1] => 251597
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(Monthly Stats, varchar, 0, 0);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02054530
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02054530&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+Iterations: 0
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251491.log, /var/www/html/data/proj3/out/debuglog.101.251491.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251491-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251491 to /var/www/html/data/proj3/out/error251491.html / /data/proj3/out/error251491.html 
+Writing reports to file.
+report File written for 251491 to /var/www/html/data/proj3/out/report251491.html / /data/proj3/out/report251491.html 
+Writing debug output to file.
+Debug File written for 251491 to /var/www/html/data/proj3/out/debug251491.html / /data/proj3/out/debug251491.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251491 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251491
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:20:55 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256687) 
+Calling getObjectXML(listobject, 256689) 
+Calling getObjectXML(listobject, 256691) 
+Calling getObjectXML(listobject, 251495) 
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 0 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Model Element 251491 completed run - removing from queue.
+Done.
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Using development version of model
+Arguments: Array
+(
+    [0] => run_shakeTree.php
+    [1] => 4
+    [2] => OR2_8130_7900
+    [3] => 101
+    [4] => 1984-01-01
+    [5] => 1984-03-31
+    [6] => 2013-09-11
+    [7] => 0
+    [8] => 37
+    [9] => 0
+    [10] => 1
+)
+
+Using DBConn to 192.168.0.21 
+URL Params submitted: Array
+(
+)
+
+Run Order Submitted: 
+   Element List - OR2_8130_7900 
+   Run ID - 101 
+   Start date - 1984-01-01 
+   End date - 1984-03-31 
+   Sleep Factor - 40 
+   Overwrite? - 0 
+  select elementid from scen_model_element  where scenarioid = 37     and custom1 in ( 'cova_ws_container', 'cova_ws_subnodal' )     and custom2 = 'OR2_8130_7900'  
+Tue, 04 Sep 2018 16:34:30 -0400 : Run  / , running 251491 
+Tue, 04 Sep 2018 16:34:30 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251499 time 2018-09-04 16:20:16 > root  (251491) 
+
+Branch 251605 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251517) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 251517 with params Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251517 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251517 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251517 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251517     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251517 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251517 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251517 Forked 
+With parameters: Array
+(
+    [elements] => 251517
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251517  ; 
+  delete from system_status  where runid = 101 and element_key = 251517  ; 
+Children of object 251511 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251517
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251517, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251517, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251517) 
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+Calling getObjectXML(listobject, 256687) 
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Calling getObjectXML(listobject, 256689) 
+Calling getObjectXML(listobject, 256691) 
+Branch 251605 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251597) 
+
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+Branch 250529 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251597) 
+
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251623) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 251623 with params Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251623 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251623 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251623 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251623     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251623 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251623 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251623 Forked 
+With parameters: Array
+(
+    [elements] => 251623
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251623  ; 
+  delete from system_status  where runid = 101 and element_key = 251623  ; 
+Children of object 251617 currently running - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Loading lib_batchmodel.php from /www/lib tree
+Branch 250529 time 2018-09-04 16:18:48 > root  (250521) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (250521) 
+
+strictness setting: 0 
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251623
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling loadModelUsingCached(modeldb, 251623, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251623, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251623) 
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+<b>Iterating through timesteps<br>
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 250547) 
+Calling getObjectXML(listobject, 256677) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POINT
+
+Forking 250547 with params Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 250547 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 250547 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 250547 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 250547     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 250547 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 250547 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 250547 Forked 
+With parameters: Array
+(
+    [elements] => 250547
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 250547  ; 
+  delete from system_status  where runid = 101 and element_key = 250547  ; 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+Children of object 250541 currently running - returning 
+Children of object 250521 currently running - returning 
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Calling getObjectXML(listobject, 256679) 
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Calling getObjectXML(listobject, 256681) 
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250547
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 250547, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(250547, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 250547) 
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling getObjectXML(listobject, 256957) 
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+Calling getObjectXML(listobject, 256959) 
+Calling getObjectXML(listobject, 256961) 
+Sub-Objects that were cached for this run: Array
+(
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(Qunit, float8, 0, 1);
+<b>Iterating through timesteps<br>
+<b>Iterating through timesteps<br>
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251517.log, /var/www/html/data/proj3/out/debuglog.101.251517.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251517-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251517 to /var/www/html/data/proj3/out/error251517.html / /data/proj3/out/error251517.html 
+Writing debug output to file.
+Debug File written for 251517 to /var/www/html/data/proj3/out/debug251517.html / /data/proj3/out/debug251517.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251517 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251517
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251623.log, /var/www/html/data/proj3/out/debuglog.101.251623.log 
+<b>Finished model interations -- starting post processing<br>
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251623-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251623 to /var/www/html/data/proj3/out/error251623.html / /data/proj3/out/error251623.html 
+Writing debug output to file.
+Debug File written for 251623 to /var/www/html/data/proj3/out/debug251623.html / /data/proj3/out/debug251623.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251623 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251623
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.250547.log, /var/www/html/data/proj3/out/debuglog.101.250547.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report250547-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 250547 to /var/www/html/data/proj3/out/error250547.html / /data/proj3/out/error250547.html 
+Writing debug output to file.
+Debug File written for 250547 to /var/www/html/data/proj3/out/debug250547.html / /data/proj3/out/debug250547.html 
+Creating output in html form.
+Storing  model output in database
+Storing 250547 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250547
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:35:12 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251499 time 2018-09-04 16:20:16 > root  (251491) 
+
+Branch 251517 time 2018-09-04 16:34:31 > root  (251491) 
+
+Branch 251605 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:34:32 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:34:32 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:34:31 > root 2018-09-04 16:20:16 (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:34:32 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250547 time 2018-09-04 16:34:32 > root 2018-09-04 16:20:16 (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251605 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251623 time 2018-09-04 16:34:32 > root  (251597) 
+
+Branch 250529 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (251597) 
+
+Branch 250547 time 2018-09-04 16:34:32 > root  (251597) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:34:32 > root 2018-09-04 16:19:34 (251617) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251617 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250547 time 2018-09-04 16:34:32 > root 2018-09-04 16:19:34 (251631) 
+
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250529 time 2018-09-04 16:18:48 > root  (250521) 
+
+Branch 250567 time 2018-09-04 16:18:48 > root  (250521) 
+
+Branch 250547 time 2018-09-04 16:34:32 > root  (250521) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (250527) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (250541) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 250541
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250541 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 250541, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250547 time 2018-09-04 16:34:32 > root 2018-09-04 16:18:48 (250541) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (250547) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250547
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250547 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250547, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 250541 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 250521) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 250521 with params Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 250521 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 250521 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 250521 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 250521     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 250521 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 250521 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 250521 Forked 
+With parameters: Array
+(
+    [elements] => 250521
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 250521  ; 
+  delete from system_status  where runid = 101 and element_key = 250521  ; 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Children of object 251631 currently running - returning 
+Children of object 251597 currently running - returning 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250521
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 250521, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(250521, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 250521) 
+Calling getObjectXML(listobject, 250523) 
+Calling getObjectXML(listobject, 250525) 
+Calling getObjectXML(listobject, 250527) 
+Calling getObjectXML(listobject, 250529) 
+Calling getObjectXML(listobject, 307900) 
+Calling getObjectXML(listobject, 250567) 
+Calling getObjectXML(listobject, 307902) 
+Calling getObjectXML(listobject, 250571) 
+Calling getObjectXML(listobject, 250541) 
+Calling getObjectXML(listobject, 250543) 
+Calling getObjectXML(listobject, 250545) 
+Calling getObjectXML(listobject, 250547) 
+File open result: Resource id #617 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.250547.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  106.115611875
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  96.380991674776
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0.90826401480217
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 250547 <br>
+cache info: Array
+(
+    [tablename] => -1_101_250547
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.250547.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:34:32
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 250551) 
+Calling getObjectXML(listobject, 250553) 
+Calling getObjectXML(listobject, 250555) 
+Calling getObjectXML(listobject, 250557) 
+Calling getObjectXML(listobject, 250559) 
+Calling getObjectXML(listobject, 250561) 
+Calling getObjectXML(listobject, 250563) 
+Calling getObjectXML(listobject, 326299) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 250547
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02052000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02052000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 27
+Iterations: 14
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 14
+Iterations: 7
+Iterations: 12
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 7
+Iterations: 23
+Iterations: 8
+Iterations: 17
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 6
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 14
+Iterations: 7
+Iterations: 12
+Iterations: 10
+Iterations: 9
+Iterations: 9
+Iterations: 7
+Iterations: 10
+Iterations: 15
+Iterations: 7
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.250521.log, /var/www/html/data/proj3/out/debuglog.101.250521.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report250521-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 250521 to /var/www/html/data/proj3/out/error250521.html / /data/proj3/out/error250521.html 
+Writing reports to file.
+report File written for 250521 to /var/www/html/data/proj3/out/report250521.html / /data/proj3/out/report250521.html 
+Writing debug output to file.
+Debug File written for 250521 to /var/www/html/data/proj3/out/debug250521.html / /data/proj3/out/debug250521.html 
+Creating output in html form.
+Storing  model output in database
+Storing 250521 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 250521
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:35:54 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251499 time 2018-09-04 16:20:16 > root  (251491) 
+
+Branch 251517 time 2018-09-04 16:34:31 > root  (251491) 
+
+Branch 251605 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:34:32 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250521 time 2018-09-04 16:35:14 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:34:31 > root 2018-09-04 16:20:16 (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:34:32 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250529 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250521 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251605 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251641 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251651 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251657 time 2018-09-04 16:19:34 > root  (251597) 
+
+Branch 251623 time 2018-09-04 16:34:32 > root  (251597) 
+
+Branch 250529 time 2018-09-04 16:35:14 > root  (251597) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root  (251597) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root  (251597) 
+
+Branch 250521 time 2018-09-04 16:35:14 > root  (251597) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (copy) (copy) (251603) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251617) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251617
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251617 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251617, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251623 time 2018-09-04 16:34:32 > root 2018-09-04 16:19:34 (251617) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251623) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251623
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251623 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251623, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251617 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (251631) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251631
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251631 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251631, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 250529 time 2018-09-04 16:35:14 > root 2018-09-04 16:19:34 (251631) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root 2018-09-04 16:19:34 (251631) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root 2018-09-04 16:19:34 (251631) 
+
+Branch 250521 time 2018-09-04 16:35:14 > root 2018-09-04 16:19:34 (251631) 
+
+strictness setting: 0 
+Element South Fork Roanoke River (Headwater) (250521) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 250521
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 250521 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256957) 
+Calling getObjectXML(listobject, 256959) 
+Calling getObjectXML(listobject, 256961) 
+Calling getObjectXML(listobject, 250525) 
+Checking for A51063 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51063 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 250521, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251631 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251597) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 251597 with params Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251597 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251597 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251597 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251597     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251597 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251597 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251597 Forked 
+With parameters: Array
+(
+    [elements] => 251597
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251597  ; 
+  delete from system_status  where runid = 101 and element_key = 251597  ; 
+Children of object 251525 currently running - returning 
+Children of object 251491 currently running - returning 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251597
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251597, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251597, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251597) 
+Calling getObjectXML(listobject, 251599) 
+Calling getObjectXML(listobject, 251601) 
+Calling getObjectXML(listobject, 251603) 
+Calling getObjectXML(listobject, 251605) 
+Calling getObjectXML(listobject, 306328) 
+Calling getObjectXML(listobject, 306330) 
+Calling getObjectXML(listobject, 306336) 
+Calling getObjectXML(listobject, 251641) 
+Calling getObjectXML(listobject, 306326) 
+Calling getObjectXML(listobject, 306332) 
+Calling getObjectXML(listobject, 251651) 
+Calling getObjectXML(listobject, 306334) 
+Calling getObjectXML(listobject, 251657) 
+Calling getObjectXML(listobject, 306338) 
+Calling getObjectXML(listobject, 306340) 
+Calling getObjectXML(listobject, 251663) 
+Calling getObjectXML(listobject, 318027) 
+Calling getObjectXML(listobject, 318029) 
+Calling getObjectXML(listobject, 318031) 
+Calling getObjectXML(listobject, 318033) 
+Calling getObjectXML(listobject, 318035) 
+Calling getObjectXML(listobject, 318037) 
+Calling getObjectXML(listobject, 318039) 
+Calling getObjectXML(listobject, 318041) 
+Calling getObjectXML(listobject, 318043) 
+Calling getObjectXML(listobject, 318045) 
+Calling getObjectXML(listobject, 318047) 
+Calling getObjectXML(listobject, 318049) 
+Calling getObjectXML(listobject, 318051) 
+Calling getObjectXML(listobject, 318053) 
+Calling getObjectXML(listobject, 318055) 
+Calling getObjectXML(listobject, 318057) 
+Calling getObjectXML(listobject, 318059) 
+Calling getObjectXML(listobject, 318061) 
+Calling getObjectXML(listobject, 318063) 
+Calling getObjectXML(listobject, 318065) 
+Calling getObjectXML(listobject, 318067) 
+Calling getObjectXML(listobject, 318069) 
+Calling getObjectXML(listobject, 318071) 
+Calling getObjectXML(listobject, 318073) 
+Calling getObjectXML(listobject, 318075) 
+Calling getObjectXML(listobject, 251617) 
+Calling getObjectXML(listobject, 251619) 
+Calling getObjectXML(listobject, 251621) 
+Calling getObjectXML(listobject, 251623) 
+File open result: Resource id #2396 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251623.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  148.0991390625
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  118.68121386655
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0.8013632936547
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251623 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251623
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251623.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:34:32
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251627) 
+Calling getObjectXML(listobject, 251629) 
+Calling getObjectXML(listobject, 251631) 
+Calling getObjectXML(listobject, 250521) 
+File open result: Resource id #2578 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.250521.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  106.60109449264
+Handling 1 - wd_upstream_mgd 
+Calling setSingleDataColumnType(wd_upstream_mgd, 'guess',  0
+Handling 2 - ps_upstream_mgd 
+Calling setSingleDataColumnType(ps_upstream_mgd, 'guess',  0
+Handling 3 - Qreach 
+Calling setSingleDataColumnType(Qreach, 'guess',  0
+Handling 4 - Qlake 
+Calling setSingleDataColumnType(Qlake, 'guess',  0
+Handling 5 - imp_off 
+Calling setSingleDataColumnType(imp_off, 'guess',  1
+Handling 6 - wd_mgd 
+Calling setSingleDataColumnType(wd_mgd, 'guess',  0
+Handling 7 - ps_mgd 
+Calling setSingleDataColumnType(ps_mgd, 'guess',  0
+Handling 8 - ps_trib_mgd 
+Calling setSingleDataColumnType(ps_trib_mgd, 'guess',  0
+Handling 9 - wd_trib_mgd 
+Calling setSingleDataColumnType(wd_trib_mgd, 'guess',  0
+Handling 10 - name 
+Handling 11 - description 
+Handling 12 - componentid 
+Handling 13 - subshedid 
+Handling 14 - dt 
+Handling 15 - month 
+Handling 16 - day 
+Handling 17 - year 
+Handling 18 - thisdate 
+Handling 19 - time 
+Handling 20 - timestamp 
+Handling 21 - run_mode 
+Handling 22 - season 
+Handling 23 - ps_cumulative_mgd 
+Calling setSingleDataColumnType(ps_cumulative_mgd, 'guess',  0
+Handling 24 - wd_cumulative_mgd 
+Calling setSingleDataColumnType(wd_cumulative_mgd, 'guess',  0
+Handling 25 - flow_mode 
+Calling setSingleDataColumnType(flow_mode, 'guess',  0
+Handling 26 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 27 - Listen on Parent 
+Calling setSingleDataColumnType(Listen on Parent, 'guess',  0
+Handling 28 - Send to Children 
+Calling setSingleDataColumnType(Send to Children, 'guess',  0
+Handling 29 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 30 - Listen to Children 
+Calling setSingleDataColumnType(Listen to Children, 'guess',  0
+Handling 31 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 250521 <br>
+cache info: Array
+(
+    [tablename] => -1_101_250521
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.250521.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:35:14
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251633) 
+Calling getObjectXML(listobject, 251635) 
+Calling getObjectXML(listobject, 251637) 
+Calling getObjectXML(listobject, 251639) 
+Calling getObjectXML(listobject, 324395) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 251623
+    [1] => 250521
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02052000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02052000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 23
+Iterations: 19
+Iterations: 11
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 16
+Iterations: 9
+Iterations: 12
+Iterations: 9
+Iterations: 10
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 10
+Iterations: 23
+Iterations: 8
+Iterations: 17
+Iterations: 10
+Iterations: 13
+Iterations: 10
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 10
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 8
+Iterations: 7
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 15
+Iterations: 10
+Iterations: 10
+Iterations: 9
+Iterations: 10
+Iterations: 10
+Iterations: 10
+Iterations: 8
+Iterations: 16
+Iterations: 10
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251597.log, /var/www/html/data/proj3/out/debuglog.101.251597.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251597-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251597 to /var/www/html/data/proj3/out/error251597.html / /data/proj3/out/error251597.html 
+Writing reports to file.
+report File written for 251597 to /var/www/html/data/proj3/out/report251597.html / /data/proj3/out/report251597.html 
+Writing debug output to file.
+Debug File written for 251597 to /var/www/html/data/proj3/out/debug251597.html / /data/proj3/out/debug251597.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251597 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251597
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:36:35 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Posting summary verified = -1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251499 time 2018-09-04 16:20:16 > root  (251491) 
+
+Branch 251517 time 2018-09-04 16:34:31 > root  (251491) 
+
+Branch 251605 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 251641 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 251651 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 251657 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 251623 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 250529 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root  (251491) 
+
+Branch 250521 time 2018-09-04 16:35:55 > root  (251491) 
+
+Branch 251597 time 2018-09-04 16:35:55 > root  (251491) 
+
+strictness setting: 0 
+Element 1. Withdrawals & Discharges (251497) Cacheable Mode - 0 
+Item can not be cached, returning 1 
+strictness setting: 0 
+Element 1. Local Runoff Inflows (copy) (copy) (251511) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251511
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251511 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251511, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251517 time 2018-09-04 16:34:31 > root 2018-09-04 16:20:16 (251511) 
+
+strictness setting: 0 
+Element VA Hydro Model (HSPF) (copy) (copy) (copy) (251517) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251517
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251517 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251517, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251511 is un-cacheable, all children run or cached - returning 
+strictness setting: 0 
+Element 2. Upstream Reach Segments (copy) (251525) Cacheable Mode - 2 
+Item permits pass-through caching, checking for cacheable/runnable children 
+Summarizing run  for element 251525
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251525 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Tree Check -  : checkTreeRunDate(listobject, 251525, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Branch 251605 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 251641 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 251651 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 251657 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 251623 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250529 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250567 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250547 time 2018-09-04 16:35:14 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 250521 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+Branch 251597 time 2018-09-04 16:35:55 > root 2018-09-04 16:20:16 (251525) 
+
+strictness setting: 0 
+Element North and South Fork (Confluence) Roanoke River (251597) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251597
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251597 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256677) 
+Calling getObjectXML(listobject, 256679) 
+Calling getObjectXML(listobject, 256681) 
+Calling getObjectXML(listobject, 251601) 
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251597, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Object 251525 is un-cacheable, all children run or cached - returning 
+Called updateObjectProps()
+
+Calling getObjectXML(listobject, 251491) 
+Recreate() setting for elementid: 0 
+saveModelObject() called 
+
+Checking for object geometry 
+
+GETTING GEOMETRY FROM object properties 
+
+Parsing object geometry, found POLYGON
+
+Forking 251491 with params Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Function forkRun() Called 
+Model Run request: Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+
+Spawning process for 251491 with runtype = oldschool
+/usr/bin/php -f /var/www/html/om//run_model.php 251491 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11 > /dev/null &
+ update system_status  set status_mesg = 'Model Run for Element 251491 Forked',     status_flag = 1,     pid = -1,     last_updated = now(),     host = 'deq2.bse.vt.edu',     runid = '101'  where element_name = 'model_run'     and element_key = 251491     and host = 'deq2.bse.vt.edu'     and runid = '101' 
+Model Run for Element 251491 Forked with command: /usr/bin/php -f /var/www/html/om//run_model.php 251491 101 normal 1984-01-01 1984-03-31 -1 "" 2013-09-11
+Model Run for Element 251491 Forked 
+With parameters: Array
+(
+    [elements] => 251491
+    [runid] => 101
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+)
+ 
+  delete from scen_model_run_elements  where runid = 101 and elementid = 251491  ; 
+  delete from system_status  where runid = 101 and element_key = 251491  ; 
+Model Element 251491 not completed ... sleeping 
+Sleeping for 40 
+DEBUG: loading /var/www/html/lib/xajax/xajax_core/xajax.inc.php = error_reporting = 1
+DEBUG: loading /var/www/html/lib/xdg/xajaxgrid.inc.php  = error_reporting = 1
+DEBUG: loading DB Libraries  = error_reporting = 1
+Loading PEAR Tools
+Loading Model libraries
+Loading lib_batchmodel.php from /www/lib tree
+Remote Run Parameter: 1 
+Run Vars passed in via method console 
+
+Run type normal 
+
+Calling Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251491
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Calling loadModelUsingCached(modeldb, 251491, 101, -1 with cache_level = 2013-09-11
+Checking the following objects for valid cache entriesArray
+(
+)
+
+Calling unSerializeModelObject(251491, input_props, modeldb, 2013-09-11, 101) 
+Calling getObjectXML(listobject, 251491) 
+Calling getObjectXML(listobject, 251493) 
+Calling getObjectXML(listobject, 251495) 
+Calling getObjectXML(listobject, 251497) 
+Calling getObjectXML(listobject, 251499) 
+Calling getObjectXML(listobject, 328691) 
+Calling getObjectXML(listobject, 328693) 
+Calling getObjectXML(listobject, 328695) 
+Calling getObjectXML(listobject, 328697) 
+Calling getObjectXML(listobject, 328699) 
+Calling getObjectXML(listobject, 251545) 
+Calling getObjectXML(listobject, 318111) 
+Calling getObjectXML(listobject, 318113) 
+Calling getObjectXML(listobject, 251511) 
+Calling getObjectXML(listobject, 251513) 
+Calling getObjectXML(listobject, 251515) 
+Calling getObjectXML(listobject, 251517) 
+File open result: Resource id #983 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251517.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  26.8195421875
+Handling 1 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  24.396426897731
+Handling 2 - name 
+Handling 3 - description 
+Handling 4 - componentid 
+Handling 5 - subshedid 
+Handling 6 - dt 
+Handling 7 - month 
+Handling 8 - day 
+Handling 9 - year 
+Handling 10 - thisdate 
+Handling 11 - time 
+Handling 12 - timestamp 
+Handling 13 - run_mode 
+Handling 14 - season 
+Handling 15 - Qunit 
+Calling setSingleDataColumnType(Qunit, 'guess',  0.90965113152087
+Handling 16 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 17 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 18 - Listen Model Component Flows 
+Calling setSingleDataColumnType(Listen Model Component Flows, 'guess',  0
+Handling 19 - Model Control 
+Calling setSingleDataColumnType(Model Control, 'guess',  0
+Handling 20 - Listen Model Control 
+Calling setSingleDataColumnType(Listen Model Control, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251517 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251517
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251517.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:34:31
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251521) 
+Calling getObjectXML(listobject, 251523) 
+Calling getObjectXML(listobject, 251525) 
+Calling getObjectXML(listobject, 251597) 
+File open result: Resource id #1280 
+Obtaining values from file: 
+Calling readDelimitedFile_fgetcsv for first 2 lines
+Opening for reading: /var/www/html/data/proj3/out/runlog101.251597.log<br>
+Handling 0 - area_sqmi 
+Calling setSingleDataColumnType(area_sqmi, 'guess',  255.38792284394
+Handling 1 - wd_upstream_mgd 
+Calling setSingleDataColumnType(wd_upstream_mgd, 'guess',  0
+Handling 2 - ps_upstream_mgd 
+Calling setSingleDataColumnType(ps_upstream_mgd, 'guess',  0
+Handling 3 - Qreach 
+Calling setSingleDataColumnType(Qreach, 'guess',  0
+Handling 4 - Qlake 
+Calling setSingleDataColumnType(Qlake, 'guess',  0
+Handling 5 - imp_off 
+Calling setSingleDataColumnType(imp_off, 'guess',  1
+Handling 6 - wd_mgd 
+Calling setSingleDataColumnType(wd_mgd, 'guess',  0
+Handling 7 - ps_mgd 
+Calling setSingleDataColumnType(ps_mgd, 'guess',  0
+Handling 8 - ps_trib_mgd 
+Calling setSingleDataColumnType(ps_trib_mgd, 'guess',  0
+Handling 9 - wd_trib_mgd 
+Calling setSingleDataColumnType(wd_trib_mgd, 'guess',  0
+Handling 10 - Qup 
+Calling setSingleDataColumnType(Qup, 'guess',  0
+Handling 11 - name 
+Handling 12 - description 
+Handling 13 - componentid 
+Handling 14 - subshedid 
+Handling 15 - dt 
+Handling 16 - month 
+Handling 17 - day 
+Handling 18 - year 
+Handling 19 - thisdate 
+Handling 20 - time 
+Handling 21 - timestamp 
+Handling 22 - run_mode 
+Handling 23 - season 
+Handling 24 - ps_cumulative_mgd 
+Calling setSingleDataColumnType(ps_cumulative_mgd, 'guess',  0
+Handling 25 - wd_cumulative_mgd 
+Calling setSingleDataColumnType(wd_cumulative_mgd, 'guess',  0
+Handling 26 - flow_mode 
+Calling setSingleDataColumnType(flow_mode, 'guess',  0
+Handling 27 - week 
+Calling setSingleDataColumnType(week, 'guess',  52
+Handling 28 - Listen on Parent 
+Calling setSingleDataColumnType(Listen on Parent, 'guess',  0
+Handling 29 - Send to Children 
+Calling setSingleDataColumnType(Send to Children, 'guess',  0
+Handling 30 - Send to Parent 
+Calling setSingleDataColumnType(Send to Parent, 'guess',  0
+Handling 31 - Listen to Children 
+Calling setSingleDataColumnType(Listen to Children, 'guess',  0
+Handling 32 - Qout 
+Calling setSingleDataColumnType(Qout, 'guess',  0
+File Variables loaded. wake() returning.
+Cached object created for 251597 <br>
+cache info: Array
+(
+    [tablename] => -1_101_251597
+    [debug_file] => 
+    [filename] => /var/www/html/data/proj3/out/runlog101.251597.log
+    [innerHTML] => This IP: deq2.bse.vt.edu, file IP: deq2.bse.vt.edu ...
+    [run_date] => 2018-09-04 16:35:55
+    [record_missing] => 0
+    [remote] => 0
+)
+
+Calling getObjectXML(listobject, 251527) 
+Calling getObjectXML(listobject, 251529) 
+Calling getObjectXML(listobject, 251531) 
+Calling getObjectXML(listobject, 251533) 
+Calling getObjectXML(listobject, 324401) 
+Sub-Objects that were cached for this run: Array
+(
+    [0] => 251517
+    [1] => 251597
+)
+
+Setting Start and End Date for model to 1984-01-01 - 1984-03-31 
+
+<b>Beginning Model Run<br>
+<b>Setting Timer<br>
+<b>Setting Debug Mode on all children<br>
+<b>Initializing components<br>
+Calling setSingleDataColumnType(ps_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(wd_cumulative_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(Monthly Stats, varchar, 0, 0);
+Calling setSingleDataColumnType(imp_off, float8, 1, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(Qin, float8, 0, 1);
+Calling setSingleDataColumnType(demand, float8, 0, 1);
+Calling setSingleDataColumnType(last_demand_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(local_area, float8, 0, 1);
+Calling setSingleDataColumnType(last_discharge_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(discharge, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(flowby, float8, 0, 0);
+Calling setSingleDataColumnType(flowby_calc, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(safe_yield, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(current_mgy, float8, 0, 1);
+Calling setSingleDataColumnType(future_mgd, float8, 0, 1);
+Calling setSingleDataColumnType(best_available, float8, 0, 1);
+Looking for USGS Basin geometry for station 02016000
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02016000&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(Qsynth_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qbaseline, float8, 0, 1);
+Calling setSingleDataColumnType(Qbase_unit, float8, 0, 1);
+Calling setSingleDataColumnType(Qsurr, float8, 0, 1);
+Calling setSingleDataColumnType(area_surr, float8, 27.8, 1);
+Looking for USGS Basin geometry for station 02054530
+USGS Basin geom: 
+USGS URL: https://waterdata.usgs.gov/nwis/dv?site_no=02054530&cb_00060=on&cb_00010=on&cb_00095=on&cb_00045=on&begin_date=1983-12-31&end_date=1984-04-01&format=rdb 
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(drought_status, float8, 0, 1);
+Calling setSingleDataColumnType(use_type, float8, 0, 1);
+<b>Iterating through timesteps<br>
+Iterations: 0
+Iterations: 16
+Iterations: 19
+Iterations: 18
+Iterations: 12
+Iterations: 7
+Iterations: 7
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 7
+Iterations: 8
+Iterations: 8
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 10
+Iterations: 7
+Iterations: 13
+Iterations: 12
+Iterations: 10
+Iterations: 10
+Iterations: 10
+Iterations: 10
+Iterations: 7
+Iterations: 7
+Iterations: 7
+Iterations: 10
+Iterations: 20
+Iterations: 13
+Iterations: 14
+Iterations: 13
+Iterations: 10
+Iterations: 12
+Iterations: 10
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 10
+Iterations: 10
+Iterations: 9
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 8
+Iterations: 7
+Iterations: 10
+Iterations: 7
+Iterations: 10
+Iterations: 8
+Iterations: 8
+Iterations: 9
+Iterations: 7
+Iterations: 7
+Iterations: 12
+Iterations: 10
+Iterations: 8
+Iterations: 10
+Iterations: 8
+Iterations: 10
+Iterations: 7
+Iterations: 8
+Iterations: 15
+<b>Finished model interations -- starting post processing<br>
+<b>Finished post-processing. model run ended.<br>
+runModel() Returned from calling routine.
+Model Run Debug Data Copied from /var/www/html/data/proj3/out/debuglog.0.251491.log, /var/www/html/data/proj3/out/debuglog.101.251491.log 
+Done
+Assembling Panels.
+Writing reports to file /var/www/html/data/proj3/out/report251491-101.log 
+createHTMLModelRunSummary() called - summarizing object.
+Assembling Panels.
+Writing errors to file.
+Error File written for 251491 to /var/www/html/data/proj3/out/error251491.html / /data/proj3/out/error251491.html 
+Writing reports to file.
+report File written for 251491 to /var/www/html/data/proj3/out/report251491.html / /data/proj3/out/report251491.html 
+Writing debug output to file.
+Debug File written for 251491 to /var/www/html/data/proj3/out/debug251491.html / /data/proj3/out/debug251491.html 
+Creating output in html form.
+Storing  model output in database
+Storing 251491 model output in database
+Returned from Normal run with Array
+(
+    [runid] => 101
+    [elementid] => 251491
+    [cache_runid] => -1
+    [startdate] => 1984-01-01
+    [enddate] => 1984-03-31
+    [cache_level] => 2013-09-11
+    [cache_list] => 
+    [test_only] => 0
+    [scenarioid] => -1
+)
+
+
+Tue, 04 Sep 2018 16:37:17 -0400 : Run  / , running 251491 
+Shaking the tree on 251491 (IP: deq2.bse.vt.edu)
+Calling: shakeTree(listobject, serverip = deq2.bse.vt.edu, max_simultaneous = 5, recid = 251491, run_id = 101, startdate = 1984-01-01, enddate = 1984-03-31, cache_date = 2013-09-11, debug = 0, strict = 0, run_mode = 1, url_params);
+strictness setting: 0 
+Element Roanoke River (Wayside Park) (251491) Cacheable Mode - 1 
+Item permits full caching, checking last run date 
+Summarizing run  for element 251491
+  select count(*) as numsum from scen_model_run_elements where runid = 101 and elementid = 251491 and ( (run_summary is not null) and (run_summary <> '') )  
+
+Checking Run Data (strict = 0)
+
+Calling getObjectXML(listobject, 256687) 
+Calling getObjectXML(listobject, 256689) 
+Calling getObjectXML(listobject, 256691) 
+Calling getObjectXML(listobject, 251495) 
+Checking for A51121 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51121 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for A51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A54093
+    [1] => A54077
+    [2] => A51073
+    [3] => A54023
+    [4] => A11001
+)
+<br>
+Checking for B51161 in Array
+(
+    [0] => A51147
+)
+<br>
+Posting summary verified = 1 
+Tree Check -  : checkTreeRunDate(listobject, 251491, 101, 1984-01-01, 1984-03-31, 2013-09-11);
+Model Element 251491 completed run - removing from queue.
+Done.
