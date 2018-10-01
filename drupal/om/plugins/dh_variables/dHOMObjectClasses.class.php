@@ -3,7 +3,7 @@ module_load_include('inc', 'dh', 'plugins/dh.display');
 module_load_include('module', 'dh');
 
 class dHOMBaseObjectClass extends dHVariablePluginDefault {
-  var $object_class = 'BlankShell';
+  var $object_class = FALSE; // use to be BlankShell, but BlankShell will all be saved as modelElement 
   var $path = "/var/www/html/om/";
   public function hiddenFields() {
     $hidden = array(
@@ -62,7 +62,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefault {
     //dh_update_properties($values, 'singular');
     $defaults = $this->getDefaults($entity);
     foreach ($defaults as $thisone) {
-      dpm($thisone,'adding default');
+      //dpm($thisone,'adding default');
       dh_update_properties($thisone, $thisone['singularity']);
     }
   }
@@ -289,12 +289,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefault {
   }
 }
 
-class dHOMObjectClass extends dHOMBaseObjectClass {
-  // controls the objectclass property -- 
-  // currently this does nothing but we *might* allow it to make this change?
-  // seems dangerous
-}
-
 class dHOMElementConnect extends dHOMBaseObjectClass {
   var $object_class = FALSE;
   
@@ -408,10 +402,25 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
   var $object_class = 'textField';
 }
 
-class dHOMDataMatrix extends dHOMSubComp {
+class dHOM_ModelScenario extends dHVariablePluginDefault {
+  var $object_class = FALSE;
+}
+
+class dHOMObjectClass extends dHOMBaseObjectClass {
+  // controls the objectclass property -- 
+  // currently this does nothing but we *might* allow it to make this change?
+  // seems dangerous
+}
+
+class dHOMDataMatrix extends dHVarWithTableFieldBase {
   var $object_class = 'DataMatrix';
   var $default_bundle = 'om_data_matrix';
 }
+
+class dHOM_USGSGageObject extends dHOMModelElement {
+  var $object_class = 'USGSGageObject';
+}
+
 
 // Remaining Objects from who_xmlobject.php
 // ***************************
@@ -466,9 +475,5 @@ class dHOMDataMatrix extends dHOMSubComp {
    withdrawalRuleObject     |     1
 
 */ 
-
-class dHOM_USGSGageObject extends dHOMModelElement {
-  var $object_class = 'USGSGageObject';
-}
 
 ?>
