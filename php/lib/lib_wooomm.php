@@ -2783,8 +2783,6 @@ function saveObjectSubComponents($listobject, $thisobject, $elid, $overwrite=0, 
                            $propval = $thisproc->$thisprop;
                            $subobject->setProp($thisprop, $propval);
                            if ($debug) {
-                              
-
                               switch (gettype($propval)) {
                                  case 'array':
                                  if ( ! (($thisprop == 'adminsetuparray') or ($thisprop == 'adminsetup') or ($thisprop == 'processors')) ){
@@ -2856,7 +2854,7 @@ function setElementGeometry($elid, $geomtype, $wkt_geom, $src_srid = 4326, $debu
       
    }
    
-   $listobject->querystring = " update scen_model_element set geomtype = $geomtype, $geomcol = st_transform($geomexp,4326) ";
+   $listobject->querystring = "  update scen_model_element set geomtype = $geomtype, $geomcol = st_transform($geomexp,4326) ";
    $listobject->querystring .= " where elementid = $elid ";
    if ($debug) {
      error_log($listobject->querystring);

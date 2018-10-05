@@ -14,7 +14,7 @@ class dHOMHydroImpoundment extends dHOMModelElement {
   // being automatically added.
   // will use standard editing for now, but...
   
-  public function getDefaults($entity, &$defaults) {
+  public function getDefaults($entity, &$defaults = array()) {
     parent::getDefaults($entity, $defaults);
     $defaults += array(
       'initstorage' => array(
