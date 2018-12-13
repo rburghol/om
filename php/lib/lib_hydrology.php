@@ -3902,8 +3902,7 @@ class modelContainer extends modelObject {
 
 }
 
-class 
- {
+class simTimer {
 
    var $thistime;
    var $debug = 0;
@@ -4617,6 +4616,31 @@ class dataMatrix extends modelSubObject {
    function deleteFromMatrix($key1, $key2='') {
    
    
+   }
+   
+   function setProp($propname, $propvalue, $view = '') {
+     
+     if ( ($propname == 'matrix') ) {
+       // handle calls to set the matrix on this object
+       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
+       //$this->matrix = array('storage','stage','surface_area',0,0,0);
+       // check for a valid json object, transform to array
+       switch ($view) {
+         case 'json-1d':
+         $propvalue = json_decode($propvalue, TRUE);
+         if (is_array($propvalue)) {
+           //error_log("Array located, handling " . print_r($propvalue,1));
+           $this->matrix = $propvalue;
+         } 
+         break;
+         
+         default:
+         parent::setProp($propname, $propvalue, $view);
+         break;
+       }
+     } else {
+       parent::setProp($propname, $propvalue, $view);
+     }
    }
    
    function assocArrayToMatrix($thisarray = array()) {
@@ -14895,7 +14919,7 @@ class hydroImpSmall extends hydroImpoundment {
       if ($this->debug) {
          $this->logDebug("Final variables on this object " . print_r($this->state,1) . "<br>");
       }
-      error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
+      //error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
    }
    
    function step() {
@@ -15182,6 +15206,18 @@ class hydroImpSmall extends hydroImpoundment {
       $innerHTML .= " calculated flow-by <br>";
       */
       return $innerHTML;
+   }
+   
+   function setProp($propname, $propvalue, $view = '') {
+     
+     //$json_object = json_decode($json);
+     //if (is_object($thisobject) and $json_object
+     if (in_array($propname, array('storage_stage_area', 'matrix'))) {
+       // handle calls to set the stage-storage attributes 
+       // decode from json if applicable
+       //$this->matrix = array('storage','stage','surface_area',0,0,0);
+     }
+     parent::setProp($propname, $propvalue, $view);
    }
    
 }
