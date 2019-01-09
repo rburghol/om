@@ -1,0 +1,217 @@
+MAP
+NAME imageMapFile     
+STATUS ON
+SIZE 240 160
+EXTENT -78.7267150878906 37.3508682250977 -78.6360321044922 37.4583015441895
+UNITS DD
+SHAPEPATH "data"  
+IMAGECOLOR 255 255 255
+PROJECTION
+  "init=epsg:4326"
+END
+FONTSET fonts.txt
+DEBUG ON
+CONFIG "MS_ERRORFILE" "/tmp/mapserver.log"
+
+OUTPUTFORMAT
+ NAME 'AGG'
+ DRIVER AGG/PNG
+ TRANSPARENT ON
+# IMAGEMODE RGB
+ IMAGEMODE RGBA
+END
+
+SYMBOL
+  NAME "triangle"
+  TYPE vector
+  POINTS
+    0 4
+    2 0
+    4 4
+    0 4
+  END
+END
+
+SYMBOL
+  NAME "rectangle"
+  TYPE vector
+  POINTS    
+    0 0
+    0 3
+    3 3
+    3 0
+    0 0
+  END
+  FILLED TRUE
+END
+
+SYMBOL
+  NAME "foursquare"
+  TYPE vector
+  POINTS    
+    0 0
+    0 4
+    4 4
+    4 0
+    0 0
+   -4 0
+  END
+  FILLED TRUE
+END
+
+SYMBOL
+  NAME 'circle'
+  TYPE ELLIPSE
+  POINTS 1 1 END
+  FILLED TRUE
+END
+
+QUERYMAP
+ STATUS ON
+ STYLE NORMAL
+END
+
+WEB
+   IMAGEPATH "/var/www/html/om/nhd_tools/maps/"
+   IMAGEURL "/om/nhd_tools/maps/"
+   TEMPLATE "map.html"
+   VALIDATION
+      'elementid'   '[0-9]+$'
+      'comid'   '[0-9]+$'
+   END
+END    
+
+LAYER
+   CONNECTIONTYPE postgis
+   CONNECTION "host=192.168.0.20 user=postgres password=314159 dbname=model"
+   NAME poli_bounds
+   GROUP poli_bounds
+   TYPE POLYGON
+   STATUS OFF
+   DEBUG ON
+   DATA "the_geom from poli_bounds"
+   FILTER " projectid = 3"
+   TEMPLATE drought.html
+   #MINSCALE 1000
+   #MAXSCALE 50000
+   LABELITEM "name"
+   CLASS
+      NAME "Political Boundaries"
+      SYMBOL 'circle'
+      SIZE 2
+      COLOR -1 -1 -1
+      BACKGROUNDCOLOR 0 0 0
+      OUTLINECOLOR 222 222 222
+      LABEL
+        COLOR 222 222 222
+        TYPE TRUETYPE
+        FONT arial
+        SIZE 10
+        ANTIALIAS TRUE
+        POSITION CC
+        PARTIALS FALSE
+        MINDISTANCE 300
+        MINFEATURESIZE 30
+        BUFFER 4
+      END # end of label
+   END
+   TOLERANCE 10
+   PROJECTION
+   # EPSG SRID = 4326
+     "init=epsg:4326"
+   END
+   METADATA
+    "DESCRIPTION"   "Political Boundaries"
+    "RESULT_FIELDS" "name county state"
+   END
+END
+
+LAYER
+   CONNECTIONTYPE postgis
+   CONNECTION "host=192.168.0.20 user=postgres password=314159 dbname=model"
+   NAME proj_seggroups
+   GROUP proj_seggroups
+   TYPE POLYGON
+   STATUS DEFAULT
+   DEBUG ON
+   DATA "shape FROM (select a.poly_geom AS shape, a.elemname, a.elementid, a.elementid as oid from scen_model_element as a where scenarioid = 37 ) AS foo USING UNIQUE oid using SRID=4326 "
+   TEMPLATE "bodytemplate.html"
+   FILTER "elementid = %elementid%"
+   HEADER "imap_html_header.html"
+   FOOTER "imap_html_footer.html"
+   #MINSCALE 1000
+   #MAXSCALE 50000
+   CLASS
+      NAME "proj_seggroups"
+      SYMBOL 'circle'
+      SIZE 3
+      COLOR -1 -1 -1
+      BACKGROUNDCOLOR 0 0 0
+      OUTLINECOLOR 0 0 0
+      LABEL
+        COLOR 222 222 222
+        TYPE TRUETYPE
+        FONT arial
+        SIZE 8
+        ANTIALIAS TRUE
+        POSITION CC
+        PARTIALS FALSE
+        MINDISTANCE 300
+        MINFEATURESIZE 30
+        BUFFER 4
+      END # end of label
+   END
+   TOLERANCE 10
+   PROJECTION
+   # EPSG SRID = 4326
+     "init=epsg:4326"
+   END
+  METADATA
+    "DESCRIPTION"   "Stat Results"
+    'default_elementid' '-1'
+  END
+  VALIDATION
+    # %firstname% substitutions can only have numbers and the minus sign
+    'elementid'     '^[0-9\-]+$'
+  END
+END
+
+
+LAYER
+   CONNECTIONTYPE postgis
+   CONNECTION "host=192.168.0.20 user=postgres password=314159 dbname=va_hydro"
+   NAME nhd_fulldrainage
+   GROUP nhd_fulldrainage
+   TYPE POLYGON
+   STATUS ON
+   DEBUG ON
+   DATA "shape FROM (select a.the_geom AS shape, a.comid, gid as oid from nhd_fulldrainage as a) AS foo USING UNIQUE oid using SRID=4269 "
+   #FILTER "comid in (%comid%) OR ('%comid%' = '')"
+   #FILTER "comid in (-88888)"
+   FILTER "comid = %comid%"
+   TEMPLATE "bodytemplate.html"
+   HEADER "imap_html_header.html"
+   FOOTER "imap_html_footer.html"
+   #MINSCALE 1000
+   #MAXSCALE 50000
+   CLASS
+      NAME "nhd_fulldrainage"
+      #SYMBOL 'circle'
+      #SIZE 3
+      #COLOR -1 -1 -1
+      COLOR 0 0 0
+      BACKGROUNDCOLOR 0 0 0
+      OUTLINECOLOR 0 0 0
+   END
+   TOLERANCE 10
+   PROJECTION
+   # EPSG SRID = 4326
+     "init=epsg:4269"
+   END
+  METADATA
+    "DESCRIPTION"   "Stat Results"
+    'default_comid' '-1'
+  END
+END
+
+END  

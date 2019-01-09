@@ -1,0 +1,50 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Google/MapServer Tile Example</title>
+<script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAA7WL0moYTPBf2u-kPTUd8hSpxCV4KUwMR8tyB6kYVprcA33vJxTUyO8Pd0KshKNw8YTmJ-y9GxOGcA"
+        type="text/javascript"></script>
+<script type="text/javascript">
+//
+// x^13 = 17.0 , x=1.24 (solving for 17/100ths of a degree)
+// x^n = wid => 1.24^n = wid,
+//var wid=Math.max( abs(lat1 - lat2), abs(lon1 - lon2) ) * ;
+function load() {
+  if (GBrowserIsCompatible()) {
+    var urlTemplate = 'http://deq2.bse.vt.edu/cgi-bin/mapserv?';
+        urlTemplate += 'map=/var/www/html/wooommdev/nhd_tools/nhd_cbp_small.map&';
+        urlTemplate += 'layers=nhd_fulldrainage proj_seggroups&';
+        urlTemplate += 'mode=tile&';
+        urlTemplate += 'tilemode=gmap&';
+        urlTemplate += 'tile={X}+{Y}+{Z}';
+        urlTemplate += '&elementid=258449';
+        urlTemplate += '&format=image/png&transparent=true';
+    var myLayer = new GTileLayer(null,0,18,{
+                                 tileUrlTemplate:urlTemplate,
+                                 isPng:true,
+                                 opacity:1.0 });
+    var map = new GMap2(document.getElementById("map"));
+    map.addControl(new GLargeMapControl());
+    map.addControl(new GMapTypeControl());
+    //map.setCenter(new GLatLng(38.34, -77.57), 10);
+    var lon1=-77.6607002333784;
+    var lat1=38.2628084156438;
+    var lon2=-77.495380067933;
+    var lat2=38.430028678926;
+    var southWest = new google.maps.LatLng(lat1,lon1);
+    var northEast = new google.maps.LatLng(lat2,lon2);
+    var bounds = new google.maps.LatLngBounds(southWest,northEast);
+    map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
+    map.addOverlay(new GTileLayerOverlay(myLayer));
+  }
+}
+
+</script>
+</head>
+<body onload="load()" onunload="GUnload()">
+  <div id="map" style="width: 500px; height: 500px"></div>
+</body>
+</html>
