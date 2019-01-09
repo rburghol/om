@@ -1,0 +1,1 @@
+link /var/www/html/wooomm/xajax_config.php

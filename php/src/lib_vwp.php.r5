@@ -1,0 +1,302 @@
+<?php
+
+// lib_vwp.php - routines to support the vwp functions
+
+
+function loadModelElement($elementid, $input_props = array(), $use_cached = 1) {
+   global $unserobjects;
+   $ret = array('object'=>FALSE, 'innerHTML'=>'', 'debugHTML'=>'', 'error'=>FALSE, 'errorHTML'=>'');
+   // $unserobjects - object cache 
+   // check for the element in the cache
+   if ($use_cached) {
+      if (isset($unserobjects[$elementid])) {
+         if (is_object($unserobjects[$elementid])) {
+            $ret['object'] = $unserobjects[$elementid];
+            $ret['innerHTML'] .= "Element $elementid found in cache.<br>\n";
+            return $ret;
+         } else {
+            $ret['errorHTML'] .= "Element $elementid not valid - attempting to reload.<br>\n";
+         }
+      } else {
+         $ret['debugHTML'] .= "Element $elementid not found in cache - attempting to load.<br>\n";
+      }
+   }
+   // if not, go to the loadsinglemodel element routine
+   $result = unSerializeSingleModelObject($elementid, $input_props);
+   $ret['object'] = $result['object'];
+   if (!is_object($result['object'])) {
+      $ret['error'] = TRUE;
+      $ret['errorHTML'] .= "Problem instantiating object: " . $result['error'];
+   }
+   $ret['debugHTML'] .= $result['debug'];
+   
+   return $ret;
+}
+
+
+function getModelVarsForCustomForm($elementid, $customformfile, $debug = 0) {
+   $content = file_get_contents($customformfile);
+   $forminfo = getCustomHTMLFormVars($content);
+   $thisrec = array();
+   foreach ($forminfo as $thisvar) {
+      // check for elementid OPTIONAL
+      if (isset($thisvar['elementid'])) {
+         $elementid = $thisvar['elementid'];
+      }
+      $loadres = loadModelElement($elementid, array(), 1);
+      if (is_object($loadres['object'])) {
+         $thisobject = $loadres['object'];
+         $prop = '';
+         if ($debug) print("Output: " . $loadres['innerHTML'] . "<br>\n");
+         // check for propname MANDATORY
+         // regardless of whether this is on the object or the sub-component 
+         // we need to know what variable we are seeking
+         if (isset($thisvar['propname'])) {
+            $propname = $thisvar['propname'];
+            // check for paramname MANDATORY - holds the ultimate form variable name
+            if (isset($thisvar['paramname'])) {
+               $paramname = $thisvar['paramname'];
+               // check for subcompname OPTIONAL
+               if (isset($thisvar['subcompname'])) {
+                  // load the subcomp
+                  $subcompname = $thisvar['subcompname'];
+                  if ($debug) print("Looking for $subcompname on $elementid <br>\n");
+                  if (is_object($thisobject->processors[$subcompname])) {
+                     if ($debug) print("Getting $subcompname -> $propname from $elementid <br>\n");
+                     $prop = $thisobject->processors[$subcompname]->getProp($propname);
+                     if ($debug) print("Value Returned as $prop <br>\n");
+                  } else {
+                     if ($debug) {
+                        print("<b>Error:</b> $subcompname is not a sub-component on $elementid <br>\n");
+                     }
+                  }
+               } else {
+                  if ($debug) {
+                     print("$subcompname is not a sub-component on $elementid <br>\n");
+                  }
+                  // this is a property, not a sub-comp, it should be displayed by itself
+                  $prop = $thisobject->getProp($propname);
+               }
+               $thisrec[$paramname] = $prop;
+               // if all MANDATORY values are set, add to variable queue under variable paramname
+            } else {
+               print("<b>Error:</b> 'paramname' is not set in custom form <br>\n");
+            }
+         } else {
+            print("<b>Error:</b> 'propname' is not set in custom form <br>\n");
+         }
+      } else {
+         print("<b>Error:</b> There was a problem loading object $elementid<br>\n");
+         print("Error: " . $loadres['errorHTML'] . "<br>\n");
+         if ($debug) {
+            print("Debug: " . $loadres['debugHTML'] . "<br>\n");
+         }
+      }
+   }
+   
+   return $thisrec;
+}
+
+function saveCustomElementForm($listobject, $adminsetup, $default_elid, $formvars, $content, $debug = 0) {
+   //** parse the form to know whether the value is for an object prop or a subcomp prop
+   $result = array('innerHTML'=>'', 'errors'=>array(), 'debugHTML'=>'');
+   $forminfo = getCustomHTMLFormVars($content);
+   $processed = array();
+   //print("Raw form fields: " . print_r($forminfo,1) . " <br>\n");
+   // load the object in question
+   //** call object or subcomp setProp() method
+   foreach ($forminfo as $thisinfo) {
+      if (isset($thisinfo['elementid'])) {
+         $thiselid = $thisinfo['elementid'];
+      } else {
+         $thiselid = $default_elid;
+      }
+      if (isset($processed[$thiselid])) {
+         error_log("Retrieving object from processed stack " . get_class($processed[$thiselid]));
+         $thisobject = $processed[$thiselid];
+      } else {
+         error_log("Retrieving object from database");
+         $loadres = loadModelElement($thiselid, array(), 0);
+         $thisobject = $loadres['object'];
+         if ($loadres['error']) {
+            error_log($loadres['errorHTML']);
+            error_log($loadres['debugHTML']);
+         }
+      }
+      if (isset($thisinfo['paramname']) and isset($thisinfo['propname'])) {
+         $paramname = $thisinfo['paramname'];
+         $propname = $thisinfo['propname'];
+         $result['debugHTML'] .= "<br><br>Processing vars for $propname ($paramname):<br>";
+         // run processMultiFormVars over the input vars with ONLY this records adminsetup info
+         // therefore extracting only the variables associated with this record
+         // then, all variables that appear in the "outvalues" array get applied to the (sub)object in question
+         $oneadmin = array('column info' => array()); 
+         $oneadmin['table info'] = $adminsetup['table info'];
+         // must have the pk field value set in this, otherwise, processmultiform will not process
+         $oneadmin['column info']['elementid'] = $adminsetup['column info']['elementid'];
+         $oneadmin['column info'][$paramname] = $adminsetup['column info'][$paramname];
+         $varout = processMultiFormVars($listobject,$formvars,$oneadmin,0,$debug);
+         //print("<br><br>  &nbsp;&nbsp;&nbsp;&nbsp;" . print_r($varout,1) . "<br>" . print_r( $oneadmin, 1) . "<br>");
+         if (isset($formvars[$paramname])) {
+            $propval = $formvars[$paramname];
+            if (isset($thisinfo['subcompname'])) {
+               $subcompname = $thisinfo['subcompname'];
+               if ($debug) {
+                  if (is_array($propval)) { 
+                     $valstring = print_r($propval,1);
+                  } else {
+                     $valstring = $propval;
+                  }
+                  $result['debugHTML'] .= "Setting $propname on $subcompname = $valstring<br>\n";
+               }
+               //error_log("Setting $propname on $subcompname = $valstring<br>\n");
+               if (isset($thisobject->processors[$subcompname])) {
+                  if (is_object($thisobject->processors[$subcompname])) {
+                     $thisobject->processors[$subcompname]->setProp($propname, $propval);
+                     // update subcomp prop
+                     //print("Setting $propname on subcomp $subcompname of parent $elementid <br>\n");
+                     foreach($varout['outspecial'][$paramname] as $key => $val) {  
+                        if ($debug) {
+                           if (is_array($val)) { 
+                              $valstring = print_r($val,1);
+                           } else {
+                              $valstring = $val;
+                           }
+                           $result['debugHTML'] .= "Setting $key on $subcompname = $valstring<br>\n";
+                        }
+                        $thisobject->processors[$subcompname]->setProp($key, $val);
+                     }
+                  }
+               }
+            } else {
+               // update parent object prop
+               if ($debug) {
+                  $result['debugHTML'] .= "Setting $propname on parent $elementid <br>\n";
+               }
+               $thisobject->setProp($propname, $propval);
+               foreach($varout['outspecial'][$paramname] as $key => $val) { 
+                  //print("Setting $key on parent $elementid <br>\n");
+                  $thisobject->setProp($key, $val);
+               }
+            }
+         }
+      } else {
+         $result['errors'][] = "Failed to process: " . print_r($thisinfo,1) . "<br>";
+      }
+      $processed[$thiselid] = $thisobject;
+   }
+   //** save the subcomps on the object 
+   //error_log("Calling saveObjectSubComponents \n");
+   foreach ($processed as $thiselid => $thisobject) {
+      $res = saveObjectSubComponents($listobject, $thisobject, $thiselid, 1, $debug);
+      if ($debug) {
+         $result['debugHTML'] .= "<b>Result of subobject save :</b><br> $res <br>";
+      }
+      if (!is_object($thisobject)) {
+         $result['errors'][] = "Object got clobbered during sub-comp save <br>";
+      }
+      //** save the object
+      //error_log("Calling updateObjectPropList \n");
+      $res = updateObjectPropList($thiselid, $thisobject, 1);
+      //print("<b>Result of object save :</b><br> $res <br>");
+   }
+   return $result;
+}
+
+function showVWPTemplates($listobject, $userid) {
+   global $usergroupids;
+   $ret = array();
+   # get base model domains, then later we will get the Model Containers from them
+   $listobject->querystring = "  select a.elementid, a.elemname ";
+   $listobject->querystring .= " from scen_model_element as a ";
+   $listobject->querystring .= " where ownerid = $userid ";
+   $listobject->querystring .= "    and custom1 = 'cova_vwp_projinfo' ";
+   $listobject->querystring .= " order by a.elemname  " ;
+   $ret['debugHTML'] .= "$listobject->querystring <br>";
+   $listobject->performQuery();
+   //$listobject->showList();
+
+   $ret['user'] = $listobject->queryrecords;
+   # get base model domains, then later we will get the Model Containers from them
+   $listobject->querystring = "  select a.elementid, a.elemname, b.username as owner ";
+   $listobject->querystring .= " from scen_model_element as a, users as b ";
+   $listobject->querystring .= " where ownerid <> $userid ";
+   $listobject->querystring .= "    and a.groupid in ($usergroupids) ";
+   $listobject->querystring .= "    and a.gperms >= 4 ";
+   $listobject->querystring .= "    and a.custom1 = 'cova_vwp_projinfo' ";
+   $listobject->querystring .= "    and a.ownerid = b.userid ";
+   $listobject->querystring .= " order by a.elemname  " ;
+   $ret['debugHTML'] .= "$listobject->querystring <br>";
+   $listobject->performQuery();
+
+   $ret['group'] = $listobject->queryrecords;
+   
+   return $ret;
+}
+
+function guessCOVALocation($listobject, $scenarioid, $lat, $lon, $debug = 0) {
+   
+   // check for containment by local trib
+   // check for containment by major segment
+   $options = findCOVALocationPossibilities($listobject, $scenarioid, $lat, $lon, $debug);
+   
+}
+
+function findCOVALocationPossibilities($listobject, $scenarioid, $latdd, $londd, $debug = 0) {
+   global $usgsdb;
+   // check for containment by local trib
+   // check for containment by major segment
+   // check for nearest local trib
+   // get containing NHD+ segment
+   $options = array(); // type- nhd+ / major_seg / local_seg; id - elementid/com_id
+   $recs = getElementsContainingPoint($listobject, $scenarioid, $latdd, $londd);
+   //error_log($recs);
+   foreach ($recs as $thisrec) {
+      // check custom1 and see what gives
+      $type = $thisrec['custom1'];
+      $elementid = $thisrec['elementid'];
+      $local_area = -1;
+      $name = $thisrec['elemname'];
+      switch ($type) {
+         case 'cova_ws_container':
+            // hierarchical, complex container
+            // get stream stats, cumulative area, local area
+            $channelid = getCOVAMainstem($listobject, $elementid);
+            $props = getElementPropertyValue($listobject, $channelid, array('area','drainage_area'), $debug);
+            $local_area = $props['area'];
+            $cumulative_area = $props['drainage_area'];
+         break;
+         
+         case 'cova_ws_subnodal':
+            // hierarchical, complex container
+            $channelid = getCOVAMainstem($listobject, $elementid);
+            $props = getElementPropertyValue($listobject, $channelid, array('area','drainage_area'), $debug);
+            $local_area = $props['area'];
+            $cumulative_area = $props['drainage_area'];
+         break;
+         
+         case 'vahydro_lite_container':
+            // non-hierarchical, simple container
+         break;
+      }
+      if ($local_area >= 0) {
+         $options[] = array('type'=>$type, 'id'=>$elementid, 'name'=>$name, 'local_area'=>$local_area, 'cumulative_area' => $cumulative_area);
+      }
+   }
+   
+   if (is_object($usgsdb)) {
+      // now look at NHD+ to find the location of the containing NHD+ segment
+      $nhdinfo = findNHDSegment($usgsdb, $latdd, $londd, $debug, 'sqmi');
+      $nhd_area = $nhdinfo['cumdrainag'];
+      $comid = $nhdinfo['comid'];
+      if ($nhd_area > 0) {
+         $options[] = array('type'=>'nhd+', 'id'=>$comid, 'local_area' => $nhd_area, 'cumulative_area' => $nhd_area);
+      }
+      
+   }
+   
+   return $options;
+   
+}
+
+?>

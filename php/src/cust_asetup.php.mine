@@ -1,0 +1,118 @@
+<?php
+
+   # adminsetup
+   # file contains definitions for database table formatting parameters
+   # type - display type
+   # params -
+   #    #3 - select list - foreigntable:pkcol:listcols(csv):sortcol:showlabels
+   #    #8 - scientific notation
+   #    #9 - number format
+   #    #10 - currency format
+   #    #11 - 2 columns map - localvar1:localvar2:foreigntable:foreigncolumn1:foreigncolumn2:
+   #                      listcolumns(csv):sortcol:showlabels(bool)
+   #    #12 - formatted select - foreigntable:pkcol:listcols(csv):sortcol:showlabels
+   #    #13 - 2 columns map, constant first parameter - constant:localvar2:foreigntable:
+   #                      listcolumns(csv):sortcol:showlabels(bool)
+   #    #15 - edit link
+   #    #16 - subSelectList shows only a subset of the intems in the select list table,
+            #   indicated by the seckeycol, the matching value of the seckeycol coming
+            #   from the currentrecord, the value of the field named "myseckeycol" -
+            #   params = foreigntable:pkcol:seckeycol:myseckeycol:listcols(csv):sortcol:showlabels
+   #    #17 - mapped parameter value foreigntable:localkeycol:foreignkeycol:paramcol(csv)
+   #    #18 - keyed map, has two local values to indicate the local entry in the mapping table
+            # with one foreign key value, may be a multi-list
+            # params ($maptable:$local1:$local2:$map1:$map2:$foreignmapcol:$foreigntable:$foreignkeycol:$paramcol:$ismulti:$numrows)
+   #    #24 - geometry column
+   # 'search info' - columns to be included in search form, method for searching
+      # 1 - exact match, entry field, multi-select or select list, based on 'column info' entry
+      # 2 - exact match, select list, based on 'column info' entry
+      # 3 - exact match, multi-select, based on 'column info' entry
+      # 4 - upper, lower bounds
+      # 5 - fuzzy match - uses ilike or like (case-sensitive is parameter)
+      # 6 - geometric bounding box overlap && - not yet implemented
+   $adminsetuparray = array(
+
+      "test"=>array(
+          "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column", "child_formats"=>array() ),
+          "column info"=>array(
+              "name"=>array("type"=>1,"params"=>"","label"=>"Name","visible"=>1, "readonly"=>0, "width"=>32),
+              "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
+              "test_matrix"=>array("type"=>27,"params"=>"3:0:2:8","label"=>"Data Matrix","visible"=>1, "readonly"=>0, "width"=>6),
+              "debug"=>array("type"=>3,"params"=>"0|False,1|True:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6)
+           )
+        ),
+
+      "wsp_section80"=>array(
+          "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column", "child_formats"=>array() ),
+          "column info"=>array(
+              "name"=>array("type"=>1,"params"=>"","label"=>"Name","visible"=>1, "readonly"=>0, "width"=>32),
+              "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
+              "cws_info"=>array("type"=>2,"params"=>"","label"=>"CWS Info","visible"=>1, "readonly"=>1, "width"=>6),
+              "cws_info_plan"=>array("type"=>27,"params"=>"10:0:2:16","label"=>"","visible"=>1, "readonly"=>0, "width"=>6),
+              "debug"=>array("type"=>3,"params"=>"0|False,1|True:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6)
+           )
+        ),
+
+      "project_info"=>array(
+          "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column", "child_formats"=>array() ),
+          "column info"=>array(
+              "name"=>array("type"=>1,"params"=>"","label"=>"Name","visible"=>1, "readonly"=>0, "width"=>32),
+              "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
+              "project_type"=>array("type"=>3,"params"=>"1|Direct Withdrawal,2|Off-Stream Storage,3|On-Stream Storage:vpdesid:vpdesname::0","label"=>"Currently in VPDES? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "wd_lat"=>array("type"=>1,"params"=>"","label"=>"WD Lat","visible"=>1, "readonly"=>0, "width"=>8),
+              "wd_lon"=>array("type"=>1,"params"=>"","label"=>"WD Lon","visible"=>1, "readonly"=>0, "width"=>8),
+              "imp_lat"=>array("type"=>1,"params"=>"","label"=>"IM Lat","visible"=>1, "readonly"=>0, "width"=>8),
+              "imp_lon"=>array("type"=>1,"params"=>"","label"=>"IM Lon","visible"=>1, "readonly"=>0, "width"=>8),
+              "source_name"=>array("type"=>1,"params"=>"","label"=>"Source:","visible"=>1, "readonly"=>0, "width"=>32),
+              "storage_stage_area"=>array("type"=>27,"params"=>"3:0:2:8","label"=>"Impoundment Geometry","visible"=>1, "readonly"=>0, "width"=>6),
+              "vwp_current"=>array("type"=>3,"params"=>"0|False,1|True:vwpid:vwpname::0","label"=>"Currently in VWP? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "vwp_id"=>array("type"=>1,"params"=>"","label"=>"VWP","visible"=>1, "readonly"=>0, "width"=>16),
+              "annual_mg"=>array("type"=>1,"params"=>"","label"=>"Max Annual (MG)","visible"=>1, "readonly"=>0, "width"=>8),
+              "drainage_area"=>array("type"=>1,"params"=>"","label"=>"Drainage Area (sqmi)","visible"=>1, "readonly"=>0, "width"=>8),
+              "maxcapacity"=>array("type"=>1,"params"=>"","label"=>"Max Annual (MG)","visible"=>1, "readonly"=>0, "width"=>8),
+              "max_mgd"=>array("type"=>1,"params"=>"","label"=>"Max Day (MG)","visible"=>1, "readonly"=>0, "width"=>8),
+              "maxmonth_mg"=>array("type"=>1,"params"=>"","label"=>"Max Month (MG)","visible"=>1, "readonly"=>0, "width"=>8),
+              "vpdes_current"=>array("type"=>3,"params"=>"0|False,1|True:vpdesid:vpdesname::0","label"=>"Currently in VPDES? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "vpdes_id"=>array("type"=>1,"params"=>"","label"=>"VDES","visible"=>1, "readonly"=>0, "width"=>16),
+              "vpdes_outfalls"=>array("type"=>27,"params"=>"1:0:2:8","label"=>"Outfall #s","visible"=>1, "readonly"=>0, "width"=>6),
+              "vwuds_current"=>array("type"=>3,"params"=>"0|False,1|True:vwudsid:vwudsname::0","label"=>"Currently in VWUDS? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "vwuds_userid"=>array("type"=>1,"params"=>"","label"=>"VWUDS","visible"=>1, "readonly"=>0, "width"=>16),
+              "has_storage"=>array("type"=>3,"params"=>"0|False,1|True:hsmid:hsmname::0","label"=>"Has Storage? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "monthly_pct"=>array("type"=>27,"params"=>"2:13:2:8","label"=>"Monthly %","visible"=>1, "readonly"=>0, "width"=>6),
+              "vwuds_mpids"=>array("type"=>27,"params"=>"1:0:2:8","label"=>"MPIDs","visible"=>1, "readonly"=>0, "width"=>6),
+              "groupid"=>array("type"=>3,"params"=>"groups:groupid:groupname:groupname:0:","label"=>"Group ID","visible"=>1, "readonly"=>0, "width"=>12),
+              "operms"=>array("type"=>3,"params"=>"7|All (RW-Del),6|Read/Write,4|Read-Only,0|None:opid:opname::0","label"=>"Owner Permissions: ","visible"=>1, "readonly"=>0, "width"=>6),
+              "gperms"=>array("type"=>3,"params"=>"7|All (RW-Del),6|Read/Write,4|Read-Only,0|None:gpid:gpname::0","label"=>"Group Permissions: ","visible"=>1, "readonly"=>0, "width"=>6),
+              "watershed_map"=>array("type"=>-1,"params"=>"","label"=>"Watershed","visible"=>1, "readonly"=>1, "width"=>6),
+              "locid"=>array("type"=>23,"params"=>"","label"=>"Loc ID? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "debug"=>array("type"=>3,"params"=>"0|False,1|True:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6)
+           )
+        ),
+
+      "waterproject_info"=>array(
+          "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column", "child_formats"=>array() ),
+          "column info"=>array(
+              "name"=>array("type"=>1,"params"=>"","label"=>"Name","visible"=>1, "readonly"=>0, "width"=>32),
+              "project"=>array("type"=>1,"params"=>"","label"=>"Project Name","visible"=>1, "readonly"=>0, "width"=>64),
+              "street"=>array("type"=>1,"params"=>"","label"=>"Street ","visible"=>1, "readonly"=>0, "width"=>6),
+              "city"=>array("type"=>1,"params"=>"","label"=>"City","visible"=>1, "readonly"=>0, "width"=>8),
+              "area"=>array("type"=>1,"params"=>"","label"=>"Lot Size (acres)","visible"=>1, "readonly"=>0, "width"=>8),
+              "CN"=>array("type"=>1,"params"=>"","label"=>"Curve Number","visible"=>1, "readonly"=>0, "width"=>8),
+              "roof"=>array("type"=>1,"params"=>"","label"=>"Roof Area (sq ft)","visible"=>1, "readonly"=>0, "width"=>8),
+              "baths"=>array("type"=>1,"params"=>"","label"=>"# Bathrooms","visible"=>1, "readonly"=>0, "width"=>8),
+              "occupants"=>array("type"=>1,"params"=>"","label"=>"# Full-Time Occupants","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "laundry"=>array("type"=>1,"params"=>"","label"=>"# Loads opf Laundry Per Week","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "shwr_time"=>array("type"=>1,"params"=>"","label"=>"Avg. Shower Duration (hours)","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "shwr_wk"=>array("type"=>1,"params"=>"","label"=>"# Showers per person/week","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "area_turf"=>array("type"=>1,"params"=>"","label"=>"Area of irrigated turf (sq feet)","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "area_food"=>array("type"=>1,"params"=>"","label"=>"Area of irrigated fruits/veg (sq feet)","visible"=>1, "readonly"=>0, "occupants"=>8),
+              "lon"=>array("type"=>1,"params"=>"","label"=>"Lon","visible"=>1, "readonly"=>0, "width"=>8),
+              "lat"=>array("type"=>1,"params"=>"","label"=>"Lat","visible"=>1, "readonly"=>0, "width"=>8),
+              "storage_gallons"=>array("type"=>1,"params"=>"","label"=>"Lat","visible"=>1, "readonly"=>0, "width"=>8),
+            )
+        )
+    );
+
+/* end adminsetup array */
+
+?>

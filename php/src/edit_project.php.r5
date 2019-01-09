@@ -1,0 +1,300 @@
+<html>
+<head>
+<script src="/scripts/scripts.js"></script>
+<?php
+include("./medit_header.php");
+?>
+</head>
+<?php
+/* ******************************************************* 
+*** This is a generic project template that takes a    ***
+*** single object with a custom form as a template     ***
+*** and lets the user create copies of the template    ***
+******************************************************* */
+
+$noajax = 1;
+include('./xajax_modeling.element.php');
+# Set the map file to use
+error_reporting(E_ERROR);
+include("./cust_asetup.php");
+
+$elementid = -1;
+$templateid = 176170;
+
+if (isset($_GET['elementid'])) { 
+   // this will happen if we are loading an element
+   $elementid = $_GET['elementid'];
+}
+if (isset($_GET['templateid'])) { 
+   // this will happen if we are loading an element
+   $templateid = $_GET['templateid'];
+}
+if (isset($_GET['single'])) { 
+   // single mode only allows viewing/editing of 1 specific elementid (for use in embedding in wiki pages)
+   $single = $_GET['single'];
+} else {
+   $single = 0;
+}
+if (isset($_POST['single'])) { 
+   $single = $_POST['single'];
+}
+if (isset($_POST['elementid'])) { 
+   $elementid = $_POST['elementid'];
+}
+if (isset($_POST['actiontype'])) { 
+   $actiontype = $_POST['actiontype'];
+   $action = $actiontype;
+}
+if (isset($_POST['templateid'])) { 
+   // this will happen if we are loading an element
+   $templateid = $_POST['templateid'];
+}
+
+// need to pass this in somehow
+$templatefile = "./forms/waterproject_info.html";
+// need to pass this in somehow
+$adminname = 'waterproject_info';
+
+if (isset($_GET['templatefile'])) { 
+   // this will happen if we are loading an element
+   $templatefile = $_GET['templatefile'];
+}
+if (isset($_POST['templatefile'])) { 
+   // this will happen if we are loading an element
+   $templatefile = $_POST['templatefile'];
+}
+$filename = $templatefile;
+//$single = 1;
+#########################################
+# Print Headers
+#########################################
+if (!$single) {
+   $restrict_menus = array('logout.php');
+   include("./medit_menu.php");
+}
+#########################################
+# END - Print Headers
+#########################################
+
+
+$thisrec = array();
+if ($userid == 1) {
+   $debug = 0;
+} else {
+   $debug = 0;
+}
+
+$form_name = 'form1';
+$adminsetup = $adminsetuparray[$adminname];
+$adminsetup['column info']['groupid']['params'] = "groups:groupid:groupname:groupname:0:groupid in (select groupid from mapusergroups where userid = $userid) ";
+$adminsetup['table info']['formName'] = $form_name;
+$content = file_get_contents($filename);
+
+if ($debug) {
+   print("Form submission: " . print_r($_POST,1) . "\n<br>");
+}
+// if we have had data submitted, save:
+if ($actiontype == 'save') { 
+   if ($elementid == -1) {
+      // clone the template object
+      // then save the form data into the results of the clone operation
+      $params = array(
+         'projectid'=>$projectid,
+         'dest_scenarioid'=>$_SESSION['defscenarioid'],
+         'elements'=>array($templateid),
+         'dest_parent'=>$destination
+      );
+      print("Creating a new Project<br>");
+      $output = copyModelGroupFull($params, 1);
+      $elementid = $output['elementid'];
+      error_log("Created new copy of template ($templateid) - $elementid ");
+      error_log($output['innerHTML']);
+   }
+   print("Saving results of form submission <br>\n");
+   //$debug = 1;
+   $result = saveCustomElementForm($listobject, $adminsetup, $elementid, $_POST, $content, $debug);
+   if ($debug) {
+      print($result['innerHTML'] . "<br>");
+      print(print_r($result['errors']) . "<br>");
+      print(print_r($result['debugHTML']) . "<br>");
+   }
+}
+
+$toggleText = " style=\"display: $toggleStatus\"";
+$menuHTML = '';
+if (!$single) {
+   if ($elementid == -1) {
+      $toggleText = 'style="display: block;"';
+   } else {
+      $toggleText = 'style="display: none;"';
+   }
+   $menuHTML .= "<div class='insetBox'><a class='mH' id='op$i' ";
+   $menuHTML .= "onclick=\"toggleMenu('vwp_projinfo')\" title='Click to Expand/Hide'>(+) Project Templates (click to view/hide)</a>";
+   $menuHTML .= "<div id='vwp_projinfo' $toggleText>";
+   // get all items of this templates type that this user has access to
+   
+   $eligible_projs = getUserObjectTypes($listobject, $userid, -1, '', 'greenDesignProject');
+   //print_r($eligible_projs);
+   if ($debug) {
+      $menuHTML .= $eligible_projs['debugHTML'];
+   }
+   $user_vwp = $eligible_projs['user'];
+   $group_vwp = $eligible_projs['group'];
+   $menuHTML .= "<table><tr><td valign=top width=25%><b>General Functions</b><ul class=mNormal>";
+   $menuHTML .= "<li><a onclick='document.forms[\"$form_name\"].elements[\"actiontype\"].value = \"load_template\"; document.forms[\"$form_name\"].submit()'>Create New Project</a></li>";
+   $menuHTML .= "</ul></td>";
+   $menuHTML .= "<td valign=top width=37%><b>Your Existing Projects</b><ul class=mNormal>";
+   foreach ($user_vwp as $thisvwp) {
+      $vid = $thisvwp['elementid'];
+      $vname = $thisvwp['elemname'];
+      $menuHTML .= "<li><a onclick='document.forms[\"$form_name\"].elements[\"actiontype\"].value = \"edit\";  document.forms[\"$form_name\"].elements[\"switch_elid\"].value = $vid; document.forms[\"$form_name\"].submit()'>$vname</a>";
+   }
+   $menuHTML .= "</ul></td><td valign=top width=37%><b>Other Projects That You Can Access</b><ul class=mNormal>";
+   foreach ($group_vwp as $thisvwp) {
+      $vid = $thisvwp['elementid'];
+      $vname = $thisvwp['elemname'];
+      $oname = $thisvwp['owner'];
+      $menuHTML .= "<li><a onclick='document.forms[\"$form_name\"].elements[\"actiontype\"].value = \"edit\"; document.forms[\"$form_name\"].elements[\"switch_elid\"].value = $vid; document.forms[\"$form_name\"].submit()'>$vname ($oname)</a>";
+   }
+   $menuHTML .= "</ul></td></tr></table>";
+   $menuHTML .= "</div></div>";
+   print($menuHTML);
+}
+
+//**** NOW - LOAD OBJECTS to edit if requested ****
+if (isset($_POST['switch_elid'])) { 
+   if ($_POST['switch_elid'] > 0) {
+      // this will happen if we are loading an element
+      $elementid = $_POST['switch_elid'];
+   }
+}
+// if elementid = -1, we want to show the template object
+if ($actiontype == 'load_template') {
+   $showel = $templateid;
+   $elementid = -1;
+} else {
+   $showel = $elementid;
+}
+// evaluate permissions
+
+$innerHTML = '<hr>';
+$innerHTML .= "<form id='$form_name' name='$form_name' action='$scriptname' method=post>";
+if ($showel <> -1) {
+   $action = 'save';
+   $unserobjects = array(); // clear unserobjects so we will get fresh copies
+   if ($debug) {
+      print("getModelVarsForCustomForm($showel, $filename, $debug);<br>");
+      print("User: $userid, Default Scenario: " . $_SESSION['defscenarioid'] . " <br>");
+   }
+   $thisrec = getModelVarsForCustomForm($showel, $filename, $debug);
+   // evaluate permissions
+   $disabled = 0;
+   /*
+   $gid = $thisrec['groupid'];
+   if ($elementid == -1) {
+      $ownerid = $userid;
+   } else {
+      $recinfo = getElementInfo($listobject, $elementid);
+      $ownerid = $recinfo['ownerid'];
+   }
+   $mygroups = split(',',$usergroupids);
+   if ( ( !in_array($gid, $mygroups) ) or ( ($userid <> $ownerid) and ($gperms < 5) ) ) {
+      $disabled = 1;
+   }
+   if ($ownerid == $userid) {
+      $disabled = 0;
+   }
+   if ($userid <> $ownerid) {
+      // don't allow the group to be changed
+      $adminsetup['column info']['groupid']['disabled'] = 1;
+      $adminsetup['column info']['gperms']['disabled'] = 1;
+   }
+   */
+   
+   //print("Parsed Custom Form: " . print_r($thisrec,1) . "<br>");
+   $innerHTML .= "Element ID: $elementid <br>";
+   $latdd = $thisrec['wd_lat'];
+   $londd = $thisrec['wd_lon'];
+   $locid = $thisrec['locid'];
+   
+   $debug = 0;
+   $innerHTML .= "<table>";
+   $innerHTML .= showCustomHTMLForm($listobject,$thisrec,$adminsetup, $content, 0, 0, $debug, $disabled);
+   $innerHTML .= "</table>";
+   $submit = "document.forms[\"$form_name\"].submit()";
+   if (!$disabled) {
+      $innerHTML .= showGenericButton('save','Save', $submit, 1, 0);
+   }
+}
+$innerHTML .= showHiddenField('elementid',$elementid, 1, 0);
+$innerHTML .= showHiddenField('single',$single, 1, 0);
+$innerHTML .= showHiddenField('switch_elid',-1, 1, 0);
+$innerHTML .= showHiddenField('actiontype',$action, 1, 0);
+$innerHTML .= "</form>";
+// *****************************
+// set up a panel object
+// *****************************
+$panelHTML = '';
+$taboutput = new tabbedListObject;
+$taboutput->name = 'model_element';
+$taboutput->height = '600px';
+#$taboutput->width = '100%';
+$taboutput->width = '800px';
+$taboutput->tab_names = array('model_props','model_run_results');
+$taboutput->tab_buttontext = array(
+   'model_props'=>'Project Information',
+   'model_run_results'=>'Run Model / View Results'
+);
+$taboutput->init();
+$taboutput->tab_HTML['model_props'] .= "<b>Properties:</b><br>";
+$taboutput->tab_HTML['model_run_results'] .= "<b>Run Model / View Results:</b><br>";
+
+// add this data to the Edit Properties View
+// add a custom mode view to the "Run Model / View Results" panel
+$content = "[formfield propname=name paramname=name][/formfield]";
+$content .= "[modelobject propname=name paramname=name][/modelobject]";
+$dynamic_fields = $thisrec;
+$results_panel = parseMarkupSubstituteValues('formfield', $content, $dynamic_fields, $debug);
+
+// parseMarkup just finds tags and parses them for later processing
+$model_viewers = parseMarkup('modelobject', $results_panel, $debug);
+$model_propnames = array();
+foreach ($model_viewers as $thismodel) {
+   if (isset($unserobjects[$elementid])) {
+      $unserobjects[$elementid]->debug = 1;
+      //$model_info = "Calling showElementInfo " . $unserobjects[$elementid]->showElementInfo('', 'info');
+      $model_info = "Calling showElementInfo FOR $thismodel " . $unserobjects[$elementid]->showElementInfo('', 'editform');
+   }
+}
+
+$taboutput->tab_HTML['model_props'] .= $innerHTML;
+$taboutput->tab_HTML['model_run_results'] .= $results_panel;
+$taboutput->tab_HTML['model_run_results'] .= $model_info;
+$taboutput->tab_HTML['model_run_results'] .= "<hr>" . print_r($model_viewers,1);
+error_reporting(E_ALL);
+if (isset($unserobjects[$elementid])) {
+   $taboutput->tab_HTML['model_run_results'] .= "<hr>Form: <br>";
+   if (is_array($unserobjects[$elementid]->formvars->formpieces['fields'])) {
+      $fields = $unserobjects[$elementid]->formvars->formpieces['fields'];
+      foreach($fields as $fieldname => $thisfield) {
+         $taboutput->tab_HTML['model_run_results'] .= $fieldname . "<br>";
+         $taboutput->tab_HTML['model_run_results'] .= $thisfield . "<br>";
+      }
+   }
+   
+   $taboutput->tab_HTML['model_run_results'] .= "<hr>Debug Info: <br>" . $unserobjects[$elementid]->debugstring;
+   $taboutput->tab_HTML['model_run_results'] .= "<hr>Error Info: <br>" . $unserobjects[$elementid]->errorstring;
+}
+
+/* RENDER FINAL TABBED OBJECT */
+$taboutput->createTabListView($activetab);
+# add the tabbed view the this object
+$panelHTML .= $taboutput->innerHTML;
+print($panelHTML);
+
+//print("$innerHTML<hr>");
+if ($debug) {
+   print_r($_POST);
+}
+?>
+</html>

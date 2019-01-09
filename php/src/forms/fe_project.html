@@ -1,0 +1,250 @@
+<tr><td>
+<div width=100% class="row1"><font size=+1 face=arial>General Info</font></div>
+   <input type=hidden name=runform value='vwp'>
+   <b>Project Name </b>[formfield propname=name paramname=name][/formfield] <b>Type: </b> [formfield propname=equation subcompname=project_type paramname=project_type][/formfield] 
+   <br><b>Description </b> [formfield propname=description paramname=description][/formfield]
+   <br><b>Project Domain:</b> [formfield propname=scenarioid paramname=scenarioid][/formfield]
+
+<br><b>Permissions </b><a class="mH" onclick="toggleMenu('proj_perms')"><font size=-1>Show/Hide</font></a> </b>
+<div id="proj_perms" class="mL">
+<br>[formfield propname=ownerid paramname=ownerid][/formfield]
+   <br>&nbsp;&nbsp; Group: [formfield propname=groupid paramname=groupid][/formfield]
+   <br>&nbsp;&nbsp; Group Perms: [formfield propname=gperms paramname=gperms][/formfield]
+   <br>&nbsp;&nbsp; Public Perms: [formfield propname=pperms paramname=pperms][/formfield]
+</div>
+
+<div width=100% class="row1"><font size=+1 face=arial>Geographic Information</font></div>
+<b>Location </b><a class="mH" onclick="toggleMenu('proj_location')"><font size=-1>Show/Hide</font></a> </b>
+   <div id="proj_location" class="mL row1">
+   <br><i>Lat:[formfield propname=equation subcompname=wd_lat paramname=wd_lat][/formfield] / Lon:[formfield propname=equation subcompname=wd_lon paramname=wd_lon][/formfield]
+<br>&nbsp;&nbsp;&nbsp;(in Decimal Degrees - <a href='http://transition.fcc.gov/mb/audio/bickel/DDDMMSS-decimal.html' target=_new>D*M'S" converter</a>)</i>
+   <br><b>Control Point Drainage Area </b>[formfield propname=equation subcompname=intake_drainage_area paramname=intake_drainage_area][/formfield]
+   <br>&nbsp;&nbsp; Select Best Model Location:
+      <div id="cova_location_selector">
+      [formfield propname=value subcompname=locid paramname=locid view=cova_locator][/formfield]
+      </div>
+   </div>
+         
+     <br><b>Land Use <a class="mH" onclick="toggleMenu('proj_landuse')"><font size=-1>Show/Hide</font></a> </b>
+     <div id="proj_landuse" class="mL">
+         <br><b>Nearest Land Segment: </b>[formfield propname=nearest_landseg subcompname=cbp_runoff paramname=cbp_nearest_landseg][/formfield]
+         <br><b>Selected Land Segment:</b> [formfield propname=id2 subcompname=cbp_runoff paramname=cbp_landseg][/formfield]
+         <br><b>Estimate Land Use from NHD+/NLCD on Save?: </b>[formfield propname=reload_nlcd subcompname=cbp_runoff paramname=reload_nlcd][/formfield]
+         <br><b>Land Uses (acres): </b>
+         <br>[formfield propname=matrix subcompname=cbp_runoff paramname=cbp_runoff][/formfield]
+      </div>
+   
+<br><div width=100% class="row1"><font size=+1 face=arial>Withdrawal Information</font></div>
+     <b>Withdrawal/Discharge Data Source <a class="mH" onclick="toggleMenu('proj_wd_src')"><font size=-1>Show/Hide</font></a> </b>
+     <div id="proj_wd_src" class="mL row1">
+         <b>WD Data Source: </b>[formfield propname=equation subcompname=wd_src paramname=wd_src][/formfield]
+          | <b>PS Data Source: </b>[formfield propname=equation subcompname=ps_src paramname=ps_src][/formfield]
+      </div>
+     <br><b>Custom Withdrawal / Point Source <a class="mH" onclick="toggleMenu('proj_wd')"><font size=-1>Show/Hide</font></a> </b>
+     <div id="proj_wd" class="mL row1">
+            <b><i>Withdrawal: </i></b> 
+			<br>
+            <b>Annual Limit (MG): </b> [formfield propname=equation subcompname=annual_mg paramname=annual_mg][/formfield]
+            <br>
+            <b>Single Monthly Limit (MG): </b> [formfield propname=equation subcompname=maxmonth_mg paramname=maxmonth_mg][/formfield]
+            <br>
+            <b>Single Day Limit (MG): </b> [formfield propname=equation subcompname=max_mgd paramname=max_mgd][/formfield]
+            <br><b>Daily Withdrawal Formula (MG)*: </b>
+            <br>&nbsp;&nbsp;&nbsp;[formfield propname=demand_eqn subcompname=safeyield_mgd paramname=safeyield_mgd_demand_eqn][/formfield]<br> (* See variable names for withdrawal name info)
+            <b>Enable Conservation?: </b> [formfield propname=enable_conservation subcompname=safeyield_mgd paramname=safeyield_mgd_enable_conservation][/formfield]
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;Watch: [formfield propname=cc_watch subcompname=safeyield_mgd paramname=safeyield_mgd_cc_watch][/formfield]
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;Warning: [formfield propname=cc_warning subcompname=safeyield_mgd paramname=safeyield_mgd_cc_warning][/formfield]
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;Emergency:  [formfield propname=cc_emergency subcompname=safeyield_mgd paramname=safeyield_mgd_cc_emergency][/formfield]
+            <br><b>Source Stream </b>: [formfield propname=equation subcompname=source_name paramname=source_name][/formfield]
+            <br>
+            <b><i>Point Source: </i></b> 
+            <br>Custom PS Equation = [formfield propname=equation subcompname=ps_calc_mgd paramname=ps_calc_mgd_eqn][/formfield]
+         </div>
+         
+     <br><b>Temporal Distribution <a class="mH" onclick="toggleMenu('proj_wd_distro')"><font size=-1>Show/Hide</font></a> </b>
+     <div id="proj_wd_distro" class="mL">
+         <b>Estimated Use Distro: </b><br>Mean Monthly % of Annual: 
+         <br>[formfield propname=matrix subcompname=monthly_pct paramname=monthly_pct][/formfield]
+      </div>
+ 
+ <br><b>Flow By </b><a class="mH" onclick="toggleMenu('proj_flowby')"><font size=-1>Show/Hide</font></a>:
+	<br><div id="proj_flowby" class="mL">
+	<br>&nbsp;&nbsp;&nbsp;<b>Select Type </b> [formfield propname=equation subcompname=flowby_type paramname=flowby_type][/formfield]<br>
+      <table>
+      <tr>
+         <td><i>Simple Flow-By</i><div class='insetBox'>
+         Description: [formfield propname=description subcompname=simple_flowby paramname=simple_flowby_desc][/formfield] 
+         <br>
+         = [formfield propname=flowby_eqn subcompname=simple_flowby paramname=simple_flowby_eqn][/formfield] cfs
+         <br>[formfield propname=enable_cfb subcompname=simple_flowby paramname=simple_flowby_enable_cfb][/formfield]
+         Set flowby to [formfield propname=cfb_var subcompname=simple_flowby paramname=simple_flowby_cfb_var][/formfield]
+         if [formfield propname=cfb_condition subcompname=simple_flowby paramname=simple_flowby_cfb_condition][/formfield] calculated flow-by </div>
+         </td>
+      </tr><tr>
+         <td><i>Tiered Flow-By</i><div class='insetBox'>
+         <br>Index Variable: [formfield propname=tier_var subcompname=tiered_flowby paramname=tiered_flowby_tier_var][/formfield]
+         <br>[formfield propname=matrix subcompname=tiered_flowby paramname=tiered_flowby_matrix][/formfield]
+         <br>[formfield propname=enable_cfb subcompname=tiered_flowby paramname=tiered_flowby_enable_cfb][/formfield]
+         Set flowby to [formfield propname=cfb_var subcompname=tiered_flowby paramname=tiered_flowby_cfb_var][/formfield]
+         if [formfield propname=cfb_condition subcompname=tiered_flowby paramname=tiered_flowby_cfb_condition][/formfield] calculated flow-by 
+         </div>
+         </td>
+      </tr>
+      </table>
+   </div>
+
+<div width=100% class="row1"><font size=+1 face=arial>Channel Info (if applicable)</font></div>
+<b>Physical Info </b><a class="mH" onclick="toggleMenu('proj_channel')"><font size=-1>Show/Hide</font></a>:</div>
+   <div id="proj_channel" class="mL">
+      <table><tr>
+         <td valign=top>
+            <b>Drainage Area (sqmi): </b> [formfield propname=drainage_area subcompname=local_channel paramname=channel_drainage_area][/formfield]
+            <br><b>Local Drainage Area (sqmi): </b> [formfield propname=area subcompname=local_channel paramname=channel_area][/formfield]
+            <br><b>Phys. Province: </b>[formfield propname=province subcompname=local_channel paramname=channel_province][/formfield]
+            <br><b>Local Length (ft): </b>[formfield propname=length subcompname=local_channel paramname=channel_length][/formfield]
+            <br><b>Channel Slope (ft/ft): </b>[formfield propname=slope subcompname=local_channel paramname=channel_slope][/formfield]
+            <br><b>Roughness (n): </b>[formfield propname=n subcompname=local_channel paramname=channel_n][/formfield]
+            <br><b>Recalculate Channel Properties?: </b>[formfield propname=reset_channelprops subcompname=local_channel paramname=channel_reset_channelprops][/formfield]
+            <ul>
+            <li><b>Base Width (ft): </b>[formfield propname=base subcompname=local_channel paramname=channel_base][/formfield]
+            <li><b>Side Slope Ratio: </b>[formfield propname=Z subcompname=local_channel paramname=channel_Z][/formfield]
+            </ul>
+         </td>
+         <td valign=top>
+            <b><i>NHD Estimates</i></b>
+            <br><i>Drainage Area (sqmi): </i>[formfield propname=drainage_area subcompname=cbp_runoff paramname=nhd_channel_drainage][/formfield]
+            <br><i>Channel Length (ft): </i>[formfield propname=channel_length subcompname=cbp_runoff paramname=nhd_channel_length][/formfield]
+            <br><i>Channel Slope (ft/ft): </i>[formfield propname=channel_slope subcompname=cbp_runoff paramname=nhd_channel_slope][/formfield]
+         </td>
+      </tr></table>
+   </div>   
+<br><b>Channel Hydrology </b><a class="mH" onclick="toggleMenu('proj_channel_hydro')"><font size=-1>Show/Hide</font></a>:</div>
+   <div id="proj_channel_hydro" class="mL">
+         <b>Runoff Variable (cfs/sqmi): </b> [formfield propname=r_var subcompname=local_channel paramname=channel_r_var][/formfield]
+   </div>   
+
+<div width=100% class="row1"><font size=+1 face=arial>Reservoir/Storage Info (if applicable)</font></div>
+<b>Reservoir Specs </b><a class="mH" onclick="toggleMenu('proj_reservoir')"><font size=-1>Show/Hide</font></a>:</div>
+<div id="proj_reservoir" class="mL"><br>
+   <br><b>Has on-site storage? </b>[formfield propname=equation subcompname=has_storage paramname=has_storage][/formfield]
+   <br>&nbsp;&nbsp; If so, Dam Location Information
+   <br>Latitude: [formfield propname=equation subcompname=imp_lat paramname=imp_lat][/formfield] Longitude: [formfield propname=equation subcompname=imp_lon paramname=imp_lon][/formfield]
+   <br>&nbsp;&nbsp; Maximum Storage (ac-ft): [formfield propname=maxcapacity subcompname=impoundment paramname=maxcapacity][/formfield]
+   <br>&nbsp;&nbsp; Initial Storage (ac-ft): [formfield propname=initstorage subcompname=impoundment paramname=initstorage][/formfield]
+   <br>&nbsp;&nbsp; Unusable Storage (ac-ft): [formfield propname=unusable_storage subcompname=impoundment paramname=unusable_storage][/formfield]
+   <br>&nbsp;&nbsp; Drainage Area (sq. mi.): [formfield propname=equation subcompname=drainage_area paramname=drainage_area][/formfield]
+   <br><b>Reservoir Refill Limit (MG/year)*:</b> [formfield propname=equation subcompname=reservoir_mgy paramname=reservoir_mgy][/formfield]
+   <br>&nbsp;&nbsp; <i><font size=-1>Pump-Store reservoirs will often have a limit
+   <br>&nbsp;&nbsp; on the total amount they can refill in a year which exceeds the annual 
+   <br>&nbsp;&nbsp; demand to provide recovery after drought.</font></i>
+   <br><b>Reservoir Geometry:</b><br><div class='insetBox'>[formfield subcompname=impoundment propname=matrix paramname=storage_stage_area]Test[/formfield]</div>
+</div>
+
+<br><b>Reservoir Rules </b><a class="mH" onclick="toggleMenu('proj_release')"><font size=-1>Show/Hide</font></a>:
+	<br><div id="proj_release" class="mL">
+    <b>Refill Rules</b>:
+	   <br>&nbsp;&nbsp;&nbsp;<b>Maximum Refill Pump Rate (MGD):</b> [formfield propname=equation subcompname=refill_max_mgd paramname=refill_max_mgd][/formfield]
+   <br><b>Release Rules</b>:
+	   <br>&nbsp;&nbsp;&nbsp;<b>Select Type:</b> [formfield propname=equation subcompname=release_type paramname=release_type][/formfield]<br>
+	   <i>Simple Release</i><div class='insetBox'>
+			Description: [formfield propname=description subcompname=simple_release paramname=simple_release_desc][/formfield] 
+			   <br>
+		   simple_release = [formfield propname=flowby_eqn subcompname=simple_release paramname=simple_release_eqn][/formfield] cfs
+		   <br>[formfield propname=enable_cfb subcompname=simple_release paramname=simple_release_enable_cfb][/formfield]
+			Set release to [formfield propname=cfb_var subcompname=simple_release paramname=simple_release_cfb_var][/formfield]
+			if [formfield propname=cfb_condition subcompname=simple_release paramname=simple_release_cfb_condition][/formfield] calculated release </div>
+		<br><i>Tiered Release (tiered_release)</i><div class='insetBox'>
+		   <br>Index Variable: [formfield propname=tier_var subcompname=tiered_release paramname=tiered_release_tier_var][/formfield]
+		   <br>[formfield propname=matrix subcompname=tiered_release paramname=tiered_release_matrix][/formfield]
+		   <br>[formfield propname=enable_cfb subcompname=tiered_release paramname=tiered_release_enable_cfb][/formfield]
+			Set release to [formfield propname=cfb_var subcompname=tiered_release paramname=tiered_release_cfb_var][/formfield]
+			if [formfield propname=cfb_condition subcompname=tiered_release paramname=tiered_release_cfb_condition][/formfield] calculated release.
+		   </div>
+      </div>
+<div width=100% class="row1"><font size=+1 face=arial>Other</font></div>
+<b>Advanced Settings </b><a class="mH" onclick="toggleMenu('proj_advanced')"><font size=-1>Show/Hide</font></a>:
+   <br><div id="proj_advanced" class="mL">
+      <div class='insetBox'>
+        <br><i>USGS "Surrogate" Gage ID:</i> [formfield propname=staid subcompname=surrogate_gage paramname=surrogate_gage][/formfield] (see "Variable Names and Descriptions" for surrogate flow variables) 
+      </div>
+      <div class='insetBox'>
+      <i>Intake Flow Equation (default value should be OK in most cases)</i>
+      Qintake = [formfield propname=equation subcompname=Qintake paramname=Qintake][/formfield]
+      </div>
+      <div class='insetBox'>
+      <i>Impoundment Inflow Equation (default value should be OK in most cases)</i>
+      imp_inflow = [formfield propname=equation subcompname=imp_inflow paramname=imp_inflow][/formfield]
+      </div>
+   </div>
+<b>Auxiliary Variables </b><a class="mH" onclick="toggleMenu('proj_aux')"><font size=-1>Show/Hide</font></a>:
+   <br><div id="proj_aux" class="mL">
+   <div class='insetBox'>
+   <br>aux1 = [formfield propname=equation subcompname=aux1 paramname=aux1_eqn][/formfield] (Note: [formfield propname=description subcompname=aux1 paramname=aux1_desc][/formfield]) 
+   <br>aux2 = [formfield propname=equation subcompname=aux2 paramname=aux2_eqn][/formfield] (Note: [formfield propname=description subcompname=aux2 paramname=aux2_desc][/formfield]) 
+   <br>stat1 = [formfield propname=statname subcompname=stat1 paramname=stat1_statname][/formfield] of [formfield propname=operands subcompname=stat1 paramname=stat1_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat1 paramname=stat1_desc][/formfield]
+   <br>stat2 = [formfield propname=statname subcompname=stat2 paramname=stat2_statname][/formfield] of [formfield propname=operands subcompname=stat2 paramname=stat2_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat2 paramname=stat2_desc][/formfield]
+   <br>aux_matrix = 
+      <div class='insetBox'>
+         <br>Type: [formfield propname=lutype1 subcompname=aux_matrix paramname=aux_matrix_lu1][/formfield] Index Variable: [formfield propname=keycol1 subcompname=aux_matrix paramname=aux_matrix_key1][/formfield] 
+         <br>[formfield propname=matrix subcompname=aux_matrix paramname=aux_matrix_matrix][/formfield]
+      </div>
+   </div>
+   </div>
+ 
+ <b>Variable Glossary</b><a class="mH" onclick="toggleMenu('proj_glossary')"><font size=-1>Show/Hide</font></a>:</b>
+   <div id="proj_glossary" class="mL"><br>
+   <b>Out-flow Variables:</b>
+	  <ul class='normal'>
+		 <li><b>Qreach</b> - The value in cfs of the flow at the outlet of the modeling segment that contains the control point (segment boundaries shown in the map labelled "Select Best Model Location" above).  This value will reflect the cumulative outflows of the containing model segment after considering all withdrawals, discharges, and tributary inflows.
+		 <li><b>Qintake</b> - The mean daily flow value in cfs at the intake for this withdrawal (for "Off-Stream Storage" or "Direct Withdrawal" projects only).
+	  </ul>
+   <b>Runoff/Inflow Variables:</b>
+	  <ul class='normal'>
+		 <li><b>Runit</b> - Unit area inflow of runoff, baseflow and interflow to the containing model segment in cfs/sqmi.
+		 <li><b>imp_inflow</b> - Inflow to the impoundment in cfs.
+		 <li><b>surrogate_gage_Qout</b> - Surrogate gage flow in cfs (surrogate gage ID specified above in "Advanced Settings")
+		 <li><b>surrogate_gage_Qunit</b> - Surrogate gage flow in cfs/square mile.
+		 <li><b>surrogate_gage_area</b> - Surrogate gage drainage area in square miles.
+		 <li><b>drainage_area</b> - Impoundment drainage area in square miles.
+		 <li><b>month</b> - The numerical index of the current calendar month in the modeling simulation (1-12).
+	  </ul>
+   <b>Withdrawal Amount Variables:</b>
+	  <ul class='normal'>
+		 <li><b>wd_mgd</b> - Withdrawal value simulated in this segment based on the selected model inputs.
+		 <li><b>wd_upstream_mgd</b> - Cumulative withdrawals in all model segments flowing into this model segment.
+		 <li><b>safeyield_mgd</b> (Local Only) - Daily rate of withdrawal in this segment according to the withdrawal info entered in the section "Custom Withdrawal" (MGD).
+		 <li><b>wd_vahydro_mgd</b> (VAHydro Scenario) - Daily rate of withdrawals in this segment according to the selected scenario of the containing VAHydro model.
+		 <li><b>wd_vwuds_mgd</b> (VWUDS Historic) - Historic daily withdrawal rate in this segment as reported under Virginia Water Use Data reporting program (MGD).
+		 <li><b>wd_wsp_current_mgy</b> (WSP Current) - Current annual withdrawal in this segment as reported under water supply planning regulation (MGY).
+		 <li><b>wd_wsp_current_mgd</b> (WSP Current) - Current daily withdrawal rate in this segment as reported under water supply planning regulation (MGD).
+		 <li><b>wd_wsp_future_mgd</b> (WSP 2040) - Year 2040 projected daily withdrawal rate in this segment as reported under water supply planning regulation (MGD).
+		 <li><b>wd_wsp_max_mgd</b> (WSP 2040) - Maximum allowable daily withdrawal rate in this segment as reported under water supply planning regulation (MGD).
+       wd_wsp_current_gw_mgd
+       wd_wsp_max_gw_mgd
+       wd_wsp_future_gw_mgd
+	  </ul>
+   <b>Impoundment Information Variables:</b>
+	  <ul class='normal'>
+		 <li><b>lake_elev</b> - The current depth of water in the <i>parent container</i> impoundment.
+		 <li><b>impoundment_lake_elev</b> - The current depth of water in the impoundment located in <i>this control point</i>.
+		 <li><b>simple_release</b> - The value calculated in the equation above labelled "Simple Release".
+		 <li><b>tiered_release</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Release".
+	  </ul>
+   <b>Withdrawal/Release Rule Variables:</b>
+	  <ul class='normal'>
+		 <li><b>tiered_flowby</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Flow-By".
+		 <li><b>simple_flowby</b> - The value calculated in the equation above labelled "Simple Flow-By".
+		 <li><b>simple_release</b> - The value calculated in the equation above labelled "Simple Release".
+		 <li><b>tiered_release</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Release".
+	  </ul>
+   <b>VAHydro Model Run Descriptions:</b>
+	  <ul class='normal'>
+		 <li><b>Run 0</b> - "Baseline" scenario, no withdrawals, no point sources, pre-development land use.
+		 <li><b>Run 1</b> - Historical scenario, VWUDS reported withdrawals, VPDES discharges, land use varying over 1984-2005 according to CBP Phase 5 model.
+		 <li><b>Run 2</b> - "Current" scenario, mean VWUDS withdrawals & VPDES discharges from 2005-2009, 2005 land use.
+		 <li><b>Run 3</b> - Future, full build out scenario.
+		 <li><b>Run 4</b> - "End of Permit Period" scenario - maximum permitted withdrawals for permit period ending in 2028.
+	  </ul>
+   </div>
+
+ </td></tr>

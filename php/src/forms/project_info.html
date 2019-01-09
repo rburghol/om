@@ -1,0 +1,169 @@
+<tr><td valign=top>
+   <font size=+1 face=arial>General Information:</font>
+   <input type=hidden name=runform value='vwp'>
+   <br><b>Project Name:</b>[formfield propname=name paramname=name][/formfield]
+   <br><b>Project Type: </b> [formfield propname=equation subcompname=project_type paramname=project_type][/formfield] 
+   <br>&nbsp;&nbsp; [formfield propname=description paramname=description][/formfield]
+   <br><b>Project Access Control:</b>[formfield propname=ownerid paramname=ownerid][/formfield]
+   <br>&nbsp;&nbsp; Group: [formfield propname=groupid paramname=groupid][/formfield]
+   <br>&nbsp;&nbsp; Group Perms: [formfield propname=gperms paramname=gperms][/formfield]
+   <br>&nbsp;&nbsp; Public Perms: [formfield propname=pperms paramname=pperms][/formfield]
+   <br><b>Current VWP?</b> [formfield propname=equation subcompname=vwp_current paramname=vwp_current][/formfield]
+      VWP ID: [formfield propname=equation subcompname=vwp_id paramname=vwp_id][/formfield]
+   <table><tr>
+      <td valign=top>
+         <br><b>Current VPDES? </b> [formfield propname=equation subcompname=vpdes_current paramname=vpdes_current][/formfield]
+		  <br>&nbsp;&nbsp; If so, VPDES Permit ID: [formfield propname=equation subcompname=vpdes_id paramname=vpdes_id][/formfield]
+	  </td><td valign=top>VPDES Outfall Nos.:<div class='insetBox'> [formfield propname=matrix subcompname=vpdes_outfalls paramname=vpdes_outfalls][/formfield]</div>
+	  </td></tr>
+	  <tr><td valign=top>
+	   <b>Current VWUDS?</b>  [formfield propname=equation subcompname=vwuds_current paramname=vwuds_current][/formfield]
+		  <br>&nbsp;&nbsp; If so, VWUDS User ID: [formfield propname=equation subcompname=vwuds_userid paramname=vwuds_userid][/formfield]
+	  </td><td valign=top>VWUDS MP IDs: <div class='insetBox'>[formfield propname=matrix subcompname=vwuds_mpids paramname=vwuds_mpids][/formfield]</div>
+	   </td></tr>
+	</table>
+</td>
+<td valign=top>
+   <font size=+1 face=arial>Withdrawal Location:</font>
+   <br><i>Lat:[formfield propname=equation subcompname=wd_lat paramname=wd_lat][/formfield] / Lon:[formfield propname=equation subcompname=wd_lon paramname=wd_lon][/formfield] (in Decimal Degrees - <a href='http://transition.fcc.gov/mb/audio/bickel/DDDMMSS-decimal.html' target=_new>D*M'S" converter</a>)</i>
+   <br><b>Intake Drainage Area:</b>[formfield propname=equation subcompname=intake_drainage_area paramname=intake_drainage_area][/formfield]
+   <br>&nbsp;&nbsp; Select Best Model Location:
+   <br><div style="border: 1px solid rgb(0 , 0, 0); border-style: dotted;"><table width=480><tr><td valign=top>
+      [formfield propname=value subcompname=locid paramname=locid view=cova_locator][/formfield]
+   </td></tr></table></div>
+</td>
+</tr>
+<tr><td valign=top bgcolor=#CDCDCD>
+   <font size=+1 face=arial>Withdrawal Details:</font>
+   <table><tr>
+	   <td valign=top>
+	   <b>Annual Limit (MG): </b> [formfield propname=equation subcompname=annual_mg paramname=annual_mg][/formfield]
+	   <br>
+	   <b>Single Monthly Limit (MG): </b> [formfield propname=equation subcompname=maxmonth_mg paramname=maxmonth_mg][/formfield]
+	   <br>
+	   <b>Single Day Limit (MG): </b> [formfield propname=equation subcompname=max_mgd paramname=max_mgd][/formfield]
+	   <b>Daily Withdrawal Formula (MG): </b> [formfield propname=demand_eqn subcompname=safeyield_mgd paramname=safeyield_mgd_demand_eqn][/formfield]<br>
+	   <b>Enable Conservation?: </b> [formfield propname=enable_conservation subcompname=safeyield_mgd paramname=safeyield_mgd_enable_conservation][/formfield]<br>
+	   &nbsp;&nbsp;&nbsp;&nbsp;Watch: [formfield propname=cc_watch subcompname=safeyield_mgd paramname=safeyield_mgd_cc_watch][/formfield] Warning: [formfield propname=cc_warning subcompname=safeyield_mgd paramname=safeyield_mgd_cc_warning][/formfield] Emergency:  [formfield propname=cc_emergency subcompname=safeyield_mgd paramname=safeyield_mgd_cc_emergency][/formfield]
+	   <br><b>Source Stream </b>: [formfield propname=equation subcompname=source_name paramname=source_name][/formfield]
+	   <br><b>Flow By:</b> (Direct withdrawals & Pump Store)
+	   <br>&nbsp;&nbsp;&nbsp;<b>Select Type:</b> [formfield propname=equation subcompname=flowby_type paramname=flowby_type][/formfield]<br>
+		   <table>
+		   <tr>
+			   <td><i>Simple Flow-By</i><div class='insetBox'>
+			   Description: [formfield propname=description subcompname=simple_flowby paramname=simple_flowby_desc][/formfield] 
+			   <br>
+			   = [formfield propname=flowby_eqn subcompname=simple_flowby paramname=simple_flowby_eqn][/formfield] cfs
+			   <br>[formfield propname=enable_cfb subcompname=simple_flowby paramname=simple_flowby_enable_cfb][/formfield]
+				Set flowby to [formfield propname=cfb_var subcompname=simple_flowby paramname=simple_flowby_cfb_var][/formfield]
+				if [formfield propname=cfb_condition subcompname=simple_flowby paramname=simple_flowby_cfb_condition][/formfield] calculated flow-by </div>
+			   </td>
+		   </tr><tr>
+			   <td><i>Tiered Flow-By</i><div class='insetBox'>
+			   <br>Index Variable: [formfield propname=tier_var subcompname=tiered_flowby paramname=tiered_flowby_tier_var][/formfield]
+			   <br>[formfield propname=matrix subcompname=tiered_flowby paramname=tiered_flowby_matrix][/formfield]
+			   <br>[formfield propname=enable_cfb subcompname=tiered_flowby paramname=tiered_flowby_enable_cfb][/formfield]
+				Set flowby to [formfield propname=cfb_var subcompname=tiered_flowby paramname=tiered_flowby_cfb_var][/formfield]
+				if [formfield propname=cfb_condition subcompname=tiered_flowby paramname=tiered_flowby_cfb_condition][/formfield] calculated flow-by 
+				</div>
+			   </td>
+		   </tr>
+		   </table>
+	   </td>
+	   <td valign=top>
+	   <b>Estimated Use Distro: </b><br>Mean Monthly % of Annual: <br><div class='insetBox'> [formfield propname=matrix subcompname=monthly_pct paramname=monthly_pct][/formfield]</div>
+	   </td>
+   </tr>
+   <tr>
+	   <td colspan=2><i>Auxiliary Variables</i><div class='insetBox'>
+	   <br>aux1 = [formfield propname=equation subcompname=aux1 paramname=aux1_eqn][/formfield] (Note: [formfield propname=description subcompname=aux1 paramname=aux1_desc][/formfield]) 
+	   <br>aux2 = [formfield propname=equation subcompname=aux2 paramname=aux2_eqn][/formfield] (Note: [formfield propname=description subcompname=aux2 paramname=aux2_desc][/formfield]) 
+	   <br>stat1 = [formfield propname=statname subcompname=stat1 paramname=stat1_statname][/formfield] of [formfield propname=operands subcompname=stat1 paramname=stat1_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat1 paramname=stat1_desc][/formfield]
+	   <br>stat2 = [formfield propname=statname subcompname=stat2 paramname=stat2_statname][/formfield] of [formfield propname=operands subcompname=stat2 paramname=stat2_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat2 paramname=stat2_desc][/formfield]
+	   <br>aux_matrix = 
+	      <div class='insetBox'>
+			   <br>Index Variable: [formfield propname=keycol1 subcompname=aux_matrix paramname=aux_matrix_key1][/formfield] - Type: [formfield propname=lutype1 subcompname=aux_matrix paramname=aux_matrix_lu1][/formfield]
+			   <br>[formfield propname=matrix subcompname=aux_matrix paramname=aux_matrix_matrix][/formfield]
+		   </div>
+		</div>
+	   </td>
+   </tr>
+   <tr>
+	  <td colspan=2><i>Variable Names and Descriptions</i>
+	  <ul class='normal'>
+		 <li><b>simple_flowby</b> - The value calculated in the equation above labelled "Simple Flow-By".
+		 <li><b>Qreach</b> - The value in cfs of the flow at the outlet of the modeling segment that contains the intake (segment boundaries shown in the map labelled "Select Best Model Location" above).
+		 <li><b>Qintake</b> - The mean daily flow value in cfs at the intake for this withdrawal (for "Off-Stream Storage" or "Direct Withdrawal" projects only).
+		 <li><b>imp_inflow</b> - Inflow to the impoundment in cfs.
+		 <li><b>month</b> - The numerical index of the current calendar month in the modeling simulation (1-12).
+		 <li><b>tiered_flowby</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Flow-By".
+		 <li><b>simple_release</b> - The value calculated in the equation above labelled "Simple Release".
+		 <li><b>tiered_release</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Release".
+		 <li><b>Runit</b> - Unit area inflow of runoff, baseflow and interflow to the containing model segment in cfs/sqmi.
+		 <li><b>surrogate_gage_Qout</b> - Surrogate gage flow in cfs (surrogate gage ID specified above in "Withdrawal Location / Flow Model Info")
+		 <li><b>surrogate_gage_Qunit</b> - Surrogate gage flow in cfs/square mile.
+		 <li><b>surrogate_gage_area</b> - Surrogate gage drainage area in square miles.
+		 <li><b>drainage_area</b> - Impoundment drainage area in square miles.
+	  </ul>
+	  </td>
+   </tr>
+   
+   </table>
+</td>
+<td valign=top bgcolor=#E2EFF5><font size=+1 face=arial>Reservoir/Storage Info (if applicable):</font>
+   <br><b>Has on-site storage? </b>[formfield propname=equation subcompname=has_storage paramname=has_storage][/formfield]
+   <br>&nbsp;&nbsp; If so, Dam Location Information
+   <br>Latitude: [formfield propname=equation subcompname=imp_lat paramname=imp_lat][/formfield] Longitude: [formfield propname=equation subcompname=imp_lon paramname=imp_lon][/formfield]
+   <br>&nbsp;&nbsp; Maximum Storage (ac-ft): [formfield propname=maxcapacity subcompname=impoundment paramname=maxcapacity][/formfield]
+   <br>&nbsp;&nbsp; Initial Storage (ac-ft): [formfield propname=initstorage subcompname=impoundment paramname=initstorage][/formfield]
+   <br>&nbsp;&nbsp; Unusable Storage (ac-ft): [formfield propname=unusable_storage subcompname=impoundment paramname=unusable_storage][/formfield]
+   <br>&nbsp;&nbsp; Drainage Area (sq. mi.): [formfield propname=equation subcompname=drainage_area paramname=drainage_area][/formfield]
+   <br><b>Reservoir Refill Limit (MG/year)*:</b> [formfield propname=equation subcompname=reservoir_mgy paramname=reservoir_mgy][/formfield]
+   <br>&nbsp;&nbsp; <i><font size=-1>Pump-Store reservoirs will often have a limit
+   <br>&nbsp;&nbsp; on the total amount they can refill in a year which exceeds the annual 
+   <br>&nbsp;&nbsp; demand to provide recovery after drought.</font></i>
+   <br><b>Reservoir Geometry:</b><br><div class='insetBox'>[formfield subcompname=impoundment propname=matrix paramname=storage_stage_area]Test[/formfield]</div>
+   <br><b>Release Rules</b>:
+	   <br>&nbsp;&nbsp;&nbsp;<b>Select Type:</b> [formfield propname=equation subcompname=release_type paramname=release_type][/formfield]<br>
+	   <table><tr>
+		   <td><i>Simple Release</i><div class='insetBox'>
+			Description: [formfield propname=description subcompname=simple_release paramname=simple_release_desc][/formfield] 
+			   <br>
+		   = [formfield propname=flowby_eqn subcompname=simple_release paramname=simple_release_eqn][/formfield] cfs
+		   <br>[formfield propname=enable_cfb subcompname=simple_release paramname=simple_release_enable_cfb][/formfield]
+			Set release to [formfield propname=cfb_var subcompname=simple_release paramname=simple_release_cfb_var][/formfield]
+			if [formfield propname=cfb_condition subcompname=simple_release paramname=simple_release_cfb_condition][/formfield] calculated release </div>
+		   </td>
+	   </tr><tr>
+		   <td><i>Tiered Release</i><div class='insetBox'>
+		   <br>Index Variable: [formfield propname=tier_var subcompname=tiered_release paramname=tiered_release_tier_var][/formfield]
+		   <br>[formfield propname=matrix subcompname=tiered_release paramname=tiered_release_matrix][/formfield]
+		   <br>[formfield propname=enable_cfb subcompname=tiered_release paramname=tiered_release_enable_cfb][/formfield]
+			Set release to [formfield propname=cfb_var subcompname=tiered_release paramname=tiered_release_cfb_var][/formfield]
+			if [formfield propname=cfb_condition subcompname=tiered_release paramname=tiered_release_cfb_condition][/formfield] calculated release.
+			</div>
+		   </td>
+	   </tr><tr>
+		   <td>
+		   <font size=+1 face=arial>Advanced Settings:</font>
+		   <div class='insetBox'>
+           <br><i>USGS "Surrogate" Gage ID:</i> [formfield propname=staid subcompname=surrogate_gage paramname=surrogate_gage][/formfield] (see "Variable Names and Descriptions" for surrogate flow variables) 
+			</div>
+		   <div class='insetBox'>
+		   <i>Intake Flow Equation (default value should be OK in most cases - VAHydro defauilt: intake_drainage_area * (Qreach / reach_area_sqmi), Surrogate Gage: intake_drainage_area * (surrogate_gage_Qout/surrogate_gage_area))</i>
+		   Qintake = [formfield propname=equation subcompname=Qintake paramname=Qintake][/formfield]
+			</div>
+		   <div class='insetBox'>
+		   <i>Impoundment Inflow Equation (default value should be OK in most cases)</i>
+		   imp_inflow = [formfield propname=equation subcompname=imp_inflow paramname=imp_inflow][/formfield]
+			</div>
+		   <div class='insetBox'>
+         <i>Impoundment Evap (in/day): [formfield propname=et_in subcompname=impoundment paramname=imp_et_in][/formfield]
+         <i>Impoundment Precip (in/day): [formfield propname=precip_in subcompname=impoundment paramname=imp_precip_in][/formfield]
+			</div>
+		   </td>
+	   </tr>
+	   </table>
+   <br>
+ </td>
+</tr>

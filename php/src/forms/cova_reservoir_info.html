@@ -1,0 +1,74 @@
+<tr><td valign=top>
+   <font size=+1 face=arial>General Information:</font>
+   <input type=hidden name=runform value='vwp'>
+   <br><b>Imoundment Name:</b>[formfield propname=name paramname=name][/formfield]
+   <br>&nbsp;&nbsp; [formfield propname=description paramname=description][/formfield]
+   <br><b>Project Access Control:</b>[formfield propname=ownerid paramname=ownerid][/formfield]
+   <br>&nbsp;&nbsp; Group: [formfield propname=groupid paramname=groupid][/formfield]
+   <br>&nbsp;&nbsp; Group Perms: [formfield propname=gperms paramname=gperms][/formfield]
+   <br>&nbsp;&nbsp; Public Perms: [formfield propname=pperms paramname=pperms][/formfield]
+</td>
+</tr>
+<tr><td valign=top bgcolor=#CDCDCD width=50%>
+   <font size=+1 face=arial>Withdrawal Details:</font>
+   <table><tr>
+	   <td valign=top>
+	   <br><b>Release Fules:</b>
+	   <br>&nbsp;&nbsp;&nbsp;<b>Select Type:</b> [formfield propname=equation subcompname=flowby_type paramname=flowby_type][/formfield]<br>
+		   <table><tr>
+			   <td><i>Simple Release</i><div class='insetBox'>
+			   = [formfield propname=flowby_eqn subcompname=simple_flowby paramname=simple_flowby_eqn][/formfield] cfs
+			   <br>[formfield propname=enable_cfb subcompname=simple_flowby paramname=simple_flowby_enable_cfb][/formfield]
+				Set flowby to [formfield propname=cfb_var subcompname=simple_flowby paramname=simple_flowby_cfb_var][/formfield]
+				if [formfield propname=cfb_condition subcompname=simple_flowby paramname=simple_flowby_cfb_condition][/formfield] calculated flow-by </div>
+			   </td>
+		   </tr><tr>
+			   <td><i>Tiered Release</i><div class='insetBox'>
+			   <br>Index Variable: [formfield propname=tier_var subcompname=tiered_flowby paramname=tiered_flowby_tier_var][/formfield]
+			   <br>[formfield propname=matrix subcompname=tiered_flowby paramname=tiered_flowby_matrix][/formfield]
+			   <br>[formfield propname=enable_cfb subcompname=tiered_flowby paramname=tiered_flowby_enable_cfb][/formfield]
+				Set flowby to [formfield propname=cfb_var subcompname=tiered_flowby paramname=tiered_flowby_cfb_var][/formfield]
+				if [formfield propname=cfb_condition subcompname=tiered_flowby paramname=tiered_flowby_cfb_condition][/formfield] calculated flow-by 
+				</div>
+			   </td>
+		   </tr><tr>
+			   <td><i>Auxiliary Variables</i><div class='insetBox'>
+			   <br>aux1 = [formfield propname=equation subcompname=aux1 paramname=aux1_eqn][/formfield] (Note: [formfield propname=description subcompname=aux1 paramname=aux1_desc][/formfield]) 
+			   <br>aux2 = [formfield propname=equation subcompname=aux2 paramname=aux2_eqn][/formfield] (Note: [formfield propname=description subcompname=aux2 paramname=aux2_desc][/formfield]) 
+			   <br>stat1 = [formfield propname=statname subcompname=stat1 paramname=stat1_statname][/formfield] of [formfield propname=operands subcompname=stat1 paramname=stat1_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat1 paramname=stat1_desc][/formfield]
+			   <br>stat2 = [formfield propname=statname subcompname=stat2 paramname=stat2_statname][/formfield] of [formfield propname=operands subcompname=stat2 paramname=stat2_operands][/formfield] (CSV List of vars) Note: [formfield propname=description subcompname=stat2 paramname=stat2_desc][/formfield]
+				</div>
+			   </td>
+		   </tr>
+		   <tr>
+			  <td><i>Variable Names and Descriptions</i>
+			  <ul class='normal'>
+				 <li><b>simple_flowby</b> - The value calculated in the equation above labelled "Simple Flow-By".
+				 <li><b>Qreach</b> - The value in cfs of the flow at the outlet of the modeling segment that contains the intake (segment boundaries shown in the map labelled "Select Best Model Location" above).
+				 <li><b>Qintake</b> - The mean daily flow value in cfs at the intake for this withdrawal (for "Off-Stream Storage" or "Direct Withdrawal" projects only).
+				 <li><b>month</b> - The numerical index of the current calendar month in the modeling simulation (1-12).
+				 <li><b>tiered_flowby</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Flow-By".
+				 <li><b>simple_release</b> - The value calculated in the equation above labelled "Simple Release".
+				 <li><b>tiered_release</b> - The value of the calculation yielded by the rules in the section labelled "Tiered Release".
+				 <li><b>Runit</b> - Unit area inflow of runoff, baseflow and interflow to the containing model segment in cfs/sqmi.
+				 <li><b>surrogate_gage_Qout</b> - Surrogate gage flow in cfs (surrogate gage ID specified above in "Withdrawal Location / Flow Model Info")
+				 <li><b>surrogate_gage_Qunit</b> - Surrogate gage flow in cfs/square mile.
+				 <li><b>surrogate_gage_area</b> - Surrogate gage drainage area in square miles.
+				 <li><b>drainage_area</b> - Impoundment drainage area in square miles.
+				 <li><b>aux1</b> - Auxilliary equation for custom calculations or constants.
+				 <li><b>aux2</b>- Auxilliary equation for custom calculations or constants.
+				 <li><b>stat1</b> - Auxilliary statistic for custom calculations or constants.
+				 <li><b>stat2</b>- Auxilliary statistic for custom calculations or constants.
+			  </ul>
+		   </table>
+	   </td>
+   </tr></table>
+</td>
+<td valign=top bgcolor=#E2EFF5><font size=+1 face=arial>Reservoir/Storage Info:</font>
+   <br>&nbsp;&nbsp; Maximum Storage (ac-ft): [formfield propname=maxcapacity paramname=maxcapacity][/formfield]
+   <br>&nbsp;&nbsp; Initial Storage (ac-ft): [formfield propname=initstorage paramname=maxcapacity][/formfield]
+   <br>&nbsp;&nbsp; Unusable Storage (ac-ft): [formfield propname=unusable_storage paramname=unusable_storage][/formfield]
+   <br><b>Reservoir Geometry:</b><br><div class='insetBox'>[formfield subcompname=storage_stage_area propname=matrix paramname=storage_stage_area]Test[/formfield]</div>
+   <br><b>Release Rules</b>:
+ </td>
+</tr>
