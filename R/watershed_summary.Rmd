@@ -1,0 +1,127 @@
+---
+title: "Watershed Flow Summary"
+output: word_document
+---
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+library(pander);
+library(httr);
+save_directory <- "/var/www/html/files/fe/plots"
+#dirname(rstudioapi::getActiveDocumentContext()$path);
+#----------------------------------------------
+site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+#----------------------------------------------
+# Load Libraries
+fxn_locations = '/usr/local/home/git/hydro-tools';
+source(paste(fxn_locations,"VAHydro-1.0/fn_vahydro-1.0.R", sep = "/"));  
+source(paste(fxn_locations,"LowFlow/fn_iha.R", sep = "/"));  
+#retrieve rest token - DISABLED
+#fxn_locations <-  '/usr/local/home/git/r-dh-ecohydro/ELFGEN';
+#source(paste(fxn_locations,"elf_rest_token.R", sep = "/"));   
+#elf_rest_token (site, token)
+#token <- elf_rest_token(site, token)
+options(timeout=2000); # set timeout to twice default level to avoid abort due to high traffic
+# @todo: get list of watersheds or watershed info by REST
+# THIS DOES NOT WORK - See below using a View that can retrieve only vahydro segments
+#featureid <- 68178;
+#featrest  <- GET(
+#  paste(site,"dh_feature.json",sep="/"), 
+#  add_headers(HTTP_X_CSRF_TOKEN = token),
+#  query = list(
+#    hydroid = featureid
+#  ), 
+#  encode = "json"
+#);
+#print(paste("Property Query:",sp,""));
+# Use Views to get our info
+# Pamunkey HUC8
+#hydrocode = "nhd_huc8_02080106";
+# Uper Rockfish HUC 10 hydrocode = 0208020309
+# Rockfish HUC 8 hydrocode = nhd_huc8_02080203
+# Middle-James/Willis (above Richmond) HUC 8 hydrocode = nhd_huc8_02080205
+# Rivanna HUC 8 hydrocode = nhd_huc8_02080204
+# Middle-James/Buffalo HUC 8 hydrocode = nhd_huc8_02080203
+hydrocode = "nhd_huc8_02080106";
+ftype = 'nhd_huc8'; # nhd_huc8, nhd_huc10, vahydro
+featurl <- paste(site,'ftype-watershed-prop-compare', 'wshed_drainage_area_sqmi', 'om_element_connection', 'watershed', ftype, hydrocode, sep="/");
+data = read.csv(featurl, header = TRUE, sep = ",");
+odata <- data[order(data$attribute_value),]
+# Ex: flows <- fn_get_rundata(207885, 402);
+#     fn_iha_7q10(flows);
+runid = 4;
+# Pamunkey below fall line = 223639
+# Rockfish 213049
+# Rivanna at Confluence with james = 214993
+wd_charts = c(207771,207847);
+# Segment name | Drainage Area | 7Q10 | ALF | DoR Sept (min mo?) | 9-10
+# Initialize Summary Table
+wshed_summary_tbl = data.frame(
+  "Segment Name (D. Area)" = character(), 
+  "7Q10/ALF/Min Month" = character(), 
+  "WD (mean/max)" = character(), 
+  stringsAsFactors = FALSE) ;
+
+for (i in 1:length(odata[,1])) {
+  elid = odata[i,]$metric_value;
+  drainage = round(odata[i,]$attribute_value,1);
+  flows <- fn_get_rundata(elid, runid);
+  if (flows) {
+    x7q10 = round(fn_iha_7q10(flows),2);
+    alf = round(fn_iha_mlf(flows, 8),2);
+  } else {
+    x7q10 = 'na';
+    alf = 'na';
+  }
+  wds <- fn_get_rundata(elid, runid, "wd_cumulative_mgd");
+  if (is.numeric(wds)) {
+    mean_wd = round(mean(wds),2);
+    max_wd = round(max(wds),2);
+  } else {
+    mean_wd = 'na';
+    max_wd = 'na';
+  }
+  # aggregate: https://stackoverflow.com/questions/5556135/how-to-get-the-date-of-maximum-values-of-rainfall-in-programming-language-r
+  if (flows) {
+    moflows <- aggregate(flows, function(tt) as.Date(as.yearmon(tt)), mean);
+    ndx = which.min(moflows);
+    dor_flow = round(moflows[ndx],2);
+    dor_date = index(moflows[ndx]);
+  } else {
+    dor_flow = 'na';
+    dor_date = as.Date('1776-07-04');
+  }
+  d <- try( as.Date( dor_date, format= "%d-%m-%Y %H:%M:%S" ) )
+  if( class( d ) == "try-error" || is.na( d ) ) dor_date = as.Date('1776-07-04');
+  newline = data.frame( 
+    "Segment Name" = paste(
+      as.character(odata[i,]$name ), 
+      " (", as.character(drainage), ")", sep=""), 
+    "7Q10/ALF/Min Month" = paste(
+      as.character(x7q10), 
+      as.character(alf),
+      paste(
+        as.character(dor_flow), 
+        " (", 
+        as.character(format(dor_date,'%Y-%m')), 
+        ")", 
+        sep=''
+      ),
+      sep="/"
+    ),
+    "WD (mean/max)" = paste(as.character(mean_wd),as.character(max_wd),sep="/")
+  );
+  wshed_summary_tbl <- rbind(wshed_summary_tbl, newline);
+  if (elid %in% wd_charts) {
+    barplot(aggregate(wds, format(time(wds), "%m"), mean));
+  }
+}
+colnames(wshed_summary_tbl) <- c("Segment Name (D. Area)", "7Q10/ALF/Min Month", "WD (mean/max)" );
+# Monthly distro plot
+# Lowest Flow Month
+
+```
+* Location: `r hydrocode`
+* Run ID: `r runid`
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+pander(wshed_summary_tbl, table.split.table=Inf);
+```

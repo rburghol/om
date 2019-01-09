@@ -1,0 +1,336 @@
+---
+title: "Watershed Flow Summary"
+output: word_document
+---
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+library(pander);
+library(httr);
+library(hydroTSM);
+save_directory <- "/var/www/html/files/fe/plots"
+#----------------------------------------------
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+#----------------------------------------------
+# Load Libraries
+basepath='/var/www/R';
+source(paste(basepath,'config.local.private',sep='/'));
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(hydro_tools,"VAHydro-1.0/fn_vahydro-1.0.R", sep = "/"));  
+source(paste(hydro_tools,"LowFlow/fn_iha.R", sep = "/"));  
+#retrieve rest token - DISABLED
+#fxn_locations <-  '/usr/local/home/git/r-dh-ecohydro/ELFGEN';
+#source(paste(fxn_locations,"elf_rest_token.R", sep = "/"));   
+#elf_rest_token (site, token)
+# to run in knit'r, need to preload token
+#token = 'W-THcwwvstkINd9NIeEMrmNRls-8kVs16mMEcN_-jOA';
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+token <- rest_token(site, token, rest_uname, rest_pw);
+options(timeout=1200); # set timeout to twice default level to avoid abort due to high traffic
+
+hydrocode = "vahydrosw_wshed_JB0_7050_0000_cranstons_mill";
+ftype = 'vahydro'; # nhd_huc8, nhd_huc10, vahydro
+inputs <- list (
+  hydrocode = hydrocode,
+  bundle = 'watershed',
+  ftype = 'vahydro'
+)
+#property dataframe returned
+feature = FALSE;
+odata <- getFeature(inputs, token, site, feature);
+# Ex: flows <- fn_get_rundata(207885, 402);
+#     fn_iha_7q10(flows);
+# Get data frame for stashing multirun data
+stash <- data.frame();
+mostash <- data.frame();
+tsstash = FALSE;
+featureid <- odata[1,"hydroid"];
+fname <- as.character(odata[1,]$name );
+inputs <- list(
+  varkey = "wshed_local_area_sqmi",
+  featureid = featureid,
+  entity_type = "dh_feature"
+)
+da <- getProperty(inputs, site, model)
+
+inputs <- list(
+  varkey = "om_model_element",
+  featureid = featureid,
+  entity_type = "dh_feature",
+  propcode = "vahydro-1.0"
+)
+model <- getProperty(inputs, site, model)
+mid = as.numeric(as.character(model[1,]$pid))
+inputs <- list(
+  varkey = "om_element_connection",
+  featureid = mid,
+  entity_type = "dh_properties"
+)
+prop <- getProperty(inputs, site, prop)
+elid = as.numeric(as.character(prop[1,]$propvalue))
+
+# Analsyis config
+#runids = c(20021,20023);
+runids = c(20021,20024);
+eventstart = "2002-02-15"
+eventend = "2002-06-15"
+targetyear = 2002;
+bigQ = 50;
+
+wshed_summary_tbl = data.frame(
+  "Run ID" = character(), 
+  "Segment Name (D. Area)" = character(), 
+  "7Q10/ALF/LF-90" = character(), 
+  "WD (mean/max)" = character(), 
+  stringsAsFactors = FALSE) ;
+#pander(odata);
+#pander(odata);
+
+# Qunreg
+# Qweir
+# Qwith
+
+#dat_unreg <- fn_get_runfile(elid, 0,  cached = FALSE);
+#dat_weir <- fn_get_runfile(elid, 2,  cached = FALSE);
+#dat_with <- fn_get_runfile(elid, 3,  cached = FALSE);
+
+# 1. Get Data
+# 2. Do IHA pulse analysis
+# 3. Review individual storms and make plots
+
+for (rix in 1:length(runids)) {
+  runid = runids[rix];
+  # Pamunkey below fall line = 223639
+  # Rockfish 213049
+  # Rivanna at Confluence with james = 214993
+  # Segment name | Drainage Area | 7Q10 | ALF | DoR Sept (min mo?) | 9-10
+  # Initialize Summary Table
+  dat <- fn_get_runfile(elid, runid,  cached = FALSE);
+  dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2005-09-30"));
+  if (length(stash) == 0) {
+    stash <- cbind(as.numeric(dat$Qout));
+  } else {
+    stash <- cbind(stash, as.numeric(dat$Qout))
+  }
+  # For some reason we need to convert these numeric fields to char, then to number
+  # before sending to zoo since their retrieval is classifying them as factors instead of nums
+  # now there may be away to get around that but...
+  dat.pre <- zoo(as.numeric(dat$impoundment_Qin), order.by = dat$timestamp)
+  dat.post <- zoo(as.numeric(dat$impoundment_Qout), order.by = dat$timestamp)
+  pulse.pre = group4(dat.pre)
+  pulse.post = group4(dat.post)
+  preym = max(pulse.pre[,"High pulse length"], na.rm= TRUE)
+  postym = max(pulse.post[,"High pulse length"], na.rm= TRUE)
+  ym = max(c(preym,postym))
+  boxplot(
+    pulse.pre[,"High pulse length"], 
+    pulse.post[,"High pulse length"], 
+    labels = c("Pre CMP", "CMP"),
+    names = c("Pre CMP", "CMP"),
+    main = paste("High Pulse Length, RunID ", runid),
+    ylim = c(0,ym), na.rm= TRUE
+  )
+  prelpc = max(pulse.pre[,"Low pulse number"], na.rm= TRUE)
+  postlpc = max(pulse.post[,"Low pulse number"], na.rm= TRUE)
+  ym = max(c(prelpc,postlpc))
+  boxplot(
+    pulse.pre[,"Low pulse number"], 
+    pulse.post[,"Low pulse number"], 
+    labels = c("Pre CMP", "CMP"),
+    names = c("Pre CMP", "CMP"),
+    main = paste("Low Pulse Number, RunID ", runid),
+    ylim = c(0,ym), na.rm= TRUE
+  )
+  prelpl = max(pulse.pre[,"Low pulse length"], na.rm= TRUE)
+  postlpl = max(pulse.post[,"Low pulse length"], na.rm= TRUE)
+  ym = max(c(prelpl,postlpl))
+  boxplot(
+    pulse.pre[,"Low pulse length"], 
+    pulse.post[,"Low pulse length"], 
+    labels = c("Pre CMP", "CMP"),
+    names = c("Pre CMP", "CMP"),
+    main = paste("Low Pulse Length, RunID ", runid),
+    ylim = c(0,ym), na.rm= TRUE
+  )
+  
+  # Analyze Storm Events
+  bigdat = window(
+    dat, 
+    start = as.Date(paste(targetyear, '-01-01', sep='')), 
+    end = as.Date(paste(targetyear, '-12-31', sep=''))
+  )
+  lsd = max(as.Date(max(bigdat$thisdate)))
+  led = min(as.Date(max(bigdat$thisdate)))
+  # big events
+  biggies <- unique(subset(bigdat, as.numeric(bigdat$impoundment_Qin) > bigQ)$thisdate)
+  for (j in 1:length(biggies)) {
+    sd = as.Date(biggies[j]) - 3;
+    ed = as.Date(biggies[j]) + 3;
+    wudat <- window(bigdat, start = as.Date(sd), end = as.Date(ed));
+    gtitle = paste("From", sd,"to", ed, sep=" ")
+    ymax = ceiling(max(as.numeric(wudat$impoundment_Qin)));
+    emax = ceiling(max(as.numeric(wudat$impoundment_lake_elev)));
+    if (!( (lsd <= as.Date(biggies[j])) & (led >= as.Date(biggies[j])) )) {
+      # plot drawdown
+      par(las=2)
+      plot(wudat$impoundment_Qin, ylim = c(0.0, ymax), main = gtitle);
+      par(pch=22, col="grey") # plotting symbol and color 
+      lines(wudat$local_channel_Qout, ylim = c(0.0, ymax));
+      par(pch=22, col="red") # plotting symbol and color 
+      lines(wudat$impoundment_lake_elev);
+      par(pch=22, col="green") # plotting symbol and color 
+      points(wudat$impoundment_Qout);
+      max(as.numeric(wudat$impoundment_Qin))
+      max(as.numeric(wudat$impoundment_Qout))
+    }
+    # redundancy check stash
+    lsd = sd
+    led = ed 
+  }
+  
+  #flows <- fn_get_rundata(elid, runid);
+  flows <- zoo(as.numeric(dat$impoundment_Qout), order.by = dat$timestamp)
+   
+  # 7Q10 not relevant here
+  #flows <- dat
+  if (!is.null(flows)) {
+    x7q10 = round(fn_iha_7q10(flows),2);
+    alf = round(fn_iha_mlf(flows, 8),2);
+  } else {
+    x7q10 = 'na';
+    alf = 'na';
+  }
+  
+  wds <- zoo(as.numeric(as.character( dat$wd_cumulative_mgd )), order.by = dat$thisdate);
+  drainage <- mean(dat$area_sqmi );
+  #wds <- fn_get_rundata(elid, runid, "wd_cumulative_mgd");
+  if (is.numeric(wds)) {
+    mean_wd = round(mean(wds),2);
+    max_wd = round(max(wds),2);
+  } else {
+    mean_wd = 'na';
+    max_wd = 'na';
+  }
+  
+  ymax = ceiling(max(as.numeric(dat$impoundment_Qin)));
+  emax = ceiling(max(as.numeric(dat$impoundment_lake_elev)));
+  # plot drawdown
+  par(las=2)
+  plot(dat$impoundment_Qin, ylim = c(0.0, ymax));
+  par(pch=22, col="red") # plotting symbol and color 
+  lines(dat$impoundment_lake_elev);
+  par(pch=22, col="green") # plotting symbol and color 
+  points(dat$impoundment_Qout);
+  
+  quantile(as.numeric(dat$impoundment_Qin))
+  quantile(as.numeric(dat$impoundment_Qout))
+  
+  mean(as.numeric(dat$impoundment_Qin))
+  mean(as.numeric(dat$impoundment_Qout))
+  
+  # redundancy check stash
+  bigQ = 50;
+  # 56 cfs storm attenuate to 35 cfs
+  # eventstart and eventend set in beginning of file
+  wudat <- window(dat, start = as.Date(eventstart), end = as.Date(eventend));
+  # 
+  # wudat <- window(dat, start = as.Date("1989-02-01"), end = as.Date("1989-03-01 23:59:59"));
+  
+  ymax = ceiling(max(as.numeric(wudat$impoundment_Qin)));
+  emax = ceiling(max(as.numeric(wudat$impoundment_lake_elev)));
+  # plot drawdown
+  par(las=2)
+  plot(wudat$impoundment_Qin, ylim = c(0.0, ymax));
+  par(pch=22, col="grey") # plotting symbol and color 
+  lines(wudat$local_channel_Qout, ylim = c(0.0, ymax));
+  par(pch=22, col="red") # plotting symbol and color 
+  lines(wudat$impoundment_lake_elev);
+  par(pch=22, col="green") # plotting symbol and color 
+  points(wudat$impoundment_Qout);
+  max(as.numeric(wudat$impoundment_Qin))
+  max(as.numeric(wudat$impoundment_Qout))
+  #plot(wudat$impoundment_Qin, ylim = c(0.0, ymax));
+  #plot(wudat$impoundment_Qout, ylim = c(0.0, ymax));
+
+  # aggregate: https://stackoverflow.com/questions/5556135/how-to-get-the-date-of-maximum-values-of-rainfall-in-programming-language-r
+  if (!is.null(flows)) {
+    # this is the 90 day low flow, better for Drought of Record?
+    loflows <- group2(flows);
+    l90 <- loflows["90 Day Min"];
+    ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+    dor_flow = round(loflows[ndx,]$"90 Day Min",1);
+    dor_year = loflows[ndx,]$"year";
+    
+    #moflows <- aggregate(flows, function(tt) as.Date(as.yearmon(tt), na.rm = TRUE), mean);
+    #ndx = which.min(moflows);
+    #x2a <- aggregate(flows, as.Date(as.yearmon(flows), na.rm = TRUE), mean);
+    #dor_flow = round(moflows[ndx],2);
+    #dor_year = index(moflows[ndx]);
+  } else {
+    dor_flow = 'na';
+    dor_year = 1776;
+  }
+  newline = data.frame( 
+    "Run ID" = runid, 
+    "Segment Name (D. Area)" = paste(
+      fname, 
+      " (", as.character(drainage), ")", sep=""), 
+    "7Q10/ALF/Min Month" = paste(
+      as.character(x7q10), 
+      as.character(alf),
+      paste(
+        as.character(dor_flow), 
+        " (", 
+        dor_year, 
+        ")", 
+        sep=''
+      ),
+      sep="/"
+    ),
+    "WD (mean/max)" = paste(as.character(mean_wd),as.character(max_wd),sep="/")
+  );
+  wshed_summary_tbl <- rbind(wshed_summary_tbl, newline);
+  dat$wd_cumulative_mgd <- as.numeric(dat$wd_cumulative_mgd);
+  dat$month <- as.numeric(dat$month);
+  mo_wds <- group1(wds,'calendar','mean');
+  if (length(mostash) == 0) {
+    mostash <- cbind(mo_wds[1,]);
+  } else {
+    mostash <- cbind(mostash, mo_wds[1,])
+  }
+
+}
+colnames(wshed_summary_tbl) <- c(
+  "Run ID", 
+  "Segment Name (D. Area)", 
+  "7Q10/ALF/Min Month", 
+  "WD (mean/max)" 
+);
+# Monthly distro plots
+barplot(t(as.matrix(mostash)), beside=TRUE);
+# Flow Duration Comparison
+colnames(stash) <- paste0('run', runids);
+#plot(stash,ylim=c(0,10000))
+#fdc(stash, main=paste("Flow Duration"), log='y', xlab="Flow Exceedence",
+#    ylab="Q cfs", verbose=TRUE
+#);
+
+#flows2 <- data.frame(as.numeric(dat$local_channel_Qout), as.numeric(dat$impoundment_Qout))
+flows2 <- data.frame(stash[,1], stash[,2])
+fdc(flows2, main=paste("Flow Duration"), log='y', xlab="Flow Exceedence",
+    ylab="Q cfs", ylim=c(0,1000), verbose=FALSE
+);
+
+quantile(flows2$as.numeric.dat.local_channel_Qout)
+quantile(flows2$as.numeric.dat.impoundment_Qout)
+mean(flows2$as.numeric.dat.local_channel_Qout)
+mean(flows2$as.numeric.dat.impoundment_Qout)
+#quantile(stash[,"run102"])
+#quantile(stash[,"run103"])
+# Lowest Flow Month
+stash < zoo(as.numeric(stash), order.by = dat$thisdate)
+```
+* Location: `r hydrocode`
+* Run ID: `r runid`
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+pander(wshed_summary_tbl, table.split.table=Inf);
+```

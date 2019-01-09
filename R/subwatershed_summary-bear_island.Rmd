@@ -1,0 +1,245 @@
+---
+title: "Watershed Flow Summary"
+output: word_document
+---
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+library(pander);
+library(httr);
+library(hydroTSM);
+save_directory <- "/var/www/html/files/fe/plots"
+#----------------------------------------------
+site <- "http://deq1.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+#----------------------------------------------
+# Load Libraries
+basepath='/var/www/R';
+source(paste(basepath,'config.local.private',sep='/'));
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(hydro_tools,"VAHydro-1.0/fn_vahydro-1.0.R", sep = "/"));  
+source(paste(hydro_tools,"LowFlow/fn_iha.R", sep = "/"));  
+source(paste(hydro_tools,"LowFlow/fn_flowby.R", sep = "/"));  
+source(paste(hydro_tools,"USGS/usgs_gage_functions.R", sep = "/"));  
+#retrieve rest token - DISABLED
+#fxn_locations <-  '/usr/local/home/git/r-dh-ecohydro/ELFGEN';
+#source(paste(fxn_locations,"elf_rest_token.R", sep = "/"));   
+#elf_rest_token (site, token)
+# to run in knit'r, need to preload token
+#token = 'W-THcwwvstkINd9NIeEMrmNRls-8kVs16mMEcN_-jOA';
+source(paste(hydro_tools,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+token <- rest_token(site, token, rest_uname, rest_pw);
+options(timeout=120); # set timeout to twice default level to avoid abort due to high traffic
+# @todo: get list of watersheds or watershed info by REST
+
+hydrocode = "vahydrosw_wshed_YP3_6700_6670";
+ftype = 'vahydro'; # nhd_huc8, nhd_huc10, vahydro
+inputs <- list (
+  hydrocode = hydrocode,
+  bundle = 'watershed',
+  ftype = 'vahydro'
+)
+#property dataframe returned
+feature = FALSE;
+odata <- getFeature(inputs, token, site, feature);
+# Ex: flows <- fn_get_rundata(207885, 402);
+#     fn_iha_7q10(flows);
+# Get data frame for stashing multirun data
+stash <- data.frame();
+mostash <- data.frame();
+tsstash = FALSE;
+featureid <- odata[1,"hydroid"];
+fname <- as.character(odata[1,]$name );
+runids = c(2,4);
+gageid = '01671025'
+wshed_summary_tbl = data.frame(
+  "Run ID" = character(), 
+  "7Q10/ALF/LF-90" = character(), 
+  "WD (mean/max)" = character(), 
+  'Years' = integer(),
+  'Yrs w/7d Off' = numeric(),
+  '30d Off' = numeric(), 
+  '90d Off' = numeric(),
+  'pct_below' = numeric(),
+  stringsAsFactors = FALSE) ;
+
+#pander(odata);
+#pander(odata);
+flowby <- 41.91; # set to 0.0 if we do not want to evaluate a flowby
+startdate = '1984-10-01';
+enddate = '2005-09-30';
+inputs <- list(
+  varkey = "om_element_connection",
+  featureid = featureid,
+  entity_type = "dh_feature"
+)
+prop <- getProperty(inputs, site, prop)
+elid = as.numeric(as.character(prop[1,]$propvalue))
+```
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+for (rix in 1:length(runids)) {
+  runid = runids[rix];
+  # Pamunkey below fall line = 223639
+  # Rockfish 213049
+  # Rivanna at Confluence with james = 214993
+  # Segment name | Drainage Area | 7Q10 | ALF | DoR Sept (min mo?) | 9-10
+  # Initialize Summary Table
+  dat <- fn_get_runfile(elid, runid);
+  dat <- subset(dat, as.Date(timestamp) >= as.Date(startdate))
+  dat <- subset(dat, as.Date(timestamp) <= as.Date(enddate))
+  
+  if (length(stash) == 0) {
+    stash <- cbind(as.numeric(dat$Qout));
+  } else {
+    stash <- cbind(stash, as.numeric(dat$Qout))
+  }
+  # For some reason we need to convert these numeric fields to char, then to number
+  # before sending to zoo since their retrieval is classifying them as factors instead of nums
+  # now there may be away to get around that but...
+  flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = dat$thisdate);
+
+  #flows <- fn_get_rundata(elid, runid);
+  if (!is.null(flows)) {
+    x7q10 = round(fn_iha_7q10(flows),2);
+    alf = round(fn_iha_mlf(flows, 8),2);
+  } else {
+    x7q10 = 'na';
+    alf = 'na';
+  }
+  wds <- zoo(as.numeric(as.character( dat$wd_cumulative_mgd )), order.by = dat$thisdate);
+  drainage <- max(dat$area_sqmi );
+  #wds <- fn_get_rundata(elid, runid, "wd_cumulative_mgd");
+  if (is.numeric(wds)) {
+    mean_wd = round(mean(wds),2);
+    max_wd = round(max(wds),2);
+  } else {
+    mean_wd = 'na';
+    max_wd = 'na';
+  }
+  # aggregate: https://stackoverflow.com/questions/5556135/how-to-get-the-date-of-maximum-values-of-rainfall-in-programming-language-r
+  dor_flow = 'na';
+  dor_year = 1776;
+  if (!is.null(flows)) {
+    # this is the 90 day low flow, better for Drought of Record?
+    loflows <- group2(flows);
+    loflows <- htFlowByGroup2(loflows, flowby)
+    dor_info = htDOR(loflows) 
+    dor_flow = dor_info[1,]$dor_flow
+    dor_year = dor_info[1,]$dor_year
+  }
+  # Cumulative withdrawals
+  dat$wd_cumulative_mgd <- as.numeric(dat$wd_cumulative_mgd);
+  dat$month <- as.numeric(dat$month);
+  mo_wds <- group1(wds,'calendar','max');
+  if (length(mostash) == 0) {
+    mostash <- cbind(mo_wds[2,]);
+  } else {
+    mostash <- cbind(mostash, mo_wds[2,])
+  }
+  
+  numdays <- length(flows)
+  dat$nowd <- as.numeric(dat$Qout) < flowby
+  numdays_below <- length(subset(subset(dat, nowd == TRUE))$Qout)
+  pct_below = round(100.0 * numdays_below / numdays,2)
+  
+  pdmax = ceiling(max(as.numeric(dat$Qout)));
+  dat$flowby <- flowby;
+  dat$logQ <- log(as.numeric(dat$Qout))
+  plot(dat$Qout, ylim=c(0,pdmax), xlab=paste("North Anna River", startdate, 'to', enddate, sep=' '));
+#  plot(dat$logQ, log = "y", ylim=c(0,ceiling(log(pdmax))), xlab=paste("North Anna River", startdate, 'to', enddate, sep=' '));
+  par(pch=22, col="red") # plotting symbol and color 
+  lines(dat$flowby)
+  
+  htFlowByBar(loflows,flowby=flowby, metric = '90 Day Min')
+  
+  htFlowByBox(loflows,flowby=flowby)
+  #Format summary table
+  newline = data.frame( 
+    "Run ID" = runid, 
+      "7Q10/ALF/LF-90" = paste(
+        as.character(x7q10), 
+        as.character(alf),
+        paste(
+          as.character(dor_flow), 
+          " (", 
+          dor_year, 
+          ")", 
+          sep=''
+        ),
+        sep="/"
+      ),
+    "WD (mean/max)" = paste(as.character(mean_wd),as.character(max_wd),sep="/"),
+    'Years' = length(loflows[,"year"]),
+    'Yrs w/7d Off' = length(subset(loflows, nowd7 == TRUE)$year),
+    '30d Off' = length(subset(loflows, nowd30 == TRUE)$year), 
+    '90d Off' = length(subset(loflows, nowd90 == TRUE)$year),
+    'pct_below' = pct_below
+  );
+  wshed_summary_tbl <- rbind(wshed_summary_tbl, newline);
+  
+}
+
+# Monthly distro plots
+barplot(t(as.matrix(mostash)), beside=TRUE);
+# Flow Duration Comparison
+colnames(stash) <- paste0('run', runids);
+#plot(stash,ylim=c(0,10000))
+fdc(stash, main=paste("Flow Duration"), log='y', xlab="Flow Exceedence",
+    ylab="Q cfs", verbose=FALSE
+);
+
+# Now, get USGS gage records and add in there for comparison
+flows = streamgage_historic(gageid)
+flows <- zoo(as.numeric(as.character( flows$Flow )), order.by = flows$Date);
+
+loflows = group2(flows)
+loflows <- htFlowByGroup2(loflows, flowby)
+dor_info = htDOR(loflows) 
+numdays <- length(flows)
+flows_nowd <- as.numeric(flows) < flowby
+numdays_below <- length(subset(flows_nowd, flows_nowd == TRUE))
+pct_below = round(100.0 * numdays_below / numdays,2)
+dor_flow = dor_info[1,]$dor_flow
+dor_year = dor_info[1,]$dor_year
+htFlowByBar(loflows,flowby=flowby, metric = '90 Day Min', main = paste("USGS 90 Day Min", time(flows[1]), 'to', time(flows[length(flows)])))
+htFlowByBox(loflows,flowby=flowby)
+indies = htIndieFlows(flows)
+newline = data.frame( 
+  "Run ID" = paste("USGS", gageid, time(flows[which.min(flows)]), 'to', time(flows[which.max(flows)])), 
+    "7Q10/ALF/LF-90" = paste(
+      as.character(indies[1,]$x7q10), 
+      as.character(indies[1,]$alf),
+      paste(
+        as.character(dor_flow), 
+        " (", 
+        dor_year, 
+        ")", 
+        sep=''
+      ),
+      sep="/"
+    ),
+  "WD (mean/max)" = 'n/a',
+  'Years' = length(loflows[,"year"]),
+  'Yrs w/7d Off' = length(subset(loflows, nowd7 == TRUE)$year),
+  '30d Off' = length(subset(loflows, nowd30 == TRUE)$year), 
+  '90d Off' = length(subset(loflows, nowd90 == TRUE)$year),
+  'pct_below' = pct_below
+);
+wshed_summary_tbl <- rbind(wshed_summary_tbl, newline);
+  
+
+# Formatting
+colnames(wshed_summary_tbl) <- c(
+  "Run ID", 
+  "7Q10/ALF/LF-90", 
+  "WD (mean/max)",
+  'Years',
+  'Yrs w/7d Off',
+  '30d Off', 
+  '90d Off', 
+  '% < Flowby'
+);
+```
+* Location: `r hydrocode`
+* Run ID: `r runid`
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+pander(wshed_summary_tbl, split.table=Inf);
+```

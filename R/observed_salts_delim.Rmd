@@ -1,0 +1,516 @@
+---
+title: "Yarmouth Creek Salinity Analysis"
+output: word_document
+---
+```{r loadandprocess, include=FALSE}
+library(pander)
+
+# path='C:\Models\Chick_3D\Run08122016\Base_new_dxdy_1\';
+#install.packages('hydroTSM');
+library(hydroTSM);
+path <- 'C:\\WorkSpace\\modeling\\tidal_fresh\\vims_hi-res_chick\\data\\';
+# KC=8;    % # of layer
+kc <- 8;
+# NST=28;  % number of output location stations
+nst <- 22;
+# nday=365 % number of day to read data
+nday <- 365
+# intv=24  % Interval for output in hour
+intv <- 24
+# LF=1
+year <- 2009; # this is not actually used in this Rmd
+mo = 2
+#stations <- c(4)
+stations <- c(1, 2, 3, 4, 5); # 1 ~ OWS2, 4 ~ Little Creek Confluence, 5 - just downstream of CMP dam
+# load 2 files, "base" and "withdrawal" and compare stats
+# 1 file per station with all run data in single file
+# files do not have a header, but they are in the form:
+# year  month day hour 2nd_layer_from_bottom 3r5d  4th 5th 6th surface_salinity
+widthcols = c(6, 6, 6, 6, 10, 10, 10, 10, 10, 10, 10, 10);
+headercols = c('year', 'month', 'day', 'hour', 'bottom', 'lyr2', 
+              'lyr3', 'lyr4', 'lyr5', 'lyr6', 'lyr7', 'surface')
+quantiles = c(0.0, 0.25, 0.5, 0.75, 0.85, 0.9, 0.95, 1);
+  
+cbp_data_uri <- paste(path, 'cbp-monitoring-ret5.1-2_v02.tsv', sep='');
+cbp_data = read.delim(cbp_data_uri);
+cbp_data$SampleDate <- as.Date(cbp_data$SampleDate, "%m/%d/%Y")
+cbp_data$SampleMonth <- format(cbp_data$SampleDate, "%b")
+cbp_data$SampleDay <- format(cbp_data$SampleDate, "%d")
+cbp_data$SampleYear <- format(cbp_data$SampleDate, "%Y")
+cbp_data$SampleMoNum <- format(cbp_data$SampleDate, "%m")
+
+for (station in stations) {
+  pre_uri <- paste(path,'salt_', 'base_', station, '.txt', sep='')
+  post_uri <- paste(path,'salt_', 'withdraw_', station, '.txt', sep='')
+  # Use read.fwf (from https://www.math.ucla.edu/~anderson/rw1001/library/base/html/read.fwf.html):
+  # read.fwf(file, widths, sep=" ", as.is = FALSE, skip = 0, row.names, col.names)
+  pre_data = read.fwf(pre_uri, widths = widthcols, sep = "", col.names = headercols)
+  post_data = read.fwf(post_uri, widths = widthcols, sep = "", col.names = headercols)
+  # Tested to Here:
+
+  prepost <- cbind(
+    ISOdate(pre_data$year, pre_data$month, pre_data$day),
+    pre_data, 
+    post_data
+  );
+  colnames(prepost)<-c("Date", "year", "month", "day", "hour", "bottom", "lyr2", "lyr3", "lyr4", "lyr5", "lyr6", "lyr7", "surface", "post_year", "post_month", "post_day", "post_hour", "post_bottom", "post_lyr2", "post_lyr3", "post_lyr4", "post_lyr5", "post_lyr6", "post_lyr7", "post_surface")
+  
+  prepost_spawning <- subset(prepost, month >= 2 & month <= 6);
+  
+  x = subset(prepost, (post_lyr3 - lyr3) > 0.5)
+  gtpt25 = subset(pre_data, lyr3 >= 0.25)
+  postgtpt25 = subset(post_data, lyr3 >= 0.25)
+  gtpt5 = subset(pre_data, lyr3 >= 0.5)
+  postgtpt5 = subset(post_data, lyr3 >= 0.5)
+  gtpt75 = subset(pre_data, lyr3 >= 0.75)
+  postgtpt75 = subset(post_data, lyr3 >= 0.75)
+  gt1pt0 = subset(pre_data, lyr3 >= 1.0)
+  postgt1pt0 = subset(post_data, lyr3 >= 1.0)
+  #hist(gtpt5$month, xlim=range(1:12), col=c(rgb(0,0,0)), density=25, add=T)
+  
+  # July
+  # Pre
+  lyr = 'bottom'
+  pre_data.mo <- subset(pre_data, month == mo);
+  post_data.mo <- subset(post_data, month == mo);
+  # bottom
+  quantile(pre_data.mo$bottom, probs = quantiles);
+  quantile(post_data.mo$bottom, probs = quantiles);
+  # Surface
+  quantile(pre_data.mo$surface, probs = quantiles);
+  quantile(post_data.mo$surface, probs = quantiles);
+  # Layer 3
+  quantile(pre_data.mo$lyr3, probs = quantiles);
+  quantile(post_data.mo$lyr3, probs = quantiles);
+  
+  #prepost = c(pre_data.mo$lyr3, post_data.mo$lyr3);
+  #prepost <- data.frame(pre=pre_data.mo$lyr3, post=post_data.mo$lyr3)
+  prepost_lyr3_1mo <- data.frame(pre=pre_data.mo$lyr3, post=post_data.mo$lyr3)
+  prepost_lyr3_all <- data.frame(pre=pre_data$lyr3, post=post_data$lyr3)
+  
+  prepost_lyr3_spawning <- data.frame(pre=prepost_spawning$lyr3, post=prepost_spawning$post_lyr3)
+    
+  if (station == 1) {
+    stashion1 = prepost_lyr3_all
+    stashion1spawn = prepost_lyr3_spawning
+  }
+  if (station == 2) {
+    stashion2 = prepost_lyr3_all
+    stashion2spawn = prepost_lyr3_spawning
+  }
+  
+  if (station == 3) {
+    stashion3 = prepost_lyr3_all
+    stashion3spawn = prepost_lyr3_spawning
+  }
+  
+  if (station == 4) {
+    stashion4 = prepost_lyr3_all
+    stashion4spawn = prepost_lyr3_spawning
+    pp4_gt0 <- subset(stashion4, pre > 0)
+  }
+  
+  if (station == 5) {
+    stashion5 = prepost_lyr3_all
+    stashion5spawn = prepost_lyr3_spawning
+    pp5_gt0 <- subset(stashion5, pre > 0)
+  }
+}
+
+pre_data.moyr2004 <- subset(pre_data.mo, year == 2004);
+pre_data.moyr2005 <- subset(pre_data.mo, year == 2005);
+pre_data.moyr2006 <- subset(pre_data.mo, year == 2006);
+pre_data.moyr2007 <- subset(pre_data.mo, year == 2007);
+pre_data.moyr2008 <- subset(pre_data.mo, year == 2008);
+
+post_data.moyr2004 <- subset(post_data.mo, year == 2004);
+post_data.moyr2005 <- subset(post_data.mo, year == 2005);
+post_data.moyr2006 <- subset(post_data.mo, year == 2006);
+post_data.moyr2007 <- subset(post_data.mo, year == 2007);
+post_data.moyr2008 <- subset(post_data.mo, year == 2008);
+
+z <- cbind(
+   as.matrix(quantile(pre_data.moyr2004$lyr3, probs = quantiles)), 
+   as.matrix(quantile(pre_data.moyr2005$lyr3, probs = quantiles)), 
+   as.matrix(quantile(pre_data.moyr2006$lyr3, probs = quantiles)), 
+   as.matrix(quantile(pre_data.moyr2007$lyr3, probs = quantiles)), 
+   as.matrix(quantile(pre_data.moyr2008$lyr3, probs = quantiles))
+)
+
+
+zpost <- cbind(
+   as.matrix(quantile(post_data.moyr2004$lyr3, probs = quantiles)), 
+   as.matrix(quantile(post_data.moyr2005$lyr3, probs = quantiles)), 
+   as.matrix(quantile(post_data.moyr2006$lyr3, probs = quantiles)), 
+   as.matrix(quantile(post_data.moyr2007$lyr3, probs = quantiles)), 
+   as.matrix(quantile(post_data.moyr2008$lyr3, probs = quantiles))
+)
+#for (i in min(pre_data.mo$year):max(pre_data.mo$year)) {
+#  #print(i)
+#  pre_data.moyr <- subset(pre_data.mo, year == i);
+#  post_data.moyr <- subset(post_data.mo, year == i);
+  
+  #print (quantile(pre_data.moyr$lyr3, probs = quantiles));
+  #print(quantile(post_data.moyr$lyr3, probs = quantiles));
+#}
+zdiff = zpost - z
+
+```
+
+
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE,results='hide'}
+fdc(prepost_lyr3_1mo, main=paste("Station ", station, "Salinity Duration Month=", mo), log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+
+fdc(prepost_lyr3_spawning, main=paste("Station ", station, "Salinity Duration Spawning (Feb-June)"), log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+
+# fdc(prepost_lyr3_all, main=paste("Station ", station, "Salinity Duration Curve All"), log='', xlab="% Time salinity equalled or exceeded", 
+#     ylab="psu", verbose=FALSE);
+
+# extract 51a data
+ret51a <- subset(cbp_data, MonitoringStation == 'RET5.1A');
+
+if (exists("stashion5") & exists("stashion1")) {
+  # we have run this twice with station = 1 and 5,
+  # now we can make comparisons
+  stamerge <- data.frame(
+    pre1=stashion1$pre,
+    post1=stashion1$post,
+    pre5=stashion5$pre,
+    post5=stashion5$post,
+    Ret51a=(stashion1$pre + 0.0315488)/0.8137613
+  )
+  fdc(stamerge, main="Modeled St.1 & 5 Salinity 2004-2008", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+  plot(stamerge$pre1, stamerge$post5, col='orange', xlab='Salinity at St.1', ylab='Salinity at St.4', ylim=c(0,9))
+  title('Salinity at St. 5 = f(St. 1) pre/post WD')
+  legend( x="topleft",
+        legend=c("pre-WD","post-WD"),
+        col=c("blue","orange"), lwd=1, lty=c(0,0),
+        pch=c(1,1), bty='n' )
+  points(stamerge$pre1, stamerge$pre5, col='blue')
+  points(stamerge$pre1, stamerge$pre1, col='black')
+  # derive sta5 from sta1, record parameters
+  sta5_eq_f_sta1 <- lm(stamerge$pre5 ~ stamerge$pre1)
+  summary(sta5_eq_f_sta1)
+  m <- coef(sta5_eq_f_sta1)["stamerge$pre1"]
+  b <- coef(sta5_eq_f_sta1)["(Intercept)"]
+  obs <- ret51a$MeasureValue;
+  lm_sta1 <- (0.8137613 * obs - 0.0315488)
+  lm_sta5 <- (m * lm_sta1 + b)
+  obs_lm_sta1n5 <- data.frame(
+    obs=ret51a$MeasureValue,
+    sta1=lm_sta1,
+    sta5=lm_sta5
+  )
+  fdc(obs_lm_sta1n5, main="Modeled St.1 & 5 Salinity as f(RET5.1a)", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+}
+
+if (exists("stashion4") & exists("stashion1")) {
+  # we have run this twice with station = 1 and 5,
+  # now we can make comparisons
+  stamerge <- data.frame(
+    pre1=stashion1$pre,
+    post1=stashion1$post,
+    pre3=stashion3$pre,
+    post3=stashion3$post,
+    pre4=stashion4$pre,
+    post4=stashion4$post,
+    Ret51a=(stashion1$pre + 0.0315488)/0.8137613
+  )
+  fdc(stamerge, main="Modeled St.1 & 4 Salinity 2004-2008", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+  plot(stamerge$pre1, stamerge$post4, col='orange', xlab='Salinity at St.1', ylab='Salinity at St.4', ylim=c(0,9))
+  title('Salinity at St. 4 = f(St. 1) pre/post WD')
+  legend( x="topleft",
+        legend=c("pre-WD","post-WD"),
+        col=c("blue","orange"), lwd=1, lty=c(0,0),
+        pch=c(1,1), bty='n' )
+  points(stamerge$pre1, stamerge$pre4, col='blue')
+  points(stamerge$pre1, stamerge$pre1, col='black')
+  # pre/post-wd relationship between sta 1 and sta 3
+  fdc(stamerge, main="Modeled St.1 & 3 Salinity 2004-2008", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+  plot(stamerge$pre1, stamerge$post3, col='orange', xlab='Salinity at St.1', ylab='Salinity at St.3', ylim=c(0,9))
+  title('Salinity at St. 3 = f(St. 1) pre/post WD')
+  legend( x="topleft",
+        legend=c("pre-WD","post-WD"),
+        col=c("blue","orange"), lwd=1, lty=c(0,0),
+        pch=c(1,1), bty='n' )
+  points(stamerge$pre1, stamerge$pre3, col='blue')
+  #points(stamerge$pre1, stamerge$pre1, col='black')
+  
+  # derive sta4 from sta1, record parameters
+  sta4_eq_f_sta1 <- lm(stamerge$pre4 ~ stamerge$pre1)
+  summary(sta4_eq_f_sta1)
+  m <- coef(sta4_eq_f_sta1)["stamerge$pre1"]
+  b <- coef(sta4_eq_f_sta1)["(Intercept)"]
+  obs <- ret51a$MeasureValue;
+  lm_sta1 <- (0.8137613 * obs - 0.0315488)
+  lm_sta4 <- (m * lm_sta1 + b)
+  obs_lm_sta1n4 <- data.frame(
+    obs=ret51a$MeasureValue,
+    sta1=lm_sta1,
+    sta4=lm_sta4
+  )
+  fdc(obs_lm_sta1n4, main="Modeled St.1 & 5 Salinity as f(RET5.1a)", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+}
+
+ret51 <- subset(cbp_data, MonitoringStation == 'RET5.1');
+# 
+# ret51a_modeltime <- subset(ret51a, SampleDate >= as.Date('2007-01-01') & SampleDate < as.Date('2013-01-01'))
+# # Model time
+# fdc(ret51a_modeltime$MeasureValue, "Station RE5.1 2007 to 2013", log='', xlab="% Time salinity equalled or exceeded", 
+#     ylab="psu", verbose=FALSE);
+# 
+ret51a_spawn <- subset(ret51a, SampleMonth == 'Feb' | SampleMonth == 'Mar' | SampleMonth == 'Apr' | SampleMonth == 'May' | SampleMonth == 'Jun' )
+# Model ret51a_mar
+fdc(ret51a_spawn$MeasureValue, main="Station RE5.1a Spawning (Feb-June)", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+ret51a_feb <- subset(ret51a, SampleMonth == 'Feb')
+# Model ret51a_mar
+fdc(ret51a_feb$MeasureValue, main="Station RE5.1a February", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+ret51a_mar <- subset(ret51a, SampleMonth == 'Mar')
+# Model ret51a_mar
+fdc(ret51a_mar$MeasureValue, main="Station RE5.1a March", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+ret51a_apr <- subset(ret51a, SampleMonth == 'Apr')
+# Model time
+fdc(ret51a_apr$MeasureValue, main="Station RE5.1a April", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+
+ret51a_may <- subset(ret51a, SampleMonth == 'May')
+# Model time
+fdc(ret51a_may$MeasureValue, main="Station RE5.1a May", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+ret51a_jun <- subset(ret51a, SampleMonth == 'Jun')
+# Model time
+fdc(ret51a_jun$MeasureValue, main="Station RE5.1a June", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+
+ret51a_span_tbl <- cbind(
+   as.matrix(quantile(ret51a_feb$MeasureValue, probs = quantiles)), 
+   as.matrix(quantile(ret51a_mar$MeasureValue, probs = quantiles)), 
+   as.matrix(quantile(ret51a_apr$MeasureValue, probs = quantiles)), 
+   as.matrix(quantile(ret51a_may$MeasureValue, probs = quantiles)), 
+   as.matrix(quantile(ret51a_jun$MeasureValue, probs = quantiles))
+)
+colnames(ret51a_span_tbl) <- c('Feb', 'Mar', 'Apr', 'May', 'June')
+pander(ret51a_span_tbl, caption="Spawning season salinity at station RET5.1a.")
+
+# prepost station 4 and 5
+quantile(pp4_gt0$pre);
+quantile(pp4_gt0$post);
+quantile(pp5_gt0$pre);
+quantile(pp5_gt0$post);
+
+ret51all <- subset(cbp_data, MonitoringStation == 'RET5.1' | MonitoringStation == 'RET5.1A');
+fdc(ret51a$MeasureValue, main=paste("RE5.1a Salinity",min(ret51a$SampleDate), "to", max(ret51a$SampleDate), mo), log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE);
+
+# 2004-2009
+ret510409 <- subset(ret51all, SampleYear >= 2004 & SampleYear <= 2009);
+fdc(ret510409$MeasureValue,
+    main="Station RE5.1a Salinity Duration 2004-2009",
+    log='',
+    xlab="% Time salinity equalled or exceeded",
+    ylab="psu",
+    verbose=FALSE
+);
+# Model ret51a_mar
+fdc(ret510409$MeasureValue, main="Station RET5.1 and 5.1a (2004-2009)", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+boxplot(MeasureValue ~ SampleMonth, data = ret510409,
+   xlab = "Month", ylab = "psu",
+   main = "Station RET5.1 & 5.1a (2004-2009)",
+   lex.order = TRUE
+ );
+
+ret52 <- subset(cbp_data, MonitoringStation == 'RET5.2');
+fdc(ret52$MeasureValue,
+    main=paste("Station RE5.2 Salinity Duration"),
+    log='',
+    xlab="% Time salinity equalled or exceeded",
+    ylab="psu",
+    verbose=FALSE
+);
+mos = c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+ret52$SampleMonth = ordered(ret52$SampleMonth, levels=mos);
+par(las=3)
+boxplot(MeasureValue ~ SampleMonth, data = ret52,
+   xlab = "Month", ylab = "psu",
+   main = "Salinity at RET5.2 (1984-2016)",
+   lex.order = TRUE
+ );
+ret52_2000present <- subset(ret52, SampleYear >= 2000);
+boxplot(MeasureValue ~ SampleMonth, data = ret52_2000present,
+   xlab = "Month", ylab = "psu",
+   main = "Salinity at RET5.2 (2000-2016)",
+   lex.order = TRUE
+ );
+par(las=3)
+ret52_2000past <- subset(ret52, SampleYear < 2000);
+boxplot(MeasureValue ~ SampleMonth, data = ret52_2000past,
+   xlab = "Month", ylab = "psu",
+   main = "Salinity at RET5.2 (1984-2009)",
+   lex.order = TRUE
+ );
+
+ret51a$SampleMonth = ordered(ret51a$SampleMonth, levels=mos);
+boxplot(MeasureValue ~ SampleMonth, data = ret51a,
+   xlab = "Month", ylab = "psu", ylim=c(0,12),
+   main = "Salinity at RET5.1a (1984-2016)",
+   lex.order = TRUE
+ );
+
+ret51all$SampleMonth = ordered(ret51all$SampleMonth, levels=mos);
+boxplot(MeasureValue ~ SampleMonth, data = ret51all,
+   xlab = "Month", ylab = "psu", ylim=c(0,12),
+   main = "Salinity at RET5.1 and RET5.1a (1984-2016)",
+   lex.order = TRUE
+ );
+
+
+ret5all2kplus = subset(ret51all, SampleYear >= 2000);
+ret5all2kplus$SampleYear = ordered(ret5all2kplus$SampleYear);
+boxplot(MeasureValue ~ SampleYear, data = ret5all2kplus,
+   xlab = "Year", ylab = "psu", ylim=c(0,12),
+   main = "Salinity at RET5.1 and RET5.1a (2000-2016)",
+   lex.order = TRUE
+ );
+
+ret52all2kplus = subset(ret52, SampleYear >= 2000);
+ret52all2kplus$SampleYear = ordered(ret52all2kplus$SampleYear);
+boxplot(MeasureValue ~ SampleYear, data = ret52all2kplus,
+   xlab = "Year", ylab = "psu", ylim=c(0,16),
+   main = "Salinity at RET5.2 (2000-2016)",
+   lex.order = TRUE
+ );
+
+
+ret51all$SampleYear = ordered(ret51all$SampleYear);
+boxplot(MeasureValue ~ SampleYear, data = ret51all,
+   xlab = "Year", ylab = "psu", ylim=c(0,12),
+   main = "Salinity at RET5.1 and RET5.1a (1984-2016)",
+   lex.order = TRUE
+ );
+par(las=1);
+
+ret51all_spawn <- subset(ret51all, SampleMonth == 'Feb' | SampleMonth == 'Mar' | SampleMonth == 'Apr' | SampleMonth == 'May' | SampleMonth == 'Jun' )
+
+numgt1 <- count(subset(ret51all_spawn, MeasureValue >= 1.0));
+numlt1 <- count(subset(ret51all_spawn, MeasureValue < 1.0));
+
+ret52_spawn <- subset(ret52, SampleMonth == 'Feb' | SampleMonth == 'Mar' | SampleMonth == 'Apr' | SampleMonth == 'May' | SampleMonth == 'Jun' )
+# Model ret51a_mar
+fdc(ret52_spawn$MeasureValue, main="Station RE5.2 Spawning (Feb-June)", log='', xlab="% Time salinity equalled or exceeded",
+    ylab="psu", verbose=FALSE, ylim=c(0,6));
+```
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+
+# tables of pre and post
+if (exists("stashion5") & exists("stashion1")) {
+  pander(summary(pp5_gt0$post - pp5_gt0$pre), caption="Pre/Post Change in Salinity (psu) at upper reaches of tidal influence below Cranstons Mill Pond based on VIMS simulation of 8.3 MGD withdrawal with 50% flow-by when flow < 8.3 MGD.")
+  
+  pander(summary(pp4_gt0$post - pp4_gt0$pre), caption="Pre/Post Change in Salinity (psu) at Little Creek Confluence based on VIMS simulation of 8.3 MGD withdrawal with 50% flow-by when flow < 8.3 MGD.")
+  ps = c(0, 0.25, 0.5, 0.75, 0.85, 0.9, 0.95, 1.0);
+  quantile(stashion4spawn$pre, probs = ps);
+  quantile(stashion4spawn$post, probs = ps);
+  # non-zero 
+  stashion4spawn_nz <- subset(stashion4spawn, pre > 0);
+  quantile(stashion4spawn_nz$pre, probs = ps);
+  quantile(stashion4spawn_nz$post, probs = ps);
+  
+}
+```
+
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,error=FALSE}
+
+# tables of pre and post
+if (exists("stashion5") & exists("stashion1")) {
+  pander(summary(pp5_gt0$post - pp5_gt0$pre), caption="Pre/Post Change in Salinity (psu) at upper reaches of tidal influence below Cranstons Mill Pond based on VIMS simulation of 8.3 MGD withdrawal with 50% flow-by when flow < 8.3 MGD.")
+  quantile(stashion5spawn$pre);
+  quantile(stashion5spawn$post);
+  quantile(stashion5spawn$pre, probs = ps);
+  quantile(stashion5spawn$post, probs = ps);
+ 
+}
+# tables of pre and post
+if (exists("stashion1") & exists("stashion2") & exists("stashion3") & exists("stashion4") & exists("stashion5")) {
+  quantile(stashion3spawn$pre, probs = ps);
+  quantile(stashion3spawn$post, probs = ps);
+  
+  spawn_table_all <- cbind(
+    as.matrix(quantile(stashion1spawn$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion1spawn$post, probs = quantiles)), 
+    as.matrix(quantile(stashion2spawn$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion2spawn$post, probs = quantiles)), 
+    as.matrix(quantile(stashion3spawn$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion3spawn$post, probs = quantiles)), 
+    as.matrix(quantile(stashion4spawn$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion4spawn$post, probs = quantiles)), 
+    as.matrix(quantile(stashion5spawn$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion5spawn$post, probs = quantiles))
+  )
+  colnames(spawn_table_all) <- c('Sta.1(pre)', 'Sta.1(post)','Sta.2(pre)', 'Sta.2(post)', 'Sta.3(pre)', 'Sta.3(post)','Sta.4(pre)', 'Sta.4(post)','Sta.5(pre)', 'Sta.5(post)')
+  pander(spawn_table_all, caption="Modeled spawning season salinity pre/post at VIMS modeled Stations 1-5.", split.tables=Inf)
+pandoc.table(spawn_table_all, split.tables=Inf, caption="Spawning season salinity pre/post at VIMS modeled Stations 1-5.")
+  table_all <- cbind(
+    as.matrix(quantile(stashion1$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion1$post, probs = quantiles)), 
+    as.matrix(quantile(stashion2$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion2$post, probs = quantiles)), 
+    as.matrix(quantile(stashion3$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion3$post, probs = quantiles)), 
+    as.matrix(quantile(stashion4$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion4$post, probs = quantiles)), 
+    as.matrix(quantile(stashion5$pre, probs = quantiles)), 
+    as.matrix(quantile(stashion5$post, probs = quantiles))
+  )
+  colnames(table_all) <- c('Sta.1(pre)', 'Sta.1(post)','Sta.2(pre)', 'Sta.2(post)', 'Sta.3(pre)', 'Sta.3(post)','Sta.4(pre)', 'Sta.4(post)','Sta.5(pre)', 'Sta.5(post)')
+  pander(table_all, caption="Modeled salinity pre/post at VIMS modeled Stations 1-5.", split.tables=Inf)
+  
+ 
+}
+
+# 
+# plot(prepost_lyr3_1mo$post, ylim = range(0,4))
+# points(prepost_lyr3_1mo$pre)
+# 
+# 
+# colnames(z) <- c('2004', '2005', '2006', '2007', '2008')
+# pander(z)
+# colnames(zpost) <- c('2004', '2005', '2006', '2007', '2008')
+# pander(zpost)
+# colnames(zdiff) <- c('2004', '2005', '2006', '2007', '2008')
+# pander(zdiff)
+# 
+# 
+# hist(postgtpt5$month, xlim=range(1:12),col=rgb(0.75,0.5,0.1), main='Occurence of S > 0.5psu', xlab='Month', ylab='Freq', freq=FALSE)
+# hist(gtpt5$month, col=c(rgb(0,0,0,1)), density=50, add=T, freq=FALSE)
+# box;
+# 
+# 
+# hist(postgtpt75$month, xlim=range(1:12),col=c(rgb(1,0,0)), main='Occurence of S > 0.75psu', xlab='Month', ylab='Freq', freq=FALSE)
+# hist(gtpt75$month, xlim=range(1:12), col=c(rgb(0,0,0,1)), freq=FALSE, density=50, add=T)
+# box;
+# 
+# 
+# hist(postgt1pt0$month, xlim=range(1:12),col=c(rgb(1,0,0)), main='Occurence of S > 1.0 psu', xlab='Month', ylab='Freq', freq=FALSE)
+# hist(gt1pt0$month, xlim=range(1:12), col=c(rgb(0,0,0,1)), freq=FALSE, density=50, add=T);
+# 
+# box;
+
+```
