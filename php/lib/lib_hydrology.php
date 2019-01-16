@@ -4629,7 +4629,7 @@ class dataMatrix extends modelSubObject {
          case 'json-1d':
          $propvalue = json_decode($propvalue, TRUE);
          if (is_array($propvalue)) {
-           //error_log("Array located, handling " . print_r($propvalue,1));
+           error_log("Array located, handling " . print_r($propvalue,1));
            $this->matrix = $propvalue;
          } 
          break;
@@ -14919,7 +14919,7 @@ class hydroImpSmall extends hydroImpoundment {
       if ($this->debug) {
          $this->logDebug("Final variables on this object " . print_r($this->state,1) . "<br>");
       }
-      //error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
+      error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
    }
    
    function step() {

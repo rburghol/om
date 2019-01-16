@@ -948,7 +948,9 @@ class ObjectmodelQueryWizardHandler extends DataQueryWizardHandler {
       $runid = $form_state['values']['runid'];
     }
     foreach ($runs as $ri) {
-      $run_options[$ri['runid']] = "#$ri[runid] - from $ri[startdate] to $ri[enddate] (completed: $ri[run_date])";
+      $start = date('Y-m-d', strtotime($ri['starttime']));
+      $end = date('Y-m-d', strtotime($ri['endtime']));
+      $run_options[$ri['runid']] = "#$ri[runid] - from $start to $end (completed: $ri[run_date])";
       if ($runid == $ri[runid]) {
         $remote_url = $ri['remote_url'];
       }
