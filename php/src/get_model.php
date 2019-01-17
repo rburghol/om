@@ -1,9 +1,4 @@
-<html>
-<body>
-<h3>Test Model Run</h3>
-
 <?php
-
 
 # set up db connection
 #include('config.php');
@@ -18,7 +13,7 @@ include_once('xajax_modeling.element.php');
    $outdir - directory for files to be written
 */
 #error_reporting(E_ALL);
-print("Un-serializing Model Object <br>");
+error_log("Un-serializing Model Object <br>");
 $debug = 0;
 
 $elementid = 276486;
@@ -47,9 +42,6 @@ $debugstring = '';
 $debugstring .= "Object creation debugging: " . $thisobresult['debug'] . " <hr>";
 $debugstring .= "Object specific debugging: " . $thisobject->debugstring . '<hr>';
 
-print($debugstring);
-
+//error_log($debugstring);
+echo json_encode($thisobject);
 ?>
-</body>
-
-</html>
