@@ -25,23 +25,45 @@ if (isset($argv[1])) {
    $elementid = $argv[1];
 }
    
-
-
-$thisobresult = unSerializeModelObject($elementid);
+$single = TRUE;
+if ($single) {
+  $thisobresult = unSerializeSingleModelObject($elementid);
+} else {
+  $thisobresult = unSerializeModelObject($elementid);
+}
 $thisobject = $thisobresult['object'];
 $thisname = $thisobject->name;
 $thisobject->debug = 1;
 $thisobject->outdir = $outdir;
 $thisobject->outurl = $outurl;
 
-$thisobject->wake();
-error_log("Element $elementid wake() Returned from calling routine.");
+//$thisobject->wake();
+//$thisobject->sleep();
+//error_log("Element $elementid wake() Returned from calling routine.");
+// Should we init() if we are jsut returning?
+/*
 $thisobject->init();
 error_log("Element $elementid init() Returned from calling routine.");
 $debugstring = '';
 $debugstring .= "Object creation debugging: " . $thisobresult['debug'] . " <hr>";
 $debugstring .= "Object specific debugging: " . $thisobject->debugstring . '<hr>';
-
+*/
+$foo = new StdClass();
+$foo->hello = "world";
+$foo->bar = "baz";
+unset($thisobject->the_geom);
+$json = json_encode($foo);
+echo $json;
+//=> {"hello":"world","bar":"baz"}
+//echo "Obj: " . print_r((array)$thisobject,1);
+$obj_array = (array)$thisobject;
+// getting Json error: Type is not supported
+$json = json_encode($obj_array);
+//$json = json_encode($thisobject,0,1);
 //error_log($debugstring);
-echo json_encode($thisobject);
+$info = json_last_error_msg();
+error_log("Json error: $info");
+//http://php.net/manual/en/function.json-last-error.php
+echo $json;
+
 ?>
