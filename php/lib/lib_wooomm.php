@@ -7749,6 +7749,7 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
    $thisobject->operms = $operms;
    $thisobject->gperms = $gperms;
    $thisobject->pperms = $pperms;
+   $thisobject->object_class = $record['objectclass'];
 
    if ($debug) {
       $oprops = (array)$thisobject;
@@ -7942,6 +7943,7 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
       # manually set the componentid, since these do not have a db generated ID, and they only exist in
       # a scope that is local to the containing object, set them to be a decimal on the parent elementid
       $opobject->componentid = "$elementid" . "." . $j;
+      $opobject->object_class = get_class($opobject);
       if ($debug) {
         $returnArray['debug'] .= print_r($opobject,1);
         $returnArray['debug'] .= "<br><b>Unserializing operators</b><br>";
@@ -8117,6 +8119,7 @@ function unSerializeParentObject($elementid, $debug = 0) {
       $returnArray['error'] .= "Problem Un-serializing object: $elemname, ID: $elementid <br>";
       return $returnArray;
    }
+   $thisobject->object_class = $record['objectclass'];
 
    #$thisobject->setStateVar();
    $returnArray['object'] = $thisobject;
@@ -8135,7 +8138,7 @@ function getCachedObjectXML($listobject, $elementid, $runid) {
    $listobject->querystring .= "       WHEN geomtype = 3 THEN st_astext(a.poly_geom)";
    $listobject->querystring .= "       WHEN geomtype = 2 THEN st_astext(a.line_geom)";
    $listobject->querystring .= "       WHEN geomtype = 1 THEN st_astext(a.point_geom)";
-   $listobject->querystring .= "    END as wkt_geom, a.geomtype, ";
+   $listobject->querystring .= "    END as wkt_geom, a.geomtype, a.objectclass, ";
    $listobject->querystring .= "    CASE ";
    $listobject->querystring .= "       WHEN geomtype = 1 THEN box2d(a.point_geom) ";
    $listobject->querystring .= "       WHEN geomtype = 2 THEN box2d(a.line_geom) ";
@@ -8166,7 +8169,7 @@ function getCachedObjectXML($listobject, $elementid, $runid) {
 function getObjectXML($listobject, $elementid) {
    $retarr = array('debug'=>'', 'query'=>'');
    $listobject->querystring = "  select elem_xml, elemname, st_x(st_centroid(the_geom)) as xcoord, ";
-   $listobject->querystring .= "    groupid, operms, gperms, pperms, custom1, custom2, ";
+   $listobject->querystring .= "    groupid, operms, gperms, pperms, custom1, custom2, objectclass, ";
    $listobject->querystring .= "    st_y(st_centroid(the_geom)) as ycoord, array_dims(elemoperators) as adims, ";
    $listobject->querystring .= "    CASE ";
    $listobject->querystring .= "       WHEN geomtype = 3 THEN st_asText(poly_geom)";
