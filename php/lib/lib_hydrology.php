@@ -706,6 +706,49 @@ class modelObject {
     $this->debugstring = '';
     $this->column_defs = null;
   }
+  
+  // Functions to facilitate an export/serialization
+  public function toArray() {
+    $this->removeRecursions();
+    $this->debugstring = "";
+    return $this->processArray(get_object_vars($this));
+  }
+
+  function removeRecursions() {
+    // things to do before this gets exported
+    unset($this->listobject);
+    unset($this->parentobject);
+    // @todo: keep this around in case we need it?
+    /*
+    $ser = explode(',', $this->serialist);
+    foreach ($ser as $thisvar) {
+       if (property_exists($this, $thisvar)) {
+          $this->$thisvar = serialize($this->$thisvar);
+       }
+    }
+    */
+  }
+    
+  private function processArray($array) {
+    foreach($array as $key => $value) {
+      if (is_object($value)) {
+        if (method_exists($value, 'toArray')) {
+          $array[$key] = $value->toArray();
+        } else {
+          $array[$key] = get_object_vars($this);
+        }
+      }
+      if (is_array($value)) {
+        $array[$key] = $this->processArray($value);
+      }
+    }
+    // If the property isn't an object or array, leave it untouched
+    return $array;
+  }
+    
+  public function __toString() {
+    return json_encode($this->toArray());
+  }
 
   function setDebug($thisdebug, $thisdebugmode = -1) {
     $this->debug = $thisdebug;
