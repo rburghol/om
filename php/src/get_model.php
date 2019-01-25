@@ -29,6 +29,9 @@ if ($elementid === FALSE) {
   // this is a single component retrieval only
   $thisobresult = unSerializeSingleModelObject($elementid);
   $thisobject = $thisobresult['object'];
+  # retrieve child component linkages
+  $linkrecs = getChildComponentType($listobject, $elementid);
+  $thisobject->components = $linkrecs;
   // this simply stashes an array of children object elementids
   // client function can iterate through children if desired
   $thisobject->components = getChildComponentType($listobject, $elementid);

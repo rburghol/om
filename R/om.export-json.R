@@ -4,7 +4,7 @@ library(RCurl); #required for limiting connection timeout in vahydro_fe_data_ict
 
 base_url = 'http://deq2.bse.vt.edu/om/get_model.php?'
 params = list(
-  elementid = 328385
+  elementid = 251527
 )
 
 
@@ -17,6 +17,8 @@ element_json <- GET(
 
 element = content(element_json)
 procnames = names(element$processors)
+components = element$components
+components
 # This:
 element$processors$Qout$object_class
 # Same as this:
