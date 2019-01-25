@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: application/json');
 
 # set up db connection
 #include('config.php');

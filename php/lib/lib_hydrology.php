@@ -732,7 +732,7 @@ class modelObject {
   private function processArray($array) {
     foreach($array as $key => $value) {
       if (is_object($value)) {
-        if (method_exists($this, 'toArray')) {
+        if (method_exists($value, 'toArray')) {
           $array[$key] = $value->toArray();
         } else {
           $array[$key] = get_object_vars($this);
