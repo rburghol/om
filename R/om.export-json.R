@@ -18,7 +18,7 @@ element_json <- GET(
 element = content(element_json)
 procnames = names(element$processors)
 components = element$components
-components
+components[[1]]$elementid
 # This:
 element$processors$Qout$object_class
 # Same as this:

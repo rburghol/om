@@ -583,7 +583,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      //dpm( $cmd, "Executing ");
+      dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {

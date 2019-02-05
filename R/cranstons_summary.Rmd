@@ -70,10 +70,11 @@ elid = as.numeric(as.character(prop[1,]$propvalue))
 
 # Analsyis config
 #runids = c(20021,20023);
-runids = c(20021,20024);
-eventstart = "2002-02-15"
-eventend = "2002-06-15"
-targetyear = 2002;
+#runids = c(20051,20054);
+runids = c(200501, 20054);
+targetyear = 2005;
+eventstart = paste(targetyear,"-02-15",sep='')
+eventend = paste(targetyear,"-06-15",sep='')
 bigQ = 50;
 
 wshed_summary_tbl = data.frame(

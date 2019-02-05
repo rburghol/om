@@ -1,0 +1,6 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+cd /opt/model/apache/batch_updates/cova/
+php move_element.php $1 $2 $3
+cd $pwd

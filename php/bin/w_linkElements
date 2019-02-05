@@ -1,0 +1,7 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+cd /opt/model/apache/batch_updates/cova/
+php fn_addObjectLink.php $1 $2 $3 $4 $5
+cd $pwd
+

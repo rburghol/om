@@ -1,5 +1,6 @@
 <?php
 module_load_include('module', 'dh');
+module_load_include('module', 'om');
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
 dpm($form_state,'state');
@@ -24,7 +25,7 @@ dpm($form_state,'state');
     '#title' => t('Start Date'),
     '#description' => t('Start date for model run.'),
     '#required' => FALSE,
-    '#default_value' => empty($model->startdate) ? NULL : date($date_format,$model->startdate),
+    '#default_value' => empty($model->startdate) ? '2000-01-01' : date($date_format,$model->startdate),
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-100:+5',
@@ -32,7 +33,7 @@ dpm($form_state,'state');
   $form['enddate'] = array(
     '#title' => t('End/Expiration Date'),
     '#description' => t('End/Expiration date for property enabled.'),
-    '#default_value' => empty($model->enddate) ? NULL : date($date_format,$model->enddate),
+    '#default_value' => empty($model->enddate) ? '2000-12-31' : date($date_format,$model->enddate),
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-100:+5',
@@ -53,21 +54,61 @@ dpm($form_state,'state');
       '43200' => t('12 Hours'),
       '86400' => t('Daily'),
     ),
+    '#default_value' => empty($model->dt) ? 86400 : $model->dt,
     '#description' => t('Model timestep.'),
     '#required' => TRUE,
     '#multiple' => FALSE,
     '#weight' => 1,
   );
-  $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Run Model'),
-    '#weight' => 40,
-  );
+  // add controls
+  $form['controls'] = om_run_model_form_controls($form, $form_state);
   
   return $form;
 
 }
+
+function om_run_model_form_controls(&$form, &$form_state) {
+  $controls = array(
+    '#type' => 'container',
+    '#weight' => 40,
+    '#prefix' => '<div id="om_model_controls">',
+    '#suffix' => '</div>',
+  );
+  // this element should have a call to check the status of model at render
+  // and then 2 version of the button text "run model" and "update model status" 
+  // depending on if the specific elementid is currently running.  
+  // this can prevent double-running
+  $controls['run_model'] = array(
+    '#type' => 'submit',
+    '#value' => t('Run Model'),
+    '#weight' => 5,
+    '#ajax' => array(
+      'callback' => 'ajax_form_submit_callback',
+      'wrapper' => 'om_model_controls',
+      'progress' => array(
+        'type' => 'throbber',
+        'message' => t('Checking - please wait'),
+      ),
+      #'event' => 'click', // not needed, default is mousedown
+    ),
+  );
+  // this element should have a call to check the status of model at render
+  // and then disabled if model is idle.
+  $controls['end_model'] = array(
+    '#type' => 'submit',
+    '#value' => t('Terminate Model Run'),
+    '#weight' => 10,
+  );
+  $controls['status'] = array(
+    '#prefix' => "<div>",
+    '#suffix' => "</div>",
+    '#markup' => t('Model Run Status Unknown'),
+    '#weight' => 15,
+  );
+  return $controls;
+  
+}
+
 
 function om_run_model_form_submit(&$form, &$form_state) {
   dpm($form_state,'Model Run Requested');
@@ -96,6 +137,7 @@ function om_run_model_form_submit(&$form, &$form_state) {
     break;
   }
   $path = "/var/www/html/om/";
+  $cmd_output = array();
   if ($test_only) {
       $cmd = "cd $path \n";
       $cmd .= $setstr;
@@ -105,19 +147,18 @@ function om_run_model_form_submit(&$form, &$form_state) {
       $cmd = "cd $path \n";
       $cmd .= $setstr;
       dpm( $cmd, "Executing ");
-      shell_exec($cmd);
+      // this runs in the same process
+      //shell_exec($cmd);
+      // this runs in a separate process.
+      $forkout = exec( "$cmd > /dev/null &", $cmd_output );
     }
   }
   
-  // standalone "cached" mode (assumes all upstream segments have already been run
-  // /usr/bin/php -f /var/www/html/om//run_model.php 337724 999 cached 1984-01-01 2005-12-31 -1 "" 1 0 
-
-  // tree mode (checks to see if upstream segment is run, if not, run the first)
-  // php run_shakeTree.php 4 OR2_8130_7900 204 1984-07-01 1984-08-31 2013-09-11 0 37 0 3 &
-
-  // cached_cova mode 
-  // /usr/bin/php -f /var/www/html/om//run_model.php 339871 779 cached_cova 1984-01-01 1984-12-31 2 "" -1 0 -1
+  $element = om_run_model_form_controls($form, $form_state);
+  return $element;
 }
+
+/* USAGE
 //echo "This is some cool code.";
 $arg = arg();
 $form_state = array();
@@ -136,6 +177,7 @@ $form_state['build_info']['args'] = array($model, $op, 'dh_properties');
 // **********************
 $elements = drupal_build_form('om_run_model_form', $form_state);
 $form = drupal_render($elements);
+form_load_include($form_state, 'inc', 'om', 'src/om_run_model');
 echo $form;
-
+*/
 ?>

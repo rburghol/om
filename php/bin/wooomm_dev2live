@@ -1,0 +1,35 @@
+#!/bin/sh
+devpath="/var/www/html/wooommdev"
+devlib="/var/www/html/vdeq-libs/trunk"
+path="/var/www/html/wooomm"
+lib="/var/www/html/lib"
+
+for i in `ls $devpath/*.php | grep -v config.local`; do
+   f=`basename $i`
+   echo "Copying $devpath/$f to $path/$f"
+   cp $devpath/$f $path/$f
+done
+
+for i in `ls $devpath/forms/* | grep -v config.local`; do
+   f=`basename $i`
+   echo "Copying $devpath/forms/$f to $path/forms/$f"
+   cp $devpath/forms/$f $path/forms/$f
+done
+
+for i in `ls $devpath/summary/*.php | grep -v config.local`; do
+   f=`basename $i`
+   echo "Copying $devpath/summary/$f to $path/summary/$f"
+   cp $devpath/summary/$f $path/summary/$f
+done
+
+for i in `ls $devpath/remote/*.php | grep -v config.local`; do
+   f=`basename $i`
+   echo "Copying $devpath/$f to $path/$f"
+   cp $devpath/remote/$f $path/remote/$f
+done
+
+for i in `ls $devlib/*.php`; do
+   f=`basename $i`
+   echo "Copying $devlib/$f to $lib/$f"
+   cp $devlib/$f $lib/$f
+done

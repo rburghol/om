@@ -1,0 +1,9 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+echo "Calling copy_element.php $1 $2 $3 $4 $5 \n"
+
+cd /opt/model/apache/batch_updates/cova/
+php copy_element.php $1 $2 $3 $4 $5
+cd $pwd
+
