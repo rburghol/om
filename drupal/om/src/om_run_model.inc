@@ -127,20 +127,20 @@ function om_run_model_form_controls(&$form, &$form_state) {
 
 // @todo: move this to the base module?
 function om_run_model($config) {
-  $test_only = TRUE;
+  //$test_only = TRUE;
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $config += array(
     'run_mode' => 'cached',
   );
   // run the model 
   $run_id = $config['run_id'];
-  $elid = $config['elementid'];
+  $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
-  switch ($run_mode) {
+  switch ($config['run_mode']) {
     case 'cached':
     default:
-    $setstr = "/usr/bin/php -f /var/www/html/om/run_model.php $elid $run_id cached $startdate $enddate -1 \"\" 1 0 ";
+    $setstr = "/usr/bin/php -f /var/www/html/om/run_model.php $elementid $run_id cached $startdate $enddate -1 \"\" 1 0 ";
     break;
   }
   $cmd_output = array();
@@ -162,17 +162,27 @@ function om_run_model($config) {
   return $forkout;
 }
 
+function om_get_model_status($elementid) {
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php get_modelStatus.php $elementid ";
+  $json = shell_exec($cmd);
+  $status = json_decode($json);
+  dpm($status,'json decoded');
+  return $status;
+}
+
 function om_run_model_form_run(&$form, &$form_state) {
   dpm($form_state,'Model Run Requested');
   // load the property for the model elements
   $model = entity_ui_form_submit_build_entity($form, $form_state);
   $pid = $model->pid;
-  $elid = 'no-elid';
+  $elementid = 'no-elementid';
   // get the element link ID
   foreach ($model->dh_variables_plugins as $plugin) {
     if (method_exists($plugin, 'findRemoteOMElement')) {
       $path = array();
-      $elid = $plugin->findRemoteOMElement($model, $path);
+      $elementid = $plugin->findRemoteOMElement($model, $path);
     }
   }
   // figure out which button
@@ -181,12 +191,13 @@ function om_run_model_form_run(&$form, &$form_state) {
   $parents = $form_state['triggering_element']['#array_parents'];
   $button = $parents[count($parents) - 1];
   $model_config = $form_state['values'];
-  $model_config['elementid'] = $elid;
+  $model_config['elementid'] = $elementid;
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
   $element = $form['controls'];
   // figure out the run mode
+  $status = om_get_model_status($elementid);
   switch($button) {
     case 'run_model':
       $output = om_run_model($model_config);
