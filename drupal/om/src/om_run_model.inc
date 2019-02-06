@@ -2,6 +2,11 @@
 module_load_include('module', 'dh');
 module_load_include('module', 'om');
 
+// @todo: run_mode handling
+//        - vwp projects shoudl continue to use the vwp modes
+//        - other models should allow choice between normal single container running 
+//          and the shakeTree run mode.
+
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
@@ -88,13 +93,27 @@ function om_run_model_form_controls(&$form, &$form_state) {
       'method' => 'replace',
       'progress' => array(
         'type' => 'throbber',
-        'message' => t('Checking - please wait'),
+        'message' => t('Run requested - please wait'),
       ),
       #'event' => 'click', // not needed, default is mousedown
     ),
   );
   // this element should have a call to check the status of model at render
   // and then disabled if model is idle.
+  $controls['check_model'] = array(
+    '#type' => 'button',
+    '#value' => t('Check Model Status'),
+    '#weight' => 10,
+    '#ajax' => array(
+      'callback' => 'om_run_model_form_run',
+      'wrapper' => 'om_model_controls',
+      'method' => 'replace',
+      'progress' => array(
+        'type' => 'throbber',
+        'message' => t('Checking - please wait'),
+      ),
+    ),
+  );
   $controls['end_model'] = array(
     '#type' => 'button',
     '#value' => t('Terminate Model Run'),
@@ -105,7 +124,7 @@ function om_run_model_form_controls(&$form, &$form_state) {
       'method' => 'replace',
       'progress' => array(
         'type' => 'throbber',
-        'message' => t('Checking - please wait'),
+        'message' => t('Terminate requested - please wait'),
       ),
     ),
   );
@@ -128,6 +147,7 @@ function om_run_model_form_controls(&$form, &$form_state) {
 // @todo: move this to the base module?
 function om_run_model($config) {
   //$test_only = TRUE;
+  //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $config += array(
     'run_mode' => 'cached',
@@ -159,7 +179,7 @@ function om_run_model($config) {
       $forkout = exec( "$cmd > /dev/null &", $cmd_output );
     }
   }
-  return $forkout;
+  return array('command' => $cmd, 'output' => $forkout);
 }
 
 function om_get_model_status($elementid) {
@@ -168,12 +188,12 @@ function om_get_model_status($elementid) {
   $cmd .= "php get_modelStatus.php $elementid ";
   $json = shell_exec($cmd);
   $status = json_decode($json);
-  dpm($status,'json decoded');
+  //dpm($status,'json decoded');
   return $status;
 }
 
 function om_run_model_form_run(&$form, &$form_state) {
-  dpm($form_state,'Model Run Requested');
+  //dpm($form_state,'Model Run Requested');
   // load the property for the model elements
   $model = entity_ui_form_submit_build_entity($form, $form_state);
   $pid = $model->pid;
@@ -192,18 +212,36 @@ function om_run_model_form_run(&$form, &$form_state) {
   $button = $parents[count($parents) - 1];
   $model_config = $form_state['values'];
   $model_config['elementid'] = $elementid;
+  // since this has not been oficially submitted (in order ot use ajax properly)
+  //   we need to handle the date array
+  $sd = $model_config['startdate'];
+  $ed = $model_config['enddate'];
+  $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
+  $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
   $element = $form['controls'];
   // figure out the run mode
   $status = om_get_model_status($elementid);
+  $status = (array)$status;
+  $status_flag = $status['status_flag'];
+  $element['model_status']['#value'] = $status_flag;
   switch($button) {
     case 'run_model':
-      $output = om_run_model($model_config);
-      $element['run_model']['#value'] = 'Update Model Status';
-      $element['model_status']['#value'] = 1;
-      $message = "Model Run forked " . print_r($output,1);
+      if ($status_flag == 0) {
+        $output = om_run_model($model_config);
+        $element['run_model']['#value'] = 'Update Model Status';
+        $element['model_status']['#value'] = 1; // set as 1 to prevent accidental overwriting
+        $message = "Model Run forked " . print_r($output,1);
+      } else {
+        $message = "Model is already running.  Request ignored.";
+      }
+    break;
+    
+    case 'check_model':
+      $message = "Model Status Update returned.";
+      $element['model_status']['#value'] = $status_flag;
     break;
     
     case 'end_model':
@@ -216,8 +254,41 @@ function om_run_model_form_run(&$form, &$form_state) {
       $message = "om_run_model_form_run called with unknown button $button .";
     break;
   }
-  $element['status_message']['#markup'] = $message;
-  //dpm($element, 'element returned');
+  $content = array();
+  $content['info'] = array(
+    '#markup' => $message
+  );
+  $show = array(
+    'elemname' => "Name", 
+    'status_mesg' => "Message", 
+    'runid' => "Run ID",
+    'query' => "SQL",
+  );
+  foreach ($show as $key => $label) {
+    $content[$key] = array(
+      '#type' => 'fieldset',
+      '#title' => $label,
+      '#value' => $status[$key],
+    );
+  }
+  /*
+  $content['table'] = array(
+    '#theme' => 'table',
+    '#header' => array_keys($status),
+    '#rows' => array(0=> array_values($status)),
+    '#attributes' => array (
+      'class' => array('views-table', 'cols-3', 'table', 'table-hover', 'table-striped'),
+    ),
+  );
+  */
+  
+  $status_formatted['rows'] = array(
+    0 => array('data' => array_values($status))
+  );
+  
+  //dpm($status, 'status returned');
+  //$element['status_message']['#markup'] = $message;
+  $element['status_message']['#markup'] = render($content);
   return $element;
 }
 

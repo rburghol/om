@@ -574,6 +574,62 @@ function checkRunDate($listobject, $elementid, $runid, $rundate, $startdate = ''
    }
 }
 
+function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $timeout = 1800) {
+  // inquires about status of most recent model run.
+   // run status_flags -1 - run failed/zombied, 0 - not running/run completed successfully, 1 - running, 2 - finishing
+   $return_vals = array();
+   $status_flag = '';
+   $status_mesg = '';
+   $interval = '';
+   $elemname = '';
+   
+   $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
+   $listobject->querystring .= "    now() as thistime, host, runid ";
+   $listobject->querystring .= " from system_status as a, scen_model_element as b ";
+   $listobject->querystring .= " where a.element_name = 'model_run' ";
+   $listobject->querystring .= "    and a.element_key = $elementid  ";
+   $listobject->querystring .= "    and a.element_key = b.elementid ";
+   if ( ($qhost <> '') ) {
+      $listobject->querystring .= "    and a.host = '$qhost' ";
+   }
+   if ($qrunid <> '') {
+     $listobject->querystring .= "    and a.runid = '$qrunid' ";
+   }
+   $listobject->querystring .= " order by a.last_updated DESC ";
+   //print("$listobject->querystring <br>");
+   $return_vals['query'] = "VerifyRunStatus SQL:" . $listobject->querystring;
+   $listobject->performQuery();
+   $return_vals['error'] = "DB Error:" . $listobject->error;
+   if ($listobject->numrows > 0) {
+      $last_updated = $listobject->getRecordValue(1,'last_updated');
+      $thistime = $listobject->getRecordValue(1,'thistime');
+      $status_flag = $listobject->getRecordValue(1,'status_flag');
+      $status_mesg = $listobject->getRecordValue(1,'status_mesg');
+      $runid = $listobject->getRecordValue(1,'runid');
+      $host = $listobject->getRecordValue(1,'host');
+      $elemname = $listobject->getRecordValue(1,'elemname');
+      $last_secs = intval(date('U', strtotime($last_updated)));
+      $current_secs = intval(date('U', strtotime($thistime)));
+      $interval = $current_secs - $last_secs;
+      // runs that have not updated within the timeout that are NOT either
+      // 0 - finished, or 3 - queued but waiting, are considered to be zombied
+      if ( ($interval >= $timeout) and !(in_array($status_flag,array( 0, 3)) ) ) {
+         // this indicates that run is zombied/failed
+         $status_flag = -1;
+      }
+   } else {
+      //error_log ($listobject->querystring);
+      $status_flag = NULL;
+   }
+   $return_vals['elemname'] = $elemname;
+   $return_vals['status_flag'] = $status_flag;
+   $return_vals['status_mesg'] = $status_mesg;
+   $return_vals['interval'] = $interval;
+   $return_vals['runid'] = $runid;
+   
+   return $return_vals;
+}
+
 function verifyRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $timeout = 1800) {
    // run status_flags -1 - run failed/zombied, 0 - not running/run completed successfully, 1 - running, 2 - finishing
    $return_vals = array();
