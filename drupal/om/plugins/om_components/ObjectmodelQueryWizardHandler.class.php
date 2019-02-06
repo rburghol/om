@@ -10,8 +10,8 @@ $httppath = '/var/www/html';
 // @todo: move this to drupal configured database objects
 // model info db
 $dbip = '192.168.0.21'; 
-$dbpass = 'reim@nn';
-$dbuser = 'robertwb';
+$dbpass = 'secret';
+$dbuser = 'model_ro';
 $dbname = 'model';
 // session data database
 $session_dbpass = '314159';

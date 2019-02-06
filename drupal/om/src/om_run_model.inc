@@ -3,7 +3,6 @@ module_load_include('module', 'dh');
 module_load_include('module', 'om');
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
-dpm($form_state,'state');
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
@@ -79,12 +78,14 @@ function om_run_model_form_controls(&$form, &$form_state) {
   // depending on if the specific elementid is currently running.  
   // this can prevent double-running
   $controls['run_model'] = array(
-    '#type' => 'submit',
+    '#type' => 'button',
     '#value' => t('Run Model'),
+    //'#markup' => t('Run Model'),
     '#weight' => 5,
     '#ajax' => array(
-      'callback' => 'ajax_form_submit_callback',
+      'callback' => 'om_run_model_form_run',
       'wrapper' => 'om_model_controls',
+      'method' => 'replace',
       'progress' => array(
         'type' => 'throbber',
         'message' => t('Checking - please wait'),
@@ -95,24 +96,74 @@ function om_run_model_form_controls(&$form, &$form_state) {
   // this element should have a call to check the status of model at render
   // and then disabled if model is idle.
   $controls['end_model'] = array(
-    '#type' => 'submit',
+    '#type' => 'button',
     '#value' => t('Terminate Model Run'),
     '#weight' => 10,
+    '#ajax' => array(
+      'callback' => 'om_run_model_form_run',
+      'wrapper' => 'om_model_controls',
+      'method' => 'replace',
+      'progress' => array(
+        'type' => 'throbber',
+        'message' => t('Checking - please wait'),
+      ),
+    ),
   );
-  $controls['status'] = array(
+  $controls['status_message'] = array(
     '#prefix' => "<div>",
     '#suffix' => "</div>",
+    '#value' => 0,
     '#markup' => t('Model Run Status Unknown'),
+    '#weight' => 15,
+  );
+  $controls['model_status'] = array(
+    '#type' => 'hidden',
+    '#value' => 0,
     '#weight' => 15,
   );
   return $controls;
   
 }
 
+// @todo: move this to the base module?
+function om_run_model($config) {
+  $test_only = TRUE;
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $config += array(
+    'run_mode' => 'cached',
+  );
+  // run the model 
+  $run_id = $config['run_id'];
+  $elid = $config['elementid'];
+  $startdate = $config['startdate'];
+  $enddate = $config['enddate'];
+  switch ($run_mode) {
+    case 'cached':
+    default:
+    $setstr = "/usr/bin/php -f /var/www/html/om/run_model.php $elid $run_id cached $startdate $enddate -1 \"\" 1 0 ";
+    break;
+  }
+  $cmd_output = array();
+  if ($test_only) {
+      $cmd = "cd $path \n";
+      $cmd .= $setstr;
+      //dpm( $cmd, "Testing Only ");
+  } else {
+    if ($setstr) {
+      $cmd = "cd $path \n";
+      $cmd .= $setstr;
+      //dpm( $cmd, "Executing ");
+      // this runs in the same process
+      //shell_exec($cmd);
+      // this runs in a separate process.
+      $forkout = exec( "$cmd > /dev/null &", $cmd_output );
+    }
+  }
+  return $forkout;
+}
 
-function om_run_model_form_submit(&$form, &$form_state) {
+function om_run_model_form_run(&$form, &$form_state) {
   dpm($form_state,'Model Run Requested');
-  //$test_only = TRUE;
   // load the property for the model elements
   $model = entity_ui_form_submit_build_entity($form, $form_state);
   $pid = $model->pid;
@@ -124,42 +175,44 @@ function om_run_model_form_submit(&$form, &$form_state) {
       $elid = $plugin->findRemoteOMElement($model, $path);
     }
   }
+  // figure out which button
+  // the last item in the triggering_element parents array will contain the button name
+  //    either "run_model" or "end_model"
+  $parents = $form_state['triggering_element']['#array_parents'];
+  $button = $parents[count($parents) - 1];
+  $model_config = $form_state['values'];
+  $model_config['elementid'] = $elid;
+  // cannot create entirely new element, because it loses info that 
+  //   the form passes in.  must modify from $form array instead
+  //$element = om_run_model_form_controls($form, $form_state);
+  $element = $form['controls'];
   // figure out the run mode
-  $run_mode = 'cached';
-  // run the model 
-  $run_id = $form_state['values']['run_id'];
-  $startdate = $form_state['values']['startdate'];
-  $enddate = $form_state['values']['enddate'];
-  switch ($run_mode) {
-    case 'cached':
+  switch($button) {
+    case 'run_model':
+      $output = om_run_model($model_config);
+      $element['run_model']['#value'] = 'Update Model Status';
+      $element['model_status']['#value'] = 1;
+      $message = "Model Run forked " . print_r($output,1);
+    break;
+    
+    case 'end_model':
+      $message = "Request to Terminate model run.";
+      $element['model_status']['#value'] = -1;
+    break;
+    
     default:
-    $setstr = "/usr/bin/php -f /var/www/html/om/run_model.php $elid $run_id cached $startdate $enddate -1 \"\" 1 0 ";
+      watchdog('om', "om_run_model_form_run called with unknown button $button");
+      $message = "om_run_model_form_run called with unknown button $button .";
     break;
   }
-  $path = "/var/www/html/om/";
-  $cmd_output = array();
-  if ($test_only) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
-      dpm( $cmd, "Testing ");
-  } else {
-    if ($setstr) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
-      dpm( $cmd, "Executing ");
-      // this runs in the same process
-      //shell_exec($cmd);
-      // this runs in a separate process.
-      $forkout = exec( "$cmd > /dev/null &", $cmd_output );
-    }
-  }
-  
-  $element = om_run_model_form_controls($form, $form_state);
+  $element['status_message']['#markup'] = $message;
+  //dpm($element, 'element returned');
   return $element;
 }
 
 /* USAGE
 //echo "This is some cool code.";
+module_load_include('inc', 'om', 'src/om_run_model');
 $arg = arg();
 $form_state = array();
 $form_state['wrapper_callback'] = 'entity_ui_main_form_defaults';
@@ -175,9 +228,9 @@ $form_state['build_info']['args'] = array($model, $op, 'dh_properties');
 // **********************
 // Load the form
 // **********************
+form_load_include($form_state, 'inc', 'om', 'src/om_run_model');
 $elements = drupal_build_form('om_run_model_form', $form_state);
 $form = drupal_render($elements);
-form_load_include($form_state, 'inc', 'om', 'src/om_run_model');
 echo $form;
 */
 ?>
