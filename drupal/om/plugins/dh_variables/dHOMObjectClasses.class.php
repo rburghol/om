@@ -324,14 +324,14 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     return $hidden;
   }
 
-  function getPublicVars(&$publix = array()) {
+  function getPublicVars($entity, &$publix = array()) {
     //dpm($this,"called getPublicVars()");
     // gets all viewable variables
     $publix += array_keys($this->state); 
     $publix += $this->setvarnames; 
-    $publix += $this->getPublicProps(); 
-    $publix += $this->getPublicProcs(); 
-    $publix += $this->getPublicInputs(); 
+    $publix += $this->getPublicProps($entity); 
+    $publix += $this->getPublicProcs($entity); 
+    $publix += $this->getPublicInputs($entity); 
     $publix = array_unique($publix);
     sort($publix);
     return $publix;
@@ -339,16 +339,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
 
   function getLocalVars() {
     // gets all viewable variables
-    $publix = array_unique(array_merge(array_keys($this->state), $this->getPublicProps(), $this->getPublicProcs(), $this->getPublicInputs()));
+    $publix = array_unique(array_merge(array_keys($this->state), $this->getPublicProps($entity), $this->getPublicProcs($entity), $this->getPublicInputs($entity)));
 
     return $publix;
   }
 
-  public function getPublicProps() {
+  public function getPublicProps($entity) {
     // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
     // taken directly from om library -- will revisit after full porting
     // children will subclass this and add their own like:
-    // $publix = parent::getPublicProps()
+    // $publix = parent::getPublicProps($entity)
     $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
     return $publix;
   }
@@ -358,7 +358,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     return array();
     return $this->datasources;
   }
-  function getPublicProcs() {
+  function getPublicProcs($entity) {
     // taken directly from om library -- will revisit after full porting
     return array();
     // gets all viewable processors
@@ -386,7 +386,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     }
     return $retarr;
   }
-  function getPublicInputs() {
+  function getPublicInputs($entity) {
     // taken directly from om library -- will revisit after full porting
     return array();
     // gets all viewable variables
@@ -396,7 +396,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
        return array();
     }
   }
-  function getPublicComponents() {
+  function getPublicComponents($entity) {
     // taken directly from om library -- will revisit after full porting
     return array();
     // gets all viewable variables
@@ -406,7 +406,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
        return array();
     }
   }
-  function getPrivateProps() {
+  function getPrivateProps($entity) {
     // taken directly from om library -- will revisit after full porting
     return array();
     // gets all viewable variables in the local context only
@@ -512,7 +512,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // $path will be modified by the methods
     // the property set_remote allows us to disable this functionality, for example
     // if we are doing an insert from an import, we wouldn't want to do this.
-    if ($elid > 0 and !property_exists($entity, 'set_remote') or $entity->set_remote) {
+    if ($elid > 0) {
       $this->setAllRemoteProperties($entity, $elid, $path);
     }
   }
@@ -523,6 +523,10 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE, $mode = '') {
+    if (property_exists($entity, 'set_remote') and !$entity->set_remote) {
+      //error_log("set_remote = FALSE - returning without setting");
+      return;
+    }
     // object_class ONLY refers to the base component being added to a model element
     // if a nested property is being set, like a matrix on a hydroImpSmall, the object STILL
     // refers to hydroImpSmall, and the parent component has to be able to handle the prop by name
@@ -732,6 +736,9 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE) {
     // this element connection does not currently use this, but its children props might
+    if (property_exists($entity, 'set_remote') and !$entity->set_remote) {
+      return;
+    }
   }
 }
 
@@ -909,16 +916,16 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
     );
   }
   
-  public function getPublicVars($entity, &$vars = array()) {
+  public function getPublicVars($entity, &$publix = array()) {
     $parent = $this->getParentEntity($entity);
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
     //dpm($plugin,'plugin');
       if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($vars);
+        $plugin->getPublicVars($entity, $publix);
       }
     }
-    return $vars;
+    return $publix;
   }
 }
 
