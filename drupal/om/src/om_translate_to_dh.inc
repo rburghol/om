@@ -3,7 +3,22 @@
 // load routines needed for tablefield handling
 module_load_include('module', 'dh_wsp');
 
-  
+function om_get_property($values, $singularity = 'name') {
+  $pids = dh_get_properties($values, $singularity);
+  $om_model = FALSE;
+  if (count($pids) > 0) {
+    $pid = array_shift($pids);
+    $om_model = entity_load_single('dh_properties', $pid->pid);
+  }
+  return $om_model;
+}
+
+function om_create_property($values, $singularity = 'name') {
+  error_log("$cache[varkey] does not exist...creating");
+  $om_model = dh_properties_enforce_singularity($values, $singularity);
+  return $om_model;
+}
+
 function om_setTableField(&$entity, $luval_matrix_field, $csvtable) {
   // requires a table to be set in non-associative format (essentially a csv)
   $instance = field_info_instance($entity->entityType(), $luval_matrix_field, $entity->bundle);
@@ -37,6 +52,7 @@ function om_setTableField(&$entity, $luval_matrix_field, $csvtable) {
 }
 
 function om_translate_to_dh($om_comp, &$dh_prop) {
+  $translated = FALSE;
   switch ($om_comp->object_class) {
     case 'dataMatrix':
       $dh_prop->rowkey = $om_comp->keycol1;
@@ -60,9 +76,16 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       //error_log("Output matrix: " . print_r($out,1));
       //om_setTableField($dh_prop, 'field_dh_matrix', $out);
       //error_log("After" . print_r((array)$dh_prop->field_dh_matrix,1));
+      $translated = TRUE;
     break;
+    case 'Equation':
+      $dh_prop->propcode = $om_comp->equation;
+      $dh_prop->defaultval = $om_comp->defaultval;
+      $translated = TRUE;
+      break;
   
   }
+  return $translated;
 }
 
 function om_get_dh_varkey($om_comp) {

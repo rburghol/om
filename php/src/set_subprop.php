@@ -56,7 +56,7 @@ if (is_object($thisobject)) {
   }
 
   if (isset($thisobject->processors[$comp_name])) {
-    error_log("Changing thisobject->processors[$comp_name] (" . $thisobject->processors[$comp_name]->{$subprop_name} . ") = $subprop_value; ");
+    error_log("Tring to change thisobject->processors[$comp_name] subprop $subprop_name in (" . print_r(get_object_vars($thisobject->processors[$comp_name]),1). ") = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
     // the setProp() method should be coded to handle all of these
     // generally, if something is a sub-comp of a sub-comp like 

@@ -3,7 +3,7 @@
 $plugin = array(
   'label' => t('OM - Element Link'),
   'handler' =>  array(
-    'class' => 'dHOMConstant',
+    'class' => 'dHOMElementConnect',
     'file' => 'dHOMObjectClasses.class.php',
   ),
   'variable' =>  array(

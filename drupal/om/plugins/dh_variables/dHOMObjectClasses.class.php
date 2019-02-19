@@ -523,9 +523,13 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE, $mode = '') {
-    if (property_exists($entity, 'set_remote') and !$entity->set_remote) {
-      //error_log("set_remote = FALSE - returning without setting");
+    if ($this->set_remote === '0') {
+      //error_log("set_remote = FALSE - returning without setting $entity->propname");
       return;
+    } else {
+      //$db = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+      //error_log("Debug:" . print_r($db,1));
+      //error_log("set_remote = $this->set_remote - Setting remote for $entity->propname");
     }
     // object_class ONLY refers to the base component being added to a model element
     // if a nested property is being set, like a matrix on a hydroImpSmall, the object STILL
@@ -679,15 +683,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //dpm($elvar, " elvar");
     if ($elvar) {
       $elid = $elvar->propvalue;
+      $this->set_remote = $elvar->propcode;
     } else {
       // get parent
       $parent = $this->getParentEntity($entity);
-      //dpm($parent, "trying to call findRemoteOMElement on parent");
       if (isset($parent->dh_variables_plugins) and is_array($parent->dh_variables_plugins)) {
         foreach ($parent->dh_variables_plugins as $plugin) {
           if (is_object($plugin) and method_exists($plugin, 'findRemoteOMElement')) {
             $elid = $plugin->findRemoteOMElement($parent, $path);
           }
+          $this->set_remote = property_exists($plugin, 'set_remote') ? $plugin->set_remote : 0;
         }
       }
     }
@@ -736,9 +741,20 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE) {
     // this element connection does not currently use this, but its children props might
-    if (property_exists($entity, 'set_remote') and !$entity->set_remote) {
-      return;
+  }
+  public function formRowEdit(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
     }
+    $form['propcode'] = array(
+      '#title' => t('Automatically Push Changes to Remote?'),
+      '#type' => 'select',
+      '#options' => array('0'=>'False', '1'=>'True'),
+      '#description' => '',
+      '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
+    );
+    
   }
 }
 
@@ -842,6 +858,23 @@ class dHOMSubComp extends dHOMBaseObjectClass {
 
 class dHOMEquation extends dHOMSubComp {
   var $object_class = 'Equation';
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'defaultval' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'defaultval',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Initial value.',
+        'varname' => 'Initial Value',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    );
+    return $defaults;
+  }
   
   public function formRowEdit(&$rowform, $entity) {
     parent::formRowEdit($rowform, $entity);
