@@ -182,6 +182,46 @@ function om_run_model($config) {
   return array('command' => $cmd, 'output' => $forkout);
 }
 
+// @todo: move this to the base module?
+function om_message_model($config) {
+  //$test_only = TRUE;
+  //dpm($config,'submitted to run model');
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $config += array(
+    'host' => 'localhost',
+    'run_mode' => 'cached',
+  );
+  // run the model 
+  $run_id = $config['run_id'];
+  $elementid = $config['elementid'];
+  $host = $config['host'];
+  $message = $config['message'];
+  switch ($config['run_mode']) {
+    case 'cached':
+    default:
+    // Usage: php fn_message_model.php elementid host message [runid = NULL] 
+    $setstr = "/usr/bin/php -f /var/www/html/om/fn_message_model.php $elementid $host $message $run_id  ";
+    break;
+  }
+  $cmd_output = array();
+  if ($test_only) {
+      $cmd = "cd $path \n";
+      $cmd .= $setstr;
+      //dpm( $cmd, "Testing Only ");
+  } else {
+    if ($setstr) {
+      $cmd = "cd $path \n";
+      $cmd .= $setstr;
+      //dpm( $cmd, "Executing ");
+      // this runs in the same process
+      //shell_exec($cmd);
+      // this runs in a separate process.
+      $forkout = exec( "$cmd > /dev/null &", $cmd_output );
+    }
+  }
+  return array('command' => $cmd, 'output' => $forkout);
+}
+
 function om_get_model_status($elementid) {
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $cmd = "cd $path \n";

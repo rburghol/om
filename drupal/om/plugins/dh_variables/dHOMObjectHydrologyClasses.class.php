@@ -10,6 +10,10 @@ $class = ctools_plugin_get_class($plugin_def, 'handler');
 class dHOMHydroImpoundment extends dHOMModelElement {
   var $object_class = 'hydroImpoundment';
   
+  public function hiddenFields() {
+    $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
+    return $hidden;
+  }
   // can create framework here to set properties that are needed, similar to object_class properties
   // being automatically added.
   // will use standard editing for now, but...

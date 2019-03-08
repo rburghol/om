@@ -4,6 +4,19 @@ module_load_include('module', 'dh');
 
 class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
+  public function hiddenFields() {
+    return array(
+      'pid',
+      'featureid',
+      'startdate',
+      'enddate',
+      'bundle',
+      'entity_type',
+      'dh_link_admin_pr_condition', 
+      'field_prop_upload',
+    );
+  }
+  
   public function formRowEdit(&$rowform, $row) {
     parent::formRowEdit($rowform, $row); // does hiding etc.
     $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
@@ -182,6 +195,35 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // special form save handlers
     parent::formRowSave($rowvalues, $row);
   }
+  
+  public function buildContent(&$content, &$entity, $view_mode) {
+    // @todo: handle teaser mode and full mode with plugin support
+    foreach ($this->hiddenFields() as $hide) {
+      unset($content[$hide]);
+    }
+    switch ($view_mode) {
+      case 'plugin':
+      case 'teaser':
+      default:
+        $content['propname'] = array(
+          '#type' => 'item',
+          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub>"
+        );
+        if (isset($content['propvalue'])) {
+          $content['propvalue'] = array(
+            '#type' => 'item',
+            '#markup' => "<b>Value:</b> " . $entity->propvalue,
+          ); 
+        }
+        if (isset($content['propcode'])) {
+          $content['propcode'] = array(
+            '#type' => 'item',
+            '#markup' => "<b>Code:</b> " . $entity->propcode,
+          ); 
+        }
+      break;
+    }
+  }
 }
 
 // @todo: evaluate dHVariablePluginCodeAttribute and dHVariablePluginNumericAttribute
@@ -320,6 +362,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       'dh_link_admin_pr_condition', 
       'field_prop_upload',
       'object_class',
+      'startdate',
+      'enddate',
+      'varname'
     );
     return $hidden;
   }
@@ -894,7 +939,7 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
   var $object_class = 'textField';
   
   public function hiddenFields() {
-    return array('startdate', 'enddate','featureid','entity_type', 'propname','propvalue','dh_link_admin_pr_condition');
+    return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propname','propvalue','dh_link_admin_pr_condition');
   }
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
@@ -927,6 +972,31 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
   public function getPropertyAttribute($property) {
     return $property->propcode;
   }
+  
+  public function buildContent(&$content, &$entity, $view_mode) {
+    // @todo: handle teaser mode and full mode with plugin support
+    foreach ($this->hiddenFields() as $hide) {
+      unset($content[$hide]);
+    }
+    switch ($view_mode) {
+      case 'plugin':
+      case 'teaser':
+      default:
+        $content['propname'] = array(
+          '#type' => 'item',
+          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub>"
+        );
+        $content['propcode'] = array(
+          '#type' => 'item',
+          '#markup' => "<b>Code:</b> " . $entity->propcode,
+        );
+      break;
+    }
+  }
+}
+
+class dHOMObjectClass extends dHOMAlphanumericConstant {
+  
 }
 
 class dHOMPublicVars extends dHOMAlphanumericConstant {
@@ -964,12 +1034,6 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
 
 class dHOM_ModelScenario extends dHVariablePluginDefault {
   var $object_class = FALSE;
-}
-
-class dHOMObjectClass extends dHOMBaseObjectClass {
-  // controls the objectclass property -- 
-  // currently this does nothing but we *might* allow it to make this change?
-  // seems dangerous
 }
 
 class dHOMDataMatrix extends dHOMSubComp {
