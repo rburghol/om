@@ -72,6 +72,8 @@ elid = as.numeric(as.character(prop[1,]$propvalue))
 #runids = c(20021,20023);
 #runids = c(20051,20054);
 runids = c(1, 4);
+runpre = 1
+runpost = 4
 targetyear = 2005;
 eventstart = paste(targetyear,"-02-15",sep='')
 eventend = paste(targetyear,"-06-15",sep='')
@@ -94,113 +96,119 @@ wshed_summary_tbl = data.frame(
 #dat_weir <- fn_get_runfile(elid, 2,  cached = FALSE);
 #dat_with <- fn_get_runfile(elid, 3,  cached = FALSE);
 
+
+dat.pre <- fn_get_runfile(elid, runpre,  cached = FALSE);
+dat.pre <- zoo(as.numeric(as.character( dat.pre$Qout )), order.by = dat.pre$thisdate);
+dat.post <- fn_get_runfile(elid, runpost,  cached = FALSE);
+dat.post <- zoo(as.numeric(as.character( dat.post$Qout )), order.by = dat.post$thisdate);
+
 # 1. Get Data
 # 2. Do IHA pulse analysis
 # 3. Review individual storms and make plots
 
-for (rix in 1:length(runids)) {
-  runid = runids[rix];
-  # Pamunkey below fall line = 223639
-  # Rockfish 213049
-  # Rivanna at Confluence with james = 214993
-  # Segment name | Drainage Area | 7Q10 | ALF | DoR Sept (min mo?) | 9-10
-  # Initialize Summary Table
-  dat <- fn_get_runfile(elid, runid,  cached = FALSE);
-  dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2005-09-30"));
-  if (length(stash) == 0) {
-    stash <- cbind(as.numeric(dat$Qout));
-  } else {
-    stash <- cbind(stash, as.numeric(dat$Qout))
+# ****************************
+# Pulse analysis
+# Use Arcadis defined 0.3% event = c(0.25, 0.997)
+# Use standard IHA pulse thresholds = c(0.25, 0.75)
+thresholds <- quantile(coredata(dat.pre), probs = c(0.25, 0.997))
+#thresholds <- quantile(coredata(dat.pre), probs = c(0.25, 0.75))
+pulse.pre = group4(dat.pre, thresholds=thresholds)
+pulse.post = group4(dat.post, thresholds=thresholds)
+# ****************************
+
+# high pulse number
+# get the max values here to set axis range
+prehpc = max(pulse.pre[,"High pulse number"], na.rm= TRUE)
+posthpc = max(pulse.post[,"High pulse number"], na.rm= TRUE)
+ym = max(c(prehpc,posthpc)) + 1
+boxplot(
+  pulse.pre[,"High pulse number"], 
+  pulse.post[,"High pulse number"], 
+  labels = c("Pre WD", "Post-WD"),
+  names = c("Pre WD", "Post-WD"),
+  main = paste("High Pulse Length"),
+  ylim = c(0,ym), na.rm= TRUE
+)
+preym = max(pulse.pre[,"High pulse length"], na.rm= TRUE)
+postym = max(pulse.post[,"High pulse length"], na.rm= TRUE)
+ym = max(c(preym,postym)) + 1
+boxplot(
+  pulse.pre[,"High pulse length"], 
+  pulse.post[,"High pulse length"], 
+  labels = c("Pre WD", "Post-WD"),
+  names = c("Pre WD", "Post-WD"),
+  main = paste("High Pulse Length"),
+  ylim = c(0,ym), na.rm= TRUE
+)
+
+# Pre-condition High Pulse Summary
+ym = max(c(preym,prehpc)) + 1
+boxplot(
+  pulse.pre[,"High pulse number"], 
+  pulse.pre[,"High pulse length"], 
+  labels = c("Large Storm #/year", "Duration(hr)"),
+  names = c("Large Storm #/year", "Duration(hr)"),
+  main = paste("Bank Full (Upper 0.3%) Flows Frequency and Duration"),
+  ylim = c(0,ym), na.rm= TRUE
+)
+
+prelpc = max(pulse.pre[,"Low pulse number"], na.rm= TRUE)
+postlpc = max(pulse.post[,"Low pulse number"], na.rm= TRUE)
+ym = max(c(prelpc,postlpc))
+boxplot(
+  pulse.pre[,"Low pulse number"], 
+  pulse.post[,"Low pulse number"], 
+  labels = c("Pre CMP", "CMP"),
+  names = c("Pre CMP", "CMP"),
+  main = paste("Low Pulse Number, RunID ", runid),
+  ylim = c(0,ym), na.rm= TRUE
+)
+prelpl = max(pulse.pre[,"Low pulse length"], na.rm= TRUE)
+postlpl = max(pulse.post[,"Low pulse length"], na.rm= TRUE)
+ym = max(c(prelpl,postlpl))
+boxplot(
+  pulse.pre[,"Low pulse length"], 
+  pulse.post[,"Low pulse length"], 
+  labels = c("Pre CMP", "CMP"),
+  names = c("Pre CMP", "CMP"),
+  main = paste("Low Pulse Length, RunID ", runid),
+  ylim = c(0,ym), na.rm= TRUE
+)
+
+# Analyze Storm Events
+bigdat = window(
+  dat.post, 
+  start = as.Date(paste(targetyear, '-01-01', sep='')), 
+  end = as.Date(paste(targetyear, '-12-31', sep=''))
+)
+lsd = max(as.Date(max(bigdat$thisdate)))
+led = min(as.Date(max(bigdat$thisdate)))
+# big events
+biggies <- unique(subset(bigdat, as.numeric(bigdat$impoundment_Qin) > bigQ)$thisdate)
+for (j in 1:length(biggies)) {
+  sd = as.Date(biggies[j]) - 3;
+  ed = as.Date(biggies[j]) + 3;
+  wudat <- window(bigdat, start = as.Date(sd), end = as.Date(ed));
+  gtitle = paste("From", sd,"to", ed, sep=" ")
+  ymax = ceiling(max(as.numeric(wudat$impoundment_Qin)));
+  emax = ceiling(max(as.numeric(wudat$impoundment_lake_elev)));
+  if (!( (lsd <= as.Date(biggies[j])) & (led >= as.Date(biggies[j])) )) {
+    # plot drawdown
+    par(las=2)
+    plot(wudat$impoundment_Qin, ylim = c(0.0, ymax), main = gtitle);
+    par(pch=22, col="grey") # plotting symbol and color 
+    lines(wudat$local_channel_Qout, ylim = c(0.0, ymax));
+    par(pch=22, col="red") # plotting symbol and color 
+    lines(wudat$impoundment_lake_elev);
+    par(pch=22, col="green") # plotting symbol and color 
+    points(wudat$impoundment_Qout);
+    max(as.numeric(wudat$impoundment_Qin))
+    max(as.numeric(wudat$impoundment_Qout))
   }
-  # For some reason we need to convert these numeric fields to char, then to number
-  # before sending to zoo since their retrieval is classifying them as factors instead of nums
-  # now there may be away to get around that but...
-  dat.pre <- zoo(as.numeric(dat$impoundment_Qin), order.by = dat$timestamp)
-  dat.post <- zoo(as.numeric(dat$impoundment_Qout), order.by = dat$timestamp)
-  pulse.pre = group4(dat.pre)
-  thresholds <- quantile(coredata(dat.pre), probs = c(0.25, 0.75))
-  pulse.post = group4(dat.post, thresholds=thresholds)
-  # high pulse number
-  # get the max values here to set axis range
-  prehpc = max(pulse.pre[,"High pulse number"], na.rm= TRUE)
-  posthpc = max(pulse.post[,"High pulse number"], na.rm= TRUE)
-  ym = max(c(prehpc,posthpc))
-  boxplot(
-    pulse.pre[,"High pulse number"], 
-    pulse.post[,"High pulse number"], 
-    labels = c("Pre CMP", "CMP"),
-    names = c("Pre CMP", "CMP"),
-    main = paste("High Pulse Number, RunID ", runid),
-    ylim = c(0,ym), na.rm= TRUE
-  )
-  preym = max(pulse.pre[,"High pulse length"], na.rm= TRUE)
-  postym = max(pulse.post[,"High pulse length"], na.rm= TRUE)
-  ym = max(c(preym,postym))
-  boxplot(
-    pulse.pre[,"High pulse length"], 
-    pulse.post[,"High pulse length"], 
-    labels = c("Pre CMP", "CMP"),
-    names = c("Pre CMP", "CMP"),
-    main = paste("High Pulse Length, RunID ", runid),
-    ylim = c(0,ym), na.rm= TRUE
-  )
-  prelpc = max(pulse.pre[,"Low pulse number"], na.rm= TRUE)
-  postlpc = max(pulse.post[,"Low pulse number"], na.rm= TRUE)
-  ym = max(c(prelpc,postlpc))
-  boxplot(
-    pulse.pre[,"Low pulse number"], 
-    pulse.post[,"Low pulse number"], 
-    labels = c("Pre CMP", "CMP"),
-    names = c("Pre CMP", "CMP"),
-    main = paste("Low Pulse Number, RunID ", runid),
-    ylim = c(0,ym), na.rm= TRUE
-  )
-  prelpl = max(pulse.pre[,"Low pulse length"], na.rm= TRUE)
-  postlpl = max(pulse.post[,"Low pulse length"], na.rm= TRUE)
-  ym = max(c(prelpl,postlpl))
-  boxplot(
-    pulse.pre[,"Low pulse length"], 
-    pulse.post[,"Low pulse length"], 
-    labels = c("Pre CMP", "CMP"),
-    names = c("Pre CMP", "CMP"),
-    main = paste("Low Pulse Length, RunID ", runid),
-    ylim = c(0,ym), na.rm= TRUE
-  )
-  
-  # Analyze Storm Events
-  bigdat = window(
-    dat, 
-    start = as.Date(paste(targetyear, '-01-01', sep='')), 
-    end = as.Date(paste(targetyear, '-12-31', sep=''))
-  )
-  lsd = max(as.Date(max(bigdat$thisdate)))
-  led = min(as.Date(max(bigdat$thisdate)))
-  # big events
-  biggies <- unique(subset(bigdat, as.numeric(bigdat$impoundment_Qin) > bigQ)$thisdate)
-  for (j in 1:length(biggies)) {
-    sd = as.Date(biggies[j]) - 3;
-    ed = as.Date(biggies[j]) + 3;
-    wudat <- window(bigdat, start = as.Date(sd), end = as.Date(ed));
-    gtitle = paste("From", sd,"to", ed, sep=" ")
-    ymax = ceiling(max(as.numeric(wudat$impoundment_Qin)));
-    emax = ceiling(max(as.numeric(wudat$impoundment_lake_elev)));
-    if (!( (lsd <= as.Date(biggies[j])) & (led >= as.Date(biggies[j])) )) {
-      # plot drawdown
-      par(las=2)
-      plot(wudat$impoundment_Qin, ylim = c(0.0, ymax), main = gtitle);
-      par(pch=22, col="grey") # plotting symbol and color 
-      lines(wudat$local_channel_Qout, ylim = c(0.0, ymax));
-      par(pch=22, col="red") # plotting symbol and color 
-      lines(wudat$impoundment_lake_elev);
-      par(pch=22, col="green") # plotting symbol and color 
-      points(wudat$impoundment_Qout);
-      max(as.numeric(wudat$impoundment_Qin))
-      max(as.numeric(wudat$impoundment_Qout))
-    }
-    # redundancy check stash
-    lsd = sd
-    led = ed 
-  }
+  # redundancy check stash
+  lsd = sd
+  led = ed 
+}
   
   #flows <- fn_get_rundata(elid, runid);
   flows <- zoo(as.numeric(dat$impoundment_Qout), order.by = dat$timestamp)

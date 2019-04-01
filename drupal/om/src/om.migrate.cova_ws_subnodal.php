@@ -3,8 +3,49 @@
 // Migrate Land-River Segment runoff models from OM to vahydro 2.0
 module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
-$a = arg();
-error_log("Args:" . print_r($a,1));
+$args = array();
+while ($arg = drush_shift()) {
+  $args[] = $arg;
+}
+
+// Defaults
+// dH Settings
+$bundle = 'watershed';
+$ftype = 'vahydro';
+// single proc settings
+$one_proc = '';
+// all batch element settings
+$elementid = FALSE;
+$hydrocode = FALSE;
+
+// Is single command line arg?
+if (count($args) >= 2) {
+  // Do command line, single element settings
+  // set these if doing a single -- will fail if both not set
+  // $elementid = 340385; // set these if doing a single
+  // $hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth'; 
+  $elementid = $args[0];
+  $hydrocode = $args[1];
+  if (isset($args[2])) {
+    $one_proc = $args[2];
+  }
+  if (isset($args[3])) {
+    $bundle = $args[3];
+  }
+  if (isset($args[4])) {
+    $ftype = $args[4];
+  }
+} else {
+  if (count($args) > 0) {
+    // warn and quit
+    error_log("Usage: om.migrate.cova_ws_subnodal.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro]");
+    die;
+  }
+}
+
+error_log("elementid = $elementid, hydrocode = $hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype");
+
+
 // read csv of elementid / hydrocode pairs
 // find dh feature -- report error if it does not exist
 // name = hydrocode + vah-1.0
@@ -14,21 +55,8 @@ $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 $filepath = '/var/www/html/files/vahydro/om_lrsegs.txt';
 //$filepath = '/var/www/html/files/vahydro/om_lrsegs-short.txt';
 
-// dH Settings
-$bundle = 'watershed';
-$ftype = 'vahydro';
-
-// single proc settings
-$one_proc = '';
-
-// all batch element settings
-$elementid = FALSE;
-$hydrocode = FALSE;
-// single element settings
-$elementid = 340385; // set these if doing a single
-$hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth'; // set these if doing a single -- will fail if both not set
 // classes = array() empty mean all
-$classes = array('dataMatrix', 'Equation');
+$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp');
 //$classes = array('Equation');
 
 if (!($elementid and $hydrocode)) {
@@ -64,13 +92,14 @@ foreach ($data as $element) {
   $values = array(
     'entity_type' => 'dh_feature', 
     'featureid' => $om_fid, 
-    'propname' => $hydrocode . ' vah1.0', 
     'propcode'=>'vahydro-1.0', 
-    'object_class' => $object->object_class,
+    'varkey' => 'om_model_element',
   );
-  $om_model = om_get_property($values, 'name_singular');
+  $om_model = om_get_property($values, 'propcode_singular');
   if (!$om_model) {
     $values['varkey'] = 'om_model_element';
+    $values['propname'] = $hydrocode . ' (va-1.0)';
+    $values['object_class'] = $object->object_class;
     $om_model = om_create_property($values, 'name_singular');
   }
   error_log("Model = $om_model->propname - $om_model->propcode ");
@@ -115,9 +144,11 @@ foreach ($data as $element) {
           'varkey' => om_get_dh_varkey($proc),
         );
         // load or establish the property (do not save until sure if we've handled it)
-        $prop = dh_properties_enforce_singularity($proc_data, 'name');
-        error_log("Prop loaded for $procname $prop->propname, $prop->pid");
-        dh_variables_getPlugins($prop);
+        error_log("Looking for: " . print_r($proc_data,1));
+        $prop = om_model_getSetProperty($proc_data, 'name');
+        if (is_object($prop)) {
+          error_log("Prop loaded for $prop->propname " . print_r((array)$prop,1));
+        }
         $translated = om_translate_to_dh($proc, $prop);
         $prop->set_remote = FALSE;
         error_log("Translated $object_class = $translated ");

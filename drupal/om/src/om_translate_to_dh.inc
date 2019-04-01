@@ -3,18 +3,30 @@
 // load routines needed for tablefield handling
 module_load_include('module', 'dh_wsp');
 
+function om_model_getSetProperty($values, $singularity = 'name') {
+  $om_model = dh_properties_enforce_singularity($values, $singularity);
+  if (!$om_model) {
+    // create a model element
+    error_log("$values[varkey] does not exist...creating");
+    $om_model = entity_create('dh_properties', $values);
+    $om_model->save();
+  }
+  return $om_model;
+}
+
 function om_get_property($values, $singularity = 'name') {
   $pids = dh_get_properties($values, $singularity);
+  error_log("Pids:" . print_r((array)$pids, 1)); 
   $om_model = FALSE;
   if (count($pids) > 0) {
-    $pid = array_shift($pids);
+    $pid = array_shift($pids['dh_properties']);
     $om_model = entity_load_single('dh_properties', $pid->pid);
   }
   return $om_model;
 }
 
 function om_create_property($values, $singularity = 'name') {
-  error_log("$cache[varkey] does not exist...creating");
+  error_log("Object does not exist...creating " . print_r($values,1));
   $om_model = dh_properties_enforce_singularity($values, $singularity);
   return $om_model;
 }
@@ -22,8 +34,12 @@ function om_create_property($values, $singularity = 'name') {
 function om_translate_to_dh($om_comp, &$dh_prop) {
   $translated = FALSE;
   // load object plugin if exists
-  $plugin = count($dh_prop->dh_variables_plugins) > 0 ? $dh_prop->dh_variables_plugins[0] : FALSE;
-  $default_subprops = $plugin->getDefaults($dh_prop);
+  $plugin = dh_variables_getPlugins($dh_prop);
+  if (is_object($plugin )) {
+    error_log("Calling getDefaults on " . get_class($plugin ));
+    $default_subprops = $plugin->getDefaults($dh_prop);
+  }
+  
   switch ($om_comp->object_class) {
     case 'dataMatrix':
       $dh_prop->rowkey = $om_comp->keycol1;
@@ -45,16 +61,32 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $dh_prop->propcode = $om_comp->equation;
       $dh_prop->defaultval = $om_comp->defaultval;
       $translated = TRUE;
-      break;
+    break;
+    case 'USGSGageSubComp':
+    case 'USGSGageObject':
+      $dh_prop->propcode = $om_comp->staid;
+      $dh_prop->propvalue = $om_comp->sitetype; #sitetype = 1 - stream gage, 2 - groundwater, 3 - reservoir level;
+      $translated = TRUE;
+    break;
   
   }
   return $translated;
 }
 
 function om_get_dh_varkey($om_comp) {
+  $duplicates = array(
+    'USGSGageSubComp' => 'USGSGageObject'
+  );
+  $object_class = 
+    isset($duplicates[$om_comp->object_class]) 
+    ? $duplicates[$om_comp->object_class]
+    : $om_comp->object_class
+  ;
+  //error_log(" This object_class = $object_class");
+  
   $q = "  select varkey from {dh_variabledefinition} ";
   $q .= " where varcode = :om_class and vocabulary = 'om_object_classes'";
-  $result = db_query($q, array(':om_class' => $om_comp->object_class));
+  $result = db_query($q, array(':om_class' => $object_class));
   $varkey = $result->fetchField();
   return $varkey;
 }
