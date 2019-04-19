@@ -1640,6 +1640,9 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
       // this version just does the dynamic parents requested
       $thisobject->childstatus = extract_arrayvalue($dynamics, 'childid');
       //error_reporting(E_ALL);
+      if (isset($input_props['dt'])) {
+        $thisobject->dt = $input_props['dt'];
+      }
       if (!$test_only) {
          $meanexectime = performRun($listobject, $thisobject, $startdate, $enddate, $runid);
       }

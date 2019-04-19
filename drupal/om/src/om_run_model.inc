@@ -8,17 +8,12 @@ module_load_include('module', 'om');
 //          and the shakeTree run mode.
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
+  $runid_options = om_runid_options(); // will determine what a user can run
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
     '#default_value' => -1,
-    '#options' => array(
-      '0' => t('Pre-Condition'),
-      '1' => t('Historical Conditions'),
-      '2' => t('Current Conditions'),
-      '3' => t('Permit Term Maximum'),
-      '4' => t('Safe Yield (All at Max)'),
-    ),
+    '#options' => $runid_options,
     '#description' => t('Unique Identifier for a model run.'),
     '#required' => TRUE,
     '#multiple' => FALSE,
@@ -59,7 +54,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       '86400' => t('Daily'),
     ),
     '#default_value' => empty($model->dt) ? 86400 : $model->dt,
-    '#description' => t('Model timestep.'),
+    '#description' => t('Model timestep. NOT YET ENABLED - To change timestep, edit model property named "dt"'),
     '#required' => TRUE,
     '#multiple' => FALSE,
     '#weight' => 1,

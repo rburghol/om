@@ -95,13 +95,7 @@ foreach ($data as $element) {
     'propcode'=>'vahydro-1.0', 
     'varkey' => 'om_model_element',
   );
-  $om_model = om_get_property($values, 'propcode_singular');
-  if (!$om_model) {
-    $values['varkey'] = 'om_model_element';
-    $values['propname'] = $hydrocode . ' (va-1.0)';
-    $values['object_class'] = $object->object_class;
-    $om_model = om_create_property($values, 'name_singular');
-  }
+  $om_model = om_model_getSetProperty($values, 'propcode_singular');
   error_log("Model = $om_model->propname - $om_model->propcode ");
   // see if the 
   if (is_object($om_model)) {

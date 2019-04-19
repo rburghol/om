@@ -3,16 +3,6 @@
 // load routines needed for tablefield handling
 module_load_include('module', 'dh_wsp');
 
-function om_model_getSetProperty($values, $singularity = 'name') {
-  $om_model = dh_properties_enforce_singularity($values, $singularity);
-  if (!$om_model) {
-    // create a model element
-    error_log("$values[varkey] does not exist...creating");
-    $om_model = entity_create('dh_properties', $values);
-    $om_model->save();
-  }
-  return $om_model;
-}
 
 function om_get_property($values, $singularity = 'name') {
   $pids = dh_get_properties($values, $singularity);

@@ -32,7 +32,7 @@ function getMergedNHDBasin($hydro_db, $lat, $lon, $extra_basins = 0, $debug = 0,
    $merged_info['outlet_comid'] = $outlet;
    $merged_info['areasqkm'] = $outletarea;
    //Find the tribs for this outlet
-   if ($debug) error_log("\n Gretting Tributaries for $outlet<br>\n");
+   if ($debug) error_log("\n Getting Tributaries for $outlet<br>\n");
    //$result = findTribs($hydro_db,$outlet);
    $result = findMergedTribs($hydro_db,$outlet, $debug);
    $merged_info['flow_tree'] = $result;

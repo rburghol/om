@@ -46,6 +46,14 @@ foreach ($runVars as $thiskey => $thisval) {
       $runVars[$thiskey] = $formValues[$thiskey];
    }
 }
+$offset = $thiskey;
+$optional_input = array('dt'); // This starts at the 9th param.  
+                               // A hinky way of doing it, but works OK for cmd line
+foreach ($optional as $thiskey => $thisval) {
+   if (isset($formValues[$thiskey + $offset])) {
+      $optional_input[$thisval] = $formValues[$thiskey + $offset];
+   }
+}
 
 $startdate = '2000-07-01';
 $enddate = '2000-07-31';
@@ -59,7 +67,7 @@ error_log("Run type $runtype \n");
 switch ($runtype) {
    case 'normal':
    error_log("Calling Normal run with " . print_r($runVars,1) . "\n");
-   runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], array(),  $runVars['cache_level'], array());
+   runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], array(),  $runVars['cache_level'], array(), $optional_input);
    error_log("Returned from Normal run with " . print_r($runVars,1) . "\n");
    break;
    

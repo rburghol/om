@@ -4,16 +4,6 @@
 module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
 
-function om_model_getSetProperty($values, $singularity = 'name') {
-  $om_model = dh_properties_enforce_singularity($values, $singularity);
-  if (!$om_model) {
-    // create a model element
-    error_log("$values[varkey] does not exist...creating");
-    $om_model = entity_create('dh_properties', $values);
-    $om_model->save();
-  }
-  return $om_model;
-}
 // read csv of elementid / hydrocode pairs
 // find dh feature -- report error if it does not exist
 // name = hydrocode + vah-1.0
@@ -76,7 +66,7 @@ foreach ($data as $element) {
     'varkey'=>'om_model_element',
     'object_class' => $object->object_class,
   );
-  $om_model = om_model_getSetProperty($values, $singularity);
+  $om_model = om_model_getSetProperty($values, 'propcode_singular');
   error_log("Model = " . print_r((array)$om_model,1));
   // see if the 
   if (is_object($om_model)) {
