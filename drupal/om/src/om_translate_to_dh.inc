@@ -50,6 +50,10 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     case 'Equation':
       $dh_prop->propcode = $om_comp->equation;
       $dh_prop->defaultval = $om_comp->defaultval;
+      if (length($dh_prop->propcode) > 64) {
+        // set to proptext
+        // @todo: set to proptext of a subcomp-subcomp and handle in plugin
+      }
       $translated = TRUE;
     break;
     case 'USGSGageSubComp':

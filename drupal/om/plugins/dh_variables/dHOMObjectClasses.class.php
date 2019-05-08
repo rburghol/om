@@ -246,6 +246,8 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
   }
+  
+  // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $row) {
     $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
     if (!$varinfo) {

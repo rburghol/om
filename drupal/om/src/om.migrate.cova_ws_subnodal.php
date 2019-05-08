@@ -51,20 +51,33 @@ error_log("elementid = $elementid, hydrocode = $hydrocode, procname = $one_proc,
 // name = hydrocode + vah-1.0
 // iterate through properties
 
+if ($elementid == 'file') {
+  //$filepath = '/var/www/html/files/vahydro/om_lrsegs.txt';
+  //$filepath = '/var/www/html/files/vahydro/om_lrsegs-short.txt';
+  // 2nd param should be hydrocode
+  // To do all model containers, use:
+  //   /www/files/vahydro/vahydrosw_om_wshed_elements.tsv
+  //  This includes subnodes as well as model nodes for scenario 37
+  $filepath = $hydrocode;
+  $elementid = FALSE;
+  $hydrocode = FALSE;
+  error_log("File requested: $filepath");
+}
+
 $om = 'http://deq2.bse.vt.edu/om/get_model.php';
-$filepath = '/var/www/html/files/vahydro/om_lrsegs.txt';
-//$filepath = '/var/www/html/files/vahydro/om_lrsegs-short.txt';
 
 // classes = array() empty mean all
 $classes = array('dataMatrix', 'Equation', 'USGSGageSubComp');
 //$classes = array('Equation');
 
 if (!($elementid and $hydrocode)) {
+  $data = array();
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
   while ($line = fgetcsv($file, 0, "\t")) {
     $data[] = array_combine($header,$line);
   }
+  error_log("File opened with records: " . count($data));
 } else {
   $data = array();
   $data[] = array('elementid' => $elementid, 'hydrocode' => $hydrocode);
@@ -94,6 +107,7 @@ foreach ($data as $element) {
     'featureid' => $om_fid, 
     'propcode'=>'vahydro-1.0', 
     'varkey' => 'om_model_element',
+    'propname' => $hydrocode, 
   );
   $om_model = om_model_getSetProperty($values, 'propcode_singular');
   error_log("Model = $om_model->propname - $om_model->propcode ");
@@ -110,7 +124,7 @@ foreach ($data as $element) {
       'varkey'=>'om_element_connection'
     );
     // retrieve or create the link
-    $om_link = dh_properties_enforce_singularity($link_props, 'varid');
+    $om_link = om_model_getSetProperty($link_props, 'varid');
     // now, we stash the link set_remote property, since it needs to be disabled here
     //   to prevent saving and then resaving on om
     error_log("om_link PID for this entity: $om_link->pid");
