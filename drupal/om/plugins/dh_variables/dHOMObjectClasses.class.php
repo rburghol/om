@@ -58,7 +58,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
     foreach ($props as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        if ($overwrite or !property_exists($entity, $thisvar['propname']) or (property_exists($entity, $thisvar['propname']) and !is_object($thisvar['propname'])) ) {
+        if ($overwrite or !property_exists($entity, $thisvar['propname']) or (property_exists($entity, $thisvar['propname']) and !is_object($entity->{$thisvar['propname']})) ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
           $prop = dh_properties_enforce_singularity($thisvar, 'name');
           if (!$prop) {
@@ -645,6 +645,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $cmd = "Testing Only. \n";
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
+      dpm( $path, "Testing Path ");
       dpm( $cmd, "Testing to execute ");
     }
   }

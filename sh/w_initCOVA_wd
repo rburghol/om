@@ -1,0 +1,8 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+cd /opt/model/apache/batch_updates/cova/
+
+php cbp_set_wd_safeyield.php $1 $2 $3 $4
+cd $pwd
+

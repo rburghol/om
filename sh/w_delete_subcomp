@@ -1,0 +1,6 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+cd /opt/model/apache/batch_updates/cova/
+php delete_subcomp.php $1 $2
+cd $pwd

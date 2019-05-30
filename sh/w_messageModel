@@ -1,0 +1,3 @@
+#!/bin/sh
+# wrapper around php script
+php /opt/model/apache/batch_updates/cova/fn_message_model.php $1 $2 $3 $4

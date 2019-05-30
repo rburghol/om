@@ -1,0 +1,6 @@
+#!/bin/sh
+# wrapper around php script
+olddir=`pwd`
+cd /opt/model/apache/batch_updates/
+php clear_rundata.php $1 $2
+cd $pwd

@@ -75,6 +75,15 @@ class dHOMHydroImpoundment extends dHOMModelElement {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
+      'storage_stage_area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode' => NULL,
+        'propvalue' => 10.0,
+        'propname' => 'storage_stage_area',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_DataMatrix', TRUE),
+      ), 
     );
     return $defaults;
   }
