@@ -15251,17 +15251,27 @@ class hydroImpSmall extends hydroImpoundment {
       return $innerHTML;
    }
    
-   function setProp($propname, $propvalue, $view = '') {
-     
-     //$json_object = json_decode($json);
-     //if (is_object($thisobject) and $json_object
-     if (in_array($propname, array('storage_stage_area', 'matrix'))) {
-       // handle calls to set the stage-storage attributes 
-       // decode from json if applicable
-       //$this->matrix = array('storage','stage','surface_area',0,0,0);
-     }
+  function setProp($propname, $propvalue, $view = '') {
+
+    //$json_object = json_decode($json);
+    //if (is_object($thisobject) and $json_object
+    // subprop_name can be name:subname 
+    // if so, this is a special sub-prop like hydroImpSmall matrix
+    list($subprop_name, $subsub_name) = explode(':', $propname);
+      if ( ($subprop_name == 'storage_stage_area') and ($subsub_name == 'matrix') ) {
+        // handle calls to set the stage-storage attributes 
+        // decode from json if applicable
+        //$this->matrix = array('storage','stage','surface_area',0,0,0);
+        switch ($view) {
+          case 'json-1d':
+          default:
+            $text2table = json_decode($propvalue);
+          break;
+        }
+        $this->setupMatrix($text2table);
+      }
      parent::setProp($propname, $propvalue, $view);
-   }
+  }
    
 }
 

@@ -624,7 +624,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       //        at this time I don't think we should have any Equations sub-subs, but just in case 
         list($propname, $parentname, $grandparentname) = $path;
         // this is a property on a subcomp of the element
-        $setstr = "php set_subprop.php $elid $parentname $object_class $propname \"$propvalue\" \"$mode\" 0 ";
+        //$setstr = "php set_subprop.php $elid $parentname $object_class $propname \"$propvalue\" \"$mode\" 0 ";
+        $setstr = "php set_subprop.php $elid $grandparentname $object_class $parentname:$propname \"$propvalue\" \"$mode\" 0 ";
         // @todo: change syntax from elid propname "subpropname=value" parent_object_class overwrite
         //        to:
         //        elid propname subpropname subpropvalue parent_object_class setprop_mode overwrite 

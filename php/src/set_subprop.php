@@ -27,6 +27,7 @@ $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 // this is the object class of the parent component.
 //error_log("argv mods: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite");
 
+
 if (isset($argv[6])) {
    $overwrite = ( ($argv[6] == 1) or (strtolower($argv[6]) == 'true')) ? TRUE : FALSE;
 } else {
@@ -56,7 +57,7 @@ if (is_object($thisobject)) {
   }
 
   if (isset($thisobject->processors[$comp_name])) {
-    error_log("Tring to change thisobject->processors[$comp_name] subprop $subprop_name in (" . print_r(get_object_vars($thisobject->processors[$comp_name]),1). ") = $subprop_value; ");
+    error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name in (" . print_r(get_object_vars($thisobject->processors[$comp_name]),1). ") = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
     // the setProp() method should be coded to handle all of these
     // generally, if something is a sub-comp of a sub-comp like 
@@ -67,7 +68,7 @@ if (is_object($thisobject)) {
     //    $thisobject->processors['impoundment']->setProp('storage_stage_area', 'JSON storage table');
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
-    //error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);");
+    error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);");
   }
   $result_html = saveObjectSubComponents($listobject, $thisobject, $elid );
   //error_log("Save result: $result_html");

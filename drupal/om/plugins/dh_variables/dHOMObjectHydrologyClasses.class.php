@@ -98,6 +98,10 @@ class dHOMHydroImpoundment extends dHOMModelElement {
   // 4. pass the form to prop->plugin->formRowEdit
 }
 
+class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
+  var $object_class = 'hydroImpSmall';
+
+}
 
 class dHOMUSGSChannelGeomObject extends dHOMModelElement {
   var $object_class = 'USGSChannelGeomObject';
