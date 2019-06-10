@@ -14903,7 +14903,8 @@ class hydroImpSmall extends hydroImpoundment {
       $this->storage_matrix->lutype2 = 1; // lookup type for 2nd lookup variable: 0 - exact match; 1 - interpolate values; 2 - stair step
       if ($this->debug) error_log("setUpMatrix called with $text2table ");
       // add a row for the header line
-      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table <> '') ) {
+      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table == '') ) {
+        // need to initialize storage table
          $this->matrix = array('storage','stage','surface_area',0,0,0);
          $this->storage_matrix->numrows = 3;
          $this->storage_matrix->matrix[] = 'storage';
@@ -14917,9 +14918,10 @@ class hydroImpSmall extends hydroImpoundment {
          $this->storage_matrix->matrix[] = 0.0; // put a basic sample table - conic
       } else {
          if ($text2table <> '') {
-            //error_log("Calling matrix create with texst2table");
+            error_log("Calling matrix create with $text2table");
             $this->storage_matrix->text2table = $text2table;
             $this->storage_matrix->create();
+            $this->matrix = explode(',', $text2table);
          } else {
             $this->storage_matrix->matrix = $this->matrix;// map the text mo to a numerical description
             $this->storage_matrix->numrows = count($this->storage_matrix->matrix) / 3.0;
@@ -15252,7 +15254,6 @@ class hydroImpSmall extends hydroImpoundment {
    }
    
   function setProp($propname, $propvalue, $view = '') {
-
     //$json_object = json_decode($json);
     //if (is_object($thisobject) and $json_object
     // subprop_name can be name:subname 
@@ -15265,9 +15266,10 @@ class hydroImpSmall extends hydroImpoundment {
         switch ($view) {
           case 'json-1d':
           default:
-            $text2table = json_decode($propvalue);
+            $text2table = implode(",",json_decode($propvalue));
           break;
         }
+        error_log("$this->name Calling setupMatrix($text2table)");
         $this->setupMatrix($text2table);
       }
      parent::setProp($propname, $propvalue, $view);
