@@ -2,7 +2,7 @@
 // lib_wooomm.cbp.php
 
 
-class CBPLandDataConnection extends XMLDataConnection {
+class CBPLandDataConnectionBase extends XMLDataConnection {
 //class CBPLandDataConnection extends RSSDataConnection {
 //   var $feed_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=4';
    var $feed_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=4';
@@ -577,6 +577,12 @@ class CBPLandDataConnection extends XMLDataConnection {
    }
 
 }
+
+
+class CBPLandDataConnection extends CBPLandDataConnectionBase {
+	
+}
+
 
 class CBPLandDataConnection_sub extends CBPLandDataConnection {
    //sub-comp version of land data connection
