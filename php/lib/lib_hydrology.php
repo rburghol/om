@@ -3604,17 +3604,8 @@ class modelContainer extends modelObject {
          }
      }
    }
-
-
-   function runModel() {
-      error_log("<b>Beginning Model Run<br>");
-      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
-      $this->systemLog("<b>Beginning Model Run<br>");
-      if ($this->debug) {
-         $this->logDebug("<b>Beginning Model Run</b><br>");
-         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
-         #$this->logDebug($this->timer);
-      }
+   
+   function initTimer() {
       //error_log("<b>Creating Timer<br>");
       $newtimer = new simTimer;
       //error_log("<b>Initializing Timer properties<br>");
@@ -3625,6 +3616,18 @@ class modelContainer extends modelObject {
       #$this->logDebug($newtimer);
       error_log("<b>Setting Timer<br>");
       $this->setSimTimer( $newtimer);
+   }
+
+   function runModel() {
+      error_log("<b>Beginning Model Run<br>");
+      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
+      $this->systemLog("<b>Beginning Model Run<br>");
+      if ($this->debug) {
+         $this->logDebug("<b>Beginning Model Run</b><br>");
+         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
+         #$this->logDebug($this->timer);
+      }
+      $this->initTimer();
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
       }
@@ -6219,6 +6222,11 @@ class timeSeriesFile extends timeSeriesInput {
   var $cache_ts = 1;
   var $location_type = 0; // 0 - local file system, 1 - http
   var $remote_url = '';
+  var $file_vars = FALSE;
+  
+  function sleep() {
+    $file_vars = FALSE;
+  }
 
   function wake() {
     parent::wake();
@@ -6293,6 +6301,7 @@ class timeSeriesFile extends timeSeriesInput {
   function tsVarsFromFile() {
     # get the header line with variable names and the first line of values.
     # 
+    $this->file_vars = array();
     if ($this->debug) {
       $this->logDebug("Function tsVarsFromFile called. <br>");
       $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
@@ -6309,29 +6318,33 @@ class timeSeriesFile extends timeSeriesInput {
     }
     $nb = 0;
     foreach ($first2lines[0] as $thiskey => $thisvar) {
-error_log("Handling $thiskey - $thisvar ");
-       if (trim($thisvar) == '') {
-          $nb++;
-          $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       } else {
-          if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
-             if ($this->debug) {
-                $this->logDebug("$thisvar not in dbcolumntypes array <br>");
-             }
-             $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
-             if ($this->debug) {
-                $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
-             }
-             //$this->state[$thisvar] = $first2lines[1][$thiskey];
+      if (trim($thisvar) == '') {
+        $nb++;
+        $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      } else {
+        if ($thisvar <> 'timestamp') {
+          if (!in_array($thisvar, array_keys($this->file_vars))) {
+            $this->file_vars[] = $thisvar;
           }
+        }
+        if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
           if ($this->debug) {
-             $this->logDebug("Column $thisvar found.<br>\n");
+            $this->logDebug("$thisvar not in dbcolumntypes array <br>");
           }
-       }
-       if ($nb > 0) {
-          $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       }
+          $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
+          error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
+          if ($this->debug) {
+            $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
+          }
+          //$this->state[$thisvar] = $first2lines[1][$thiskey];
+        }
+        if ($this->debug) {
+           $this->logDebug("Column $thisvar found.<br>\n");
+        }
+      }
+      if ($nb > 0) {
+        $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      }
     }
   }
   function showHTMLInfo() {

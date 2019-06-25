@@ -1261,8 +1261,8 @@ function runCOVAProposedWithdrawal ($prop_elid, $runid, $cache_runid, $startdate
       unset($info_obj);
       //error_log("Before unsetting: " . print_r(array_keys($unserobjects),1));
       unset($unserobjects[$prop_elid]);
-      //error_log("After unsetting: " . print_r(array_keys($unserobjects),1));
-      runCached($parentid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props);
+      //error_logrunCached("After unsetting: " . print_r(array_keys($unserobjects),1));
+      ($parentid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props);
       summarizeRun($listobject, $parentid, $runid, $startdate, $enddate, 0, 0);
    } else {
       error_log("Failed to instantiate the base object.\n");
@@ -1603,81 +1603,80 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
    }
   $input_props['outdir'] = isset($input_props['outdir']) ? $input_props['outdir'] : $outdir;
 
-   if ($elementid > 0) {
-
-      if ( (strlen($startdate) > 0) and (strlen($enddate) > 0)) {
-         $input_props['model_startdate'] = $startdate;
-         $input_props['model_enddate'] = $enddate;
-      }
-      
-      // load up all of the things that are in the base model, with caching specified
-      error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
-      $model_elements = loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input_props, $cache_level, $cache_list, $run_date);
-      $error = $model_elements['error'];
-      $thisobject = $model_elements['object'];
-      $components = $model_elements['components'];
-      $cachedlist = $model_elements['cachedlist'];
-      $live = $model_elements['live'];
-      if ($test_only) {
-         error_log("Live running list: " . print_r($live,1));
-         error_log("Cached running list: " . print_r($cachedlist,1));
-         error_log("All components running list: " . print_r($components,1));
-      }
-      // if we did not pass in a start and enddate, grab it from the parent object now
-      if ( (strlen($startdate) == 0) and (strlen($enddate) == 0)) {
-         $startdate = $thisobject->starttime;
-         $enddate = $thisobject->endtime;
-      }
-      // *********************************
-      // *** Dynamic Inserts Now      ****
-      // *********************************
-      // now unserialize and add any dynamically inserted objects
-      $dyna_cache = addDynamicChildElements($modeldb, $input_props, $dynamics, $test_only);
-      //error_log("The following elements were loaded dynamically into the simulation " . print_r($dyna_cache,1));
-      // ask this to report status for children
-      // this version will do reports for all children and chidlren of children
-      //$thisobject->childstatus = $dyna_cache;
-      // this version just does the dynamic parents requested
-      $thisobject->childstatus = extract_arrayvalue($dynamics, 'childid');
-      //error_reporting(E_ALL);
-      if (isset($input_props['dt'])) {
-        $thisobject->dt = $input_props['dt'];
-      }
-      if (!$test_only) {
-         $meanexectime = performRun($listobject, $thisobject, $startdate, $enddate, $runid);
-      }
-      // store the model run data
-      if ($cache_runid <> $runid) {
-         //error_log("$cache_runid <> $runid - logging all components \n");
-         // go ahead and store a copy of all run data for this if it will not overwrite
-         // the source run "cache_runid"
-         //$log_components = array_merge(array($elementid),$live, $dyna_cache);
-         $log_components = array_unique(array_merge(array($elementid),$live, $dyna_cache, $components));
-      } else {
-         // Just store the elements that were actually run live 
-         $log_components = array_merge($live, $dyna_cache);
-      }
-      //error_log("Model Run Data to be stored for " . print_r($log_components,1));
-      if (!$test_only) {
-         storeElementRunData($listobject, $elementid, $log_components, $runid, $run_date, $startdate, $enddate, $meanexectime, 0);
-      }
-      // stash the run info and create summary files for the desired dynamics:
-      if ($cache_runid <> $runid) {
-         // create a cache entry for all objects in this simulation, whether they ran live or cached
-         $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
-      } else {
-         //error_log("($cache_runid <> $runid)");
-         $summarize = $dyna_cache;
-         $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
-      }
-      //error_log("Creating run summary files for " . print_r($summarize,1));
-      if (!$test_only) {
-         // cache only the object of interest and the parent object
-         // @todo: this was disabled for some reason?
-         createModelRunSummaryFiles($listobject, $summarize, $runid);
-      }
-      return;
-   }
+  if ($elementid > 0) {
+    if ( (strlen($startdate) > 0) and (strlen($enddate) > 0)) {
+       $input_props['model_startdate'] = $startdate;
+       $input_props['model_enddate'] = $enddate;
+    }
+    
+    // load up all of the things that are in the base model, with caching specified
+    error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
+    $model_elements = loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input_props, $cache_level, $cache_list, $run_date);
+    $error = $model_elements['error'];
+    $thisobject = $model_elements['object'];
+    $components = $model_elements['components'];
+    $cachedlist = $model_elements['cachedlist'];
+    $live = $model_elements['live'];
+    if ($test_only) {
+       error_log("Live running list: " . print_r($live,1));
+       error_log("Cached running list: " . print_r($cachedlist,1));
+       error_log("All components running list: " . print_r($components,1));
+    }
+    // if we did not pass in a start and enddate, grab it from the parent object now
+    if ( (strlen($startdate) == 0) and (strlen($enddate) == 0)) {
+       $startdate = $thisobject->starttime;
+       $enddate = $thisobject->endtime;
+    }
+    // *********************************
+    // *** Dynamic Inserts Now      ****
+    // *********************************
+    // now unserialize and add any dynamically inserted objects
+    $dyna_cache = addDynamicChildElements($modeldb, $input_props, $dynamics, $test_only);
+    //error_log("The following elements were loaded dynamically into the simulation " . print_r($dyna_cache,1));
+    // ask this to report status for children
+    // this version will do reports for all children and chidlren of children
+    //$thisobject->childstatus = $dyna_cache;
+    // this version just does the dynamic parents requested
+    $thisobject->childstatus = extract_arrayvalue($dynamics, 'childid');
+    //error_reporting(E_ALL);
+    if (isset($input_props['dt'])) {
+      $thisobject->dt = $input_props['dt'];
+    }
+    if (!$test_only) {
+       $meanexectime = performRun($listobject, $thisobject, $startdate, $enddate, $runid);
+    }
+    // store the model run data
+    if ($cache_runid <> $runid) {
+       //error_log("$cache_runid <> $runid - logging all components \n");
+       // go ahead and store a copy of all run data for this if it will not overwrite
+       // the source run "cache_runid"
+       //$log_components = array_merge(array($elementid),$live, $dyna_cache);
+       $log_components = array_unique(array_merge(array($elementid),$live, $dyna_cache, $components));
+    } else {
+       // Just store the elements that were actually run live 
+       $log_components = array_merge($live, $dyna_cache);
+    }
+    //error_log("Model Run Data to be stored for " . print_r($log_components,1));
+    if (!$test_only) {
+       storeElementRunData($listobject, $elementid, $log_components, $runid, $run_date, $startdate, $enddate, $meanexectime, 0);
+    }
+    // stash the run info and create summary files for the desired dynamics:
+    if ($cache_runid <> $runid) {
+       // create a cache entry for all objects in this simulation, whether they ran live or cached
+       $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
+    } else {
+       //error_log("($cache_runid <> $runid)");
+       $summarize = $dyna_cache;
+       $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
+    }
+    //error_log("Creating run summary files for " . print_r($summarize,1));
+    if (!$test_only) {
+       // cache only the object of interest and the parent object
+       // @todo: this was disabled for some reason?
+       createModelRunSummaryFiles($listobject, $summarize, $runid);
+    }
+    return;
+  }
 }
 
 
