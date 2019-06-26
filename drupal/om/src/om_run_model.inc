@@ -59,6 +59,44 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#multiple' => FALSE,
     '#weight' => 1,
   );
+
+	$form['Advanced'] = array();
+	$form['Advanced']['#type'] = 'fieldset';
+	$form['Advanced']['#title'] = t('Advanced Run Options');
+	$form['Advanced']['#collapsible'] = TRUE;
+	$form['Advanced']['#collapsed'] = TRUE;
+	$form['Advanced']['#weight'] = 2;
+  $form['Advanced']['runtype'] = array(
+    '#type' => 'Run Caching/Mode',
+    '#type' => 'select',
+    '#options' => array(
+      'cached' => 'Standard (Container Tree cached)',
+      'shake_tree' => 'Tree (Sequential Tree, with caching)',
+    ),
+    '#size' => 1,
+    '#default' => $model->runtype
+  );
+  // advanced options for shakeTree
+  $form['Advanced']['cache_date'] = array(
+    '#title' => t('Cache Date'),
+    '#description' => t('Date to determine if cacheable components are re-run or not.'),
+    '#default_value' => empty($model->cache_date) ? date('Y-m-d'): date($date_format,$model->cache_date),
+    '#date_format' => $date_format,
+    '#type' => 'date_select',
+    '#date_year_range' => '-20:+0',
+    '#required' => FALSE,
+  );
+  $form['Advanced']['force_overwrite'] = array(
+    '#title' => 'Force Re-run (no caching)',
+    '#type' => 'select',
+    '#options' => array(
+      '0' => 'FALSE',
+      '1' => 'TRUE',
+    ),
+    '#size' => 1,
+    '#default' => $model->force_overwrite
+  );
+  
   // add controls
   $form['controls'] = om_run_model_form_controls($form, $form_state);
   
@@ -145,14 +183,34 @@ function om_run_model($config) {
   //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $config += array(
-    'run_mode' => 'cached',
+    'runtype' => 'cached',
   );
   // run the model 
   $run_id = $config['run_id'];
   $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
-  switch ($config['run_mode']) {
+  switch ($config['runtype']) {
+    case 'shake_tree':
+    // shake tree optionsL
+    
+    $operation = 1; // $operation = 1, should be elementid ONLY 
+    // $elemname = $argv[2] = elementid ONLY (used in query)
+    // $run_id = $argv[3], $startdate = $argv[4], $enddate = $argv[5] = already handled
+    $cache_date = $config['cache_date'];// replace previous run data based on whether or not it has been run since this date
+    // $force_overwrite = $argv[7], $scid = $argv[8], $strict = $argv[9], $run_mode = $argv[10]
+    // operation - method of querying which units to run, usnig 2nd parameter as key
+    $force_overwrite = $config['force_overwrite']; // replace all previous run data for these runs or use a cache_date?
+    $scid = 37; // scenario ID, hardwired scenario ID, should pass in as part of model object for VWP interface at min
+    $strict = $config['strict']; 
+    //strict setting - whether or not to evaluate the unit area on a relatively strict limit in the post-processing verification routine
+    //  strict = 0 - do the run verification routine, but use broad criteria to evaluate it
+    //  strict = 1 - verify with narrow valid criteria
+    //  strict = -1 - do not verify, assume it is OK
+    $run_mode = $config['run_mode']; // run_mode - model setting for use by internal lists etc. select list of 1-100?
+    $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $cache_date $force_overwrite $scid $strict $run_mode";
+    break;
+	
     case 'cached':
     default:
     $setstr = "/usr/bin/php -f /var/www/html/om/run_model.php $elementid $run_id cached $startdate $enddate -1 \"\" 1 0 ";
@@ -184,14 +242,14 @@ function om_message_model($config) {
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $config += array(
     'host' => 'localhost',
-    'run_mode' => 'cached',
+    'runtype' => 'cached',
   );
   // run the model 
   $run_id = $config['run_id'];
   $elementid = $config['elementid'];
   $host = $config['host'];
   $message = $config['message'];
-  switch ($config['run_mode']) {
+  switch ($config['runtype']) {
     case 'cached':
     default:
     // Usage: php fn_message_model.php elementid host message [runid = NULL] 
