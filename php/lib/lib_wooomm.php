@@ -1261,8 +1261,8 @@ function runCOVAProposedWithdrawal ($prop_elid, $runid, $cache_runid, $startdate
       unset($info_obj);
       //error_log("Before unsetting: " . print_r(array_keys($unserobjects),1));
       unset($unserobjects[$prop_elid]);
-      //error_logrunCached("After unsetting: " . print_r(array_keys($unserobjects),1));
-      ($parentid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props);
+      //error_log("After unsetting: " . print_r(array_keys($unserobjects),1));
+      runCached($parentid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props);
       summarizeRun($listobject, $parentid, $runid, $startdate, $enddate, 0, 0);
    } else {
       error_log("Failed to instantiate the base object.\n");
@@ -5554,6 +5554,49 @@ function retrieveElementOperator($elementid, $i) {
    return array('opxml'=>$opxml, $debugHTML=>$innerHTML);
 }
 
+function compactObject(&$thisobject, &$debugHTML = '', &$retarr = array(), $debug = FALSE) {
+  if ($debug) {
+     error_log("Checking for presence of large data types.");
+  }
+  if (property_exists($thisobject, 'listobject')) {
+     $thisobject->listobject = NULL;
+  }
+  if (property_exists($thisobject, 'ucitables')) {
+     $debugHTML .= "Setting a ucitables object on $name.<br>";
+     if ($debug) {
+        error_log("Setting a ucitables object on $name.<br>");
+     }
+     $thisobject->ucitables = NULL;
+  }
+  if (property_exists($thisobject, 'the_geom')) {
+     $debugHTML .= "Nullifying the_geom on $name.<br>";
+     if ($debug) {
+        error_log("Nullifying the_geom on $name - " . substr($thisobject->the_geom,0,64));
+     }
+     if (strlen($thisobject->the_geom) > 0) {
+        $retarr['the_geom'] = $thisobject->the_geom;
+     }
+     $thisobject->the_geom = '';
+  }
+  if (property_exists($thisobject, 'fno')) {
+     $debugHTML .= "Clearing listobject object on $name.<br>";
+     if ($debug) {         
+        error_log("Clearing listobject object on $name.");
+     }
+     $thisobject->fno = '';
+  }
+  if (property_exists($thisobject, 'dbcolumntypes')) {
+     $debugHTML .= "Clearing dbcolumntypes object on $name.<br>";
+     if ($debug) {         
+        error_log("Clearing dbcolumntypes object on $name.");
+     }
+     $thisobject->dbcolumntypes = '';
+  }
+  error_log("Compacted Object: " . print_r(array_keys((array)$thisobject),1));
+  error_log("Object Proc List: " . print_r(array_keys((array)$thisobject->processors),1));
+
+}
+
 function compactSerializeObject($thisobject, $debug = 0) {
     
    $innerHTML = '';
@@ -5565,49 +5608,14 @@ function compactSerializeObject($thisobject, $debug = 0) {
    if (is_object($thisobject)) {
       # compact the object before saving it to XML
       # zero out things that shold not be saved
-      $debugHTML .= "Stripping large generic data from object for compact storage.<br>";
       $thisobject->initialized = 0; # set this to zero so that the model will wake and be refreshed
       $name = 'Un-Named Object';
       if (property_exists($thisobject, 'name')) {
          $name = $thisobject->name;
       }
-      if ($debug) {
-         error_log("Checking for presence of large data types.");
-      }
-      if (property_exists($thisobject, 'listobject')) {
-         $thisobject->listobject = NULL;
-      }
-      if (property_exists($thisobject, 'ucitables')) {
-         $debugHTML .= "Setting a ucitables object on $name.<br>";
-         if ($debug) {
-            error_log("Setting a ucitables object on $name.<br>");
-         }
-         $thisobject->ucitables = NULL;
-      }
-      if (property_exists($thisobject, 'the_geom')) {
-         $debugHTML .= "Nullifying the_geom on $name.<br>";
-         if ($debug) {
-            error_log("Nullifying the_geom on $name - " . substr($thisobject->the_geom,0,64));
-         }
-         if (strlen($thisobject->the_geom) > 0) {
-            $retarr['the_geom'] = $thisobject->the_geom;
-         }
-         $thisobject->the_geom = '';
-      }
-      if (property_exists($thisobject, 'fno')) {
-         $debugHTML .= "Clearing listobject object on $name.<br>";
-         if ($debug) {         
-            error_log("Clearing listobject object on $name.");
-         }
-         $thisobject->fno = '';
-      }
-      if (property_exists($thisobject, 'dbcolumntypes')) {
-         $debugHTML .= "Clearing dbcolumntypes object on $name.<br>";
-         if ($debug) {         
-            error_log("Clearing dbcolumntypes object on $name.");
-         }
-         $thisobject->dbcolumntypes = '';
-      }
+      $debugHTML .= "Stripping large generic data from object for compact storage.<br>";
+      $debugHTML .= compactObject($thisobject, $debugHTML, $retarr, $debug);
+      
       $debugHTML .= "Putting object to sleep.<br>";
       if ($debug) {
          error_log("Putting object to sleep.");
@@ -6129,7 +6137,8 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
             $innerHTML .= "Geometry did not load properly\n";
          }
       }
-      $compres = compactSerializeObject($thisobject);
+      error_log("Serializing for storage in db");
+      $compres = compactSerializeObject($thisobject, 1);
       if (!$compres['error']) {
          if ($debug) {
             $debugHTML .= "Storing inputs and properties on $elementid <br>\n";
@@ -6169,7 +6178,7 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
          $listobject->querystring .= " where elementid = $elementid ";
          if ($debug) {
             $debugHTML .= "$listobject->querystring ;<br>";
-            //error_log($listobject->querystring);
+            error_log($listobject->querystring);
          }
          $listobject->performQuery();
          if ($debug) {
@@ -6178,6 +6187,7 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
       } else {
          $debugHTML .= $compres['errorHTML'];
       }
+      error_log("Finished storing");
    } else {
       $innerHTML .= "\n\nThere was a problem loading object $elementid - " . $loadres['error'];
    }
