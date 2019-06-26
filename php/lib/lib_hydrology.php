@@ -6226,6 +6226,7 @@ class timeSeriesFile extends timeSeriesInput {
   
   function sleep() {
     $file_vars = FALSE;
+    parent::sleep();
   }
 
   function wake() {
@@ -6317,6 +6318,10 @@ class timeSeriesFile extends timeSeriesInput {
       $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
     }
     $nb = 0;
+    if (!isset($first2lines[0]['timestamp'])) {
+      error_log("Not a readable text file in $this->getFileName()");
+      return;
+    }
     foreach ($first2lines[0] as $thiskey => $thisvar) {
       if (trim($thisvar) == '') {
         $nb++;

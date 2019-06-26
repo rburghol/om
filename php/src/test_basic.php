@@ -8,7 +8,7 @@ include_once('xajax_modeling.element.php');
 print("Un-serializing Model Object <br>");
 $debug = 0;
 
-$elementid = 30665;
+$elementid = 340394;
 if (isset($_GET['elementid'])) {
    $elementid = $_GET['elementid'];
 }
@@ -29,6 +29,14 @@ $thisobject->outurl = $outurl;
 
 $thisobject->wake();
 error_log("Element $elementid wake() Returned from calling routine.");
+
+$ret = compactSerializeObject($thisobject, TRUE);
+die;
+
+$prop_array = array('name'=> 'Test EL', 'filepath' => '/opt/model/p6/p6_gb604/out/p532cal_062211_A51121_eos_all.csv');
+$thisobject->name = $prop_array['name'];
+updateObjectProps(1, $elementid, $prop_array, 0);
+
 $thisobject->init();
 error_log("Element $elementid init() Returned from calling routine.");
 $debugstring = '';

@@ -579,27 +579,107 @@ class CBPLandDataConnectionBase extends XMLDataConnection {
 }
 
 
-class CBPLandDataConnectionFile extends TimeSeriesFile {
+class CBPLandDataConnectionFile extends timeSeriesFile {
 //   var $feed_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=4';
-   var $filepath = 'http://deq2.bse.vt.edu/p6/';
+  var $filepath = '/tmp/text';
 
-   // element for connecting to land use parameters, and outputs, 
-   // with a facility for multiplying outputs by the land use areas DataMatrix
-   // for modeling the landuse change effects
-   var $lunames = array();
-   var $scid = -1;
-   var $id1 = 'land'; # model data class: river, land, or met
-   var $id2 = ''; # land segment: i.e., A24001
-   var $riverseg = ''; // optional, this will only be used during calls to "create()" method, restricting the historical land use to the given river and land segment intersection
-   var $max_memory_values = 500;
-   var $locationid = -1;
-   var $romode = 'component';
-   var $hspf_timestep = 3600.0;
-   var $serialist = 'lunames';
-   var $datecolumn = 'thisdatetime';
-   var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
-   var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+  // element for connecting to land use parameters, and outputs, 
+  // with a facility for multiplying outputs by the land use areas DataMatrix
+  // for modeling the landuse change effects
+  var $lunames = array();
+  var $scid = -1;
+  var $id1 = 'land'; # model data class: river, land, or met
+  var $id2 = ''; # land segment: i.e., A24001
+  var $riverseg = ''; // optional, this will only be used during calls to "create()" method, restricting the historical land use to the given river and land segment intersection
+  var $max_memory_values = 500;
+  var $locationid = -1;
+  var $romode = 'component';
+  var $hspf_timestep = 3600.0;
+  var $serialist = 'lunames';
+  var $datecolumn = 'thisdatetime';
+  var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
+  var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+   
+	// Needs to Support:
+  // - Using Text File instead of XML connection
+  // - local munging of timestep?
+  //   Could pass entire hourly simulation to model, and use:
+  //     var $intmethod = 3;
+  //   Which will do a period mean inflow for us (but may be time-consuming)
+  // - Use a shared runtime database table 
+  // - Make runtime database table persistant 
+  // @todo: explore passing arrays to broadcast object, 
+  //        such as the array of current runoff for a given landseg
+  //        Or just store it in a global, accessible by runoff objects
   
+   // @todo: 
+   // Implement global land seg data
+   // global $cbp_landseg_data;
+    // $cbp_landseg_data 
+  // Behavior
+
+  function getFileName() {
+    // This overrides the parent method which used a file browser no longer desired.
+    // handles file movement in the background, choices among source types
+    $retfile = $this->filepath;
+    return $retfile;
+  }
+  
+
+  function tsVarsFromFile() {
+    # get the header line with variable names and the first line of values.
+    # 
+    $this->file_vars = array();
+    if ($this->debug) {
+      $this->logDebug("Function tsVarsFromFile called. <br>");
+      $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
+    }
+    // set base types to avoid timestamp troubles
+    $this->setBaseTypes();
+    //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
+    error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
+    error_log("Opening for reading: " . $this->getFileName() . "<br>");
+    return;
+    $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
+    if ($this->debug) { 
+      $this->logDebug("First Line of $this->name : " . print_r($first2lines[0],1) . "<br>");
+      $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
+    }
+    $nb = 0;
+    if (!isset($first2lines[0]['timestamp'])) {
+      error_log("Not a readable text file in $this->getFileName()");
+      return;
+    }
+    foreach ($first2lines[0] as $thiskey => $thisvar) {
+      if (trim($thisvar) == '') {
+        $nb++;
+        $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      } else {
+        if ($thisvar <> 'timestamp') {
+          if (!in_array($thisvar, array_keys($this->file_vars))) {
+            $this->file_vars[] = $thisvar;
+          }
+        }
+        if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
+          if ($this->debug) {
+            $this->logDebug("$thisvar not in dbcolumntypes array <br>");
+          }
+          $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
+          error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
+          if ($this->debug) {
+            $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
+          }
+          //$this->state[$thisvar] = $first2lines[1][$thiskey];
+        }
+        if ($this->debug) {
+           $this->logDebug("Column $thisvar found.<br>\n");
+        }
+      }
+      if ($nb > 0) {
+        $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      }
+    }
+}
    function init() {
       parent::init();
       //$this->getLandUses();
@@ -874,21 +954,6 @@ class CBPLandDataConnectionFile extends TimeSeriesFile {
 }
 
 class CBPLandDataConnection extends CBPLandDataConnectionBase {
-  global $cbp_landseg_data;
-    // $cbp_landseg_data 
-	// Needs to Support:
-  // - Using Text File instead of XML connection
-  // - local munging of timestep?
-  //   Could pass entire hourly simulation to model, and use:
-  //     var $intmethod = 3;
-  //   Which will do a period mean inflow for us (but may be time-consuming)
-  // - Use a shared runtime database table 
-  // - Make runtime database table persistant 
-  // @todo: explore passing arrays to broadcast object, 
-  //        such as the array of current runoff for a given landseg
-  //        Or just store it in a global, accessible by runoff objects
-  
-  // Behavior
 }
 
 

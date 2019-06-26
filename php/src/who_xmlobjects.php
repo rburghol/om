@@ -163,7 +163,7 @@ if($result === true)
 {
    $xml = $serializer->getSerializedData();
    $who_xmlobjects['CBPLandDataConnectionFile']['xml'] = $xml;
-   $who_xmlobjects['CBPLandDataConnectionFileFile']['type'] = '1'; 
+   $who_xmlobjects['CBPLandDataConnectionFile']['type'] = '1'; 
    $who_xmlobjects['CBPLandDataConnectionFile']['toolgroup'] = 2;# type 1 - stand-alone object, 2 - sub-component only, 3 - model container (runnable), 4 - both stand-alone and sub-comp
    $who_xmlobjects['CBPLandDataConnectionFile']['name'] = 'CBP6 Landseg Data';
    $who_xmlobjects['CBPLandDataConnectionFile']['parentprops'] = array('tablecols'=>'publicvars','lon_col'=>'publicvars');
