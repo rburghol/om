@@ -253,7 +253,8 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
-    $rowform[$row->propname] = array(
+    $mname = $this->handleFormPropname($row->propname);
+    $rowform[$mname] = array(
       '#title' => t($varinfo->varname),
       '#type' => 'textfield',
       '#description' => $varinfo->vardesc,
@@ -335,6 +336,21 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
       }
     }
     return $pcts;
+  }
+  
+  // @todo: move this into dh module once we are satisifed that it is robust
+  public function attachNamedForm(&$rowform, $row) {
+    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    $mname = $this->handleFormPropname($row->propname);
+    $rowform[$mname] = array(
+      '#title' => t($varinfo->varname),
+      '#type' => 'textfield',
+      '#description' => $varinfo->vardesc,
+      '#default_value' => !empty($row->propvalue) ? $row->propvalue : "0.0",
+    );
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -966,7 +982,8 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
     $pform = array();
     $this->formRowEdit($pform, $entity);
     // harvest pieces I want to keep
-    $form[$entity->propname] = $pform['propcode'];
+    $mname = $this->handleFormPropname($row->propname);
+    $form[$mname] = $pform['propcode'];
   }
   
   public function applyEntityAttribute($property, $value) {
