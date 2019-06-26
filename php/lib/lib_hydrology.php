@@ -194,7 +194,7 @@ class modelObject {
     // set a name for the temp table that will not hose the db
     $targ = array(' ',':','-','.');
     $repl = array('_', '_', '_', '_');
-    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+    $this->setDBTablePrefix();
     $this->dbtblname = $this->tblprefix . 'datalog';
     $this->setDataColumnTypes();
 
@@ -203,6 +203,11 @@ class modelObject {
     
 
   }
+  
+  function setDBTablePrefix() {
+    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+  }
+  
   function setPropDesc() {
   }
 
@@ -5432,6 +5437,7 @@ class timeSeriesInput extends modelObject {
    var $ts_enabled = 1; // can turn this off if we retieved no data for this TS
    var $filepath = '';
    var $db_cache_name = ''; # name of an auxiliary table to hold the time series if we need to save memory
+   var $db_cache_persist = FALSE; # whether to keep this in the model runtime database
    var $max_memory_values = -1; # setting this to greater than zero results in cacheing
    var $cache_create_sql = ''; // place to hold the create statement for debugging purposes
    var $tscount = 0;
@@ -5529,7 +5535,7 @@ class timeSeriesInput extends modelObject {
    
    function cleanUp() {
       # remove all the temp tables associated with this object
-      if (is_object($this->listobject)) {
+      if (!$this->db_cache_persist and is_object($this->listobject)) {
          if ($this->listobject->tableExists($this->db_cache_name)) {
             $this->listobject->querystring = "  drop table $this->db_cache_name ";
             //error_log("Dropping db cache for $this->name ");
@@ -5611,7 +5617,13 @@ class timeSeriesInput extends modelObject {
 
 
    function tsvaluesFromLogFile($infile='') {
-      # check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
+     // @todo: for elements with a persistent cache OR for those with a shared cache
+     //         1. check to see if the cache table exists already.
+     //         2. If cache table already exists, check date on table in cache table lookup
+     //           - this is something to borrow from the analysis table/session table management
+     //         3. If cache date is < file modified date then do nothing and return
+     //         4. Otherwise, proceed as normal     
+     // check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
       if (!(strlen($infile) > 0)) {
          if (strlen($this->tsfile) == 0) {
             $this->tsfile = 'tsvalues.' . $this->componentid . '.csv';
@@ -5750,7 +5762,7 @@ class timeSeriesInput extends modelObject {
             $this->logDebug("Using the following db-columntypes: " . print_r($this->dbcolumntypes,1) . " <br>");
          }
          //$this->listobject->debug = 1;
-         $this->cache_create_sql = $this->listobject->array2tmpTable($this->tsvalues, $this->db_cache_name, $columns, $this->dbcolumntypes, 1, $this->bufferlog);
+         $this->cache_create_sql = $this->listobject->array2Table($this->tsvalues, $this->db_cache_name, $columns, $this->dbcolumntypes, 1, $this->bufferlog, $this->db_cache_persist);
          //$this->listobject->debug = 0;
          if ($this->debug) {
             $this->logDebug($this->cache_create_sql);
@@ -6223,16 +6235,18 @@ class timeSeriesFile extends timeSeriesInput {
   var $location_type = 0; // 0 - local file system, 1 - http
   var $remote_url = '';
   var $file_vars = FALSE;
+  var $file_info = FALSE;
   
   function sleep() {
     $file_vars = FALSE;
+    $file_info = FALSE;
     parent::sleep();
   }
 
   function wake() {
     parent::wake();
     $fe = fopen($this->getFileName(),'r');
-    error_log("File open result: $fe ");
+    error_log("File open result: $fe for " . $this->getFileName());
     if ($fe) {
       if ($this->location_type == 0) {
         fclose($fe);
@@ -6246,6 +6260,23 @@ class timeSeriesFile extends timeSeriesInput {
     error_log("File Variables loaded. wake() returning.");
   }
 
+  function getFileInfo() {
+    if (!is_array($this->file_info)) {
+      $this->file_info = array();
+    }
+    $this->file_info['path'] = $this->getFileName();
+    $this->file_info['location_type'] = ($this->location_type == 1) ? 'Remote' : 'Unknown';
+    $fe = fopen($this->getFileName(),'r');
+    if ($fe) {
+      $this->file_info['handle'] = $fe;
+    }
+    if ($fe and ($this->location_type == 0)) {
+      $this->file_info['location_type'] = 'Local';
+      $this->file_info['filemtime'] = filemtime($file_info['path']);
+      $this->file_info['filesize'] = filesize($file_info['path']);
+    }
+  }
+  
   function getFileName() {
     // handles file movement in the background, choices among source types
     switch ($this->location_type) {
@@ -6310,8 +6341,8 @@ class timeSeriesFile extends timeSeriesInput {
     // set base types to avoid timestamp troubles
     $this->setBaseTypes();
     //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
-    error_log("Opening for reading: " . $this->getFileName() . "<br>");
+    //error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
+    //error_log("Opening for reading: " . $this->getFileName() . "<br>");
     $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
     if ($this->debug) { 
       $this->logDebug("First Line of $this->name : " . print_r($first2lines[0],1) . "<br>");
@@ -6319,8 +6350,8 @@ class timeSeriesFile extends timeSeriesInput {
     }
     $nb = 0;
     if (!isset($first2lines[0]['timestamp'])) {
-      error_log("Not a readable text file in $this->getFileName()");
-      return;
+      error_log("timestamp column missing in text file in $this->getFileName()");
+      //return;
     }
     foreach ($first2lines[0] as $thiskey => $thisvar) {
       if (trim($thisvar) == '') {
@@ -6328,7 +6359,7 @@ class timeSeriesFile extends timeSeriesInput {
         $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
       } else {
         if ($thisvar <> 'timestamp') {
-          if (!in_array($thisvar, array_keys($this->file_vars))) {
+          if (!in_array($thisvar, $this->file_vars)) {
             $this->file_vars[] = $thisvar;
           }
         }

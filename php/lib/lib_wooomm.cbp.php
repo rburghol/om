@@ -589,7 +589,9 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   var $lunames = array();
   var $scid = -1;
   var $id1 = 'land'; # model data class: river, land, or met
-  var $id2 = ''; # land segment: i.e., A24001
+  var $version = ''; # model version: i.e., cbp6
+  var $scenario = ''; # 062211
+  var $landseg = ''; # land segment: i.e., A24001
   var $riverseg = ''; // optional, this will only be used during calls to "create()" method, restricting the historical land use to the given river and land segment intersection
   var $max_memory_values = 500;
   var $locationid = -1;
@@ -625,61 +627,6 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     return $retfile;
   }
   
-
-  function tsVarsFromFile() {
-    # get the header line with variable names and the first line of values.
-    # 
-    $this->file_vars = array();
-    if ($this->debug) {
-      $this->logDebug("Function tsVarsFromFile called. <br>");
-      $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
-    }
-    // set base types to avoid timestamp troubles
-    $this->setBaseTypes();
-    //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
-    error_log("Opening for reading: " . $this->getFileName() . "<br>");
-    return;
-    $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    if ($this->debug) { 
-      $this->logDebug("First Line of $this->name : " . print_r($first2lines[0],1) . "<br>");
-      $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
-    }
-    $nb = 0;
-    if (!isset($first2lines[0]['timestamp'])) {
-      error_log("Not a readable text file in $this->getFileName()");
-      return;
-    }
-    foreach ($first2lines[0] as $thiskey => $thisvar) {
-      if (trim($thisvar) == '') {
-        $nb++;
-        $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-      } else {
-        if ($thisvar <> 'timestamp') {
-          if (!in_array($thisvar, array_keys($this->file_vars))) {
-            $this->file_vars[] = $thisvar;
-          }
-        }
-        if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
-          if ($this->debug) {
-            $this->logDebug("$thisvar not in dbcolumntypes array <br>");
-          }
-          $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-          error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
-          if ($this->debug) {
-            $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
-          }
-          //$this->state[$thisvar] = $first2lines[1][$thiskey];
-        }
-        if ($this->debug) {
-           $this->logDebug("Column $thisvar found.<br>\n");
-        }
-      }
-      if ($nb > 0) {
-        $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-      }
-    }
-}
    function init() {
       parent::init();
       //$this->getLandUses();
@@ -711,14 +658,55 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    
    function wake() {
       parent::wake();
+      // @todo: move this to parent class after testing
+      $this->getFileInfo();
+      $this->setDBCacheName();
       // @todo: make this persistent, and shared
       $this->datatemp = 'tmp_crosstab' . $this->componentid;
       $this->lunames = array();
-      if ($this->debug) error_log("Calling getLandUses()");
+      //if ($this->debug) 
+        error_log("Calling getLandUses()");
       // @todo: check sub-comps for a 'filepath' variable.
       //        this can be used to over-ride the default filepath property
       $this->getLandUses();
    }
+   
+   function setDBCacheName() {
+      # set a name for the temp table that will not hose the db
+      $this->db_cache_name = strtolower('cbp_' . implode('_', array($this->version, $this->scenario, $this->landseg)));
+      $this->db_cache_persist = TRUE; // we can do this for files that are large and infrequently updated
+      //error_log("DSN $this->name set to $this->db_cache_name ");
+   }
+   
+  function tsvaluesFromLogFile($infile='') {
+    // @todo: for elements with a persistent cache OR for those with a shared cache
+    //         1. check to see if the cache table exists already.
+    //         2. If cache table already exists, check date on table in cache table lookup
+    //           - this is something to borrow from the analysis table/session table management
+    //         3. If cache date is < file modified date then do nothing and return
+    //         4. Otherwise, proceed as normal     
+    // check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
+    // if table exists, just return, all is cool.
+    if (is_object($this->listobject)) {
+      if ($this->listobject->tableExists($this->db_cache_name)) {
+       error_log("Cache Table $this->db_cache_name already exists. Returning.");
+       return;
+      }
+    }
+    parent::tsvaluesFromLogFile($infile);
+  }
+   
+  function tsvalues2listobject($columns = array()) {
+    // if table exists, just return, all is cool.
+    if (is_object($this->listobject)) {
+     if ($this->listobject->tableExists($this->db_cache_name)) {
+       error_log("Cache Table $this->db_cache_name already exists. Returning.");
+       return;
+     }
+    }
+    // otherwise use parent methods
+    parent::tsvalues2listobject($columns);
+  }
 
    function step() {
       // all step methods MUST call preStep(),execProcessors(), postStep()
@@ -854,6 +842,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
       } else {
          if ($this->debug) {
             $this->logdebug("landuse sub-component not found <br>\n");
+            error_log("$this->name: landuse sub-component not found <br>\n");
          }
       }
       $this->state['Qout'] = floatval($Qout);
@@ -879,6 +868,18 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    function showHTMLInfo() {
       $HTMLInfo = '';
       $HTMLInfo .= parent::showHTMLInfo() . "<hr>";
+      $HTMLInfo .= "File Info:" . print_r($this->file_info,1) . "<hr>";
+      $HTMLInfo .= "DB Cache: $this->db_cache_name (Persist = " . intval($this->db_cache_persist);
+      if (is_object($this->listobject)) {
+        $HTMLInfo .= ", Exist = " . intval($this->listobject->tableExists($this->db_cache_name)) . " ) <hr>";
+        $HTMLInfo .= "DB Host:" . pg_host($this->listobject->dbconn);
+        $HTMLInfo .= ", Port:" . pg_port($this->listobject->dbconn);
+        $HTMLInfo .= ", Name:" . pg_dbname($this->listobject->dbconn);
+        $HTMLInfo .= " )";
+      } else {
+        $HTMLInfo .= " ) <hr>";
+      }
+      $HTMLInfo .= "Vars from File:" . print_r($this->file_vars,1) . "<hr>";
       return $HTMLInfo;
    }
 
@@ -1211,7 +1212,7 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
       $innerHTML .= "<b>Exec. Rank:</b> " . $formatted->formpieces['fields']['exec_hierarch'] . "<BR>";
       $innerHTML .= "<b>Description:</b> " . $formatted->formpieces['fields']['description'];
       $innerHTML .= "<br><b>Scenario:</b> " . $formatted->formpieces['fields']['scid'];
-      $innerHTML .= " | <b>Landseg ID:</b> " . $formatted->formpieces['fields']['id2'];
+      $innerHTML .= " | <b>Landseg ID:</b> " . $formatted->formpieces['fields']['landseg'];
       $innerHTML .= " | <b>Data Timestep:</b> " . $formatted->formpieces['fields']['hspf_timestep'];
       $innerHTML .= "<br><b>Latitude:</b> " . $formatted->formpieces['fields']['lat_dd'];
       $innerHTML .= " | <b>Longitude:</b> " . $formatted->formpieces['fields']['lon_dd'];

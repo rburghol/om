@@ -4526,7 +4526,7 @@ function addElementFormPanel($formValues, $who_xmlobjects) {
    $showtime = 0;
 
    #$debug = 1;
-error_log("AddElementFormPanel Called ");
+    //error_log("AddElementFormPanel Called ");
 
    # format output into tabbed display object
    $taboutput = new tabbedListObject;
@@ -4632,8 +4632,8 @@ error_log("AddElementFormPanel Called ");
    #if ($debug) {
       $taboutput->tab_HTML['debug'] .= "Geometry Set to: $geomx - $geomy <br>";
    #}
-$elid = $formValues['elementid'];
-error_log("Action type: $actiontype ");
+  $elid = $formValues['elementid'];
+  //error_log("Action type: $actiontype ");
    switch ($actiontype) {
       case 'delete':
          #$debug = 1;
@@ -4700,7 +4700,7 @@ error_log("Action type: $actiontype ");
    #################################################################################
    ###                       Panel 1 - General Properties                        ###
    #################################################################################
-   error_log(" Showing General Properties");
+   //error_log(" Showing General Properties");
    $taboutput->tab_HTML['generalprops'] .= "<font class='heading1'>Modeling Element Form - $elid</font><br>";
    # show the menu of elements to choose from
    # construct SQL for this:
@@ -4758,7 +4758,7 @@ error_log("Action type: $actiontype ");
       }
       #$innerHTML .= "Perm: $elemperms <br>";
       # pass the listobject to these object for their use
-error_log("Calling unserializeSingleModelObject($elementid); ");
+      //error_log("Calling unserializeSingleModelObject($elementid); ");
       $unser = unserializeSingleModelObject($elementid);
       $thisobject = $unser['object'];
       $thisobject->listobject = $listobject;
@@ -7695,10 +7695,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
         error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
          $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-         error_log("Calling getObjectXML(listobject, $elementid) ");
+         //error_log("Calling getObjectXML(listobject, $elementid) ");
          $qresult = getObjectXML($listobject, $elementid);
       }
       if ($qresult['error']) {
+        error_log("Calling getObjectXML(listobject, $elementid) " . $qresult['error']);
         return FALSE;
       }
       $record = $qresult['record'];

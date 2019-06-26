@@ -1,6 +1,6 @@
 <?php
 
-error_log("Loading lib_batchmodel.php from /www/lib tree");
+//error_log("Loading lib_batchmodel.php from /www/lib tree");
 $connstring = "host=$vwuds_dbip dbname=vwuds user=$dbuser password=$dbpass";
 $dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
 
