@@ -3604,17 +3604,8 @@ class modelContainer extends modelObject {
          }
      }
    }
-
-
-   function runModel() {
-      error_log("<b>Beginning Model Run<br>");
-      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
-      $this->systemLog("<b>Beginning Model Run<br>");
-      if ($this->debug) {
-         $this->logDebug("<b>Beginning Model Run</b><br>");
-         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
-         #$this->logDebug($this->timer);
-      }
+   
+   function initTimer() {
       //error_log("<b>Creating Timer<br>");
       $newtimer = new simTimer;
       //error_log("<b>Initializing Timer properties<br>");
@@ -3625,6 +3616,18 @@ class modelContainer extends modelObject {
       #$this->logDebug($newtimer);
       error_log("<b>Setting Timer<br>");
       $this->setSimTimer( $newtimer);
+   }
+
+   function runModel() {
+      error_log("<b>Beginning Model Run<br>");
+      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
+      $this->systemLog("<b>Beginning Model Run<br>");
+      if ($this->debug) {
+         $this->logDebug("<b>Beginning Model Run</b><br>");
+         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
+         #$this->logDebug($this->timer);
+      }
+      $this->initTimer();
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
       }
@@ -6219,6 +6222,11 @@ class timeSeriesFile extends timeSeriesInput {
   var $cache_ts = 1;
   var $location_type = 0; // 0 - local file system, 1 - http
   var $remote_url = '';
+  var $file_vars = FALSE;
+  
+  function sleep() {
+    $file_vars = FALSE;
+  }
 
   function wake() {
     parent::wake();
@@ -6293,6 +6301,7 @@ class timeSeriesFile extends timeSeriesInput {
   function tsVarsFromFile() {
     # get the header line with variable names and the first line of values.
     # 
+    $this->file_vars = array();
     if ($this->debug) {
       $this->logDebug("Function tsVarsFromFile called. <br>");
       $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
@@ -6309,29 +6318,33 @@ class timeSeriesFile extends timeSeriesInput {
     }
     $nb = 0;
     foreach ($first2lines[0] as $thiskey => $thisvar) {
-error_log("Handling $thiskey - $thisvar ");
-       if (trim($thisvar) == '') {
-          $nb++;
-          $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       } else {
-          if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
-             if ($this->debug) {
-                $this->logDebug("$thisvar not in dbcolumntypes array <br>");
-             }
-             $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
-             if ($this->debug) {
-                $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
-             }
-             //$this->state[$thisvar] = $first2lines[1][$thiskey];
+      if (trim($thisvar) == '') {
+        $nb++;
+        $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      } else {
+        if ($thisvar <> 'timestamp') {
+          if (!in_array($thisvar, array_keys($this->file_vars))) {
+            $this->file_vars[] = $thisvar;
           }
+        }
+        if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
           if ($this->debug) {
-             $this->logDebug("Column $thisvar found.<br>\n");
+            $this->logDebug("$thisvar not in dbcolumntypes array <br>");
           }
-       }
-       if ($nb > 0) {
-          $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       }
+          $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
+          error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
+          if ($this->debug) {
+            $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
+          }
+          //$this->state[$thisvar] = $first2lines[1][$thiskey];
+        }
+        if ($this->debug) {
+           $this->logDebug("Column $thisvar found.<br>\n");
+        }
+      }
+      if ($nb > 0) {
+        $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      }
     }
   }
   function showHTMLInfo() {
@@ -14903,7 +14916,8 @@ class hydroImpSmall extends hydroImpoundment {
       $this->storage_matrix->lutype2 = 1; // lookup type for 2nd lookup variable: 0 - exact match; 1 - interpolate values; 2 - stair step
       if ($this->debug) error_log("setUpMatrix called with $text2table ");
       // add a row for the header line
-      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table <> '') ) {
+      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table == '') ) {
+        // need to initialize storage table
          $this->matrix = array('storage','stage','surface_area',0,0,0);
          $this->storage_matrix->numrows = 3;
          $this->storage_matrix->matrix[] = 'storage';
@@ -14917,9 +14931,10 @@ class hydroImpSmall extends hydroImpoundment {
          $this->storage_matrix->matrix[] = 0.0; // put a basic sample table - conic
       } else {
          if ($text2table <> '') {
-            //error_log("Calling matrix create with texst2table");
+            error_log("Calling matrix create with $text2table");
             $this->storage_matrix->text2table = $text2table;
             $this->storage_matrix->create();
+            $this->matrix = explode(',', $text2table);
          } else {
             $this->storage_matrix->matrix = $this->matrix;// map the text mo to a numerical description
             $this->storage_matrix->numrows = count($this->storage_matrix->matrix) / 3.0;
@@ -15252,7 +15267,6 @@ class hydroImpSmall extends hydroImpoundment {
    }
    
   function setProp($propname, $propvalue, $view = '') {
-
     //$json_object = json_decode($json);
     //if (is_object($thisobject) and $json_object
     // subprop_name can be name:subname 
@@ -15265,9 +15279,10 @@ class hydroImpSmall extends hydroImpoundment {
         switch ($view) {
           case 'json-1d':
           default:
-            $text2table = json_decode($propvalue);
+            $text2table = implode(",",json_decode($propvalue));
           break;
         }
+        error_log("$this->name Calling setupMatrix($text2table)");
         $this->setupMatrix($text2table);
       }
      parent::setProp($propname, $propvalue, $view);
