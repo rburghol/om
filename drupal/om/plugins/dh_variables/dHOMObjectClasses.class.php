@@ -344,13 +344,11 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
+    $formshell = array();
+    // use standard formatting to enable choices.
+    $this->formRowEdit($formshell, $row);
     $mname = $this->handleFormPropname($row->propname);
-    $rowform[$mname] = array(
-      '#title' => t($varinfo->varname),
-      '#type' => 'textfield',
-      '#description' => $varinfo->vardesc,
-      '#default_value' => !empty($row->propvalue) ? $row->propvalue : "0.0",
-    );
+    $rowform[$mname] = $formshell['propvalue'];
   }
   
   public function applyEntityAttribute($property, $value) {
