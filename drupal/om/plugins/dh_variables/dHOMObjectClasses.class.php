@@ -4,6 +4,37 @@ module_load_include('module', 'dh');
 
 class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
+  // @todo: should we have a method for adding these defaults, to insure proper formation?
+  // **** BEGIN - Experimental un-used Component Adding Methods
+  //        the property $component_defaults and method add_component_default() are not currently used
+  var $component_defaults = FALSE; // will be initialized in getDefaults or other place.
+  public function add_component_default($config) {
+    if ($this->component_defaults === FALSE) {
+      $this->component_defaults = array();
+    }
+    if (!isset($config['form_machine_name'])) {
+      $config['form_machine_name'] = $this->handleFormPropname($config['propname']);
+    }
+    if (!$this->validate_component_default($config)) {
+      return FALSE;
+    }
+    $this->component_defaults[$config['form_machine_name']] = $config;
+    return TRUE;
+  }
+  public function validate_component_default($config) {
+    if (!isset($config['propname'])) {
+      return FALSE;
+    }
+    if (!$this->validate_alphanumeric_underscore($config['form_machine_name'])) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+  public function validate_alphanumeric_underscore($str) {
+    return preg_match('/^[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*$/',$str);
+  }
+  // **** END - Experimental un-used Component Adding Methods
+  
   public function hiddenFields() {
     return array(
       'pid',
@@ -58,9 +89,26 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $props = array($propname => $props[$propname]);
     }
     foreach ($props as $thisvar) {
-      $prop = $this->insureProperty($entity, $thisvar);
+	    // propname is arbitrary by definition
+      // also, propname can be non-compliant with form API, which requires underscores in place of spaces.
+      // user can also rename properties, but that shouldn't be allowed with these kinds of defined by DefaultSettings
+      // or at least, if the user renames the property then this plugin should create a new one.
+      // name should alternatively be read-only in these forms.
+      // if we create the name as form compliant, and create a field called "form_name", can we eliminate any guesswork?
+      // we still have to deal with user-named properties, which is definitely something available to users.
+      //   - actually, user defined would be handled in a separate fashion.  We need to handle this well, since the 
+      //     modeling framework will enable many user-defined props, and we WILL want to be able to edit them in a multi-form
+      //     type scenario. 
+      $pn = $this->handleFormPropname($propname);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        if ($overwrite or !property_exists($entity, $thisvar['propname']) or (property_exists($entity, $thisvar['propname']) and !is_object($entity->{$thisvar['propname']})) ) {
+        if ($overwrite 
+		    or !property_exists($entity, $pn) 
+        or (property_exists($entity, $pn) 
+          and !is_object($entity->{$pn})
+        ) 
+		  ) {
+          $thisvar['featureid'] = $entity->{$this->row_map['id']};
+          $prop = $this->insureProperty($entity, $thisvar);
           if (!$prop) {
             watchdog('om', 'Could not Add Properties in plugin loadProperties');
             return FALSE;
@@ -87,8 +135,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function updateProperties(&$entity) {
     // @todo: move this to the base plugin class 
     $props = $this->getDefaults($entity);
+    //dpm($entity, "Calling updateProperties");
+    //dpm($props, "Iterating over attached properties");
     foreach ($props as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
+        //dsm("Saving " . $thisvar['propname']);
         // load the property 
         // if a property with propname is set on $entity, send its value to the plugin 
         //   * plugin should be stored on the property object already
@@ -98,12 +149,26 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           if (!is_object($entity->{$thisvar['propname']})) {
             // this has been set by the form API as a value 
             // so we need to load/create a property then set the value
+            //dpm($thisvar, "Creating object before saving ");
             $thisvar['featureid'] = $entity->{$this->row_map['id']};
-            $thisvar['propvalue'] = $entity->{$thisvar['propname']};
-            $prop = dh_update_properties($thisvar, 'name');
+            //@todo: this needs to use the plugin handler for this instead of assuming propvalue instead of propcode
+            //       why isn't this already an object after convert_attributes_to_dh_props is called?
+            //     Location (the featureid loader property) is already loaded, but Location Sharing is NOT -- why????
+            $prop = om_model_getSetProperty($thisvar, 'name');
+            //dpm($prop, "object after creation");
+            // now, apply the stashed value to the property
+            foreach ($prop->dh_variables_plugins as $plugin) {
+              // the default method will guess location based on the value unless overridden by the plugin
+              $plugin->applyEntityAttribute($prop, $entity->{$thisvar['propname']});
+            }
+            //dpm($prop, "object after plugins");
+            //dsm("Saving preloaded object " . $thisvar['propname']);
+            entity_save('dh_properties', $prop);
           } else {
             $prop = $entity->{$thisvar['propname']};
-            $prop->featureid = $entity->{$this->row_map['id']};
+            // already a loaded form object, so just let it rip.
+            //dpm($prop, "object from parent");
+            //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           }
         }
@@ -145,12 +210,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
-    //dpm($props,'props to convert');
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
       $propvalue = NULL;
       $propname = $thisvar['propname'];
+      // form property name will be converted to a machine name by attachNamedForm() methods.
+      // so now we just get this name here so that we can keep things straight but allow users descriptive names
       $pn = $this->handleFormPropname($propname);
       // check for conversion from value to property
       // this could need to change as fully loaded objects could be stored as array  that are then loaded as object or handled more completely
@@ -176,7 +242,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $load_property = TRUE;
       }
       if ($load_property) {
-        $this->loadProperties($entity, FALSE, $thisvar['propname']);
+        //dsm("Loading property $pn");
+        $this->loadProperties($entity, FALSE, $pn);
       }
       // now, apply the stashed value to the property
       if ($convert_value and is_object($entity->{$propname})) {
@@ -342,13 +409,11 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
+    $formshell = array();
+    // use standard formatting to enable choices.
+    $this->formRowEdit($formshell, $row);
     $mname = $this->handleFormPropname($row->propname);
-    $rowform[$mname] = array(
-      '#title' => t($varinfo->varname),
-      '#type' => 'textfield',
-      '#description' => $varinfo->vardesc,
-      '#default_value' => !empty($row->propvalue) ? $row->propvalue : "0.0",
-    );
+    $rowform[$mname] = $formshell['propvalue'];
   }
   
   public function applyEntityAttribute($property, $value) {
