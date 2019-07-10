@@ -9,7 +9,7 @@ $class = ctools_plugin_get_class($plugin_def, 'handler');
 //dpm("so far so good");
 class dHOMHydroImpoundment extends dHOMModelElement {
   var $object_class = 'hydroImpoundment';
-  var %attach_method = 'contained';
+  var $attach_method = 'contained';
   
   public function hiddenFields() {
     $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
