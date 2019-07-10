@@ -880,6 +880,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // if so, offer to add them automatically on save.
     // make this weight 20 so it's last thing before save button
     $defprops = $this->getDefaults($entity);
+    dpm($entity, 'dHOMBaseObjectClass entity');
+    dpm($form, 'dHOMBaseObjectClass form');
   }
 }
 
