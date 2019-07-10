@@ -191,10 +191,10 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           $plugin = dh_variables_getPlugins($dopple);
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
-              dpm($dopple, "Using attachNamedForm()");
+              dpm($dopple, "Adding $pn Using attachNamedForm()");
               $plugin->attachNamedForm($form, $dopple);
             } else {
-              dpm($dopple, "Guessing propvalue from formRowEdit()");
+              dpm($dopple, "Guessing $pn propvalue from formRowEdit()");
               $dopple_form = array();
               $plugin->formRowEdit($dopple_form, $dopple);
               $form[$pn] = $dopple_form['propvalue'];
