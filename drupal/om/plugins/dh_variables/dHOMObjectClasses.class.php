@@ -59,6 +59,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     //dpm( $row, "Calling addAttachedProperties with attach_method = $this->attach_method");
     $this->addAttachedProperties($rowform, $row);
     dpm( $rowform, "$row->propname Form after addAttachedProperties()");
+    dpm( $row, "$row->propname object after addAttachedProperties()");
   }
   
   public function insert(&$entity) {
