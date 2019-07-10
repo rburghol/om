@@ -108,18 +108,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         ) 
 		  ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
-          $prop = dh_properties_enforce_singularity($thisvar, 'name');
-          if (!$prop) {
-            // prop does not exist, so need to create
-            // @todo: manage this create the prop then pass defaults
-            $prop = entity_create('dh_properties', $thisvar);
-            if (isset($thisvar['propvalue_default'])) {
-              $prop->propvalue = $thisvar['propvalue_default'];
-            }
-            if (isset($thisvar['propcode_default'])) {
-              $prop->propcode = $thisvar['propcode_default'];
-            }
-          }
+          $prop = $this->insureProperty($entity, $thisvar);
           if (!$prop) {
             watchdog('om', 'Could not Add Properties in plugin loadProperties');
             return FALSE;
@@ -133,6 +122,16 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
     }
   }
+  
+  public function insureProperty($entity, $thisvar) {
+    // make sure all standard props are here
+    $thisvar['featureid'] = $entity->{$this->row_map['id']};
+    //dpm($thisvar, "Checking for property default");
+    $thisvar = $thisvar + array('singularity' => 'name');
+    $prop = om_model_getSetProperty($thisvar, $thisvar['singularity']);
+    return $prop;
+  }
+  
   public function updateProperties(&$entity) {
     // @todo: move this to the base plugin class 
     $props = $this->getDefaults($entity);
@@ -487,6 +486,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   function getPublicProcs($entity) {
     // taken directly from om library -- will revisit after full porting
+    // @todo: retrieve parent props, and local props.
     return array();
     // gets all viewable processors
     $retarr = array();
@@ -695,7 +695,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         // @todo: change syntax from elid propname "subpropname=value" parent_object_class overwrite
         //        to:
         //        elid propname subpropname subpropvalue parent_object_class setprop_mode overwrite 
-        $setstr = "php set_subprop.php $elid $parentname $object_class $propname \"$propvalue\" \"$mode\" 0 ";
+        $setstr = "php set_subprop.php $elid $parentname \"$object_class\" $propname \"$propvalue\" \"$mode\" 0 ";
       break;
       case 3:
       // @todo: this would be a sub-comp of a sub-comp,
@@ -710,7 +710,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         //        to:
         //        elid propname subpropname subpropvalue parent_object_class setprop_mode overwrite 
         //dpm( $setstr, "3 level subcomp not yet handled -- will not execute ");
-        $test_only = TRUE;
+        $test_only = FALSE;
       break;
       default:
         drupal_set_message("Can not handle remote update of properties with depth = " . count($path));
@@ -719,6 +719,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
+      dpm( $path, "Exec Path ");
       dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
@@ -854,6 +855,11 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $form['propname']['#type'] = 'textfield';
     $form['proptext']['#weight'] = 10;
     //$form['propname']['#markup'] = 'object_class';
+    // if this is an existing object (has pid) 
+    // check to see if it has any missing default properties,
+    // if so, offer to add them automatically on save.
+    // make this weight 20 so it's last thing before save button
+    $defprops = $this->getDefaults($entity);
   }
 }
 

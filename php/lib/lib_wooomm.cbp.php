@@ -579,8 +579,390 @@ class CBPLandDataConnectionBase extends XMLDataConnection {
 }
 
 
+class CBPLandDataConnectionFile extends timeSeriesFile {
+//   var $feed_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=4';
+  var $filepath = '/tmp/text';
+
+  // element for connecting to land use parameters, and outputs, 
+  // with a facility for multiplying outputs by the land use areas DataMatrix
+  // for modeling the landuse change effects
+  var $lunames = array();
+  var $scid = -1;
+  var $id1 = 'land'; # model data class: river, land, or met
+  var $version = ''; # model version: i.e., cbp6
+  var $scenario = ''; # 062211
+  var $landseg = ''; # land segment: i.e., A24001
+  var $riverseg = ''; // optional, this will only be used during calls to "create()" method, restricting the historical land use to the given river and land segment intersection
+  var $max_memory_values = 500;
+  var $locationid = -1;
+  var $romode = 'component';
+  var $hspf_timestep = 3600.0;
+  var $serialist = 'lunames';
+  var $datecolumn = 'thisdatetime';
+  var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
+  var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+   
+	// Needs to Support:
+  // - Using Text File instead of XML connection
+  // - local munging of timestep?
+  //   Could pass entire hourly simulation to model, and use:
+  //     var $intmethod = 3;
+  //   Which will do a period mean inflow for us (but may be time-consuming)
+  // - Use a shared runtime database table 
+  // - Make runtime database table persistant 
+  // @todo: explore passing arrays to broadcast object, 
+  //        such as the array of current runoff for a given landseg
+  //        Or just store it in a global, accessible by runoff objects
+  
+   // @todo: 
+   // Implement global land seg data
+   // global $cbp_landseg_data;
+    // $cbp_landseg_data 
+  // Behavior
+
+  function getFileName() {
+    // This overrides the parent method which used a file browser no longer desired.
+    // handles file movement in the background, choices among source types
+    $retfile = $this->filepath;
+    return $retfile;
+  }
+  
+   function init() {
+      parent::init();
+      //$this->getLandUses();
+   }
+   function setState() {
+      parent::setState();
+      $this->state['Qout'] = 0.0;
+      $this->state['area_ac'] = 0.0;
+      $this->state['area_sqmi'] = 0.0;
+      $this->state['Qafps'] = 0.0;
+      $this->state['suro'] = 0.0;
+      $this->state['ifwo'] = 0.0;
+      $this->state['agwo'] = 0.0;
+      $this->state['in_ivld'] = 0.0;
+      $this->state['landuse_var'] = $this->landuse_var;
+   }
+   
+   function setDataColumnTypes() {
+      parent::setDataColumnTypes();
+      
+      $statenums = array('Qout','area_ac','Qafps', 'suro', 'ifwo', 'agwo', 'prec', 'area_sqmi', 'in_ivld');
+      foreach ($statenums as $thiscol) {
+         $this->setSingleDataColumnType($thiscol, 'float8', 0.0);
+         $this->logformats[$thiscol] = '%s';
+      }
+      $this->dbcolumntypes['substrateclass'] = 'varchar(2)';
+      $this->dbcolumntypes['landuse_var'] = 'varchar(255)';
+   }
+   
+   function wake() {
+      parent::wake();
+      // @todo: move this to parent class after testing
+      $this->getFileInfo();
+      $this->setDBCacheName();
+      // @todo: make this persistent, and shared
+      $this->datatemp = 'tmp_crosstab' . $this->componentid;
+      $this->lunames = array();
+      //if ($this->debug) 
+        error_log("Calling getLandUses()");
+      // @todo: check sub-comps for a 'filepath' variable.
+      //        this can be used to over-ride the default filepath property
+      $this->getLandUses();
+   }
+   
+   function setDBCacheName() {
+      # set a name for the temp table that will not hose the db
+      if ($this->debug) {
+        $this->logDebug("Setting db_cache_name to cbp_  $this->version _ $this->scenario _ $this->landseg");
+      }
+      error_log("Setting db_cache_name to cbp_  $this->version _ $this->scenario _ $this->landseg");
+      $this->db_cache_name = strtolower('cbp_' . implode('_', array($this->version, $this->scenario, $this->landseg)));
+      $this->db_cache_persist = TRUE; // we can do this for files that are large and infrequently updated
+      //error_log("DSN $this->name set to $this->db_cache_name ");
+   }
+   
+  function tsvaluesFromLogFile($infile='') {
+    global $modeldb;
+    // @todo: for elements with a persistent cache OR for those with a shared cache
+    //         1. check to see if the cache table exists already.
+    //         2. If cache table already exists, check date on table in cache table lookup
+    //           - this is something to borrow from the analysis table/session table management
+    //         3. If cache date is < file modified date then do nothing and return
+    //         4. Otherwise, proceed as normal     
+    // check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
+    // if table exists, just return, all is cool.
+    if (is_object($modeldb)) {
+      if ($modeldb->tableExists($this->db_cache_name)) {
+       error_log("Cache Table $this->db_cache_name already exists. Returning.");
+       return;
+      }
+    }
+    parent::tsvaluesFromLogFile($infile);
+  }
+   
+  function tsvalues2listobject($columns = array()) {
+    global $modeldb;
+    // if table exists, just return, all is cool.
+    if (is_object($modeldb)) {
+      $this->listobject = $modeldb;
+      if ($modeldb->tableExists($this->db_cache_name)) {
+       error_log("Cache Table $this->db_cache_name already exists. Returning.");
+       return;
+      }
+    }
+    // otherwise use parent methods
+    parent::tsvalues2listobject($columns);
+  }
+
+   function step() {
+      // all step methods MUST call preStep(),execProcessors(), postStep()
+      $this->preStep();
+      if ($this->debug) {
+         $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
+      }
+      // execute sub-components
+      $this->execProcessors();
+      if ($this->debug) {
+         $this->logDebug("<b>$this->name Sub-processors executed at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . " week " . $this->state['week'] . " month " . $this->state['month'] . ".</b><br>\n");
+      }
+      // now do local flow routing manipulations
+      // need to multiply landuse matrix values by the appropriate ifow, agwo, and suro for that land use
+      // aggregate the results into a Qout variable or some area weighted value as well
+      // get landuse matrix
+      $Qout = 0.0;
+      $Qafps = 0.0;
+      $area_ac = 0.0;
+      $landuse_var = $this->state['landuse_var'];
+      $thisyear = $this->state['year'];
+      if (!($thisyear > 0)) {
+         if ($this->debug) {
+            $this->logDebug("Something is wrong with the year in the state array calling setStateTimerVars()<br>\n");
+         }
+         $this->setStateTimerVars();
+         $thisyear = $this->state['year'];
+      }
+      switch ($this->romode) {
+         case 'component':
+            $flow_comps = array('suro', 'ifwo', 'agwo');
+         break;
+         
+         case 'merged':
+            $flow_comps = array('in_ivld');
+         break;
+      }
+         
+      $other_comps = array('prec');
+      $comp_vals = array('suro'=>0.0, 'ifwo'=>0.0, 'agwo'=>0.0, 'prec'=>0.0, 'in_ivld'=>0.0);
+      /*
+      // test, if no 'landuse_current' sub-comp is set, draw from the landuse_historic matrix
+      // this doesn't work just yet
+      // schema should use "landusevar" and "landuseyear", where landusevar is the name of a matrix
+      // and landuseyear specifies either a static year, the model property "thisyear" or a reference 
+      // to another variable.
+      // if "landuseyear" variable is not set as a sub-component, can default to use prop "thisyear"
+      // if "landusevar" component is not set, default to "landuse_historic"
+      // landuse_year can be a matrix, keyed on run_mode, such that:
+      // 0 = some year in history (lets say 1850)
+      // 1 = thisyear
+      // 2 = some year representing current conditions (say 2005)
+      // if "landuse_historic" is not set, then we bail, otherwise we should be good to go
+      // this should maintain backward compatibility with previous incarnations of the model which 
+      // used separate landuse_var settings and matrices, but did not specify a landuse_year, 
+      // so long as landuse_year defaults to thisyear
+      
+      if ( isset($this->processors[$landuse_var]) or ( ($landuse_var == 'landuse_current') and isset($this->processors['landuse_historic']) ) ) {
+         // if the "current" land use is not set,  
+         if (($landuse_var == 'landuse_current') and !isset($this->processors['landuse_current']) ) {
+            $landuse_matrix = $this->processors['landuse_historic'];
+            $luyear = $this->current_lu_year;
+      */      
+      if ( isset($this->processors[$landuse_var]) ) {
+         $landuse_matrix = $this->processors[$landuse_var];
+         // get the values for the land uses
+         $landuse_matrix->formatMatrix();
+         if ($this->debug) {
+            $this->logDebug("Getting land use values for year $thisyear<br>\n");
+         }
+         $lumatrix = $landuse_matrix->matrix_formatted;
+         foreach ($lumatrix as $luname=>$values) {
+            $luarea = $landuse_matrix->evaluateMatrix($luname, $thisyear);
+            if (is_numeric($luarea)) {
+               if ($this->debug) {
+                  $this->logDebug("Found Land use $luname with area $luarea<br>\n");
+               }
+               $area_ac += $luarea;
+               // only evaluate this if the land use area is > 0.0
+               if ($luarea > 0) {
+                  foreach ($flow_comps as $thiscomp) {
+                     // this is the expected format of this variable, i.e. for_ifwo
+                     $lu_flowvar = $luname . '_' . $thiscomp;
+                     if ($this->debug) {
+                        $this->logDebug("Evaluating $lu_flowvar = " . $this->state[$lu_flowvar]);
+                        $this->logDebug("<br>\n");
+                     }
+                     if (isset($this->state[$lu_flowvar])) {
+                        // converts from watershed in/ivld to watershed ft/ivld (/12.0)
+                        // to acre-feet/ivld (* luarea)
+                        // to cubic-feet (* 43560 ft-per-acre)
+                        // to cfs (/timestep)
+                        $thisflow = ( ($this->state[$lu_flowvar]/12.0) * $luarea * 43560.0) / $this->hspf_timestep;
+                        $comp_vals[$thiscomp] += $thisflow;
+                        $Qout += $thisflow;
+                        if ($this->debug) {
+                           $this->logDebug("Adding $lu_flowvar @ $thisflow cfs to Qout ($Qout) ");
+                           $this->logDebug("<br>\n");
+                        }
+                     }
+                  }
+                  foreach ($other_comps as $thiscomp) {
+                     // this is the expected format of this variable, i.e. for_ifwo
+                     $lu_flowvar = $luname . '_' . $thiscomp;
+                     if (isset($this->state[$lu_flowvar])) {
+                        // converts from watershed in/ivld to watershed ft/ivld (/12.0)
+                        // to acre-feet/ivld (* luarea)
+                        // to cubic-feet (* 43560 ft-per-acre)
+                        // to cfs (/timestep)
+                        // weight this comp by the land use area, then later we will un-weight it when we store in the state var
+                        switch ($thiscomp) {
+                           case 'prec':
+                           // since precip is given as a rate in the model output, we have to convert it to a quantity
+                              $thisflow = $this->state[$lu_flowvar] * $luarea * ($this->timer->timestep / $this->hspf_timestep);
+                           break;
+
+                           default:                           
+                              $thisflow = $this->state[$lu_flowvar] * $luarea;
+                           break;
+                        }
+                        $comp_vals[$thiscomp] += $thisflow;
+                     }
+                  }
+               }
+            }
+         }
+         $Qafps = $Qout / ($area_ac * 43560.0);
+         if ($this->debug) {
+            $this->logdebug("Qout = $Qout <br>\n");
+            $this->logdebug("luarea = $luarea <br>\n");
+            $this->logdebug("Qafps = $Qout / ($area_ac * 43560.0) <br>\n");
+         }
+      } else {
+         if ($this->debug) {
+            $this->logdebug("landuse sub-component not found <br>\n");
+            error_log("$this->name: landuse sub-component not found <br>\n");
+         }
+      }
+      $this->state['Qout'] = floatval($Qout);
+      $this->state['area_ac'] = floatval($area_ac);
+      $this->state['area_sqmi'] = floatval($area_ac) / 640.0;
+      $this->state['Qafps'] = floatval($Qafps);
+      $this->state['suro'] = floatval($comp_vals['suro']);
+      $this->state['agwo'] = floatval($comp_vals['agwo']);
+      $this->state['ifwo'] = floatval($comp_vals['ifwo']);
+      $this->state['in_ivld'] = floatval($comp_vals['in_ivld']);
+      foreach ($other_comps as $thiscomp) {
+         // un-weight these other components now, since we want raw, not converted values
+         $this->state[$thiscomp] = floatval($comp_vals[$thiscomp] / $area_ac);
+      }
+      
+      // log the results
+      if ($this->debug) {
+         $this->logDebug("$this->name Calling Logstate() thisdate = ");
+      }
+      $this->postStep();
+   }
+
+   function showHTMLInfo() {
+    global $modeldb;
+      $HTMLInfo = '';
+      $HTMLInfo .= parent::showHTMLInfo() . "<hr>";
+      $HTMLInfo .= "File Info:" . print_r($this->file_info,1) . "<hr>";
+      $HTMLInfo .= "DB Cache: $this->db_cache_name (Persist = " . intval($this->db_cache_persist);
+      if (is_object($modeldb)) {
+        $HTMLInfo .= ", Exist = " . intval($modeldb->tableExists($this->db_cache_name)) . " )";
+        $HTMLInfo .= "DB Host:" . pg_host($modeldb->dbconn);
+        $HTMLInfo .= ", Port:" . pg_port($modeldb->dbconn);
+        $HTMLInfo .= ", Name:" . pg_dbname($modeldb->dbconn);
+        $HTMLInfo .= " ) <hr>";
+      } else {
+        $HTMLInfo .= " ) <hr>";
+      }
+      $HTMLInfo .= "Vars from File:" . print_r($this->file_vars,1) . "<hr>";
+      return $HTMLInfo;
+   }
+
+   function create() {
+      if ($this->debug) {
+         $this->logDebug("Processors on this object before create(): " . print_r(array_keys($this->processors),1) . " <br>");
+      }
+      parent::create();
+      if ($this->debug) {
+         $this->logDebug("Processors after parent create(): " . print_r(array_keys($this->processors),1) . " <br>");
+      }
+      // set default land use
+      // set basic data query
+      $this->logDebug("Create() function called <br>");
+      $this->lunames = array();
+      //return;
+      $this->getLandUses();
+      
+      if (count($this->lunames) == 0) {
+         // if there are none set, just hit some defaults
+         $this->lunames = array('for');
+      }
+      sort($this->lunames);
+      
+      $this->logDebug("Object landuses: " . print_r($this->lunames,1) . " <br>");
+      
+      if (isset($this->processors['landuse'])) {
+         unset($this->processors['landuse']);
+      }
+      // landuse subcomponent to allow users to simulate land use values
+      $ludef = new dataMatrix;
+      $ludef->listobject = $this->listobject;
+      $ludef->name = 'landuse';
+      $ludef->wake();
+      $ludef->numcols = 3;  
+      $ludef->valuetype = 2; // 2 column lookup (col & row)
+      $ludef->keycol1 = ''; // key for 1st lookup variable
+      $ludef->lutype1 = 0; // lookp type - exact match for land use name
+      $ludef->keycol2 = 'year'; // key for 2nd lookup variable
+      $ludef->lutype2 = 1; // lookup type - interpolated for year value
+      // add a row for the header line
+      $ludef->numrows = count($this->lunames) + 1;
+      // since these are stored as a single dimensioned array, regardless of their lookup type 
+      // (for compatibility with single dimensional HTML form variables)
+      // we set alternating values representing the 2 columns (luname - acreage)
+      $ludef->matrix[] = 'luname - year(acres)';
+      $ludef->matrix[] = 1980; // put this year in the date field as a default lower limit
+      $ludef->matrix[] = date('Y'); // put current year in the date field as a default upper limit
+      foreach ($this->lunames as $thisname) {
+         $ludef->matrix[] = $thisname;
+         $ludef->matrix[] = 0.0;
+         $ludef->matrix[] = 0.0;
+      }
+      if ($this->debug) {
+         $this->logDebug("Trying to add land use sub-component matrix with values: " . print_r($ludef->matrix,1) . " <br>");
+      }
+      $this->addOperator('landuse', $ludef, 0);
+   }
+
+   function getData() {
+      // restrict the land uses to non-zero values set in the landuse DataMatrix if the use has not explicitly
+      // proceed with parent getData routine
+      parent::getData();
+   }
+   
+  function getLandUses() {
+    // the landuse_names are the first row of the csv file
+    $this->luname = $this->file_vars; // this should be set in tsVarsFromFile() called in wake() method
+    if ($this->debug) {
+     error_log("Lu array: " . print_r($this->lunames,1));
+    }
+  }
+}
+
 class CBPLandDataConnection extends CBPLandDataConnectionBase {
-	
 }
 
 
@@ -838,7 +1220,7 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
       $innerHTML .= "<b>Exec. Rank:</b> " . $formatted->formpieces['fields']['exec_hierarch'] . "<BR>";
       $innerHTML .= "<b>Description:</b> " . $formatted->formpieces['fields']['description'];
       $innerHTML .= "<br><b>Scenario:</b> " . $formatted->formpieces['fields']['scid'];
-      $innerHTML .= " | <b>Landseg ID:</b> " . $formatted->formpieces['fields']['id2'];
+      $innerHTML .= " | <b>Landseg ID:</b> " . $formatted->formpieces['fields']['landseg'];
       $innerHTML .= " | <b>Data Timestep:</b> " . $formatted->formpieces['fields']['hspf_timestep'];
       $innerHTML .= "<br><b>Latitude:</b> " . $formatted->formpieces['fields']['lat_dd'];
       $innerHTML .= " | <b>Longitude:</b> " . $formatted->formpieces['fields']['lon_dd'];

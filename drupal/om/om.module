@@ -41,6 +41,12 @@ function om_runid_options() {
 function om_model_getSetProperty($values, $singularity = 'name') {
   $om_model = dh_properties_enforce_singularity($values, $singularity);
   if (!is_object($om_model)) {
+    if (isset($values['propvalue_default'])) {
+      $values['propvalue'] = $values['propvalue_default'];
+    }
+    if (isset($values['propcode_default'])) {
+      $values['propcode'] = $values['propcode_default'];
+    }
     // create a model element
     //error_log("$values[varkey] does not exist...creating");
     $om_model = entity_create('dh_properties', $values);

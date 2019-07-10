@@ -194,7 +194,7 @@ class modelObject {
     // set a name for the temp table that will not hose the db
     $targ = array(' ',':','-','.');
     $repl = array('_', '_', '_', '_');
-    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+    $this->setDBTablePrefix();
     $this->dbtblname = $this->tblprefix . 'datalog';
     $this->setDataColumnTypes();
 
@@ -203,6 +203,11 @@ class modelObject {
     
 
   }
+  
+  function setDBTablePrefix() {
+    $this->tblprefix = str_replace($targ, $repl, "tmp$this->componentid" . "_"  . str_pad(rand(1,99), 3, '0', STR_PAD_LEFT) . "_");
+  }
+  
   function setPropDesc() {
   }
 
@@ -3604,17 +3609,8 @@ class modelContainer extends modelObject {
          }
      }
    }
-
-
-   function runModel() {
-      error_log("<b>Beginning Model Run<br>");
-      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
-      $this->systemLog("<b>Beginning Model Run<br>");
-      if ($this->debug) {
-         $this->logDebug("<b>Beginning Model Run</b><br>");
-         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
-         #$this->logDebug($this->timer);
-      }
+   
+   function initTimer() {
       //error_log("<b>Creating Timer<br>");
       $newtimer = new simTimer;
       //error_log("<b>Initializing Timer properties<br>");
@@ -3625,6 +3621,18 @@ class modelContainer extends modelObject {
       #$this->logDebug($newtimer);
       error_log("<b>Setting Timer<br>");
       $this->setSimTimer( $newtimer);
+   }
+
+   function runModel() {
+      error_log("<b>Beginning Model Run<br>");
+      $this->logDebug("<b>Error info for ModelContainer: </b>" . $this->name . '<br>');
+      $this->systemLog("<b>Beginning Model Run<br>");
+      if ($this->debug) {
+         $this->logDebug("<b>Beginning Model Run</b><br>");
+         $this->logDebug("<b>Time of Run Start:</b> " . date('r') . "<br>");
+         #$this->logDebug($this->timer);
+      }
+      $this->initTimer();
       if ($this->debug) {
          $this->logDebug("<b>Time set on all subcomps</b><br>");
       }
@@ -5429,6 +5437,7 @@ class timeSeriesInput extends modelObject {
    var $ts_enabled = 1; // can turn this off if we retieved no data for this TS
    var $filepath = '';
    var $db_cache_name = ''; # name of an auxiliary table to hold the time series if we need to save memory
+   var $db_cache_persist = FALSE; # whether to keep this in the model runtime database
    var $max_memory_values = -1; # setting this to greater than zero results in cacheing
    var $cache_create_sql = ''; // place to hold the create statement for debugging purposes
    var $tscount = 0;
@@ -5526,7 +5535,7 @@ class timeSeriesInput extends modelObject {
    
    function cleanUp() {
       # remove all the temp tables associated with this object
-      if (is_object($this->listobject)) {
+      if (!$this->db_cache_persist and is_object($this->listobject)) {
          if ($this->listobject->tableExists($this->db_cache_name)) {
             $this->listobject->querystring = "  drop table $this->db_cache_name ";
             //error_log("Dropping db cache for $this->name ");
@@ -5608,7 +5617,13 @@ class timeSeriesInput extends modelObject {
 
 
    function tsvaluesFromLogFile($infile='') {
-      # check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
+     // @todo: for elements with a persistent cache OR for those with a shared cache
+     //         1. check to see if the cache table exists already.
+     //         2. If cache table already exists, check date on table in cache table lookup
+     //           - this is something to borrow from the analysis table/session table management
+     //         3. If cache date is < file modified date then do nothing and return
+     //         4. Otherwise, proceed as normal     
+     // check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
       if (!(strlen($infile) > 0)) {
          if (strlen($this->tsfile) == 0) {
             $this->tsfile = 'tsvalues.' . $this->componentid . '.csv';
@@ -5647,9 +5662,11 @@ class timeSeriesInput extends modelObject {
                if (isset($thisline['thisdate'])) {
                   $ts = strtotime($thisline['thisdate']);
                   $this->tsvalues[$ts] = $thisline;
+                  $this->tsvalues[$ts]['timestamp'] = $ts;
                   if ($this->debug) {
                      if ($k == 0) {
                         $this->logDebug($thisline['thisdate'] . " converted to Timestamp $ts <br>");
+                        error_log($thisline['thisdate'] . " converted to Timestamp $ts <br>");
                      }
                   }
                } else {
@@ -5743,11 +5760,11 @@ class timeSeriesInput extends modelObject {
          $outform = '';
          
          if ($this->debug) {
-            $this->logDebug("Outputting Time Series to db: $this->dbtblname <br>");
+            $this->logDebug("Outputting Time Series to db: $this->db_cache_name <br>");
             $this->logDebug("Using the following db-columntypes: " . print_r($this->dbcolumntypes,1) . " <br>");
          }
          //$this->listobject->debug = 1;
-         $this->cache_create_sql = $this->listobject->array2tmpTable($this->tsvalues, $this->db_cache_name, $columns, $this->dbcolumntypes, 1, $this->bufferlog);
+         $this->cache_create_sql = $this->listobject->array2Table($this->tsvalues, $this->db_cache_name, $columns, $this->dbcolumntypes, 1, $this->bufferlog, $this->db_cache_persist);
          //$this->listobject->debug = 0;
          if ($this->debug) {
             $this->logDebug($this->cache_create_sql);
@@ -6219,11 +6236,19 @@ class timeSeriesFile extends timeSeriesInput {
   var $cache_ts = 1;
   var $location_type = 0; // 0 - local file system, 1 - http
   var $remote_url = '';
+  var $file_vars = FALSE;
+  var $file_info = FALSE;
+  
+  function sleep() {
+    $file_vars = FALSE;
+    $file_info = FALSE;
+    parent::sleep();
+  }
 
   function wake() {
     parent::wake();
     $fe = fopen($this->getFileName(),'r');
-    error_log("File open result: $fe ");
+    error_log("File open result: $fe for " . $this->getFileName());
     if ($fe) {
       if ($this->location_type == 0) {
         fclose($fe);
@@ -6237,6 +6262,23 @@ class timeSeriesFile extends timeSeriesInput {
     error_log("File Variables loaded. wake() returning.");
   }
 
+  function getFileInfo() {
+    if (!is_array($this->file_info)) {
+      $this->file_info = array();
+    }
+    $this->file_info['path'] = $this->getFileName();
+    $this->file_info['location_type'] = ($this->location_type == 1) ? 'Remote' : 'Unknown';
+    $fe = fopen($this->getFileName(),'r');
+    if ($fe) {
+      $this->file_info['handle'] = $fe;
+    }
+    if ($fe and ($this->location_type == 0)) {
+      $this->file_info['location_type'] = 'Local';
+      $this->file_info['filemtime'] = filemtime($file_info['path']);
+      $this->file_info['filesize'] = filesize($file_info['path']);
+    }
+  }
+  
   function getFileName() {
     // handles file movement in the background, choices among source types
     switch ($this->location_type) {
@@ -6293,6 +6335,7 @@ class timeSeriesFile extends timeSeriesInput {
   function tsVarsFromFile() {
     # get the header line with variable names and the first line of values.
     # 
+    $this->file_vars = array();
     if ($this->debug) {
       $this->logDebug("Function tsVarsFromFile called. <br>");
       $this->logDebug("calling readDelimitedFile($this->filepath,'$this->delimiter', 0, 2); <br>");
@@ -6300,38 +6343,46 @@ class timeSeriesFile extends timeSeriesInput {
     // set base types to avoid timestamp troubles
     $this->setBaseTypes();
     //$first2lines = readDelimitedFile($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
-    error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
-    error_log("Opening for reading: " . $this->getFileName() . "<br>");
+    //error_log("Calling readDelimitedFile_fgetcsv for first 2 lines");
+    //error_log("Opening for reading: " . $this->getFileName() . "<br>");
     $first2lines = readDelimitedFile_fgetcsv($this->getFileName(),$this->translateDelim($this->delimiter), 0, 2);
     if ($this->debug) { 
       $this->logDebug("First Line of $this->name : " . print_r($first2lines[0],1) . "<br>");
       $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
     }
     $nb = 0;
+    if (!in_array('timestamp', $first2lines[0]) and !in_array('thisdate', $first2lines[0]) ) {
+      error_log("timestamp/thisdate column missing in text file in " . $this->getFileName());
+      //return;
+    }
     foreach ($first2lines[0] as $thiskey => $thisvar) {
-error_log("Handling $thiskey - $thisvar ");
-       if (trim($thisvar) == '') {
-          $nb++;
-          $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       } else {
-          if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
-             if ($this->debug) {
-                $this->logDebug("$thisvar not in dbcolumntypes array <br>");
-             }
-             $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
-             if ($this->debug) {
-                $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
-             }
-             //$this->state[$thisvar] = $first2lines[1][$thiskey];
+      if (trim($thisvar) == '') {
+        $nb++;
+        $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      } else {
+        if ( ($thisvar <> 'timestamp') and ($thisvar <> 'thisdate') ) {
+          if (!in_array($thisvar, $this->file_vars)) {
+            $this->file_vars[] = $thisvar;
           }
+        }
+        if (!in_array($thisvar, array_keys($this->dbcolumntypes))) {
           if ($this->debug) {
-             $this->logDebug("Column $thisvar found.<br>\n");
+            $this->logDebug("$thisvar not in dbcolumntypes array <br>");
           }
-       }
-       if ($nb > 0) {
-          $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
-       }
+          $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
+          //error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
+          if ($this->debug) {
+            $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
+          }
+          //$this->state[$thisvar] = $first2lines[1][$thiskey];
+        }
+        if ($this->debug) {
+           $this->logDebug("Column $thisvar found.<br>\n");
+        }
+      }
+      if ($nb > 0) {
+        $this->logError("Total of $nb blank value found in $this->name time series file " . $this->getFileName() . "<br>");
+      }
     }
   }
   function showHTMLInfo() {
@@ -14903,7 +14954,8 @@ class hydroImpSmall extends hydroImpoundment {
       $this->storage_matrix->lutype2 = 1; // lookup type for 2nd lookup variable: 0 - exact match; 1 - interpolate values; 2 - stair step
       if ($this->debug) error_log("setUpMatrix called with $text2table ");
       // add a row for the header line
-      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table <> '') ) {
+      if ( (!is_array($this->matrix) or (count($this->matrix) == 0)) and ($text2table == '') ) {
+        // need to initialize storage table
          $this->matrix = array('storage','stage','surface_area',0,0,0);
          $this->storage_matrix->numrows = 3;
          $this->storage_matrix->matrix[] = 'storage';
@@ -14917,9 +14969,10 @@ class hydroImpSmall extends hydroImpoundment {
          $this->storage_matrix->matrix[] = 0.0; // put a basic sample table - conic
       } else {
          if ($text2table <> '') {
-            //error_log("Calling matrix create with texst2table");
+            error_log("Calling matrix create with $text2table");
             $this->storage_matrix->text2table = $text2table;
             $this->storage_matrix->create();
+            $this->matrix = explode(',', $text2table);
          } else {
             $this->storage_matrix->matrix = $this->matrix;// map the text mo to a numerical description
             $this->storage_matrix->numrows = count($this->storage_matrix->matrix) / 3.0;
@@ -15252,7 +15305,6 @@ class hydroImpSmall extends hydroImpoundment {
    }
    
   function setProp($propname, $propvalue, $view = '') {
-
     //$json_object = json_decode($json);
     //if (is_object($thisobject) and $json_object
     // subprop_name can be name:subname 
@@ -15265,9 +15317,10 @@ class hydroImpSmall extends hydroImpoundment {
         switch ($view) {
           case 'json-1d':
           default:
-            $text2table = json_decode($propvalue);
+            $text2table = implode(",",json_decode($propvalue));
           break;
         }
+        error_log("$this->name Calling setupMatrix($text2table)");
         $this->setupMatrix($text2table);
       }
      parent::setProp($propname, $propvalue, $view);

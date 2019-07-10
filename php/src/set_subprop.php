@@ -57,7 +57,7 @@ if (is_object($thisobject)) {
   }
 
   if (isset($thisobject->processors[$comp_name])) {
-    error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name in (" . print_r(get_object_vars($thisobject->processors[$comp_name]),1). ") = $subprop_value; ");
+    error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name  = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
     // the setProp() method should be coded to handle all of these
     // generally, if something is a sub-comp of a sub-comp like 
@@ -67,8 +67,8 @@ if (is_object($thisobject)) {
     // if this was a sub-sub-comp, like storage_stage_area on hydroImpSmall we should be called ONLY once:
     //    $thisobject->processors['impoundment']->setProp('storage_stage_area', 'JSON storage table');
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
-    $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
     error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);");
+    $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
   }
   $result_html = saveObjectSubComponents($listobject, $thisobject, $elid );
   //error_log("Save result: $result_html");

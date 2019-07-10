@@ -23,8 +23,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
     $defaults += array(
       'initstorage' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 0.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
         'propname' => 'initstorage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -32,8 +32,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
       ),
       'maxcapacity' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 100.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 100.0,
         'propname' => 'maxcapacity',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -41,17 +41,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
       ),
       'unusable_storage' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 10.0,
-        'propname' => 'unusable_storage',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ),
-      'unusable_storage' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 10.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 10.0,
         'propname' => 'unusable_storage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -59,8 +50,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
       ),
       'riser_diameter' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 10.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 10.0,
         'propname' => 'riser_diameter',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -68,8 +59,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
       ), 
       'riser_length' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 10.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 10.0,
         'propname' => 'riser_length',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -77,8 +68,8 @@ class dHOMHydroImpoundment extends dHOMModelElement {
       ), 
       'storage_stage_area' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 10.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 10.0,
         'propname' => 'storage_stage_area',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -121,8 +112,8 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
     $defaults += array(
       'length' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 5000.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 5000.0,
         'propname' => 'length',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -130,8 +121,8 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
       ),
       'base' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 1.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
         'propname' => 'base',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -139,8 +130,8 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
       ),
       'drainage_area' => array(
         'entity_type' => $entity->entityType(),
-        'propcode' => NULL,
-        'propvalue' => 1.0,
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
         'propname' => 'drainage_area',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),

@@ -226,8 +226,8 @@ $debug = TRUE;
          $loclist .= $locdel . $thisdata['location_id'];
          $locdel = ',';
       }
-      // this initially will just retrieve the data with column names crosstabbed and fudged to represnt land use
-      // we should ultimatley include many options, such as timestep aggregation (merging hourly output to daily, or
+      // this initially will just retrieve the data with column names crosstabbed and fudged to represent land use
+      // we should ultimately include many options, such as timestep aggregation (merging hourly output to daily, or
       // multiplpes of hours
       // this could form the basis of our WFS retrieval system.
       if (strlen($loclist) > 0) {

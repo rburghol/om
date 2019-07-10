@@ -150,6 +150,28 @@ if($result === true)
    $who_xmlobjects['CBPLandDataConnection']['description'] = 'Widget used top access remotely available CBP model outputs for use as a time series input to a WOOOMM simulation.';
 }
 
+
+
+error_log("Creating CBPLandDataConnectionFile<br>");
+#print("Creating Object<br>");
+$obj = new CBPLandDataConnectionFile;
+// perform serialization
+$result = $serializer->serialize($obj);
+#print("Printing Result<br>");
+// check result code and display XML if success
+if($result === true)
+{
+   $xml = $serializer->getSerializedData();
+   $who_xmlobjects['CBPLandDataConnectionFile']['xml'] = $xml;
+   $who_xmlobjects['CBPLandDataConnectionFile']['type'] = '1'; 
+   $who_xmlobjects['CBPLandDataConnectionFile']['toolgroup'] = 2;# type 1 - stand-alone object, 2 - sub-component only, 3 - model container (runnable), 4 - both stand-alone and sub-comp
+   $who_xmlobjects['CBPLandDataConnectionFile']['name'] = 'CBP6 Landseg Data';
+   $who_xmlobjects['CBPLandDataConnectionFile']['parentprops'] = array('tablecols'=>'publicvars','lon_col'=>'publicvars');
+   $who_xmlobjects['CBPLandDataConnectionFile']['parent'] = array('dataConnectionObject');
+   $who_xmlobjects['CBPLandDataConnectionFile']['localprops'] = array('lon_col'=>'privatevars','lat_col'=>'privatevars','datecolumn'=>'privatevars','yearcolumn'=>'privatevars','monthcolumn'=>'privatevars','daycolumn'=>'privatevars');
+   $who_xmlobjects['CBPLandDataConnectionFile']['description'] = 'Widget used to access Phase 6 CBP model outputs for use as a time series input to a WOOOMM simulation.';
+}
+
 #print("Creating Object<br>");
 $obj = new CBPDataInsert;
 // perform serialization

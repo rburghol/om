@@ -736,6 +736,32 @@
               "cacheable"=>array("type"=>3,"params"=>"0|Do Not Cache,1|Cacheable,2|Pass-Through (children can cache),3|0th Level (allow perm child cache):cmid:cmname::0","label"=>"Run Cache Mode: ","visible"=>1, "readonly"=>0, "width"=>6)
            )
         ),
+      "CBPLandDataConnectionFile"=>array(
+          "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column"),
+          "column info"=>array(
+              "name"=>array("type"=>1,"params"=>"","label"=>"Name","visible"=>1, "readonly"=>0, "width"=>32),
+              "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
+              "delimiter"=>array("type"=>3,"params"=>"0|Comma,1|Tab,2|pipe,3|Space:dlid:dlname::0:","label"=>"File Delimiter ","visible"=>1, "readonly"=>0, "width"=>6),
+              "intmethod"=>array("type"=>3,"params"=>"1|Previous Value,2|Next Value,3|Mean,4|Mininum,5|Maximum,6|Sum:imid:imname::0:","label"=>"Gage Type","visible"=>1, "readonly"=>0, "width"=>12),
+              "version"=>array("type"=>1,"params"=>"","label"=>"Model Version (i.e. p532)","visible"=>1, "readonly"=>0, "width"=>32),
+              "scenario"=>array("type"=>1,"params"=>"","label"=>"Scenario (i.e. p532c_06211)","visible"=>1, "readonly"=>0, "width"=>32),
+              "landseg"=>array("type"=>1,"params"=>"","label"=>"Land Segment (fipsab)","visible"=>1, "readonly"=>0, "width"=>32),
+              "location_type"=>array("type"=>3,"params"=>"0|Local File,1|Remote URL:ltid:ltname::0:","label"=>"File Location Type","visible"=>1, "readonly"=>0, "width"=>12),
+              "filepath"=>array("type"=>1,"params"=>"","label"=>"File Path or URL", "visible"=>1, "readonly"=>0, "width"=>80),
+              "log2db"=>array("type"=>3,"params"=>"0|Memory,1|Database,2|File:lid:lname::0:","label"=>"Runtime Logging Option ","visible"=>1, "readonly"=>0, "width"=>6),
+              "cache_log"=>array("type"=>3,"params"=>"0|False,1|True:clid:clname::0:","label"=>"Store Run Data in Text File? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "debug"=>array("type"=>3,"params"=>"0|False,1|True,2|Verbose:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "debugmode"=>array("type"=>3,"params"=>"0|Screen Output (Normal),1|System Log,2|STDOUT,3|To File:dbid:dbname::0","label"=>"Debug Mode ","visible"=>1, "readonly"=>0, "width"=>6),
+              "cascadedebug"=>array("type"=>3,"params"=>"0|False,1|True:fmid:fmname::0:","label"=>"Force debug mode to child objects? ","visible"=>1, "readonly"=>0, "width"=>6),
+              "max_memory_values"=>array("type"=>1, "params"=>"", "label"=>"Max. Values to Store in Memory (-1 is unlimited)","visible"=>1, "readonly"=>'0', "width"=>24),
+              "groupid"=>array("type"=>3,"params"=>"groups:groupid:groupname:groupname:0:","label"=>"Group ID","visible"=>1, "readonly"=>0, "width"=>12),
+              "operms"=>array("type"=>3,"params"=>"7|All (RW-Del),6|Read/Write,4|Read-Only,0|None:opid:opname::0","label"=>"Owner Permissions: ","visible"=>1, "readonly"=>0, "width"=>6),
+              "gperms"=>array("type"=>3,"params"=>"7|All (RW-Del),6|Read/Write,4|Read-Only,0|None:gpid:gpname::0","label"=>"Group Permissions: ","visible"=>1, "readonly"=>0, "width"=>6),
+              "pperms"=>array("type"=>3,"params"=>"7|All (RW-Del),6|Read/Write,4|Read-Only,0|None:ppid:ppname::0","label"=>"Public Permissions: ","visible"=>1, "readonly"=>0, "width"=>6),
+              "the_geom"=>array("type"=>1, "params"=>"", "label"=>"Geometry Info","visible"=>0, "readonly"=>'0', "width"=>24),
+              "cacheable"=>array("type"=>3,"params"=>"0|Do Not Cache,1|Cacheable,2|Pass-Through (children can cache),3|0th Level (allow perm child cache):cmid:cmname::0","label"=>"Run Cache Mode: ","visible"=>1, "readonly"=>0, "width"=>6)
+           )
+        ),
       "storageObject"=>array(
           "table info"=>array("pk"=>"elementid", "sortcol"=>"name", "outputformat"=>"column"),
           "column info"=>array(
@@ -1689,6 +1715,7 @@
               "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
               "conntype"=>array("type"=>3,"params"=>"1|PostgreSQL,2|ODBC,3|Oracle,4|WFS,5|Shared:ctid:ctname::0","label"=>"Connection Type","visible"=>1, "readonly"=>0, "width"=>6),
               "host"=>array("type"=>1,"params"=>"","label"=>"Connection Host","visible"=>1, "readonly"=>0, "width"=>6),
+              "port"=>array("type"=>1,"params"=>"","label"=>"Connection Port","visible"=>1, "readonly"=>0, "width"=>6),
               "username"=>array("type"=>1,"params"=>"","label"=>"User Name","visible"=>1, "readonly"=>0, "width"=>32),
               "password"=>array("type"=>21,"params"=>"","label"=>"Password","visible"=>1, "readonly"=>0, "width"=>32),
               "dbname"=>array("type"=>1,"params"=>"","label"=>"Database Name","visible"=>1, "readonly"=>0, "width"=>32),
@@ -1725,6 +1752,7 @@
               "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
               "conntype"=>array("type"=>3,"params"=>"1|PostgreSQL,2|ODBC,3|Oracle,4|WFS,5|Shared:ctid:ctname::0","label"=>"Connection Type","visible"=>1, "readonly"=>0, "width"=>6),
               "host"=>array("type"=>1,"params"=>"","label"=>"Connection Host","visible"=>1, "readonly"=>0, "width"=>6),
+              "port"=>array("type"=>1,"params"=>"","label"=>"Connection Port","visible"=>1, "readonly"=>0, "width"=>6),
               "username"=>array("type"=>1,"params"=>"","label"=>"User Name","visible"=>1, "readonly"=>0, "width"=>32),
               "password"=>array("type"=>21,"params"=>"","label"=>"Password","visible"=>1, "readonly"=>0, "width"=>32),
               "dbname"=>array("type"=>1,"params"=>"","label"=>"Database Name","visible"=>1, "readonly"=>0, "width"=>32),
@@ -1773,6 +1801,7 @@
               "description"=>array("type"=>1,"params"=>"","label"=>"Description","visible"=>1, "readonly"=>0, "width"=>64),
               "conntype"=>array("type"=>3,"params"=>"1|PostgreSQL,2|ODBC,3|Oracle,4|WFS,5|Shared:ctid:ctname::0","label"=>"Connection Type","visible"=>1, "readonly"=>0, "width"=>6),
               "host"=>array("type"=>1,"params"=>"","label"=>"Connection Host","visible"=>1, "readonly"=>0, "width"=>6),
+              "port"=>array("type"=>1,"params"=>"","label"=>"Connection Port","visible"=>1, "readonly"=>0, "width"=>6),
               "username"=>array("type"=>1,"params"=>"","label"=>"User Name","visible"=>1, "readonly"=>0, "width"=>32),
               "password"=>array("type"=>21,"params"=>"","label"=>"Password","visible"=>1, "readonly"=>0, "width"=>32),
               "dbname"=>array("type"=>1,"params"=>"","label"=>"Database Name","visible"=>1, "readonly"=>0, "width"=>32),
@@ -1812,6 +1841,7 @@
               "id2"=>array("type"=>1,"params"=>"","label"=>"River Segment (catcode2)","visible"=>1, "readonly"=>0, "width"=>32),
               "conntype"=>array("type"=>3,"params"=>"1|PostgreSQL,2|ODBC,3|Oracle,4|WFS,5|Shared:ctid:ctname::0","label"=>"Connection Type","visible"=>1, "readonly"=>0, "width"=>6),
               "host"=>array("type"=>1,"params"=>"","label"=>"Connection Host","visible"=>1, "readonly"=>0, "width"=>6),
+              "port"=>array("type"=>1,"params"=>"","label"=>"Connection Port","visible"=>1, "readonly"=>0, "width"=>6),
               "username"=>array("type"=>1,"params"=>"","label"=>"User Name","visible"=>1, "readonly"=>0, "width"=>32),
               "password"=>array("type"=>21,"params"=>"","label"=>"Password","visible"=>1, "readonly"=>0, "width"=>32),
               "dbname"=>array("type"=>1,"params"=>"","label"=>"Database Name","visible"=>1, "readonly"=>0, "width"=>32),

@@ -1603,81 +1603,80 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
    }
   $input_props['outdir'] = isset($input_props['outdir']) ? $input_props['outdir'] : $outdir;
 
-   if ($elementid > 0) {
-
-      if ( (strlen($startdate) > 0) and (strlen($enddate) > 0)) {
-         $input_props['model_startdate'] = $startdate;
-         $input_props['model_enddate'] = $enddate;
-      }
-      
-      // load up all of the things that are in the base model, with caching specified
-      error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
-      $model_elements = loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input_props, $cache_level, $cache_list, $run_date);
-      $error = $model_elements['error'];
-      $thisobject = $model_elements['object'];
-      $components = $model_elements['components'];
-      $cachedlist = $model_elements['cachedlist'];
-      $live = $model_elements['live'];
-      if ($test_only) {
-         error_log("Live running list: " . print_r($live,1));
-         error_log("Cached running list: " . print_r($cachedlist,1));
-         error_log("All components running list: " . print_r($components,1));
-      }
-      // if we did not pass in a start and enddate, grab it from the parent object now
-      if ( (strlen($startdate) == 0) and (strlen($enddate) == 0)) {
-         $startdate = $thisobject->starttime;
-         $enddate = $thisobject->endtime;
-      }
-      // *********************************
-      // *** Dynamic Inserts Now      ****
-      // *********************************
-      // now unserialize and add any dynamically inserted objects
-      $dyna_cache = addDynamicChildElements($modeldb, $input_props, $dynamics, $test_only);
-      //error_log("The following elements were loaded dynamically into the simulation " . print_r($dyna_cache,1));
-      // ask this to report status for children
-      // this version will do reports for all children and chidlren of children
-      //$thisobject->childstatus = $dyna_cache;
-      // this version just does the dynamic parents requested
-      $thisobject->childstatus = extract_arrayvalue($dynamics, 'childid');
-      //error_reporting(E_ALL);
-      if (isset($input_props['dt'])) {
-        $thisobject->dt = $input_props['dt'];
-      }
-      if (!$test_only) {
-         $meanexectime = performRun($listobject, $thisobject, $startdate, $enddate, $runid);
-      }
-      // store the model run data
-      if ($cache_runid <> $runid) {
-         //error_log("$cache_runid <> $runid - logging all components \n");
-         // go ahead and store a copy of all run data for this if it will not overwrite
-         // the source run "cache_runid"
-         //$log_components = array_merge(array($elementid),$live, $dyna_cache);
-         $log_components = array_unique(array_merge(array($elementid),$live, $dyna_cache, $components));
-      } else {
-         // Just store the elements that were actually run live 
-         $log_components = array_merge($live, $dyna_cache);
-      }
-      //error_log("Model Run Data to be stored for " . print_r($log_components,1));
-      if (!$test_only) {
-         storeElementRunData($listobject, $elementid, $log_components, $runid, $run_date, $startdate, $enddate, $meanexectime, 0);
-      }
-      // stash the run info and create summary files for the desired dynamics:
-      if ($cache_runid <> $runid) {
-         // create a cache entry for all objects in this simulation, whether they ran live or cached
-         $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
-      } else {
-         //error_log("($cache_runid <> $runid)");
-         $summarize = $dyna_cache;
-         $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
-      }
-      //error_log("Creating run summary files for " . print_r($summarize,1));
-      if (!$test_only) {
-         // cache only the object of interest and the parent object
-         // @todo: this was disabled for some reason?
-         createModelRunSummaryFiles($listobject, $summarize, $runid);
-      }
-      return;
-   }
+  if ($elementid > 0) {
+    if ( (strlen($startdate) > 0) and (strlen($enddate) > 0)) {
+       $input_props['model_startdate'] = $startdate;
+       $input_props['model_enddate'] = $enddate;
+    }
+    
+    // load up all of the things that are in the base model, with caching specified
+    error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
+    $model_elements = loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input_props, $cache_level, $cache_list, $run_date);
+    $error = $model_elements['error'];
+    $thisobject = $model_elements['object'];
+    $components = $model_elements['components'];
+    $cachedlist = $model_elements['cachedlist'];
+    $live = $model_elements['live'];
+    if ($test_only) {
+       error_log("Live running list: " . print_r($live,1));
+       error_log("Cached running list: " . print_r($cachedlist,1));
+       error_log("All components running list: " . print_r($components,1));
+    }
+    // if we did not pass in a start and enddate, grab it from the parent object now
+    if ( (strlen($startdate) == 0) and (strlen($enddate) == 0)) {
+       $startdate = $thisobject->starttime;
+       $enddate = $thisobject->endtime;
+    }
+    // *********************************
+    // *** Dynamic Inserts Now      ****
+    // *********************************
+    // now unserialize and add any dynamically inserted objects
+    $dyna_cache = addDynamicChildElements($modeldb, $input_props, $dynamics, $test_only);
+    //error_log("The following elements were loaded dynamically into the simulation " . print_r($dyna_cache,1));
+    // ask this to report status for children
+    // this version will do reports for all children and chidlren of children
+    //$thisobject->childstatus = $dyna_cache;
+    // this version just does the dynamic parents requested
+    $thisobject->childstatus = extract_arrayvalue($dynamics, 'childid');
+    //error_reporting(E_ALL);
+    if (isset($input_props['dt'])) {
+      $thisobject->dt = $input_props['dt'];
+    }
+    if (!$test_only) {
+       $meanexectime = performRun($listobject, $thisobject, $startdate, $enddate, $runid);
+    }
+    // store the model run data
+    if ($cache_runid <> $runid) {
+       //error_log("$cache_runid <> $runid - logging all components \n");
+       // go ahead and store a copy of all run data for this if it will not overwrite
+       // the source run "cache_runid"
+       //$log_components = array_merge(array($elementid),$live, $dyna_cache);
+       $log_components = array_unique(array_merge(array($elementid),$live, $dyna_cache, $components));
+    } else {
+       // Just store the elements that were actually run live 
+       $log_components = array_merge($live, $dyna_cache);
+    }
+    //error_log("Model Run Data to be stored for " . print_r($log_components,1));
+    if (!$test_only) {
+       storeElementRunData($listobject, $elementid, $log_components, $runid, $run_date, $startdate, $enddate, $meanexectime, 0);
+    }
+    // stash the run info and create summary files for the desired dynamics:
+    if ($cache_runid <> $runid) {
+       // create a cache entry for all objects in this simulation, whether they ran live or cached
+       $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
+    } else {
+       //error_log("($cache_runid <> $runid)");
+       $summarize = $dyna_cache;
+       $summarize = array_unique(array_merge(array($elementid), $dyna_cache));
+    }
+    //error_log("Creating run summary files for " . print_r($summarize,1));
+    if (!$test_only) {
+       // cache only the object of interest and the parent object
+       // @todo: this was disabled for some reason?
+       createModelRunSummaryFiles($listobject, $summarize, $runid);
+    }
+    return;
+  }
 }
 
 
@@ -4197,7 +4196,7 @@ function copyElementGeom($src_elid, $dest_elid) {
 }
 
 function addElementForm($formValues, $who_xmlobjects) {
-   global $listobject, $ucitables, $projectid, $scenarioid, $debug, $userid, $usergroupids, $adminsetuparray, $timer;
+   global $modeldb, $listobject, $ucitables, $projectid, $scenarioid, $debug, $userid, $usergroupids, $adminsetuparray, $timer;
    $innerHTML = '';
 
    if ($debug) {
@@ -4349,6 +4348,8 @@ function addElementForm($formValues, $who_xmlobjects) {
       # pass the listobject to these object for their use
       $unser = unserializeModelObject($elementid);
       $thisobject = $unser['object'];
+      // this should work? modeldb would be more appropriate and woudl allow data conns to check their cached tables
+      //$thisobject->listobject = $modeldb;
       $thisobject->listobject = $listobject;
       $elemtype = $unser['elemtype'];
       if ($elemtype == 'HSPFContainer') {
@@ -4527,7 +4528,7 @@ function addElementFormPanel($formValues, $who_xmlobjects) {
    $showtime = 0;
 
    #$debug = 1;
-error_log("AddElementFormPanel Called ");
+    //error_log("AddElementFormPanel Called ");
 
    # format output into tabbed display object
    $taboutput = new tabbedListObject;
@@ -4633,8 +4634,8 @@ error_log("AddElementFormPanel Called ");
    #if ($debug) {
       $taboutput->tab_HTML['debug'] .= "Geometry Set to: $geomx - $geomy <br>";
    #}
-$elid = $formValues['elementid'];
-error_log("Action type: $actiontype ");
+  $elid = $formValues['elementid'];
+  //error_log("Action type: $actiontype ");
    switch ($actiontype) {
       case 'delete':
          #$debug = 1;
@@ -4701,7 +4702,7 @@ error_log("Action type: $actiontype ");
    #################################################################################
    ###                       Panel 1 - General Properties                        ###
    #################################################################################
-   error_log(" Showing General Properties");
+   //error_log(" Showing General Properties");
    $taboutput->tab_HTML['generalprops'] .= "<font class='heading1'>Modeling Element Form - $elid</font><br>";
    # show the menu of elements to choose from
    # construct SQL for this:
@@ -4759,7 +4760,7 @@ error_log("Action type: $actiontype ");
       }
       #$innerHTML .= "Perm: $elemperms <br>";
       # pass the listobject to these object for their use
-error_log("Calling unserializeSingleModelObject($elementid); ");
+      //error_log("Calling unserializeSingleModelObject($elementid); ");
       $unser = unserializeSingleModelObject($elementid);
       $thisobject = $unser['object'];
       $thisobject->listobject = $listobject;
@@ -5555,6 +5556,49 @@ function retrieveElementOperator($elementid, $i) {
    return array('opxml'=>$opxml, $debugHTML=>$innerHTML);
 }
 
+function compactObject(&$thisobject, &$debugHTML = '', &$retarr = array(), $debug = FALSE) {
+  if ($debug) {
+     error_log("Checking for presence of large data types.");
+  }
+  if (property_exists($thisobject, 'listobject')) {
+     $thisobject->listobject = NULL;
+  }
+  if (property_exists($thisobject, 'ucitables')) {
+     $debugHTML .= "Setting a ucitables object on $name.<br>";
+     if ($debug) {
+        error_log("Setting a ucitables object on $name.<br>");
+     }
+     $thisobject->ucitables = NULL;
+  }
+  if (property_exists($thisobject, 'the_geom')) {
+     $debugHTML .= "Nullifying the_geom on $name.<br>";
+     if ($debug) {
+        error_log("Nullifying the_geom on $name - " . substr($thisobject->the_geom,0,64));
+     }
+     if (strlen($thisobject->the_geom) > 0) {
+        $retarr['the_geom'] = $thisobject->the_geom;
+     }
+     $thisobject->the_geom = '';
+  }
+  if (property_exists($thisobject, 'fno')) {
+     $debugHTML .= "Clearing listobject object on $name.<br>";
+     if ($debug) {         
+        error_log("Clearing listobject object on $name.");
+     }
+     $thisobject->fno = '';
+  }
+  if (property_exists($thisobject, 'dbcolumntypes')) {
+     $debugHTML .= "Clearing dbcolumntypes object on $name.<br>";
+     if ($debug) {         
+        error_log("Clearing dbcolumntypes object on $name.");
+     }
+     $thisobject->dbcolumntypes = '';
+  }
+  error_log("Compacted Object: " . print_r(array_keys((array)$thisobject),1));
+  error_log("Object Proc List: " . print_r(array_keys((array)$thisobject->processors),1));
+
+}
+
 function compactSerializeObject($thisobject, $debug = 0) {
     
    $innerHTML = '';
@@ -5566,49 +5610,14 @@ function compactSerializeObject($thisobject, $debug = 0) {
    if (is_object($thisobject)) {
       # compact the object before saving it to XML
       # zero out things that shold not be saved
-      $debugHTML .= "Stripping large generic data from object for compact storage.<br>";
       $thisobject->initialized = 0; # set this to zero so that the model will wake and be refreshed
       $name = 'Un-Named Object';
       if (property_exists($thisobject, 'name')) {
          $name = $thisobject->name;
       }
-      if ($debug) {
-         error_log("Checking for presence of large data types.");
-      }
-      if (property_exists($thisobject, 'listobject')) {
-         $thisobject->listobject = NULL;
-      }
-      if (property_exists($thisobject, 'ucitables')) {
-         $debugHTML .= "Setting a ucitables object on $name.<br>";
-         if ($debug) {
-            error_log("Setting a ucitables object on $name.<br>");
-         }
-         $thisobject->ucitables = NULL;
-      }
-      if (property_exists($thisobject, 'the_geom')) {
-         $debugHTML .= "Nullifying the_geom on $name.<br>";
-         if ($debug) {
-            error_log("Nullifying the_geom on $name - " . substr($thisobject->the_geom,0,64));
-         }
-         if (strlen($thisobject->the_geom) > 0) {
-            $retarr['the_geom'] = $thisobject->the_geom;
-         }
-         $thisobject->the_geom = '';
-      }
-      if (property_exists($thisobject, 'fno')) {
-         $debugHTML .= "Clearing listobject object on $name.<br>";
-         if ($debug) {         
-            error_log("Clearing listobject object on $name.");
-         }
-         $thisobject->fno = '';
-      }
-      if (property_exists($thisobject, 'dbcolumntypes')) {
-         $debugHTML .= "Clearing dbcolumntypes object on $name.<br>";
-         if ($debug) {         
-            error_log("Clearing dbcolumntypes object on $name.");
-         }
-         $thisobject->dbcolumntypes = '';
-      }
+      $debugHTML .= "Stripping large generic data from object for compact storage.<br>";
+      $debugHTML .= compactObject($thisobject, $debugHTML, $retarr, $debug);
+      
       $debugHTML .= "Putting object to sleep.<br>";
       if ($debug) {
          error_log("Putting object to sleep.");
@@ -6130,7 +6139,8 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
             $innerHTML .= "Geometry did not load properly\n";
          }
       }
-      $compres = compactSerializeObject($thisobject);
+      error_log("Serializing for storage in db");
+      $compres = compactSerializeObject($thisobject, 1);
       if (!$compres['error']) {
          if ($debug) {
             $debugHTML .= "Storing inputs and properties on $elementid <br>\n";
@@ -6170,7 +6180,7 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
          $listobject->querystring .= " where elementid = $elementid ";
          if ($debug) {
             $debugHTML .= "$listobject->querystring ;<br>";
-            //error_log($listobject->querystring);
+            error_log($listobject->querystring);
          }
          $listobject->performQuery();
          if ($debug) {
@@ -6179,6 +6189,7 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
       } else {
          $debugHTML .= $compres['errorHTML'];
       }
+      error_log("Finished storing");
    } else {
       $innerHTML .= "\n\nThere was a problem loading object $elementid - " . $loadres['error'];
    }
@@ -7686,10 +7697,11 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
         error_log("Calling getCachedObjectXML(listobject, $elementid, $cache_runid)");
          $qresult = getCachedObjectXML($listobject, $elementid, $cache_runid);
       } else {
-         error_log("Calling getObjectXML(listobject, $elementid) ");
+         //error_log("Calling getObjectXML(listobject, $elementid) ");
          $qresult = getObjectXML($listobject, $elementid);
       }
       if ($qresult['error']) {
+        error_log("Calling getObjectXML(listobject, $elementid) " . $qresult['error']);
         return FALSE;
       }
       $record = $qresult['record'];
@@ -8352,7 +8364,7 @@ function getElementCacheable($listobject, $elementid) {
 }
 
 function unSerializeModelObject($elementid, $input_props = array(), $model_listobj = '', $cache_level = -1, $cache_id = -1, $current_level = -1) {
-   global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $debug, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $wdimex_exe, $basedir, $model_startdate, $model_enddate, $serverip;
+   global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $debug, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $wdimex_exe, $basedir, $model_startdate, $model_enddate, $serverip, $modeldb;
    
    //error_log("unSerializeModelObject called for $elementid <br>");
    
@@ -8397,6 +8409,8 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    //error_log("Checking listobject $elementid <br>");
    // unless we are passed one, we implicitly assume that the standard list object is valid
    if (!is_object($model_listobj)) {
+     // swap modeldb for listobject as default here, when loading objects for editing - does it break anything?
+     // maybe it requires the adminsetuparray or something?
       $model_listobj = $listobject;
       //error_log("No Valid Model Object Passed, using default Database for Model Runtime Storage");
    } else {
