@@ -56,7 +56,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
     $this->loadProperties($row);
     // apply custom settings here
-    dpm( $this, "Calling addAttachedProperties with attach_method = $this->attach_method");
+    dpm( $row, "Calling addAttachedProperties with attach_method = $this->attach_method");
     $this->addAttachedProperties($rowform, $row);
   }
   
