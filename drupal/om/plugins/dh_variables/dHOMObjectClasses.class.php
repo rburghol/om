@@ -198,6 +198,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
           if ($plugin) {
+            if ($this->debug) {
+              dpm($plugin, 'plugin');
+            }
             if (method_exists($plugin, 'attachNamedForm')) {
               if ($this->debug) {
                 dpm($dopple, "Adding $pn Using attachNamedForm()");
@@ -946,6 +949,19 @@ class dHOMConstant extends dHOMBaseObjectClass {
   
   public function getPropertyAttribute($property) {
     return $property->propvalue;
+  }
+  
+  // @todo: move this into dh module once we are satisifed that it is robust
+  public function attachNamedForm(&$rowform, $row) {
+    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    $formshell = array();
+    // use standard formatting to enable choices.
+    $this->formRowEdit($formshell, $row);
+    $mname = $this->handleFormPropname($row->propname);
+    $rowform[$mname] = $formshell['propvalue'];
   }
 }
 
