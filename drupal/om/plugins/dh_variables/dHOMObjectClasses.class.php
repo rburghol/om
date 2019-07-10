@@ -181,6 +181,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function addAttachedProperties(&$form, &$entity) {
     $dopples = $this->getDefaults($entity);
+    if ($this->debug) {
+      dpm($entity, "plugin " . get_class($this) . " handling entity");
+    }
     foreach ($dopples as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         $pn = $this->handleFormPropname($thisvar['propname']);
@@ -191,10 +194,14 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           $plugin = dh_variables_getPlugins($dopple);
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
-              dpm($dopple, "Adding $pn Using attachNamedForm()");
+              if ($this->debug) {
+                dpm($dopple, "Adding $pn Using attachNamedForm()");
+              }
               $plugin->attachNamedForm($form, $dopple);
             } else {
-              dpm($dopple, "Guessing $pn propvalue from formRowEdit()");
+              if ($this->debug) {
+                dpm($dopple, "Guessing $pn propvalue from formRowEdit()");
+              }
               $dopple_form = array();
               $plugin->formRowEdit($dopple_form, $dopple);
               $form[$pn] = $dopple_form['propvalue'];
