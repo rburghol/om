@@ -191,6 +191,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $pn = $this->handleFormPropname($thisvar['propname']);
         $dopple = $entity->{$thisvar['propname']};
         // @todo: if this is a code variable, we should get propcode?
+        if ($this->debug) {
+          dpm($dopple, "Handling $pn ");
+        }
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
