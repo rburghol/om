@@ -8,49 +8,34 @@ include_once('xajax_modeling.element.php');
 print("Un-serializing Model Object <br>");
 $debug = 0;
 
-$elementid = 340394;
-if (isset($_GET['elementid'])) {
-   $elementid = $_GET['elementid'];
-}
-if (isset($argv[1])) {
-   $elementid = $argv[1];
-}
-   
-// create a shell object
+// create a shell modelContainer object
 // create a timer
-// add a matrix 
+error_log("Element $elementid wake() Returned from calling routine.");
+$model = new modelContainer();
+$model->starttime = '1984-01-01';
+$model->endtime = '1984-01-31';
+$model->dt = 86400;
 
+// add a timeseriesfile / cbp type
+$elementid = 340394;
 $thisobresult = unSerializeModelObject($elementid);
 $thisobject = $thisobresult['object'];
 $thisname = $thisobject->name;
-$thisobject->debug = 1;
 $thisobject->outdir = $outdir;
 $thisobject->outurl = $outurl;
+$thisobject->landseg = 'tiny';
+$thisobject->debug = 0;
+$thisobject->filepath = '/opt/model/p6/test/tiny.csv';
+error_log("Calling wake() again -- db cache is:" . $thisobject->db_cache_name);
 
-$thisobject->wake();
-error_log("Element $elementid wake() Returned from calling routine.");
-
-$ret = compactSerializeObject($thisobject, TRUE);
-die;
-
-$prop_array = array('name'=> 'Test EL', 'filepath' => '/opt/model/p6/p6_gb604/out/p532cal_062211_A51121_eos_all.csv');
-$thisobject->name = $prop_array['name'];
-updateObjectProps(1, $elementid, $prop_array, 0);
-
+$model->addComponent($thisobject);
+$model->debug = 0;
+$model->wake();
+//$model->init();
+// try changing to a different file
+//$thisobject->debug = 1;
+//$thisobject->debugmode = 1;
+$thisobject->setDBCacheName();
 $thisobject->init();
-error_log("Element $elementid init() Returned from calling routine.");
-$debugstring = '';
-
-error_log("Column Defs:" . print_r($thisobject->column_defs,1));
-
-$thisobject->initTimer();
-$thisobject->step();
-$phub_class = get_class($thisobject->processors['broadcast_hydro']);
-error_log("Phub class: $phub_class");
-$phubhub_class = get_class($phub->parentHub);
-error_log("Phubhub class: $phubhub_class");
-$phub = $thisobject->processors['broadcast_hydro'];
-error_log("PhubPhub ardata = " . print_r($phub->parentHub->arData,1));
-error_log("Phub ardata = " . print_r($phub->arData,1));
 
 ?>

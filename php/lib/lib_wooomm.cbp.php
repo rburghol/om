@@ -673,12 +673,17 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    
    function setDBCacheName() {
       # set a name for the temp table that will not hose the db
+      if ($this->debug) {
+        $this->logDebug("Setting db_cache_name to cbp_  $this->version _ $this->scenario _ $this->landseg");
+      }
+      error_log("Setting db_cache_name to cbp_  $this->version _ $this->scenario _ $this->landseg");
       $this->db_cache_name = strtolower('cbp_' . implode('_', array($this->version, $this->scenario, $this->landseg)));
       $this->db_cache_persist = TRUE; // we can do this for files that are large and infrequently updated
       //error_log("DSN $this->name set to $this->db_cache_name ");
    }
    
   function tsvaluesFromLogFile($infile='') {
+    global $modeldb;
     // @todo: for elements with a persistent cache OR for those with a shared cache
     //         1. check to see if the cache table exists already.
     //         2. If cache table already exists, check date on table in cache table lookup
@@ -687,8 +692,8 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     //         4. Otherwise, proceed as normal     
     // check for a file, if set, use it to populate the lookup table, otherwise, use the CSV string
     // if table exists, just return, all is cool.
-    if (is_object($this->listobject)) {
-      if ($this->listobject->tableExists($this->db_cache_name)) {
+    if (is_object($modeldb)) {
+      if ($modeldb->tableExists($this->db_cache_name)) {
        error_log("Cache Table $this->db_cache_name already exists. Returning.");
        return;
       }
@@ -697,12 +702,14 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   }
    
   function tsvalues2listobject($columns = array()) {
+    global $modeldb;
     // if table exists, just return, all is cool.
-    if (is_object($this->listobject)) {
-     if ($this->listobject->tableExists($this->db_cache_name)) {
+    if (is_object($modeldb)) {
+      $this->listobject = $modeldb;
+      if ($modeldb->tableExists($this->db_cache_name)) {
        error_log("Cache Table $this->db_cache_name already exists. Returning.");
        return;
-     }
+      }
     }
     // otherwise use parent methods
     parent::tsvalues2listobject($columns);
@@ -866,16 +873,17 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    }
 
    function showHTMLInfo() {
+    global $modeldb;
       $HTMLInfo = '';
       $HTMLInfo .= parent::showHTMLInfo() . "<hr>";
       $HTMLInfo .= "File Info:" . print_r($this->file_info,1) . "<hr>";
       $HTMLInfo .= "DB Cache: $this->db_cache_name (Persist = " . intval($this->db_cache_persist);
-      if (is_object($this->listobject)) {
-        $HTMLInfo .= ", Exist = " . intval($this->listobject->tableExists($this->db_cache_name)) . " ) <hr>";
-        $HTMLInfo .= "DB Host:" . pg_host($this->listobject->dbconn);
-        $HTMLInfo .= ", Port:" . pg_port($this->listobject->dbconn);
-        $HTMLInfo .= ", Name:" . pg_dbname($this->listobject->dbconn);
-        $HTMLInfo .= " )";
+      if (is_object($modeldb)) {
+        $HTMLInfo .= ", Exist = " . intval($modeldb->tableExists($this->db_cache_name)) . " )";
+        $HTMLInfo .= "DB Host:" . pg_host($modeldb->dbconn);
+        $HTMLInfo .= ", Port:" . pg_port($modeldb->dbconn);
+        $HTMLInfo .= ", Name:" . pg_dbname($modeldb->dbconn);
+        $HTMLInfo .= " ) <hr>";
       } else {
         $HTMLInfo .= " ) <hr>";
       }

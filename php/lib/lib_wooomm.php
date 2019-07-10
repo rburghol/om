@@ -4196,7 +4196,7 @@ function copyElementGeom($src_elid, $dest_elid) {
 }
 
 function addElementForm($formValues, $who_xmlobjects) {
-   global $listobject, $ucitables, $projectid, $scenarioid, $debug, $userid, $usergroupids, $adminsetuparray, $timer;
+   global $modeldb, $listobject, $ucitables, $projectid, $scenarioid, $debug, $userid, $usergroupids, $adminsetuparray, $timer;
    $innerHTML = '';
 
    if ($debug) {
@@ -4348,6 +4348,8 @@ function addElementForm($formValues, $who_xmlobjects) {
       # pass the listobject to these object for their use
       $unser = unserializeModelObject($elementid);
       $thisobject = $unser['object'];
+      // this should work? modeldb would be more appropriate and woudl allow data conns to check their cached tables
+      //$thisobject->listobject = $modeldb;
       $thisobject->listobject = $listobject;
       $elemtype = $unser['elemtype'];
       if ($elemtype == 'HSPFContainer') {
@@ -8362,7 +8364,7 @@ function getElementCacheable($listobject, $elementid) {
 }
 
 function unSerializeModelObject($elementid, $input_props = array(), $model_listobj = '', $cache_level = -1, $cache_id = -1, $current_level = -1) {
-   global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $debug, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $wdimex_exe, $basedir, $model_startdate, $model_enddate, $serverip;
+   global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $debug, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $wdimex_exe, $basedir, $model_startdate, $model_enddate, $serverip, $modeldb;
    
    //error_log("unSerializeModelObject called for $elementid <br>");
    
@@ -8407,6 +8409,8 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    //error_log("Checking listobject $elementid <br>");
    // unless we are passed one, we implicitly assume that the standard list object is valid
    if (!is_object($model_listobj)) {
+     // swap modeldb for listobject as default here, when loading objects for editing - does it break anything?
+     // maybe it requires the adminsetuparray or something?
       $model_listobj = $listobject;
       //error_log("No Valid Model Object Passed, using default Database for Model Runtime Storage");
    } else {

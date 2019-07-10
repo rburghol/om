@@ -5662,9 +5662,11 @@ class timeSeriesInput extends modelObject {
                if (isset($thisline['thisdate'])) {
                   $ts = strtotime($thisline['thisdate']);
                   $this->tsvalues[$ts] = $thisline;
+                  $this->tsvalues[$ts]['timestamp'] = $ts;
                   if ($this->debug) {
                      if ($k == 0) {
                         $this->logDebug($thisline['thisdate'] . " converted to Timestamp $ts <br>");
+                        error_log($thisline['thisdate'] . " converted to Timestamp $ts <br>");
                      }
                   }
                } else {
@@ -5758,7 +5760,7 @@ class timeSeriesInput extends modelObject {
          $outform = '';
          
          if ($this->debug) {
-            $this->logDebug("Outputting Time Series to db: $this->dbtblname <br>");
+            $this->logDebug("Outputting Time Series to db: $this->db_cache_name <br>");
             $this->logDebug("Using the following db-columntypes: " . print_r($this->dbcolumntypes,1) . " <br>");
          }
          //$this->listobject->debug = 1;
@@ -6349,8 +6351,8 @@ class timeSeriesFile extends timeSeriesInput {
       $this->logDebug("2nd Line of $this->name : " . print_r($first2lines[1],1) . "<br>");
     }
     $nb = 0;
-    if (!isset($first2lines[0]['timestamp'])) {
-      error_log("timestamp column missing in text file in $this->getFileName()");
+    if (!in_array('timestamp', $first2lines[0]) and !in_array('thisdate', $first2lines[0]) ) {
+      error_log("timestamp/thisdate column missing in text file in " . $this->getFileName());
       //return;
     }
     foreach ($first2lines[0] as $thiskey => $thisvar) {
@@ -6358,7 +6360,7 @@ class timeSeriesFile extends timeSeriesInput {
         $nb++;
         $this->logError("Blank value found in $this->name time series file " . $this->getFileName() . "<br>");
       } else {
-        if ($thisvar <> 'timestamp') {
+        if ( ($thisvar <> 'timestamp') and ($thisvar <> 'thisdate') ) {
           if (!in_array($thisvar, $this->file_vars)) {
             $this->file_vars[] = $thisvar;
           }
@@ -6368,7 +6370,7 @@ class timeSeriesFile extends timeSeriesInput {
             $this->logDebug("$thisvar not in dbcolumntypes array <br>");
           }
           $this->setSingleDataColumnType($thisvar, 'guess',  $first2lines[1][$thiskey]);
-          error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
+          //error_log("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey]);
           if ($this->debug) {
             $this->logDebug("Calling setSingleDataColumnType($thisvar, 'guess',  " . $first2lines[1][$thiskey] . ")<br>");
           }
