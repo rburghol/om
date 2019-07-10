@@ -91,7 +91,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       $props = array($propname => $props[$propname]);
     }
-    dpm($props, "$entity->propname adding props");
     foreach ($props as $thisvar) {
 	    // propname is arbitrary by definition
       // also, propname can be non-compliant with form API, which requires underscores in place of spaces.
