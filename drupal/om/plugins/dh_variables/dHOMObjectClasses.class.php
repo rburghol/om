@@ -56,9 +56,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
     $this->loadProperties($row);
     // apply custom settings here
-    dpm( $row, "Calling addAttachedProperties with attach_method = $this->attach_method");
+    //dpm( $row, "Calling addAttachedProperties with attach_method = $this->attach_method");
     $this->addAttachedProperties($rowform, $row);
-    dpm( $rowform, "Form after addAttachedProperties()");
+    dpm( $rowform, "$row->propname Form after addAttachedProperties()");
   }
   
   public function insert(&$entity) {
@@ -90,6 +90,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       $props = array($propname => $props[$propname]);
     }
+    dpm($props, "$entity->propname adding props");
     foreach ($props as $thisvar) {
 	    // propname is arbitrary by definition
       // also, propname can be non-compliant with form API, which requires underscores in place of spaces.
