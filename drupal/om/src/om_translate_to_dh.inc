@@ -23,6 +23,7 @@ function om_create_property($values, $singularity = 'name') {
 
 function om_translate_to_dh($om_comp, &$dh_prop) {
   $translated = FALSE;
+  error_log("om_translate_to_dh() for $om_comp->object_class ");
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
