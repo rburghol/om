@@ -53,7 +53,7 @@ if (count($args) >= 2) {
 } else {
   if (count($args) > 0) {
     // warn and quit
-    error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_entity_type=om_model_element] [classes=" . implode(',', $classes) . "]");
+    error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=om_model_element] [classes=" . implode(',', $classes) . "]");
     die;
   }
 }
