@@ -51,7 +51,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     case 'Equation':
       $dh_prop->propcode = $om_comp->equation;
       $dh_prop->defaultval = $om_comp->defaultval;
-      if (length($dh_prop->propcode) > 64) {
+      if (length($dh_prop->propcode) > 255) {
         // set to proptext
         // @todo: set to proptext of a subcomp-subcomp and handle in plugin
       }
@@ -64,6 +64,11 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $translated = TRUE;
     break;
   
+  }
+  if ($translated) {
+    error_log("Translated $om_comp->object_class to $dh_prop->propname");
+  } else {
+    error_log("Could not translate");
   }
   return $translated;
 }
