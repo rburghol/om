@@ -28,6 +28,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   if (is_object($plugin )) {
     error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
+    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
   }
   
   switch ($om_comp->object_class) {
