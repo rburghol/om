@@ -121,6 +121,7 @@ foreach ($data as $element) {
       'varkey' => $model_varkey,
       'propname' => $object->name,
     );
+    error_log("Searching Model " . print_r($values,1));
     $om_model = om_model_getSetProperty($values, 'propcode_singular');
     error_log("Model = $om_model->propname - $om_model->propcode ");
     // see if the
