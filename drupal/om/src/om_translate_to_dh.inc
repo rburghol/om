@@ -23,11 +23,13 @@ function om_create_property($values, $singularity = 'name') {
 
 function om_translate_to_dh($om_comp, &$dh_prop) {
   $translated = FALSE;
+  error_log("om_translate_to_dh() for $om_comp->object_class ");
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
     error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
+    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
   }
   
   switch ($om_comp->object_class) {
@@ -48,9 +50,10 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $translated = TRUE;
     break;
     case 'Equation':
+      error_log("Setting Eq: $om_comp->equation with default $om_comp->defaultval ");
       $dh_prop->propcode = $om_comp->equation;
       $dh_prop->defaultval = $om_comp->defaultval;
-      if (length($dh_prop->propcode) > 64) {
+      if (strlen($dh_prop->propcode) > 255) {
         // set to proptext
         // @todo: set to proptext of a subcomp-subcomp and handle in plugin
       }
@@ -63,6 +66,11 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $translated = TRUE;
     break;
   
+  }
+  if ($translated) {
+    error_log("Translated $om_comp->object_class to $dh_prop->propname");
+  } else {
+    error_log("Could not translate");
   }
   return $translated;
 }
