@@ -45,7 +45,7 @@ if (count($args) >= 2) {
     $model_scenario = $args[5];
   }
   if (isset($args[6])) {
-    $model_varkey = explode(',',$args[6]);
+    $model_varkey = $args[6];
   }
   if (isset($args[7])) {
     $classes = explode(',',$args[7]);
