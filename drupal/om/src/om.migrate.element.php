@@ -18,13 +18,18 @@ $one_proc = '';
 $elementid = FALSE;
 $hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
+$model_varkey = 'om_model_element';
+$model_entity_type = 'dh_feature';
+// command line class override
+$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp');
+//$classes = array('Equation');
 
 // Is single command line arg?
 if (count($args) >= 2) {
   // Do command line, single element settings
   // set these if doing a single -- will fail if both not set
   // $elementid = 340385; // set these if doing a single
-  // $hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth'; 
+  // $hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
   $elementid = $args[0];
   $hydrocode = $args[1];
   if (isset($args[2])) {
@@ -39,10 +44,16 @@ if (count($args) >= 2) {
   if (isset($args[5])) {
     $model_scenario = $args[5];
   }
+  if (isset($args[6])) {
+    $model_varkey = explode(',',$args[6]);
+  }
+  if (isset($args[7])) {
+    $classes = explode(',',$args[7]);
+  }
 } else {
   if (count($args) > 0) {
     // warn and quit
-    error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0]");
+    error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_entity_type=om_model_element] [classes=" . implode(',', $classes) . "]");
     die;
   }
 }
@@ -71,8 +82,6 @@ if ($elementid == 'file') {
 $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 
 // classes = array() empty mean all
-$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp');
-//$classes = array('Equation');
 
 if (!($elementid and $hydrocode)) {
   $data = array();
@@ -104,28 +113,28 @@ foreach ($data as $element) {
     continue;
   }
   if (is_object($object)) {
-    $om_feature = entity_load_single('dh_feature', $om_fid);
+    $om_feature = entity_load_single($model_entity_type, $om_fid);
     error_log("Found $om_feature->name ($om_feature->hydroid)");
     $om_model = FALSE;
     $values = array(
-      'entity_type' => 'dh_feature', 
-      'featureid' => $om_fid, 
-      'propcode'=>$model_scenario, 
-      'varkey' => 'om_model_element',
-      'propname' => $object->name, 
+      'entity_type' => $model_entity_type,
+      'featureid' => $om_fid,
+      'propcode'=>$model_scenario,
+      'varkey' => $model_varkey,
+      'propname' => $object->name,
     );
     $om_model = om_model_getSetProperty($values, 'propcode_singular');
     error_log("Model = $om_model->propname - $om_model->propcode ");
-    // see if the 
+    // see if the
     if (is_object($om_model)) {
       error_log("Model with pid = $om_model->pid");
       // first, disable set_remote to prevent looping
       // add the element link
       $link_props = array(
-        'entity_type' => 'dh_properties', 
-        'featureid' => $om_model->pid, 
-        'propname' => 'OM Element Link', 
-        'propvalue' => $elid, 
+        'entity_type' => 'dh_properties',
+        'featureid' => $om_model->pid,
+        'propname' => 'OM Element Link',
+        'propvalue' => $elid,
         'varkey'=>'om_element_connection'
       );
       // retrieve or create the link
@@ -181,7 +190,7 @@ foreach ($data as $element) {
   } else {
     error_log("Could not find: elementid=$elid ");
   }
-  
+
 }
 
 ?>
