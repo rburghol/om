@@ -933,6 +933,10 @@ class dHOMConstant extends dHOMBaseObjectClass {
 }
 
 class dHOMModelElement extends dHOMBaseObjectClass {
+  // All objects of this class and inherited by this class
+  // should assume that propcode is used to describe the primary 
+  // model version/scenario.  However, a model object may belong to 
+  // multiple scenarios which can be defined by the om_model_scenario subcomp
   var $object_class = 'modelObject';
   
   public function hiddenFields() {
