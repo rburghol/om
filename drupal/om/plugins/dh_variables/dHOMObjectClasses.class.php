@@ -677,9 +677,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //     but really should be handled by the 2 parent code
     // Ex: run_mode on the parent model object should resolve 2 1 parent, but comes in as 2
     // Equations ARE handled correctly however, since the 
-    dpm($path,'path');
-    dpm($entity,'entity');
-    dsm("Handling a property on a subcomp of the element ($elid) depth = " . count($path));
+    //dpm($path,'path');
+    //dpm($entity,'entity');
+    //dsm("Handling a property on a subcomp of the element ($elid) depth = " . count($path));
     switch (count($path)) {
       case 1:
         list($propname) = $path;
@@ -759,8 +759,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //     but really should be handled by the 2 parent code
     // Ex: run_mode on the parent model object should resolve 2 1 parent, but comes in as 2
     // Equations ARE handled correctly however, since the 
-    dpm($path,'path');
-    dsm("Handling a property on a subcomp of the element ($elid) depth = " . count($path));
+    //dpm($path,'path');
+    //dsm("Handling a property on a subcomp of the element ($elid) depth = " . count($path));
     switch (count($path)) {
       case 1:
         list($propname) = $path;
@@ -795,7 +795,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
     
   public function findRemoteOMElement($entity, &$path) {
-    dpm($entity, "findRemoteOMElement @ depth = $path");
+    //dpm($entity, "findRemoteOMElement @ depth = $path");
     $elid = 0;
     $path[] = $entity->propname;
     // check for a property with varkey om_element_connection on this entity
@@ -808,16 +808,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // *************************************************
     // Current MGY
     // *************************************************
-    dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
+    //dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
     $elvar = dh_properties_enforce_singularity($elvar_info, 'singular');
-    dpm($elvar, " elvar");
+    //dpm($elvar, " elvar");
     if ($elvar) {
       $elid = $elvar->propvalue;
       $this->set_remote = $elvar->propcode;
     } else {
       // get parent
       $parent = $this->getParentEntity($entity);
-      dpm($parent,"Looking at object parent for remote element link.");
+      //dpm($parent,"Looking at object parent for remote element link.");
       if (isset($parent->dh_variables_plugins) and is_array($parent->dh_variables_plugins)) {
         foreach ($parent->dh_variables_plugins as $plugin) {
           if (is_object($plugin) and method_exists($plugin, 'findRemoteOMElement')) {
@@ -949,7 +949,7 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // this is to be done on save.  The base class only saves name and description, 
     // subclasses can save other things
-    dpm($path, 'original path to setAllRemoteProperties()');
+    //dpm($path, 'original path to setAllRemoteProperties()');
     array_unshift($path, 'name');
     $this->setRemoteProp($entity, $elid, $path, $entity->propname, $this->object_class);
     // removes the name 
@@ -986,7 +986,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
   // @todo: add basic handling of things other than descriptions
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    dpm($path, 'original path to setAllRemoteProperties()');
+    //dpm($path, 'original path to setAllRemoteProperties()');
     //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     if (property_exists($entity, 'proptext')) {
       array_unshift($path, 'description');

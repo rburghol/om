@@ -2,10 +2,8 @@
 module_load_include('inc', 'dh', 'plugins/dh.display');
 module_load_include('module', 'dh');
 // make sure that we have base plugins 
-$plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
+$plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMModelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
-
-
 
 class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   var $object_class = 'CBPLandDataConnectionFile';
