@@ -1093,6 +1093,9 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 class dHOMtextField extends dHOMAlphanumericConstant {
   // special subcomp for alpha info
   var $object_class = 'textField';
+  public function hiddenFields() {
+    return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propvalue','dh_link_admin_pr_condition');
+  }
   
   public function getDefaults($entity, &$defaults = array()) {
     // getDefaults is required to be compatible with om.migrate.element.php
@@ -1296,38 +1299,6 @@ class dHOMDataMatrix extends dHOMSubComp {
     $entity->{$this->matrix_field} = array(
       'und' => $default
     );
-  }
-  
-  public function addAttachedProperties(&$form, &$entity) {
-    $dopples = $this->getDefaults($entity);
-    dpm($entity,"Matrix entity");
-    foreach ($dopples as $thisvar) {
-      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        $pn = $this->handleFormPropname($thisvar['propname']);
-        $dopple = $entity->{$thisvar['propname']};
-        // @todo: if this is a code variable, we should get propcode?
-        switch ($this->attach_method) {
-          case 'contained':
-          $plugin = dh_variables_getPlugins($dopple);
-          if ($plugin) {
-            if (method_exists($plugin, 'attachNamedForm')) {
-              dpm($dopple, "Using attachNamedForm() for $pn ");
-              $plugin->attachNamedForm($form, $dopple);
-            } else {
-              dsm("Using formRowEdit() for $pn ");
-              $plugin->formRowEdit($dopple_form, $dopple);
-              $form[$pn] = $dopple_form['propvalue'];
-            }
-          }
-          break;
-          default:
-          $dopple_form = array();
-          dh_variables_formRowPlugins($dopple_form, $dopple);
-          $form[$pn] = $dopple_form['propvalue'];
-          break;
-        }
-      }
-    }
   }
  
 }
