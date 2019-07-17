@@ -43,6 +43,7 @@ if ($elementid === FALSE) {
   if (!$include_geom) {
     unset($thisobject->the_geom);
   }
+  $thisobject->sleep();
   $thisobject = $thisobject->toArray();
   error_log("************ get_model.php $elementid called **************");
   $info = "json_encode handled object properly.";
