@@ -2154,12 +2154,6 @@ class modelObject {
                       $this->state[$thisvar] = $this->processors[$thisvar]->result;
                    break;
                 }
-                 if (get_class($this->processors[$thisvar]) == 'textField') {
-                   error_log("Set state for $thisvar to : " . $this->state[$thisvar]);
-                   error_log(print_r($this->data_cols[array_search($thisvar, $this->data_cols)],1));
-                   error_log(print_r($this->dbcolumntypes[$thisvar],1));
-                   error_log(print_r($this->logformats[$thisvar],1));
-                 }
                 //error_log("Done. <br>\n");
              }
              // evaluate the equation

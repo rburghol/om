@@ -619,6 +619,11 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    // global $cbp_landseg_data;
     // $cbp_landseg_data 
   // Behavior
+  
+  function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
+    error_log("$thiscol, $thistype, $defval, $loggable, $overwrite, $logformat ");
+    parent::setSingleDataColumnType($thiscol, $thistype, $defval, $loggable, $overwrite, $logformat);
+  }
 
   function getFileName() {
     // This overrides the parent method which used a file browser no longer desired.
