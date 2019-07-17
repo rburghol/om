@@ -146,7 +146,9 @@ foreach ($data as $element) {
       $om_link->save();
       $props = dh_get_dh_propnames('dh_properties', $om_model->pid);
       error_log("Prop names for this entity: " . print_r($props,1));
-      // now add these
+      // now add these components.
+      $allvars = array_keys((array)$object);
+      error_log("Properties on this om model: " . print_r($allvars,1));
       $procs = $object->processors;
       $procnames = array_keys($procs);
       error_log("Processor names for om model: " . print_r($procnames,1));
