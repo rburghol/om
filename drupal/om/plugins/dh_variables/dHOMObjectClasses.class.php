@@ -635,6 +635,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
     // if this was a form API use case we could keep the parent name
+    dpm($path,get_class($entity) . " : path : element id " . $elid);
+    dpm($path,get_class($entity) . " : path");
     array_pop($path);
     // $path will be modified by the methods
     // the property set_remote allows us to disable this functionality, for example
