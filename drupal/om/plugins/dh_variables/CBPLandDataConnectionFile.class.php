@@ -43,10 +43,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMmodelElement {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMEquation");
-    array_unshift($path, 'equation');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  }
 }
   
 ?>
