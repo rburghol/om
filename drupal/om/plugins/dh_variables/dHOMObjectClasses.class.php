@@ -985,7 +985,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
   // @todo: add basic handling of things other than descriptions
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dpm($path, 'original path to setAllRemoteProperties()');
+    dpm($path, 'original path to setAllRemoteProperties()');
     //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     if (property_exists($entity, 'proptext')) {
       array_unshift($path, 'description');
@@ -1023,7 +1023,7 @@ class dHOMEquation extends dHOMSubComp {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMEquation");
+    dsm("setAllRemoteProperties from dHOMEquation");
     array_unshift($path, 'equation');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
