@@ -656,6 +656,11 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
       $this->dbcolumntypes['landuse_var'] = 'varchar(255)';
    }
    
+   function sleep() {
+     $this->file_info['handle'] = FALSE;
+     parent::sleep();
+   }
+   
    function wake() {
       parent::wake();
       // @todo: move this to parent class after testing
