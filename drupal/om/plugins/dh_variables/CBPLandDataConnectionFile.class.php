@@ -2,12 +2,10 @@
 module_load_include('inc', 'dh', 'plugins/dh.display');
 module_load_include('module', 'dh');
 // make sure that we have base plugins 
-$plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
+$plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMModelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
 
-
-
-class dHOMCBPLandDataConnectionFile extends dHOMmodelElement {
+class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   var $object_class = 'CBPLandDataConnectionFile';
   
   public function getDefaults($entity, &$defaults = array()) {
@@ -43,10 +41,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMmodelElement {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMEquation");
-    array_unshift($path, 'equation');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  }
 }
   
 ?>
