@@ -1088,6 +1088,11 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
       break;
     }
   }
+}
+
+class dHOMtextField extends dHOMAlphanumericConstant {
+  // special subcomp for alpha info
+  var $object_class = 'textField';
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
