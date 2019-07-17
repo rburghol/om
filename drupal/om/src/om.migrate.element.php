@@ -13,7 +13,7 @@ while ($arg = drush_shift()) {
 $bundle = 'watershed';
 $ftype = 'vahydro';
 // single proc settings
-$one_proc = '';
+$one_proc = 'all';
 // all batch element settings
 $elementid = FALSE;
 $hydrocode = FALSE;
@@ -152,7 +152,7 @@ foreach ($data as $element) {
       error_log("Processor names for om model: " . print_r($procnames,1));
       foreach ($procs as $procname => $proc) {
         // just do one
-        if (($one_proc <> '') and ($procname <> $one_proc)) {
+        if (($one_proc <> 'all') and ($procname <> $one_proc)) {
           continue;
         }
         $object_class = $proc->object_class;
