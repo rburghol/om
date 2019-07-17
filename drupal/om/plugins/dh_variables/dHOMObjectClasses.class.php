@@ -817,6 +817,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     } else {
       // get parent
       $parent = $this->getParentEntity($entity);
+      dpm($parent,"Looking at object parent for remote element link.");
       if (isset($parent->dh_variables_plugins) and is_array($parent->dh_variables_plugins)) {
         foreach ($parent->dh_variables_plugins as $plugin) {
           if (is_object($plugin) and method_exists($plugin, 'findRemoteOMElement')) {
