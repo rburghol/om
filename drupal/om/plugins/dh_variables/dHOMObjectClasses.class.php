@@ -1105,7 +1105,7 @@ class dHOMtextField extends dHOMSubComp {
   }
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    dsm("setAllRemoteProperties from dHOMtextField");
+    //dsm("setAllRemoteProperties from dHOMtextField");
     array_unshift($path, 'value');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
