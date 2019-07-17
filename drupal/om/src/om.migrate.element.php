@@ -150,6 +150,7 @@ foreach ($data as $element) {
       $allvars = array_keys((array)$object);
       error_log("Properties on this om model: " . print_r($allvars,1));
       $procs = $object->processors;
+      error_log("Procnames array for om model: " . print_r($object->procnames,1));
       $procnames = array_keys($procs);
       error_log("Processor names for om model: " . print_r($procnames,1));
       foreach ($procs as $procname => $proc) {
