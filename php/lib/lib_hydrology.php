@@ -16430,6 +16430,9 @@ class textField extends modelSubObject {
       return $publix;
    }
    
+   function postStep() {
+      $this->writeToParent();
+   }
 }
 
 
