@@ -8,7 +8,7 @@ $plugin = array(
   ),
   'variable' =>  array(
     'varname' => 'OM Object Class - CBPLandDataConnectionFile',
-    'vardesc' => 'Gage object, retrieves and provides runtime settings for USGS gage',
+    'vardesc' => 'Data Connection to csv EOS export file stored in persistent model runtime table.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
     'varkey' => 'om_class_cbp_eos_file',
