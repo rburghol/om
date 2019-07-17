@@ -16413,6 +16413,7 @@ class textField extends modelSubObject {
    var $charlength = 64;
    var $value_dbcolumntype = 'varchar(64)';
    var $value = '';
+   var $loggable = 1;
    
    
    function wake() {
