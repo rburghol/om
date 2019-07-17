@@ -3,7 +3,7 @@
 $plugin = array(
   'label' => t('OM Component Class - CBPLandDataConnectionFile'),
   'handler' =>  array(
-    'class' => 'CBPLandDataConnectionFile',
+    'class' => 'dHOMCBPLandDataConnectionFile',
     'file' => 'CBPLandDataConnectionFile.class.php',
   ),
   'variable' =>  array(
