@@ -26,8 +26,11 @@ if (isset($args[4]) and $args[4] > 0) {
 
 if (!isset($cvalues['templateid'])) {
   error_log("Attempting to create " . print_r($cvalues,1));
+  // insertBlankComponent doesn't actually create anything!
   $feedback = insertBlankComponent($cvalues);
-  error_log("Creation routine output:" . print_r($feedback,1) );
+  // createObjectType seems to be OK ?
+  $result = createObjectType($object_type, $props2set)
+  //error_log("Creation routine output:" . print_r($result,1) );
   $listobject->querystring = "SELECT currval('scen_model_element_elementid_seq') ";
   error_log("Get parent ID:" . $listobject->querystring );
   $listobject->performQuery();

@@ -879,7 +879,7 @@
               "cache_log"=>array("type"=>3,"params"=>"0|False,1|True:clid:clname::0:","label"=>"Store Run Data in Text File? ","visible"=>1, "readonly"=>0, "width"=>6),
               "log2db"=>array("type"=>3,"params"=>"0|Memory,1|Database,2|File:lid:lname::0:","label"=>"Runtime Logging Option ","visible"=>1, "readonly"=>0, "width"=>6),
               "run_mode"=>array("type"=>1,"params"=>"","label"=>"Run Mode (for custom use by model components) ","visible"=>1, "readonly"=>0, "width"=>6),
-              "flow_mode"=>array("type"=>3,"params"=>"0|Best Available,1|USGS Baseline,2|USGS Synthetic,3|VAHydro HSPF,4|USGS Historical:fmid:fmname::0","label"=>"Flow Mode (0 - best available, 1 - USGS baseline, 2 - USGS Synth, 3 - VA HSPF, 4+ - Custom) ","visible"=>1, "readonly"=>0, "width"=>6),
+              "flow_mode"=>array("type"=>3,"params"=>"0|Best Available,1|USGS Baseline,2|USGS Synthetic,3|VAHydro HSPF,4|USGS Historical,5|CBP Phase6:fmid:fmname::0","label"=>"Flow Mode (0 - best available, 1 - USGS baseline, 2 - USGS Synth, 3 - VA HSPF, 4+ - Custom) ","visible"=>1, "readonly"=>0, "width"=>6),
               "debug"=>array("type"=>3,"params"=>"0|False,1|True,2|Verbose:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6),
               "debugmode"=>array("type"=>3,"params"=>"0|Screen Output (Normal),1|System Log,2|STDOUT,3|To File:dbid:dbname::0","label"=>"Debug Mode ","visible"=>1, "readonly"=>0, "width"=>6),
               "bufferlog"=>array("type"=>3,"params"=>"0|False,1|True:blid:blname::0","label"=>"Buffer Log Queries? ","visible"=>1, "readonly"=>0, "width"=>6),
