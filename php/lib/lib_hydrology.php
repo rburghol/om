@@ -1912,8 +1912,8 @@ class modelObject {
                   $lkl++;
                 }
                 $this->listobject->debug = $olddebug;
+               $this->reportstring .= "Runtime Table SQL: " . $createsql . "\n\n<br>";
              }
-             $this->reportstring .= "Runtime Table SQL: " . $createsql . "\n\n<br>";
           //}
        } else {
           // log to db requested, but no valid db object is set
