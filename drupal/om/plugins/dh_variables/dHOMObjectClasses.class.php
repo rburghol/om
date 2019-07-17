@@ -1088,6 +1088,13 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
       break;
     }
   }
+  
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    //dsm("setAllRemoteProperties from dHOMEquation");
+    array_unshift($path, 'value');
+    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
 }
 
 class dHOMObjectClass extends dHOMAlphanumericConstant {
