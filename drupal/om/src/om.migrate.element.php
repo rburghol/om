@@ -152,7 +152,7 @@ foreach ($data as $element) {
       $procs = $object->processors;
       error_log("Procnames array for om model: " . print_r($object->procnames,1));
       $procnames = array_keys($procs);
-      error_log("Processor names for om model: " . print_r($procnames,1));
+      error_log(count($object->processors) . " Processor names for om model: " . print_r($procnames,1));
       foreach ($procs as $procname => $proc) {
         // just do one
         if (($one_proc <> 'all') and ($procname <> $one_proc)) {
