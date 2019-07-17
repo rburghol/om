@@ -16432,7 +16432,7 @@ class textField extends modelSubObject {
       return $publix;
    }
    function evaluate() {
-      $this->result = 'test_string';
+      //$this->result = 'test_string';
    }
    
    function postStep() {
