@@ -2119,6 +2119,9 @@ class modelObject {
              // if this processor is not transparent, it will evaluate and return a value, otherwise,
              // we assume that it does not set a value
              //error_log("Evaluating $this->name -> $thisvar<br>\n");
+             if (get_class($this->processors[$thisvar]) == 'textField') {
+               error_log("Eval : " . $this->processors[$thisvar]);
+             }
              if (method_exists($this->processors[$thisvar], 'evaluate')) {
                 //error_log("evaluate() method exists <br>\n");
                 //$this->processors[$thisvar]->evaluate(); // this is now doen in the step() function
@@ -2154,6 +2157,9 @@ class modelObject {
                       $this->state[$thisvar] = $this->processors[$thisvar]->result;
                    break;
                 }
+                 if (get_class($this->processors[$thisvar]) == 'textField') {
+                   error_log("Set state for $thisvar to : " . $this->state[$thisvar]);
+                 }
                 //error_log("Done. <br>\n");
              }
              // evaluate the equation
