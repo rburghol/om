@@ -1056,7 +1056,7 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
     $pform = array();
     $this->formRowEdit($pform, $entity);
     // harvest pieces I want to keep
-    $mname = $this->handleFormPropname($row->propname);
+    $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
   }
   
