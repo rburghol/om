@@ -1091,7 +1091,7 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
   }
 }
 
-class dHOMtextField extends dHOMAlphanumericConstant {
+class dHOMtextField extends dHOMSubComp {
   // special subcomp for alpha info
   var $object_class = 'textField';
   public function hiddenFields() {
@@ -1105,9 +1105,27 @@ class dHOMtextField extends dHOMAlphanumericConstant {
   }
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMEquation");
+    //dsm("setAllRemoteProperties from dHOMtextField");
     array_unshift($path, 'value');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    if (!$entity->varid) {
+      return FALSE;
+    }
+    $form['propname'] = array(
+      '#title' => t('Name'),
+      '#type' => 'textfield',
+      '#description' => $entity->vardesc,
+      '#default_value' => !empty($entity->propname) ? $entity->propname : "",
+    );
+    $form['propcode'] = array(
+      '#title' => t($entity->varname),
+      '#type' => 'textfield',
+      '#description' => 'Value for this text variable',
+      '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
+    );
   }
 }
 
