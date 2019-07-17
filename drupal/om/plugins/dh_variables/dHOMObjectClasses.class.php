@@ -1094,6 +1094,11 @@ class dHOMtextField extends dHOMAlphanumericConstant {
   // special subcomp for alpha info
   var $object_class = 'textField';
   
+  public function getDefaults($entity, &$defaults = array()) {
+    // getDefaults is required to be compatible with om.migrate.element.php
+    // could add a check for that to not call getDefaults, but for now, just put it here
+    return $defaults;
+  }
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     //dsm("setAllRemoteProperties from dHOMEquation");
