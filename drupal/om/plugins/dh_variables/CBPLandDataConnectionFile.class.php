@@ -8,9 +8,17 @@ $class = ctools_plugin_get_class($plugin_def, 'handler');
 
 
 class dHOMCBPLandDataConnectionFile extends dHOMmodelElement {
-  var $object_class = 'Equation';
+  var $object_class = 'CBPLandDataConnectionFile';
   
   public function getDefaults($entity, &$defaults = array()) {
+    // needs:
+    //   - land seg - constant alpha
+    //   - riverseg - constant alpha 
+    //   - landuse - default matrix with acreage 
+    //   - landuse_var - default matrix with runmode/luvar name pairs (defaults to all being "landuse")
+    //   @tbd - file_var - make object in OM be flexible at startup to use a lookup or alpha variable to select 
+    //          the file to use.  Allows us to switch between climate change or other meteorology runs.
+    //   @tbd: - luyear - land use year, defaults to timer year, but may be fixed.
     $defaults = parent::getDefaults($entity, $defaults);
     $defaults += array(
       'defaultval' => array(
