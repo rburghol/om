@@ -1311,7 +1311,7 @@ class dHOMDataMatrix extends dHOMSubComp {
           $plugin = dh_variables_getPlugins($dopple);
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
-              dsm("Using attachNamedForm() for $pn ");
+              dpm($dopple, "Using attachNamedForm() for $pn ");
               $plugin->attachNamedForm($form, $dopple);
             } else {
               dsm("Using formRowEdit() for $pn ");
