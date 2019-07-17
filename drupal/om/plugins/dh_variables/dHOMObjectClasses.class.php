@@ -635,8 +635,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
     // if this was a form API use case we could keep the parent name
-    dpm($path,get_class($entity) . " : path : element id " . $elid);
-    dpm($path,get_class($entity) . " : path");
     array_pop($path);
     // $path will be modified by the methods
     // the property set_remote allows us to disable this functionality, for example
@@ -797,7 +795,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
     
   public function findRemoteOMElement($entity, &$path) {
-    //dpm($entity, "findRemoteOMElement @ depth = $path");
+    dpm($entity, "findRemoteOMElement @ depth = $path");
     $elid = 0;
     $path[] = $entity->propname;
     // check for a property with varkey om_element_connection on this entity
@@ -810,9 +808,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // *************************************************
     // Current MGY
     // *************************************************
-    //dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
+    dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
     $elvar = dh_properties_enforce_singularity($elvar_info, 'singular');
-    //dpm($elvar, " elvar");
+    dpm($elvar, " elvar");
     if ($elvar) {
       $elid = $elvar->propvalue;
       $this->set_remote = $elvar->propcode;
