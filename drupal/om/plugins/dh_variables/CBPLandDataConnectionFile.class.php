@@ -7,7 +7,7 @@ $class = ctools_plugin_get_class($plugin_def, 'handler');
 
 
 
-class dHOMCBPLandDataConnectionFile extends dHOMmodelElement {
+class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   var $object_class = 'CBPLandDataConnectionFile';
   
   public function getDefaults($entity, &$defaults = array()) {
