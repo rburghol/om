@@ -146,10 +146,13 @@ foreach ($data as $element) {
       $om_link->save();
       $props = dh_get_dh_propnames('dh_properties', $om_model->pid);
       error_log("Prop names for this entity: " . print_r($props,1));
-      // now add these
+      // now add these components.
+      $allvars = array_keys((array)$object);
+      error_log("Properties on this om model: " . print_r($allvars,1));
       $procs = $object->processors;
+      error_log("Procnames array for om model: " . print_r($object->procnames,1));
       $procnames = array_keys($procs);
-      error_log("Processor names for om model: " . print_r($procnames,1));
+      error_log(count($object->processors) . " Processor names for om model: " . print_r($procnames,1));
       foreach ($procs as $procname => $proc) {
         // just do one
         if (($one_proc <> 'all') and ($procname <> $one_proc)) {

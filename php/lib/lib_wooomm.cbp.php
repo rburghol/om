@@ -631,6 +631,10 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
       parent::init();
       //$this->getLandUses();
    }
+   function toArray() {
+     $this->file_info['handle'] = FALSE;
+     return parent::toArray();
+   }
    function setState() {
       parent::setState();
       $this->state['Qout'] = 0.0;
@@ -657,7 +661,6 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    }
    
    function sleep() {
-     $this->file_info['handle'] = FALSE;
      parent::sleep();
    }
    
