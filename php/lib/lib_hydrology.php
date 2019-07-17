@@ -16416,11 +16416,12 @@ class textField extends modelSubObject {
    var $loggable = 1;
    
    
-   function wake() {
-      parent::wake();
-      $this->value_dbcolumntype = "varchar($this->charlength)";
-      $this->result = $this->value;
-   }
+  function wake() {
+    $this->loggable = 1;
+    $this->value_dbcolumntype = "varchar($this->charlength)";
+    parent::wake();
+    $this->result = $this->value;
+  }
 
    function getPublicProps() {
       # gets only properties that are visible (must be manually defined)
