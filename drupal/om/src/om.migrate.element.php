@@ -21,7 +21,7 @@ $model_scenario = 'vahydro-1.0';
 $model_varkey = 'om_model_element';
 $model_entity_type = 'dh_feature';
 // command line class override
-$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp');
+$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp', 'textField');
 //$classes = array('Equation');
 
 // Is single command line arg?
@@ -147,10 +147,7 @@ foreach ($data as $element) {
       $props = dh_get_dh_propnames('dh_properties', $om_model->pid);
       error_log("Prop names for this entity: " . print_r($props,1));
       // now add these components.
-      $allvars = array_keys((array)$object);
-      error_log("Properties on this om model: " . print_r($allvars,1));
       $procs = $object->processors;
-      error_log("Procnames array for om model: " . print_r($object->procnames,1));
       $procnames = array_keys($procs);
       error_log(count($object->processors) . " Processor names for om model: " . print_r($procnames,1));
       foreach ($procs as $procname => $proc) {

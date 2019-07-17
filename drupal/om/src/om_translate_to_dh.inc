@@ -65,6 +65,10 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $dh_prop->propvalue = $om_comp->sitetype; #sitetype = 1 - stream gage, 2 - groundwater, 3 - reservoir level;
       $translated = TRUE;
     break;
+    case 'textField':
+      $dh_prop->propcode = $om_comp->value;
+      $translated = TRUE;
+    break;
   
   }
   if ($translated) {
