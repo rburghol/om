@@ -2781,9 +2781,9 @@ class modelObject {
 
   }
 
-  }
+}
 
-  class modelSubObject extends modelObject {
+class modelSubObject extends modelObject {
   var $wvars = 0;
 
   function wake() {
@@ -2799,6 +2799,7 @@ class modelObject {
   function logState() {
 
     // logging will be done by the parent, so no need to waste memory and time with this
+    // should consider whether we filter values here to prevent mismatches with the log data type.
 
   }
 
@@ -16417,6 +16418,7 @@ class textField extends modelSubObject {
    function wake() {
       parent::wake();
       $this->value_dbcolumntype = "varchar($this->charlength)";
+      $this->result = $this->value;
    }
 
    function getPublicProps() {
