@@ -497,7 +497,7 @@ class modelObject {
           // howwever, this should be OK
           if (isset($thisproc->defaultval)) {
              $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);
-             error_log("Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);");
+             //error_log("Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);");
           } else {
              $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);
              error_log("No Default Value for $thisproc->name -- Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);");

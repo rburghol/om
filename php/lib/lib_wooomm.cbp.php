@@ -621,7 +621,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   // Behavior
   
   function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
-    error_log("$thiscol, $thistype, $defval, $loggable, $overwrite, $logformat ");
+    //error_log("$thiscol, $thistype, $defval, $loggable, $overwrite, $logformat ");
     parent::setSingleDataColumnType($thiscol, $thistype, $defval, $loggable, $overwrite, $logformat);
   }
 
