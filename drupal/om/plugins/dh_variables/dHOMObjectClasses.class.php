@@ -258,6 +258,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function formRowSave(&$rowvalues, &$row) {
     // special form save handlers
+    dpm($rowvalues,'vals');
+    dpm($row,'entity');
     parent::formRowSave($rowvalues, $row);
   }
   
