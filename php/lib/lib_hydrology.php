@@ -5583,7 +5583,9 @@ class timeSeriesInput extends modelObject {
          }
          $this->listobject->querystring = "  SELECT * ";
          $this->listobject->querystring .= " FROM  " . $this->db_cache_name;
-         $this->listobject->querystring .= " WHERE \"timestamp\" > $this->lasttimesec LIMIT $limit ";
+         $this->listobject->querystring .= " WHERE \"timestamp\" > $this->lasttimesec ";
+         $this->listobject->querystring .= " ORDER BY \"timestamp\"";
+         $this->listobject->querystring .= " LIMIT $limit ";
          if ($this->debug) {
             $this->logDebug($this->listobject->querystring);
          }
