@@ -975,10 +975,10 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   }
    function getCurrentDataSlice() {
      parent::getCurrentDataSlice();
-     error_log("getCurrentDataSlice @ " . $this->timer->thistime->format("U") . ":" . $this->listobject->querystring);
-     $tsdat = $this->tsvalues;
-     $tsdata1 = array_shift($tsdat);
-     error_log("tsdata 1: " . print_r($tsdata1,1));
+     //error_log("getCurrentDataSlice @ " . $this->timer->thistime->format("U") . ":" . $this->listobject->querystring);
+     //$tsdat = $this->tsvalues;
+     //$tsdata1 = array_shift($tsdat);
+     //error_log("tsdata 1: " . print_r($tsdata1,1));
    }
 }
 
