@@ -226,7 +226,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       // - property exists, and IS object: check for form API munged name and copy over, otherwise, do nothing
       // - property exists and is NOT object: stash the value, load the prop object, and setValue to stashed
       // - property does not exist: load property and return
-      if (property_exists($entity, $pn) and !is_object($entity->{$pn})) {
+      if (property_exists($entity, $propname) and !is_object($entity->{$propname})) {
         // if the prop is not an object, stash the value and load property, 
         $convert_value = TRUE;
         $propvalue = $entity->{$thisvar['propname']};
