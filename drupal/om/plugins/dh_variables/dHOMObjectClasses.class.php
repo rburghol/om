@@ -102,9 +102,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $pn = $this->handleFormPropname($propname);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         if ($overwrite 
-		    or !property_exists($entity, $pn) 
-        or (property_exists($entity, $pn) 
-          and !is_object($entity->{$pn})
+		    or !property_exists($entity, $propname) 
+        or (property_exists($entity, $propname) 
+          and !is_object($entity->{$propname})
         ) 
 		  ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
@@ -243,7 +243,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       if ($load_property) {
         //dsm("Loading property $pn");
-        $this->loadProperties($entity, FALSE, $pn);
+        $this->loadProperties($entity, FALSE, $propname);
       }
       // now, apply the stashed value to the property
       if ($convert_value and is_object($entity->{$propname})) {
