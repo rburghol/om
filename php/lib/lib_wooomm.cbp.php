@@ -977,9 +977,8 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
      parent::getCurrentDataSlice();
      error_log("getCurrentDataSlice @ $this->timer->starttime:" . $this->listobject->querystring);
      $tsdat = $this->tsvalues;
-     error_log("tsdata 1: " . print_r(array_shift($tsdat),1));
-     error_log("tsdata 2 : " . print_r(array_shift($tsdat),1));
-     error_log("tsdata 3 : " . print_r(array_shift($tsdat),1));
+     $tsdata1 = array_shift($tsdat);
+     error_log("tsdata 1: " . print_r($tsdata1,1));
    }
 }
 
