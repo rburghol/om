@@ -621,7 +621,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   // Behavior
   
   function setSingleDataColumnType($thiscol, $thistype = 'float8', $defval = NULL, $loggable = 1, $overwrite = 0, $logformat='%s') {
-    error_log("$thiscol, $thistype, $defval, $loggable, $overwrite, $logformat ");
+    //error_log("$thiscol, $thistype, $defval, $loggable, $overwrite, $logformat ");
     parent::setSingleDataColumnType($thiscol, $thistype, $defval, $loggable, $overwrite, $logformat);
   }
 
@@ -973,6 +973,13 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
      error_log("Lu array: " . print_r($this->lunames,1));
     }
   }
+   function getCurrentDataSlice() {
+     parent::getCurrentDataSlice();
+     //error_log("getCurrentDataSlice @ " . $this->timer->thistime->format("U") . ":" . $this->listobject->querystring);
+     //$tsdat = $this->tsvalues;
+     //$tsdata1 = array_shift($tsdat);
+     //error_log("tsdata 1: " . print_r($tsdata1,1));
+   }
 }
 
 class CBPLandDataConnection extends CBPLandDataConnectionBase {

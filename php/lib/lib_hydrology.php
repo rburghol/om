@@ -497,7 +497,7 @@ class modelObject {
           // howwever, this should be OK
           if (isset($thisproc->defaultval)) {
              $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);
-             error_log("Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);");
+             //error_log("Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, $thisproc->defaultval, $thisproc->loggable);");
           } else {
              $this->setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);
              error_log("No Default Value for $thisproc->name -- Calling setSingleDataColumnType($thisproc->name, $thisproc->value_dbcolumntype, NULL, $thisproc->loggable);");
@@ -5583,7 +5583,9 @@ class timeSeriesInput extends modelObject {
          }
          $this->listobject->querystring = "  SELECT * ";
          $this->listobject->querystring .= " FROM  " . $this->db_cache_name;
-         $this->listobject->querystring .= " WHERE \"timestamp\" > $this->lasttimesec LIMIT $limit ";
+         $this->listobject->querystring .= " WHERE \"timestamp\" > $this->lasttimesec ";
+         $this->listobject->querystring .= " ORDER BY \"timestamp\"";
+         $this->listobject->querystring .= " LIMIT $limit ";
          if ($this->debug) {
             $this->logDebug($this->listobject->querystring);
          }
