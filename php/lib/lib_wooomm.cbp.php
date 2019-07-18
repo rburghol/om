@@ -973,6 +973,10 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
      error_log("Lu array: " . print_r($this->lunames,1));
     }
   }
+   function getCurrentDataSlice() {
+     parent::getCurrentDataSlice();
+     error_log("getCurrentDataSlice:" . $this->listobject->querystring);
+   }
 }
 
 class CBPLandDataConnection extends CBPLandDataConnectionBase {
