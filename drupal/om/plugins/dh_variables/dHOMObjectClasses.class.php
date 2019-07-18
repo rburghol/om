@@ -126,7 +126,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function insureProperty($entity, $thisvar) {
     // make sure all standard props are here
     $thisvar['featureid'] = $entity->{$this->row_map['id']};
-    //dpm($thisvar, "Checking for property default");
+    dpm($thisvar, "Checking for property default");
     $thisvar = $thisvar + array('singularity' => 'name');
     $prop = om_model_getSetProperty($thisvar, $thisvar['singularity']);
     return $prop;
