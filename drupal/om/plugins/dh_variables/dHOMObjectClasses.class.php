@@ -253,8 +253,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           // the default method will guess location based on the value unless overridden by the plugin
           $plugin->applyEntityAttribute($prop, $propvalue);
         }
-        // insure this.
-        //$prop->featureid = $entity->identifier();
+        // insure this featureid.  There is probably a better way to do this earlier in the process.
+        // we need to insure a valid parent entity first, save it, then load attached properties and update.  
+        $prop->featureid = $entity->identifier();
       }
     }
     dpm($entity,'entity post conversion to props');
