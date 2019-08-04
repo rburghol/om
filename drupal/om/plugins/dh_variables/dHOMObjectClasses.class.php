@@ -210,6 +210,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
+    dpm($props,'props from getDefaults');
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
@@ -252,6 +253,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           // the default method will guess location based on the value unless overridden by the plugin
           $plugin->applyEntityAttribute($prop, $propvalue);
         }
+        // insure this.
+        $prop->featureid = $entity->identifier();
       }
     }
     dpm($entity,'entity post conversion to props');
