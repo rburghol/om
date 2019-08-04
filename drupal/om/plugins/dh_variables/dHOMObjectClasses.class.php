@@ -126,7 +126,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function insureProperty($entity, $thisvar) {
     // make sure all standard props are here
     $thisvar['featureid'] = $entity->{$this->row_map['id']};
-    dpm($thisvar, "Checking for property default");
+    //dpm($thisvar, "Checking for property default");
     $thisvar = $thisvar + array('singularity' => 'name');
     $prop = om_model_getSetProperty($thisvar, $thisvar['singularity']);
     return $prop;
@@ -210,7 +210,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
-    dpm($props,'props from getDefaults');
+    //dpm($props,'props from getDefaults');
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
@@ -258,13 +258,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $prop->featureid = $entity->identifier();
       }
     }
-    dpm($entity,'entity post conversion to props');
+    //dpm($entity,'entity post conversion to props');
   }
   
   public function formRowSave(&$rowvalues, &$row) {
     // special form save handlers
-    dpm($rowvalues,'vals');
-    dpm($row,'entity');
+    //dpm($rowvalues,'vals');
+    //dpm($row,'entity');
     parent::formRowSave($rowvalues, $row);
   }
   
