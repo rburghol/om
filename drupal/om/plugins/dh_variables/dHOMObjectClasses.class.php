@@ -254,7 +254,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           $plugin->applyEntityAttribute($prop, $propvalue);
         }
         // insure this.
-        $prop->featureid = $entity->identifier();
+        //$prop->featureid = $entity->identifier();
       }
     }
     dpm($entity,'entity post conversion to props');
