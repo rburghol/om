@@ -102,9 +102,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $pn = $this->handleFormPropname($propname);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         if ($overwrite 
-		    or !property_exists($entity, $pn) 
-        or (property_exists($entity, $pn) 
-          and !is_object($entity->{$pn})
+		    or !property_exists($entity, $propname) 
+        or (property_exists($entity, $propname) 
+          and !is_object($entity->{$propname})
         ) 
 		  ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
@@ -210,6 +210,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
+    //dpm($props,'props from getDefaults');
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
@@ -243,7 +244,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       if ($load_property) {
         //dsm("Loading property $pn");
-        $this->loadProperties($entity, FALSE, $pn);
+        $this->loadProperties($entity, FALSE, $propname);
       }
       // now, apply the stashed value to the property
       if ($convert_value and is_object($entity->{$propname})) {
@@ -252,12 +253,18 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           // the default method will guess location based on the value unless overridden by the plugin
           $plugin->applyEntityAttribute($prop, $propvalue);
         }
+        // insure this featureid.  There is probably a better way to do this earlier in the process.
+        // we need to insure a valid parent entity first, save it, then load attached properties and update.  
+        $prop->featureid = $entity->identifier();
       }
     }
+    //dpm($entity,'entity post conversion to props');
   }
   
   public function formRowSave(&$rowvalues, &$row) {
     // special form save handlers
+    //dpm($rowvalues,'vals');
+    //dpm($row,'entity');
     parent::formRowSave($rowvalues, $row);
   }
   
