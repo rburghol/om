@@ -851,12 +851,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //dpm($entity, 'entity');
     parent::formRowEdit($form, $entity);
     $this->hideFormRowEditFields($form);
-    $opts = dh_vardef_varselect_options(array("vocabulary = 'om_object_classes'"));
-    $form['varid']['#options'] = $opts;
-    $form['varid']['#title'] = 'Model Object Type';
-    $form['varid']['#description'] = 'Select object class here. ';
-    $form['varid']['#type'] = 'select';
-    //$form['varid']['#default_value'] = 'om_class_BlankShell';
+    if ($this->object_class) {
+      //$form['varid']['#default_value'] = 'om_class_BlankShell';
+      $opts = dh_vardef_varselect_options(array("vocabulary = 'om_object_classes'"));
+      $form['varid']['#options'] = $opts;
+      $form['varid']['#title'] = 'Model Object Type';
+      $form['varid']['#description'] = 'Select object class here. ';
+      $form['varid']['#type'] = 'select';
+    } else {
+      $form['varid']['#type'] = 'hidden';
+    }
     $form['propname']['#default_value'] = empty($entity->propname) ? $this->object_class : $entity->propname;
     $form['propname']['#title_display'] = 'before';
     $form['propname']['#title'] = 'Name';
