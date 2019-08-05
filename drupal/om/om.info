@@ -12,4 +12,4 @@ files[] = om.admin.inc
 ;files[] = views/om.views_default.inc
 files[] = views/handlers/views_handler_relationship_attributable.inc
 
-version = "7.x-1.0"
+version = "7.x-1.01"

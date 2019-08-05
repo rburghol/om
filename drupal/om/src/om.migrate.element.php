@@ -95,15 +95,28 @@ if (!($elementid and $hydrocode)) {
 }
 
 foreach ($data as $element) {
+  // data could have elementid on one side, pid on another. or parent_pid to migrate an element to a specific
+  // parent model
+  // all model elements should have propcode = vahydro-1.0 or some other relevant model scenario indicator
+  // propname, propcode, and varkey/varid can all be used for matching elements 
+  // similarly, 
+  // could pass in parent_elid and custom1 or name of child in order to link parents and children.
+  // if (isset($element['parent_elid']) and isset($element['custom1']) ) {
+    // $children = getNestedContainersCriteria ($listobject, $elementid, $types, $custom1, $custom2, $ignore);
+    // $child = array_shift($children);
+    // $elid = $child['elementid'];
+  //}
   $elid = $element['elementid'];
   $hydrocode = $element['hydrocode'];
   $uri = $om . "?elementid=$elid";
+  $model_entity_type = isset($element['model_entity_type']) ? $element['model_entity_type'] : $model_entity_type;
   error_log("Opening $uri ");
   $json = file_get_contents ($uri);
   //error_log("json:" . $json);
   $object = json_decode($json);
-  // try to load the drupal object with matching hydrocode
-  $om_fid = dh_search_feature($hydrocode, $bundle, $ftype);
+  // Check to see if we have passed in a drupal prop featureid as om_fid
+  // otherwise, try to load the drupal object with matching hydrocode
+  $om_fid = isset($element['om_fid']) ? $element['om_fid'] : dh_search_feature($hydrocode, $bundle, $ftype);
   if (!$om_fid) {
     error_log("Could not load dh feature with bundle=$bundle, ftype = $ftype and hydrocode = $hydrocode");
     watchdog('om', "Could not load dh feature with ftype = $ftype and hydrocode = $hydrocode");

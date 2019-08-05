@@ -46,4 +46,10 @@ function om_install() {
 function om_uninstall () {
 }
 
+function om_update_7101() {
+	db_query("update {dh_properties} SET propcode = 'dopple' where varid in (select hydroid from {dh_variabledefinition} where varkey = 'om_element_connect') and propcode is null ");
+	drupal_set_message(t("Initialized propcode for legacy om_element_connect"));
+	db_query("update {dh_properties_revision} SET propcode = 'dopple' where varid in (select hydroid from {dh_variabledefinition} where varkey = 'om_element_connect') and propcode is null ");
+	drupal_set_message(t("Initialized propcode for legacy om_element_connect"));
+}
 ?>
