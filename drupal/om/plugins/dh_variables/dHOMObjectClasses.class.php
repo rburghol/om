@@ -1333,7 +1333,7 @@ class dHOM_USGSGageObject extends dHOMModelElement {
   var $object_class = 'USGSGageObject';
 }
 
-class dHOMLinkage extends dHOMSubComp {
+class dHOMLinkage extends dHOMBaseObjectClass {
   var $object_class = FALSE;
   var $attach_method = 'contained';
   
