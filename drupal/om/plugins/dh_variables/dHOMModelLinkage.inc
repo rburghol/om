@@ -1,7 +1,7 @@
 <?php
 
 $plugin = array(
-  'label' => t('OM - Element Link'),
+  'label' => t('OM - Model Linkage (map_model_linkages)'),
   'handler' =>  array(
     'class' => 'dHOMLinkage',
     'file' => 'dHOMObjectClasses.class.php',
