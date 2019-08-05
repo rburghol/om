@@ -1486,6 +1486,7 @@ class dHOMLinkage extends dHOMSubComp {
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
+          dpm($plugin,'plugin');
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
               dsm("Using attachNamedForm()");
