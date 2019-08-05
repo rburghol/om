@@ -1446,6 +1446,7 @@ class dHOMLinkage extends dHOMSubComp {
   
   public function formRowEdit(&$rowform, $entity) {
     parent::formRowEdit($rowform, $entity);
+    dpm($entity,'edit form entity');
     // @todo:
     // - Link Type Select List
     // - Entity + Property Browser w/
