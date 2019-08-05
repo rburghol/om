@@ -1482,7 +1482,7 @@ class dHOMLinkage extends dHOMSubComp {
         $pn = $this->handleFormPropname($thisvar['propname']);
         $dopple = $entity->{$thisvar['propname']};
         // @todo: if this is a code variable, we should get propcode?
-        dsm("Handling attached prop $pn");
+        dpm($dopple,"Handling attached prop $pn");
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
