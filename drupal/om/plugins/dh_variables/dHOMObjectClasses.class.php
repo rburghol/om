@@ -1431,7 +1431,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Null/localhost is for local, rest, json or OM path to getProp.php and setProp.php.',
-        'varname' => 'Destination Prop',
+        'varname' => 'Source URI',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'update_setting' => array(
@@ -1441,7 +1441,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Valid settings: create (first time only), update, step, all.',
-        'varname' => 'Destination Prop',
+        'varname' => 'Update Setting',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     );
@@ -1450,7 +1450,6 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   public function formRowEdit(&$rowform, $entity) {
     parent::formRowEdit($rowform, $entity);
-    dpm($entity,'edit form entity');
     // @todo:
     // - Link Type Select List
     // - Entity + Property Browser w/
@@ -1479,38 +1478,6 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     return 0;
   }
   
-  public function addAttachedProperties(&$form, &$entity) {
-    $dopples = $this->getDefaults($entity);
-    foreach ($dopples as $thisvar) {
-      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        $pn = $this->handleFormPropname($thisvar['propname']);
-        $dopple = $entity->{$thisvar['propname']};
-        // @todo: if this is a code variable, we should get propcode?
-        dpm($dopple,"Handling attached prop $pn");
-        switch ($this->attach_method) {
-          case 'contained':
-          $plugin = dh_variables_getPlugins($dopple);
-          dpm($plugin,'plugin');
-          if ($plugin) {
-            if (method_exists($plugin, 'attachNamedForm')) {
-              dsm("Using attachNamedForm()");
-              $plugin->attachNamedForm($form, $dopple);
-            } else {
-              dsm("Using formRowEdit()");
-              $plugin->formRowEdit($dopple_form, $dopple);
-              $form[$pn] = $dopple_form['propvalue'];
-            }
-          }
-          break;
-          default:
-          $dopple_form = array();
-          dh_variables_formRowPlugins($dopple_form, $dopple);
-          $form[$pn] = $dopple_form['propvalue'];
-          break;
-        }
-      }
-    }
-  }
 }
 
 
