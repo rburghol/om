@@ -1470,6 +1470,10 @@ class dHOMLinkage extends dHOMSubComp {
     //array_unshift($path, 'equation');
     //$this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
+  public function findRemoteOMElement($entity, &$path) {
+    // do not pass to sub-props as this does not propagate. (yet!)
+    return 0;
+  }
   
   public function addAttachedProperties(&$form, &$entity) {
     $dopples = $this->getDefaults($entity);
