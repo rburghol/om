@@ -1470,7 +1470,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
     // retrieve the linked data.
-    //dpm($entity,'save model linkage');
+    dpm($entity,'save model linkage');
     $src_location = empty($entity->src_location->propcode) ? 'localhost' : $entity->src_location->propcode;
     $update_setting = empty($entity->update_setting->propcode) ? 'none' : $entity->update_setting->propcode;
     switch ($update_setting) {
@@ -1480,7 +1480,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         switch ($src_location) {
           case 'localhost':
             $linked_value = $this->getLocalhostLinkedValue($entity);
-            //dsm("Found $linked_value ");
+            dsm("Found $linked_value ");
             $this->setLocalhostLinkedValue($entity, $linked_value);
           break;
           // @todo: handle other types besides localhost
@@ -1502,7 +1502,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       if (property_exists($dest_entity, $dest_prop)) {
         $dest_entity->{$dest_prop} = $linked_value;
         $dest_entity->save();
-        //dpm($dest_entity, "Saved dest entity");
+        dpm($dest_entity, "Saved dest entity");
       }
     }
   }
@@ -1525,6 +1525,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
             'value' => $src_prop
           );
           $loaded = $src_entity->loadComponents($conds);
+          dpm($src_entity,'source entity');
           if (count($loaded) > 0) {
             $loname = strtolower($src_prop);
             $src_object = $src_entity->dh_properties[$loname];
