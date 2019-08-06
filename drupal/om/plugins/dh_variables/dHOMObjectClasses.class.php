@@ -1479,46 +1479,66 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       if (in_array($entity->link_type->propcode, array(2,3))) {
         switch ($src_location) {
           case 'localhost':
-            $src_entity_type = $entity->src_entity_type->propcode;
-            $src_entity_id = $entity->src_entity_id->propcode;
-            $src_entity = entity_load_single($src_entity_type, $src_entity_id);
-            if (is_object($src_entity)) {
-              // check if prop already exists, if so, just grab it,
-              // otherwise, try to load a dh_property with the target name 
-              if (!empty($entity->src_prop->propcode)) {
-                $src_prop = $entity->src_prop->propcode;
-                dpm($entity->src_prop, "$src_prop");
-                if (property_exists($src_entity, $src_prop)) {
-                  $linked_value = $src_entity->{$src_prop};
-                } else {
-                  $conds = array();
-                  $conds[] = array(
-                    'name' => 'propname',
-                    'value' => $src_prop
-                  );
-                  $loaded = $src_entity->loadComponents($conds);
-                  if (count($loaded) > 0) {
-                    $loname = strtolower($src_prop);
-                    $src_object = $src_entity->dh_properties[$loname];
-                    dpm($src_object,"source prop $src_prop prop");
-                    // @todo: support linking propcode or other values on dh_properties
-                    $linked_value = $src_object->propvalue;
-                  } else {
-                    watchdog('om', "OMLinkage could not find src_prop " . $src_prop);
-                  }
-                }
-              } else {
-                watchdog('om', "Missing src_prop on OMLinkage config.");
-              }
-              dpm($src_entity,'src_entity');
-            }
+            $linked_value = $this->getLocalhostLinkedValue($entity);
             dsm("Found $linked_value ");
+            $this->setLocalhostLinkedValue($entity, $linked_value);
           break;
           // @todo: handle other types besides localhost
         }
       }
       break;
     }
+  }
+  
+  function setLocalhostLinkedValue(&$entity, $linked_value) {
+    $dest_entity_type = $entity->dest_entity_type->propcode;
+    $dest_entity_id = $entity->dest_entity_id->propcode;
+    $dest_prop = $entity->dest_prop->propcode;
+    // @todo: we don't yet use the dest_entity_type, or dest_entity_id since 
+    //        we assumed this is attached to a parent property to set value 
+    //        but we may later allow this
+    $dest_entity = $this->getParentEntity($entity);
+    if (is_object($dest_entity)) {
+      if (property_exists($dest_entity, $dest_prop)) {
+        $dest_entity->{$dest_prop} = $linked_value;
+        $dest_entity->save();
+        dpm($dest_entity, "Saved dest entity");
+      }
+    }
+  }
+  
+  function getLocalhostLinkedValue(&$entity) {
+    $src_entity_type = $entity->src_entity_type->propcode;
+    $src_entity_id = $entity->src_entity_id->propcode;
+    $src_entity = entity_load_single($src_entity_type, $src_entity_id);
+    if (is_object($src_entity)) {
+      // check if prop already exists, if so, just grab it,
+      // otherwise, try to load a dh_property with the target name 
+      if (!empty($entity->src_prop->propcode)) {
+        $src_prop = $entity->src_prop->propcode;
+        if (property_exists($src_entity, $src_prop)) {
+          $linked_value = $src_entity->{$src_prop};
+        } else {
+          $conds = array();
+          $conds[] = array(
+            'name' => 'propname',
+            'value' => $src_prop
+          );
+          $loaded = $src_entity->loadComponents($conds);
+          if (count($loaded) > 0) {
+            $loname = strtolower($src_prop);
+            $src_object = $src_entity->dh_properties[$loname];
+            // @todo: support linking propcode or other values on dh_properties
+            $linked_value = $src_object->propvalue;
+          } else {
+            watchdog('om', "OMLinkage could not find src_prop " . $src_prop);
+          }
+        }
+      } else {
+        watchdog('om', "Missing src_prop on OMLinkage config.");
+      }
+    }
+    return $linked_value;
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
