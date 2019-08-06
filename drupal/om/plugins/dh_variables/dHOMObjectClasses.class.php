@@ -1511,6 +1511,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $src_entity_type = $entity->src_entity_type->propcode;
     $src_entity_id = $entity->src_entity_id->propcode;
     $src_entity = entity_load_single($src_entity_type, $src_entity_id);
+    dpm($entity,'entity');
+    dpm($src_entity,'src_entity');
     if (is_object($src_entity)) {
       // check if prop already exists, if so, just grab it,
       // otherwise, try to load a dh_property with the target name 
