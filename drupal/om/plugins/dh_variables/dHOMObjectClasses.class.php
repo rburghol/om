@@ -1469,7 +1469,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // and if update_setting == 'update' or 'all' 
     // retrieve the linked data.
     $src_location = empty($entity->src_location->propcode) ? 'localhost' : $entity->src_location->propcode;
-    switch ($entity->update_setting) {
+    $update_setting = empty($entity->update_setting->propcode) ? 'none' : $entity->update_setting->propcode;
+    switch ($update_setting) {
       case 'all':
       case 'update':
       if (in_array($entity->link_type->propcode, array(2,3))) {
