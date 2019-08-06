@@ -1462,6 +1462,35 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#prefix'] = ' = ';
   }
   
+  
+  public function save(&$entity) {
+    // looks at link info,
+    // if this is a remote or local property link
+    // and if update_setting == 'update' or 'all' 
+    // retrieve the linked data.
+    $src_location = empty($entity->src_location->propcode) ? 'localhost' : $entity->src_location->propcode;
+    switch ($entity->update_setting) {
+      case 'all':
+      case 'update':
+      if (in_array($entity->link_type->propcode, array(2,3))) {
+        switch ($src_location) {
+          case 'localhost':
+            $src_entity_type = $entity->src_entity_type->propcode;
+            $src_entity_id = $entity->src_entity_id->propcode;
+            $src_entity = entity_load_single($src_entity_type, $src_entity_id);
+            if (is_object($src_entity)) {
+              // check if prop already exists, if so, just grab it,
+              // otherwise, try to load a dh_property with the target name 
+            }
+          break;
+          // @todo: handle other types besides localhost
+        }
+      }
+      break;
+    }
+    parent::save($entity);
+  }
+  
   public function setAllRemoteProperties($entity, $elid, $path) {
     // @todo: this is a special entity that lives in its own table in 
     //        the om 1.0 system.  This should simply utilize the 
