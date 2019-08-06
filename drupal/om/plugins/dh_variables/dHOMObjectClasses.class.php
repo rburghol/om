@@ -1468,6 +1468,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
     // retrieve the linked data.
+    dpm($entity,'save model linkage');
     $src_location = empty($entity->src_location->propcode) ? 'localhost' : $entity->src_location->propcode;
     $update_setting = empty($entity->update_setting->propcode) ? 'none' : $entity->update_setting->propcode;
     switch ($update_setting) {
