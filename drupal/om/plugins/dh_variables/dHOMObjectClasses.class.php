@@ -1462,12 +1462,9 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#prefix'] = ' = ';
   }
   
-  
-  public function save(&$entity) {
-    parent::save($entity);
+  public function updateProperties(&$entity) {
+    parent::updateProperties($entity);
     dpm($entity,'entity before save model linkage');
-    $this->convert_attributes_to_dh_props($entity);
-    $this->updateProperties($entity);
     // looks at link info,
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
