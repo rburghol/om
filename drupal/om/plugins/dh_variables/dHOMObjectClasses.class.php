@@ -1487,23 +1487,25 @@ class dHOMLinkage extends dHOMBaseObjectClass {
               // otherwise, try to load a dh_property with the target name 
               if (!empty($entity->src_prop->propcode)) {
                 $src_prop = $entity->src_prop->propcode;
+                dpm($entity->src_prop, "$src_prop");
                 if (property_exists($src_entity, $src_prop)) {
                   $linked_value = $src_entity->{$src_prop};
-                }
-                $conds = array();
-                $conds[] = array(
-                  'name' => 'propname',
-                  'value' => $src_prop
-                );
-                $loaded = $src_entity->loadComponents($conds);
-                if (count($loaded) > 0) {
-                  $loname = strtolower($src_prop);
-                  $src_object = $this->dh_properties[$loname];
-                  dpm($src_object,'source prop prop');
-                  // @todo: support linking propcode or other values on dh_properties
-                  $linked_value = $src_object->propvalue;
                 } else {
-                  watchdog('om', "OMLinkage could not find src_prop " . $src_prop);
+                  $conds = array();
+                  $conds[] = array(
+                    'name' => 'propname',
+                    'value' => $src_prop
+                  );
+                  $loaded = $src_entity->loadComponents($conds);
+                  if (count($loaded) > 0) {
+                    $loname = strtolower($src_prop);
+                    $src_object = $this->dh_properties[$loname];
+                    dpm($src_object,"source prop $src_prop prop");
+                    // @todo: support linking propcode or other values on dh_properties
+                    $linked_value = $src_object->propvalue;
+                  } else {
+                    watchdog('om', "OMLinkage could not find src_prop " . $src_prop);
+                  }
                 }
               } else {
                 watchdog('om', "Missing src_prop on OMLinkage config.");
