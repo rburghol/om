@@ -851,12 +851,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //dpm($entity, 'entity');
     parent::formRowEdit($form, $entity);
     $this->hideFormRowEditFields($form);
-    $opts = dh_vardef_varselect_options(array("vocabulary = 'om_object_classes'"));
-    $form['varid']['#options'] = $opts;
-    $form['varid']['#title'] = 'Model Object Type';
-    $form['varid']['#description'] = 'Select object class here. ';
-    $form['varid']['#type'] = 'select';
-    //$form['varid']['#default_value'] = 'om_class_BlankShell';
+    if ($this->object_class) {
+      //$form['varid']['#default_value'] = 'om_class_BlankShell';
+      $opts = dh_vardef_varselect_options(array("vocabulary = 'om_object_classes'"));
+      $form['varid']['#options'] = $opts;
+      $form['varid']['#title'] = 'Model Object Type';
+      $form['varid']['#description'] = 'Select object class here. ';
+      $form['varid']['#type'] = 'select';
+    } else {
+      $form['varid']['#type'] = 'hidden';
+    }
     $form['propname']['#default_value'] = empty($entity->propname) ? $this->object_class : $entity->propname;
     $form['propname']['#title_display'] = 'before';
     $form['propname']['#title'] = 'Name';
@@ -1331,6 +1335,149 @@ class dHOMDataMatrix extends dHOMSubComp {
 
 class dHOM_USGSGageObject extends dHOMModelElement {
   var $object_class = 'USGSGageObject';
+}
+
+class dHOMLinkage extends dHOMBaseObjectClass {
+  var $object_class = FALSE;
+  var $attach_method = 'contained';
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'link_type' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'link_type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => '1: parent-child link, 2: local property link, 3: remote object property link (not direct parent or child).',
+        'varname' => 'Link Type',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'src_entity_type' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'src_entity_type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Source Entity Type.',
+        'varname' => 'Source Entity Type',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'src_entity_id' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'src_entity_id',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Source Entity Unique Identifier.',
+        'varname' => 'Source Entity ID',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'src_prop' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'src_prop',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Source Entity Property Name.',
+        'varname' => 'Source Prop',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'dest_entity_type' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'dest_entity_type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Destination Entity Type.',
+        'varname' => 'Destination Entity Type',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'dest_entity_id' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'dest_entity_id',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Destination Entity Unique Identifier.',
+        'varname' => 'Destination Entity ID',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'dest_prop' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'dest_prop',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Destination Entity Property Name.',
+        'varname' => 'Destination Prop',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'src_location' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'src_location',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'How to obtain link: null/localhost is default handled by local system. Other values: JSONAPI, RESTapi, and OMapi.',
+        'varname' => 'Source Location',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'src_uri' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'src_uri',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Null/localhost is for local, rest, json or OM path to getProp.php and setProp.php.',
+        'varname' => 'Source URI',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'update_setting' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'update_setting',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Valid settings: create (first time only), update, step, all. Only step objects are executed during model simulations.',
+        'varname' => 'Update Setting',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    );
+    return $defaults;
+  }
+  
+  public function formRowEdit(&$rowform, $entity) {
+    parent::formRowEdit($rowform, $entity);
+    // @todo:
+    // - Link Type Select List
+    // - Entity + Property Browser w/
+    //   - a select list of local parent & child entities directly connected.
+    //   - Visible if link type is local property (parent or child) or parent:child container link
+    // - Remote entity search
+    //   - user enters entity_type, name, location (default localhost), and/or elementid 
+    //   - uses local search facility or REST/JSONAPI if remote 
+    $rowform['propcode']['#title'] = '';
+    $rowform['propcode']['#prefix'] = ' = ';
+  }
+  
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    // @todo: this is a special entity that lives in its own table in 
+    //        the om 1.0 system.  This should simply utilize the 
+    //        w_linkElements script plumbing 
+    // For now, we just return.
+    return;
+    // Copied from Equation class - to be modified.
+    //parent::setAllRemoteProperties($entity, $elid, $path);
+    //array_unshift($path, 'equation');
+    //$this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
+  public function findRemoteOMElement($entity, &$path) {
+    // do not pass to sub-props as this does not propagate. (yet!)
+    return 0;
+  }
+  
 }
 
 
