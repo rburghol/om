@@ -1494,9 +1494,9 @@ class dHOMLinkage extends dHOMBaseObjectClass {
                   'name' => 'propname',
                   'value' => $entity->src_prop->propcode
                 );
-                $loaded = $e->loadComponents($conds);
+                $loaded = $src_entity->loadComponents($conds);
                 if (count($loaded) > 0) {
-                  $linked_value = $src_entity->{$entity->src_prop->propcode}->propcode;
+                  $linked_value = $src_entity->{$entity->src_prop->propcode}->propvalue;
                 } else {
                   watchdog('om', "OMLinkage could not find src_prop " . $entity->src_prop->propcode);
                 }
