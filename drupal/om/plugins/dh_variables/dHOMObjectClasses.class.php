@@ -1464,6 +1464,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   
   public function save(&$entity) {
+    parent::save($entity);
     // looks at link info,
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
@@ -1491,7 +1492,6 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       }
       break;
     }
-    parent::save($entity);
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
