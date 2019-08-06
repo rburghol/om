@@ -1486,7 +1486,25 @@ class dHOMLinkage extends dHOMBaseObjectClass {
             if (is_object($src_entity)) {
               // check if prop already exists, if so, just grab it,
               // otherwise, try to load a dh_property with the target name 
+              if (!empty($entity->src_prop->propcode)) {
+                if (property_exists($src_entity, $entity->src_prop->propcode)) {
+                  $linked_value = $src_entity->{$entity->src_prop->propcode};
+                }
+                $conds[] = array(
+                  'name' => 'propname',
+                  'value' => $entity->src_prop->propcode
+                );
+                $loaded = $e->loadComponents($conds);
+                if (count($loaded) > 0) {
+                  $linked_value = $src_entity->{$entity->src_prop->propcode}->propcode;
+                } else {
+                  watchdog('om', "OMLinkage could not find src_prop " . $entity->src_prop->propcode);
+                }
+              } else {
+                watchdog('om', "Missing src_prop on OMLinkage config.");
+              }
             }
+            dsm("Found $linked_value ");
           break;
           // @todo: handle other types besides localhost
         }
