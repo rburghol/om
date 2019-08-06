@@ -1499,7 +1499,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
                   $loaded = $src_entity->loadComponents($conds);
                   if (count($loaded) > 0) {
                     $loname = strtolower($src_prop);
-                    $src_object = $this->dh_properties[$loname];
+                    $src_object = $src_entity->dh_properties[$loname];
                     dpm($src_object,"source prop $src_prop prop");
                     // @todo: support linking propcode or other values on dh_properties
                     $linked_value = $src_object->propvalue;
