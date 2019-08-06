@@ -632,7 +632,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function save(&$entity) {
     //$entity->propname = 'blankShell';
-    $this->addProperties($entity);
     parent::save($entity);
     // now, find out if we are suppose to sync to a remote server
     // 1. $elid = findRemoteOMElement($entity, $path) ; this returns $elid and increments $path
@@ -1466,6 +1465,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   public function save(&$entity) {
     parent::save($entity);
+    $this->convert_attributes_to_dh_props($entity);
     // looks at link info,
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
