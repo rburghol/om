@@ -1462,10 +1462,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#prefix'] = ' = ';
   }
   
-  
-  public function save(&$entity) {
-    parent::save($entity);
-    $this->convert_attributes_to_dh_props($entity);
+  public function updateProperties(&$entity) {
+    parent::updateProperties($entity);
     // looks at link info,
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
@@ -1511,6 +1509,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $src_entity_type = $entity->src_entity_type->propcode;
     $src_entity_id = $entity->src_entity_id->propcode;
     $src_entity = entity_load_single($src_entity_type, $src_entity_id);
+    //dpm($entity,'entity');
+    //dpm($src_entity,'src_entity');
     if (is_object($src_entity)) {
       // check if prop already exists, if so, just grab it,
       // otherwise, try to load a dh_property with the target name 
@@ -1525,6 +1525,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
             'value' => $src_prop
           );
           $loaded = $src_entity->loadComponents($conds);
+          //dpm($src_entity,'source entity');
           if (count($loaded) > 0) {
             $loname = strtolower($src_prop);
             $src_object = $src_entity->dh_properties[$loname];
