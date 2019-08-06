@@ -1465,6 +1465,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   public function save(&$entity) {
     parent::save($entity);
+    dpm($entity,'entity before save model linkage');
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
     // looks at link info,
