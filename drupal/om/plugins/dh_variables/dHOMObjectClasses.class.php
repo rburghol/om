@@ -1466,6 +1466,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function save(&$entity) {
     parent::save($entity);
     $this->convert_attributes_to_dh_props($entity);
+    $this->updateProperties($entity);
     // looks at link info,
     // if this is a remote or local property link
     // and if update_setting == 'update' or 'all' 
