@@ -1500,7 +1500,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   function getLocalhostLinkedValue(&$entity) {
     $src_entity_type = $entity->propcode;
-    $src_entity_id = $entity->propcode;
+    $src_entity_id = $entity->propvalue;
     $src_entity = entity_load_single($src_entity_type, $src_entity_id);
     //dpm($entity,'entity');
     //dpm($src_entity,'src_entity');
