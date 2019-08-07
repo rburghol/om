@@ -203,6 +203,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           break;
         }
       }
+      if (isset($dopple['#weight'])) {
+        $form[$pn]'#weight'] = $dopple['#weight'];
+      }
     }
   }
   
@@ -1352,26 +1355,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'featureid' => $entity->identifier(),
         'vardesc' => '1: parent-child link, 2: local property link, 3: remote object property link (not direct parent or child).',
         'varname' => 'Link Type',
-        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
-      ),
-      'src_entity_type' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propname' => 'src_entity_type',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'vardesc' => 'Source Entity Type.',
-        'varname' => 'Source Entity Type',
-        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
-      ),
-      'src_entity_id' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propname' => 'src_entity_id',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'vardesc' => 'Source Entity Unique Identifier.',
-        'varname' => 'Source Entity ID',
+        '#weight' => 1,
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'src_prop' => array(
@@ -1382,6 +1366,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'featureid' => $entity->identifier(),
         'vardesc' => 'Source Entity Property Name.',
         'varname' => 'Source Prop',
+        '#weight' => 4,
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'dest_entity_type' => array(
@@ -1393,6 +1378,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'Destination Entity Type.',
         'varname' => 'Destination Entity Type',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 5,
       ),
       'dest_entity_id' => array(
         'entity_type' => $entity->entityType(),
@@ -1403,6 +1389,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'Destination Entity Unique Identifier.',
         'varname' => 'Destination Entity ID',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 6,
       ),
       'dest_prop' => array(
         'entity_type' => $entity->entityType(),
@@ -1413,6 +1400,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'Destination Entity Property Name.',
         'varname' => 'Destination Prop',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 7,
       ),
       'src_location' => array(
         'entity_type' => $entity->entityType(),
@@ -1423,6 +1411,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'How to obtain link: null/localhost is default handled by local system. Other values: JSONAPI, RESTapi, and OMapi.',
         'varname' => 'Source Location',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 8,
       ),
       'src_uri' => array(
         'entity_type' => $entity->entityType(),
@@ -1433,6 +1422,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'Null/localhost is for local, rest, json or OM path to getProp.php and setProp.php.',
         'varname' => 'Source URI',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 9,
       ),
       'update_setting' => array(
         'entity_type' => $entity->entityType(),
@@ -1443,6 +1433,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'vardesc' => 'Valid settings: create (first time only), update, step, all. Only step objects are executed during model simulations.',
         'varname' => 'Update Setting',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 10,
       ),
     );
     return $defaults;
@@ -1458,8 +1449,10 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // - Remote entity search
     //   - user enters entity_type, name, location (default localhost), and/or elementid 
     //   - uses local search facility or REST/JSONAPI if remote 
-    $rowform['propcode']['#title'] = '';
-    $rowform['propcode']['#prefix'] = ' = ';
+    $rowform['propcode']['#title'] = 'Source Entity Type';
+    $rowform['propcode']['#weight'] = 2;
+    $rowform['propvalue']['#title'] = 'Source Entity ID';
+    $rowform['propvalue']['#weight'] = 3;
   }
   
   public function updateProperties(&$entity) {
@@ -1506,8 +1499,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    $src_entity_type = $entity->src_entity_type->propcode;
-    $src_entity_id = $entity->src_entity_id->propcode;
+    $src_entity_type = $entity->propcode;
+    $src_entity_id = $entity->propcode;
     $src_entity = entity_load_single($src_entity_type, $src_entity_id);
     //dpm($entity,'entity');
     //dpm($src_entity,'src_entity');
