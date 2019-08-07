@@ -203,8 +203,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           break;
         }
       }
-      if (isset($dopple['#weight'])) {
-        $form[$pn]['#weight'] = $dopple['#weight'];
+      if (isset($thisvar['#weight'])) {
+        $form[$pn]['#weight'] = $thisvar['#weight'];
       }
     }
   }
