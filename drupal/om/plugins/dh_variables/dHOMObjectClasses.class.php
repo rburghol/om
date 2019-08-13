@@ -1467,6 +1467,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     switch ($update_setting) {
       case 'all':
       case 'update':
+      // type 1 is a parent child, so no updates to make.
       if (in_array($entity->link_type->propcode, array(2,3))) {
         switch ($src_location) {
           case 'localhost':
