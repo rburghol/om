@@ -5,6 +5,7 @@ $projectid = 3;
 $userid = 1;
 $scenarioid = 37;
 $wd_template_id = 284895;
+$new_wd_template_id = 340402; // a generic shell object with broadcast properties
 
 include_once('xajax_modeling.element.php');
 //error_reporting(E_ALL);
