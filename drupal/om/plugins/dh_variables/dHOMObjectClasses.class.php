@@ -485,7 +485,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // taken directly from om library -- will revisit after full porting
     // children will subclass this and add their own like:
     // $publix = parent::getPublicProps($entity)
-    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
+    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'flow_mode', 'run_mode', 'timestamp');
     return $publix;
   }
 
