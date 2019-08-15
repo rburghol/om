@@ -30,30 +30,33 @@ if (count($args) >= 2) {
   // set these if doing a single -- will fail if both not set
   // $elementid = 340385; // set these if doing a single
   // $hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
-  $elementid = $args[0];
-  $hydrocode = $args[1];
-  if (isset($args[2])) {
-    $one_proc = $args[2];
-  }
+  $query_type = $args[0];
+  $elementid = $args[1];
+  $hydrocode = $args[2];
   if (isset($args[3])) {
-    $bundle = $args[3];
+    $one_proc = $args[3];
   }
   if (isset($args[4])) {
-    $ftype = $args[4];
+    $bundle = $args[4];
   }
   if (isset($args[5])) {
-    $model_scenario = $args[5];
+    $ftype = $args[5];
   }
   if (isset($args[6])) {
-    $model_varkey = $args[6];
+    $model_scenario = $args[6];
   }
   if (isset($args[7])) {
-    $classes = explode(',',$args[7]);
+    $model_varkey = $args[7];
+  }
+  if (isset($args[8])) {
+    $classes = explode(',',$args[8]);
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=om_model_element] [classes=" . implode(',', $classes) . "]");
-  error_log("If hydrocode is integer, will assume that this is a model pid submitted via command line and that entity_type = dh_properties");
+  error_log("Usage: om.migrate.element.php query_type=[feature]|pid,prop_feature elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=om_model_element] [classes=" . implode(',', $classes) . "]");
+  error_log("If query_type = feature and hydrocode is integer, will assume a hydroid of the parent of the model element has been submitted ");
+  error_log("If query_type = pid and hydrocode is integer, will assume a pid for the model element has been submitted ");
+  error_log("If query_type = prop_feature and hydrocode is integer, will assume a pid for the model element that is the parent of the model element has been submitted");
   die;
 }
 
@@ -112,7 +115,6 @@ foreach ($data as $element) {
   // if hydrocode is numeric, we are passing a pid for the target model element in
   if (!isset($element['om_fid']) and is_numeric($hydrocode)) {
     $element['om_fid'] = $hydrocode;
-    $element['model_entity_type'] = 'dh_properties';
   }
   $uri = $om . "?elementid=$elid";
   $model_entity_type = isset($element['model_entity_type']) ? $element['model_entity_type'] : $model_entity_type;
@@ -130,18 +132,33 @@ foreach ($data as $element) {
     continue;
   }
   if (is_object($object)) {
-    $om_feature = entity_load_single($model_entity_type, $om_fid);
-    error_log("Found $om_feature->name ($om_feature->hydroid)");
-    $om_model = FALSE;
-    $values = array(
-      'entity_type' => $model_entity_type,
-      'featureid' => $om_fid,
-      'propcode'=>$model_scenario,
-      'varkey' => $model_varkey,
-      'propname' => $object->name,
-    );
-    error_log("Searching Model " . print_r($values,1));
-    $om_model = om_model_getSetProperty($values, 'propcode_singular');
+    switch($query_type) {
+      case 'pid':
+      // this is a reference to a direct model pid, no need to query
+      $om_model = entity_load_single('dh_properties', $om_fid);
+      error_log("Using query_mode PID to load model element directly.");
+      break;
+      
+      case 'prop_feature':
+      $model_entity_type = 'dh_properties';
+      error_log("Using query_mode PROP_FEATURE to load model element");
+      case 'feature':
+      default:
+      error_log("Using query_mode FEATURE to load model element");
+      $om_feature = entity_load_single($model_entity_type, $om_fid);
+      error_log("Found $om_feature->name ($om_feature->hydroid)");
+      $om_model = FALSE;
+      $values = array(
+        'entity_type' => $model_entity_type,
+        'featureid' => $om_fid,
+        'propcode'=>$model_scenario,
+        'varkey' => $model_varkey,
+        'propname' => $object->name,
+      );
+      error_log("Searching Model " . print_r($values,1));
+      $om_model = om_model_getSetProperty($values, 'propcode_singular');
+      break;
+    }
     error_log("Model = $om_model->propname - $om_model->propcode ");
     // see if the
     if (is_object($om_model)) {
