@@ -305,7 +305,7 @@ function om_run_model_form_run(&$form, &$form_state) {
   $button = $parents[count($parents) - 1];
   $model_config = $form_state['values'];
   $model_config['elementid'] = $elementid;
-  // since this has not been oficially submitted (in order ot use ajax properly)
+  // since this has not been oficially submitted (in order to use ajax properly)
   //   we need to handle the date array
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
