@@ -53,6 +53,7 @@ if (count($args) >= 2) {
 } else {
   // warn and quit
   error_log("Usage: om.migrate.element.php elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=om_model_element] [classes=" . implode(',', $classes) . "]");
+  error_log("If hydrocode is integer, will assume that this is a model pid submitted via command line and that entity_type = dh_properties");
   die;
 }
 
@@ -111,6 +112,7 @@ foreach ($data as $element) {
   // if hydrocode is numeric, we are passing a pid for the target model element in
   if (!isset($element['om_fid']) and is_numeric($hydrocode)) {
     $element['om_fid'] = $hydrocode;
+    $element['model_entity_type'] = 'dh_properties';
   }
   $uri = $om . "?elementid=$elid";
   $model_entity_type = isset($element['model_entity_type']) ? $element['model_entity_type'] : $model_entity_type;
