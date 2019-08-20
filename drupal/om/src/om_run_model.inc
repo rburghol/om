@@ -187,6 +187,7 @@ function om_run_model($config) {
   $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
+  error_log("Config" . print_r($config,1));
   switch ($config['runtype']) {
     case 'shake_tree':
     // shake tree optionsL
