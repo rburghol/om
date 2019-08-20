@@ -218,7 +218,7 @@ function om_run_model($config) {
     // operation - method of querying which units to run, usnig 2nd parameter as key
     $force_overwrite = $config['force_overwrite']; // replace all previous run data for these runs or use a cache_date?
     $scid = 37; // scenario ID, hardwired scenario ID, should pass in as part of model object for VWP interface at min
-    $strict = $config['strict']; 
+    $strict = empty($config['strict']) ? -1 : $config['strict']; 
     //strict setting - whether or not to evaluate the unit area on a relatively strict limit in the post-processing verification routine
     //  strict = 0 - do the run verification routine, but use broad criteria to evaluate it
     //  strict = 1 - verify with narrow valid criteria
@@ -327,10 +327,10 @@ function om_run_model_form_run(&$form, &$form_state) {
   //   we need to handle the date array
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
-  $cd = $model_config['cachedate'];
+  $cd = $model_config['cache_date'];
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
-  $model_config['cachedate'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
+  $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
