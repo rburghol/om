@@ -206,6 +206,7 @@ function om_run_model($config) {
     //  strict = -1 - do not verify, assume it is OK
     $run_mode = $config['run_mode']; // run_mode - model setting for use by internal lists etc. select list of 1-100?
     $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $cache_date $force_overwrite $scid $strict $run_mode";
+    $test_only = TRUE;
     break;
 	
     case 'cached':
@@ -214,16 +215,14 @@ function om_run_model($config) {
     break;
   }
   $cmd_output = array();
+  $cmd = "cd $path \n";
+  $cmd .= $setstr;
   if ($test_only) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
       //dpm( $cmd, "Testing Only ");
+      error_log("Test Command: $cmd");
   } else {
     if ($setstr) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
       //dpm( $cmd, "Executing ");
-      error_log("Executing " . $cmd);
       // this runs in the same process
       //shell_exec($cmd);
       // this runs in a separate process.
