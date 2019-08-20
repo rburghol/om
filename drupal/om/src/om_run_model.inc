@@ -92,8 +92,8 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#size' => 1,
     '#default_value' => empty($model->flow_mode) ? 3 : $model->flow_mode
   );
-  dpm($model,'model');
-  dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
+  //dpm($model,'model');
+  //dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
   // advanced options for shakeTree
   $form['Advanced']['cache_date'] = array(
     '#title' => t('Cache Date'),
@@ -205,7 +205,7 @@ function om_run_model($config) {
   $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
-  error_log("Config" . print_r($config,1));
+  //error_log("Config" . print_r($config,1));
   switch ($config['runtype']) {
     case 'shake_tree':
     // shake tree optionsL
