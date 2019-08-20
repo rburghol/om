@@ -182,15 +182,12 @@ function om_run_model($config) {
   //$test_only = TRUE;
   //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
-  $config += array(
-    'runtype' => 'cached',
-  );
   // run the model 
   $run_id = $config['run_id'];
   $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
-  switch ($config['runtype']) {
+  switch ($config['Advanced']['runtype']) {
     case 'shake_tree':
     // shake tree optionsL
     
