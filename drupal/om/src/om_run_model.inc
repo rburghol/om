@@ -93,6 +93,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#default' => empty($model->flow_mode) ? 3 : $model->flow_mode
   );
   dpm($model,'model');
+  dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
   // advanced options for shakeTree
   $form['Advanced']['cache_date'] = array(
     '#title' => t('Cache Date'),
