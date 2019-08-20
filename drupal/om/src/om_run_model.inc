@@ -8,12 +8,12 @@ module_load_include('module', 'om');
 //          and the shakeTree run mode.
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
-  $runid_options = om_runid_options(); // will determine what a user can run
+  $run_id_options = om_run_id_options(); // will determine what a user can run
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
-    '#default_value' => -1,
-    '#options' => $runid_options,
+    '#default_value' => empty($model->run_id) ? 100 : $model->run_id,
+    '#options' => $run_id_options,
     '#description' => t('Unique Identifier for a model run.'),
     '#required' => TRUE,
     '#multiple' => FALSE,
@@ -67,15 +67,33 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
 	$form['Advanced']['#collapsed'] = TRUE;
 	$form['Advanced']['#weight'] = 2;
   $form['Advanced']['runtype'] = array(
-    '#type' => 'Run Caching/Mode',
+    '#title' => t('Run Caching'),
     '#type' => 'select',
     '#options' => array(
       'cached' => 'Standard (Container Tree cached)',
       'shake_tree' => 'Tree (Sequential Tree, with caching)',
     ),
     '#size' => 1,
-    '#default' => $model->runtype
+    '#default_value' => empty($model->runtype) ? 'cached' : $model->runtype
   );
+  $run_mode_options = om_run_mode_options(); // will determine what a user can run
+  $form['Advanced']['run_mode'] = array(
+    '#title' => t('Run Mode (wd/ps/lakes)'),
+    '#type' => 'select',
+    '#options' => $run_mode_options,
+    '#size' => 1,
+    '#default_value' => empty($model->run_mode) ? 2 : $model->run_mode
+  );
+  $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
+  $form['Advanced']['flow_mode'] = array(
+    '#title' => t('Flow Mode (runoff dataset)'),
+    '#type' => 'select',
+    '#options' => $flow_mode_options,
+    '#size' => 1,
+    '#default_value' => empty($model->flow_mode) ? 3 : $model->flow_mode
+  );
+  dpm($model,'model');
+  dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
   // advanced options for shakeTree
   $form['Advanced']['cache_date'] = array(
     '#title' => t('Cache Date'),
@@ -182,14 +200,12 @@ function om_run_model($config) {
   //$test_only = TRUE;
   //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
-  $config += array(
-    'runtype' => 'cached',
-  );
   // run the model 
   $run_id = $config['run_id'];
   $elementid = $config['elementid'];
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
+  error_log("Config" . print_r($config,1));
   switch ($config['runtype']) {
     case 'shake_tree':
     // shake tree optionsL
@@ -202,13 +218,14 @@ function om_run_model($config) {
     // operation - method of querying which units to run, usnig 2nd parameter as key
     $force_overwrite = $config['force_overwrite']; // replace all previous run data for these runs or use a cache_date?
     $scid = 37; // scenario ID, hardwired scenario ID, should pass in as part of model object for VWP interface at min
-    $strict = $config['strict']; 
+    $strict = empty($config['strict']) ? -1 : $config['strict']; 
     //strict setting - whether or not to evaluate the unit area on a relatively strict limit in the post-processing verification routine
     //  strict = 0 - do the run verification routine, but use broad criteria to evaluate it
     //  strict = 1 - verify with narrow valid criteria
     //  strict = -1 - do not verify, assume it is OK
     $run_mode = $config['run_mode']; // run_mode - model setting for use by internal lists etc. select list of 1-100?
-    $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $cache_date $force_overwrite $scid $strict $run_mode";
+    $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $startdate $enddate $cache_date $force_overwrite $scid $strict $run_mode";
+    //$test_only = TRUE;
     break;
 	
     case 'cached':
@@ -217,14 +234,13 @@ function om_run_model($config) {
     break;
   }
   $cmd_output = array();
+  $cmd = "cd $path \n";
+  $cmd .= $setstr;
   if ($test_only) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
       //dpm( $cmd, "Testing Only ");
+      error_log("Testing Run Type: $config[runtype] : $cmd");
   } else {
     if ($setstr) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
       //dpm( $cmd, "Executing ");
       // this runs in the same process
       //shell_exec($cmd);
@@ -252,7 +268,7 @@ function om_message_model($config) {
   switch ($config['runtype']) {
     case 'cached':
     default:
-    // Usage: php fn_message_model.php elementid host message [runid = NULL] 
+    // Usage: php fn_message_model.php elementid host message [run_id = NULL] 
     $setstr = "/usr/bin/php -f /var/www/html/om/fn_message_model.php $elementid $host $message $run_id  ";
     break;
   }
@@ -305,12 +321,14 @@ function om_run_model_form_run(&$form, &$form_state) {
   $button = $parents[count($parents) - 1];
   $model_config = $form_state['values'];
   $model_config['elementid'] = $elementid;
-  // since this has not been oficially submitted (in order ot use ajax properly)
+  // since this has not been oficially submitted (in order to use ajax properly)
   //   we need to handle the date array
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
+  $cd = $model_config['cache_date'];
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
+  $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
@@ -354,7 +372,7 @@ function om_run_model_form_run(&$form, &$form_state) {
   $show = array(
     'elemname' => "Name", 
     'status_mesg' => "Message", 
-    'runid' => "Run ID",
+    'run_id' => "Run ID",
     'query' => "SQL",
   );
   foreach ($show as $key => $label) {

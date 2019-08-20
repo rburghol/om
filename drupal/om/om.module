@@ -9,7 +9,7 @@ function om_entity_info() {
   return $return;
 }
 
-function om_runid_options() {
+function om_run_id_options() {
   global $user;
   $options = array();
   if (in_array('administrator', $user->roles)) {
@@ -34,6 +34,51 @@ function om_runid_options() {
       $options[$i] = "Custom User Run #$i";
     }
   }
+  return $options;
+}
+
+function om_run_mode_options() {
+  global $user;
+  $options = array();
+  $options += array(
+    '0' => t('Baseline Hydrology (#0)'),
+    '1' => t('Historical Conditions (#1)'),
+    '2' => t('Current Conditions (#2)'),
+    '3' => t('Permit Term Maximum (#3)'),
+    '4' => t('Safe Yield (All at Max) (#4)'),
+    '5' => t('Custom Admin Run (#5)'),
+    '6' => t('Custom Admin Run (#6)'),
+    '7' => t('Custom Admin Run (#7)'),
+    '8' => t('Custom Admin Run (#8)'),
+    '9' => t('Custom Admin Run (#9)'),
+    '10' => t('Current/2020 Demand in 2020 SWRP'),
+    '11' => t('Future 2030 Demand in 2020 SWRP'),
+    '12' => t('Future 2040 Demand in 2020 SWRP'),
+    '13' => t('Current/2020 Demand 2020 SWRP with 2050 CC run #1'),
+    '14' => t('Current/2020 Demand 2020 SWRP with 2050 CC run #2'),
+    '15' => t('Current/2020 Demand 2020 SWRP with 2050 CC run #3'),
+    '16' => t('Future 2040 Demand in 2020 SWRP with Driest 2050 CC'),
+    '17' => t('TBD'),
+    '18' => t('TBD'),
+    '19' => t('TBD'),
+    '20' => t('TBD'),
+    '21' => t('2015 SWRP Current 2010 (#21)'),
+    '22' => t('2015 SWRP Future 2040 (#22)'),
+  );
+  return $options;
+}
+
+function om_flow_mode_options() {
+  global $user;
+  $options = array();
+  $options += array(
+    '0' => t('Best Available (seldom used) (#0)'),
+    '1' => t('Baseline USGS { Q + wd - ps }(seldom used) (#1)'),
+    '2' => t('USGS Paired, Synthetic Hydrograph (seldom used) (#2)'),
+    '3' => t('VAHydro 1.0/CBP5.3 (#3)'),
+    '4' => t('CBP Phase 6 (#4)'),
+    '5' => t('CBP Phase 6 (#5)'),
+  );
   return $options;
 }
 
