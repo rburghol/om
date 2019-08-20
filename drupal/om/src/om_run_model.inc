@@ -217,6 +217,8 @@ function om_run_model($config) {
   $cmd_output = array();
   $cmd = "cd $path \n";
   $cmd .= $setstr;
+      error_log("Run Type: $config[runtype] : $cmd");
+      return;
   if ($test_only) {
       //dpm( $cmd, "Testing Only ");
       error_log("Test Command: $cmd");
