@@ -74,7 +74,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       'shake_tree' => 'Tree (Sequential Tree, with caching)',
     ),
     '#size' => 1,
-    '#default' => $model->runtype
+    '#default_value' => empty($model->runtype) ? 'cached' : $model->runtype
   );
   $run_mode_options = om_run_mode_options(); // will determine what a user can run
   $form['Advanced']['run_mode'] = array(
@@ -82,7 +82,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $run_mode_options,
     '#size' => 1,
-    '#default' => empty($model->run_mode) ? 2 : $model->run_mode
+    '#default_value' => empty($model->run_mode) ? 2 : $model->run_mode
   );
   $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
   $form['Advanced']['flow_mode'] = array(
@@ -90,7 +90,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $flow_mode_options,
     '#size' => 1,
-    '#default' => empty($model->flow_mode) ? 3 : $model->flow_mode
+    '#default_value' => empty($model->flow_mode) ? 3 : $model->flow_mode
   );
   dpm($model,'model');
   dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
