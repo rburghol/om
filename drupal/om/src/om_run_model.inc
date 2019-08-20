@@ -67,7 +67,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
 	$form['Advanced']['#collapsed'] = TRUE;
 	$form['Advanced']['#weight'] = 2;
   $form['Advanced']['runtype'] = array(
-    '#type' => 'Run Caching/Mode',
+    '#type' => 'Run Caching',
     '#type' => 'select',
     '#options' => array(
       'cached' => 'Standard (Container Tree cached)',
@@ -75,6 +75,22 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     ),
     '#size' => 1,
     '#default' => $model->runtype
+  );
+  $run_mode_options = om_run_mode_options(); // will determine what a user can run
+  $form['Advanced']['run_mode'] = array(
+    '#type' => 'Run Mode (wd/ps/lakes)',
+    '#type' => 'select',
+    '#options' => $run_mode_options,
+    '#size' => 1,
+    '#default' => $model->run_mode
+  );
+  $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
+  $form['Advanced']['flow_mode'] = array(
+    '#type' => 'Flow Mode (runoff dataset)',
+    '#type' => 'select',
+    '#options' => $flow_mode_options,
+    '#size' => 1,
+    '#default' => $model->flow_mode
   );
   // advanced options for shakeTree
   $form['Advanced']['cache_date'] = array(
@@ -309,8 +325,10 @@ function om_run_model_form_run(&$form, &$form_state) {
   //   we need to handle the date array
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
+  $cd = $model_config['cachedate'];
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
+  $model_config['cachedate'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
