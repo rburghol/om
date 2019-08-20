@@ -226,6 +226,7 @@ function om_run_model($config) {
       $cmd = "cd $path \n";
       $cmd .= $setstr;
       //dpm( $cmd, "Executing ");
+      error_log("Executing " . $cmd);
       // this runs in the same process
       //shell_exec($cmd);
       // this runs in a separate process.

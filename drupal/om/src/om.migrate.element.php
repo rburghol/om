@@ -162,6 +162,10 @@ foreach ($data as $element) {
     error_log("Model = $om_model->propname - $om_model->propcode ");
     // see if the
     if (is_object($om_model)) {
+      // set the object class value ??
+      // Currently this is not used.  The object_class is a function of the plugin, which is set by the 
+      // varkey.  We need to either have a lookup or 
+      //$om_model->object_class;
       error_log("Model with pid = $om_model->pid");
       // first, disable set_remote to prevent looping
       // add the element link
