@@ -224,7 +224,7 @@ function om_run_model($config) {
     //  strict = 1 - verify with narrow valid criteria
     //  strict = -1 - do not verify, assume it is OK
     $run_mode = $config['run_mode']; // run_mode - model setting for use by internal lists etc. select list of 1-100?
-    $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $cache_date $force_overwrite $scid $strict $run_mode";
+    $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $startdate $enddate $cache_date $force_overwrite $scid $strict $run_mode";
     $test_only = TRUE;
     break;
 	
