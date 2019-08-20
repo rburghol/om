@@ -67,7 +67,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
 	$form['Advanced']['#collapsed'] = TRUE;
 	$form['Advanced']['#weight'] = 2;
   $form['Advanced']['runtype'] = array(
-    '#type' => 'Run Caching',
+    '#title' => t('Run Caching'),
     '#type' => 'select',
     '#options' => array(
       'cached' => 'Standard (Container Tree cached)',
@@ -78,7 +78,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   );
   $run_mode_options = om_run_mode_options(); // will determine what a user can run
   $form['Advanced']['run_mode'] = array(
-    '#type' => 'Run Mode (wd/ps/lakes)',
+    '#title' => t('Run Mode (wd/ps/lakes)'),
     '#type' => 'select',
     '#options' => $run_mode_options,
     '#size' => 1,
@@ -86,7 +86,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   );
   $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
   $form['Advanced']['flow_mode'] = array(
-    '#type' => 'Flow Mode (runoff dataset)',
+    '#title' => t('Flow Mode (runoff dataset)'),
     '#type' => 'select',
     '#options' => $flow_mode_options,
     '#size' => 1,
