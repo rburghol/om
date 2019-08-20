@@ -9,7 +9,7 @@ function om_entity_info() {
   return $return;
 }
 
-function om_runid_options() {
+function om_run_id_options() {
   global $user;
   $options = array();
   if (in_array('administrator', $user->roles)) {

@@ -8,12 +8,12 @@ module_load_include('module', 'om');
 //          and the shakeTree run mode.
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
-  $runid_options = om_runid_options(); // will determine what a user can run
+  $run_id_options = om_run_id_options(); // will determine what a user can run
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
-    '#default_value' => -1,
-    '#options' => $runid_options,
+    '#default_value' => empty($model->run_id) ? 100 : $model->run_id,
+    '#options' => $run_id_options,
     '#description' => t('Unique Identifier for a model run.'),
     '#required' => TRUE,
     '#multiple' => FALSE,
@@ -270,7 +270,7 @@ function om_message_model($config) {
   switch ($config['runtype']) {
     case 'cached':
     default:
-    // Usage: php fn_message_model.php elementid host message [runid = NULL] 
+    // Usage: php fn_message_model.php elementid host message [run_id = NULL] 
     $setstr = "/usr/bin/php -f /var/www/html/om/fn_message_model.php $elementid $host $message $run_id  ";
     break;
   }
@@ -374,7 +374,7 @@ function om_run_model_form_run(&$form, &$form_state) {
   $show = array(
     'elemname' => "Name", 
     'status_mesg' => "Message", 
-    'runid' => "Run ID",
+    'run_id' => "Run ID",
     'query' => "SQL",
   );
   foreach ($show as $key => $label) {
