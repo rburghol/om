@@ -18,7 +18,7 @@ $one_proc = 'all';
 $elementid = FALSE;
 $hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
-$model_varkey = 'om_model_element';
+$model_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
 // command line class override
 $classes = array('dataMatrix', 'Equation', 'USGSGageSubComp', 'textField');
