@@ -53,7 +53,7 @@ if (count($args) >= 2) {
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.element.php query_type=[feature]|pid,prop_feature elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=om_model_element] [classes=" . implode(',', $classes) . "]");
+  error_log("Usage: om.migrate.element.php query_type=[feature]|pid,prop_feature elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=varcode (queries for varcode matching OM class)] [classes=" . implode(',', $classes) . "]");
   error_log("If query_type = feature and hydrocode is integer, will assume a hydroid of the parent of the model element has been submitted ");
   error_log("If query_type = pid and hydrocode is integer, will assume a pid for the model element has been submitted ");
   error_log("If query_type = prop_feature and hydrocode is integer, will assume a pid for the model element that is the parent of the model element has been submitted");
@@ -132,6 +132,15 @@ foreach ($data as $element) {
     continue;
   }
   if (is_object($object)) {
+    // check the model_varkey 
+    // - varcode = search the database for a variable whose varcode matches the OM objectclass of this object 
+    // - all others expect the varkey to use 
+    if ($model_varkey == 'varcode') {
+      // 
+      $model_varkey = dh_varcode2varid($model_varkey, TRUE);
+      $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
+      error_log("Using variable key from Varcode query: $model_varkey ");
+    }
     switch($query_type) {
       case 'pid':
       // this is a reference to a direct model pid, no need to query
