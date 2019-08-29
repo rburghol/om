@@ -6,6 +6,8 @@ $userid = 1;
 $scenarioid = 37;
 $wd_template_id = 284895;
 $new_wd_template_id = 340402; // a generic shell object with broadcast properties
+$cbp6_runoff_container_template_id = 340393;
+$cbp6_runoff_file_template_id = 340398;
 
 include_once('xajax_modeling.element.php');
 //error_reporting(E_ALL);

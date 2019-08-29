@@ -1499,30 +1499,37 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     }
   }
   
+  function getLinkedEntity(&$entity) {
+    $entity->src_entity_type = $entity->propcode;
+    $entity->src_entity_id = $entity->propvalue;
+    $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
+    return $entity->src_entity;
+  }
+  
   function getLocalhostLinkedValue(&$entity) {
-    $src_entity_type = $entity->propcode;
-    $src_entity_id = $entity->propvalue;
-    $src_entity = entity_load_single($src_entity_type, $src_entity_id);
     //dpm($entity,'entity');
-    //dpm($src_entity,'src_entity');
-    if (is_object($src_entity)) {
+    //dpm($entity->src_entity,'src_entity');
+    if (!$entity->src_entity) {
+      $this->getLinkedEntity(&$entity);
+    }
+    if (is_object($entity->src_entity)) {
       // check if prop already exists, if so, just grab it,
       // otherwise, try to load a dh_property with the target name 
       if (!empty($entity->src_prop->propcode)) {
         $src_prop = $entity->src_prop->propcode;
-        if (property_exists($src_entity, $src_prop)) {
-          $linked_value = $src_entity->{$src_prop};
+        if (property_exists($entity->src_entity, $src_prop)) {
+          $linked_value = $entity->src_entity->{$src_prop};
         } else {
           $conds = array();
           $conds[] = array(
             'name' => 'propname',
             'value' => $src_prop
           );
-          $loaded = $src_entity->loadComponents($conds);
-          //dpm($src_entity,'source entity');
+          $loaded = $entity->src_entity->loadComponents($conds);
+          //dpm($entity->src_entity,'source entity');
           if (count($loaded) > 0) {
             $loname = strtolower($src_prop);
-            $src_object = $src_entity->dh_properties[$loname];
+            $src_object = $entity->src_entity->dh_properties[$loname];
             // @todo: support linking propcode or other values on dh_properties
             $linked_value = $src_object->propvalue;
           } else {
