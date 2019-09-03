@@ -972,6 +972,12 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
     //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
   }
+  
+  public function delete($entity) {
+    // @todo: ask if we want to delete the corresponding remote
+    // @todo: enable to delete the corresponding remote
+    //dpm($entity,'plugin delete() method called');
+  }
 }
 
 class dHOMModelContainer extends dHOMModelElement {
@@ -1008,14 +1014,14 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
     }
   }
-}
-
-class dHOMEquation extends dHOMSubComp {
-  var $object_class = 'Equation';
   
   public function delete($entity) {
     dpm($entity,'plugin delete() method called');
   }
+}
+
+class dHOMEquation extends dHOMSubComp {
+  var $object_class = 'Equation';
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
