@@ -1017,6 +1017,22 @@ class dHOMSubComp extends dHOMBaseObjectClass {
   
   public function delete($entity) {
     dpm($entity,'plugin delete() method called');
+    $comp_path = array(); // initialize the path var. 
+                     // We will than use it later to determine if we should 
+                     // Delete the remote element 
+    $propname = $entity->propname;
+    $elid = $this->findRemoteOMElement($entity, $comp_path);
+    dpm($comp_path,'Delete subcomp path');
+    dpm($elid,'Delete subcomp elid');
+    // findRemoteElement
+    // Check path depth - if this is a 1st level sub-comp delete, if not, return 
+    /*
+      case 2:
+        list($propname, $parentname) = $path;
+        // this is a property on a subcomp of the element
+        $setstr = "php delete_subcomp.php $elid $propname ";
+      break;
+      */
   }
 }
 
