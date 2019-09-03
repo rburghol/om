@@ -433,6 +433,10 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   public function getPropertyAttribute($property) {
     return $property->propvalue;
   }
+  
+  public function delete($entity) {
+    dpm($entity,'plugin delete() method collaed');
+  }
 }
 
 class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
