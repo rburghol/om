@@ -1514,7 +1514,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     //dpm($entity,'entity');
     //dpm($entity->src_entity,'src_entity');
     if (!$entity->src_entity) {
-      $this->getLinkedEntity(&$entity);
+      $this->getLinkedEntity($entity);
     }
     if (is_object($entity->src_entity)) {
       // check if prop already exists, if so, just grab it,
