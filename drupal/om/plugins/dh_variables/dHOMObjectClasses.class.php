@@ -433,10 +433,6 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   public function getPropertyAttribute($property) {
     return $property->propvalue;
   }
-  
-  public function delete($entity) {
-    dpm($entity,'plugin delete() method called');
-  }
 }
 
 class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
@@ -1016,6 +1012,10 @@ class dHOMSubComp extends dHOMBaseObjectClass {
 
 class dHOMEquation extends dHOMSubComp {
   var $object_class = 'Equation';
+  
+  public function delete($entity) {
+    dpm($entity,'plugin delete() method called');
+  }
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
