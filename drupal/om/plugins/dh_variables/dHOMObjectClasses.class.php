@@ -435,7 +435,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   }
   
   public function delete($entity) {
-    dpm($entity,'plugin delete() method collaed');
+    dpm($entity,'plugin delete() method called');
   }
 }
 
