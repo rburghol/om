@@ -1026,13 +1026,19 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     dpm($elid,'Delete subcomp elid');
     // findRemoteElement
     // Check path depth - if this is a 1st level sub-comp delete, if not, return 
-    /*
+    switch (count($comp_path)) {
       case 2:
         list($propname, $parentname) = $path;
         // this is a property on a subcomp of the element
         $setstr = "php delete_subcomp.php $elid $propname ";
       break;
-      */
+    }
+    if ($setstr and !$test_only) {
+      $cmd = "cd $this->path \n";
+      $cmd .= $setstr;
+      dpm( $cmd, "Executing ");
+      shell_exec($cmd);
+    }
   }
 }
 
@@ -1533,8 +1539,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    //dpm($entity,'entity');
-    //dpm($entity->src_entity,'src_entity');
+    dpm($entity,'getLocalhostLinkedValue entity');
+    dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
       $this->getLinkedEntity($entity);
     }
@@ -1583,6 +1589,26 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function findRemoteOMElement($entity, &$path) {
     // do not pass to sub-props as this does not propagate. (yet!)
     return 0;
+  }
+  
+  public function buildContent(&$content, &$entity, $view_mode) {
+    // @todo: handle teaser mode and full mode with plugin support
+    parent::buildContent($content, $entity, $view_mode);
+    getLinkedEntity($entity);
+    switch ($view_mode) {
+      case 'plugin':
+      case 'teaser':
+      default:
+        if (is_object($entity->src_entity) and method_exists($remote_rec, 'entityType')) {
+          // this is a local drupal entity, we can handle it 
+          $content['remote'] = array(
+            '#type' => 'link',
+            '#title' => "<b>Name:</b> " . $entity->src_entity->label(),
+            '#href' => $entity->src_entity->uri(),
+          );
+        }
+      break;
+    }
   }
   
 }
