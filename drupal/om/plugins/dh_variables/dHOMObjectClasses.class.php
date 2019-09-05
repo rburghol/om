@@ -1600,7 +1600,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       case 'plugin':
       case 'teaser':
       default:
-        if (is_object($entity->src_entity) and method_exists($remote_rec, 'entityType')) {
+        if (is_object($entity->src_entity) and method_exists($entity->src_entity, 'entityType')) {
           // this is a local drupal entity, we can handle it 
           $content['remote'] = array(
             '#type' => 'link',
