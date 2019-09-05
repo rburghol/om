@@ -1595,7 +1595,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
     $this->getLinkedEntity($entity);
-    dpm($entity->src_entity,'ent to content');
+    //dpm($entity->src_entity,'ent to content');
     switch ($view_mode) {
       case 'plugin':
       case 'teaser':
@@ -1605,7 +1605,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
           $content['remote'] = array(
             '#type' => 'link',
             '#title' => "From: " . $entity->src_entity->label(),
-            '#href' => $entity->src_entity->uri(),
+            '#href' => "admin/content/dh_adminreg_feature/manage/" . $entity->src_entity->label() . "/view",
           );
         }
       break;
