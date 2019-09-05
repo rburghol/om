@@ -1595,7 +1595,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
     $this->getLinkedEntity($entity);
-    dpm($entity,'ent to content');
+    dpm($entity->src_entity,'ent to content');
     switch ($view_mode) {
       case 'plugin':
       case 'teaser':
