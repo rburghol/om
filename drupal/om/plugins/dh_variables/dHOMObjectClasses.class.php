@@ -1605,7 +1605,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
           $content['remote'] = array(
             '#type' => 'link',
             '#title' => "From: " . $entity->src_entity->label(),
-            '#href' => "admin/content/dh_adminreg_feature/manage/" . $entity->src_entity->label() . "/view",
+            '#href' => "admin/content/" . $entity->src_entity->entityType() . "/manage/" . $entity->src_entity->id() . "/view",
           );
         }
       break;
