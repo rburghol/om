@@ -1539,8 +1539,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    dpm($entity,'getLocalhostLinkedValue entity');
-    dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
+    //dpm($entity,'getLocalhostLinkedValue entity');
+    //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
       $this->getLinkedEntity($entity);
     }
@@ -1595,6 +1595,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
     $this->getLinkedEntity($entity);
+    dpm($entity,'ent to content');
     switch ($view_mode) {
       case 'plugin':
       case 'teaser':
