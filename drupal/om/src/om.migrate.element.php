@@ -150,6 +150,8 @@ foreach ($data as $element) {
       $search_mode = 'name';
       $model_entity_type = 'dh_properties';
       error_log("Using query_mode PROP_FEATURE to load model element");
+      break;
+      
       case 'feature':
       default:
       $search_mode = 'propcode_singular';
