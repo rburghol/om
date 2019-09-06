@@ -173,7 +173,7 @@ foreach ($data as $element) {
       );
       $om_model = om_model_getSetProperty($values, $search_mode);
     }
-    error_log("Model = $om_model->propname - $om_model->propcode ");
+    error_log("Searched mode $search_mode, found Model = $om_model->propname - $om_model->propcode ");
     // see if the
     if (is_object($om_model)) {
       // set the object class value ??
