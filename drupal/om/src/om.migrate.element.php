@@ -141,22 +141,29 @@ foreach ($data as $element) {
       $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
       error_log("Using variable key from Varcode query: $model_varkey ");
     }
+    $om_model = FALSE;
     switch($query_type) {
       case 'pid':
-      // this is a reference to a direct model pid, no need to query
-      $om_model = entity_load_single('dh_properties', $om_fid);
-      error_log("Using query_mode PID to load model element directly.");
       break;
       
       case 'prop_feature':
+      $search_mode = 'name';
       $model_entity_type = 'dh_properties';
       error_log("Using query_mode PROP_FEATURE to load model element");
       case 'feature':
       default:
+      $search_mode = 'propcode_singular';
       error_log("Using query_mode FEATURE to load model element");
       $om_feature = entity_load_single($model_entity_type, $om_fid);
       error_log("Found $om_feature->name ($om_feature->hydroid)");
-      $om_model = FALSE;
+      break;
+    }
+    if ($query_type == 'pid') {
+      // this is a reference to a direct model pid, no need to query
+      $om_model = entity_load_single('dh_properties', $om_fid);
+      error_log("Using query_mode PID to load model element directly.");
+    } else {
+      error_log("Searching Model " . print_r($values,1));
       $values = array(
         'entity_type' => $model_entity_type,
         'featureid' => $om_fid,
@@ -164,9 +171,7 @@ foreach ($data as $element) {
         'varkey' => $model_varkey,
         'propname' => $object->name,
       );
-      error_log("Searching Model " . print_r($values,1));
-      $om_model = om_model_getSetProperty($values, 'propcode_singular');
-      break;
+      $om_model = om_model_getSetProperty($values, $search_mode);
     }
     error_log("Model = $om_model->propname - $om_model->propcode ");
     // see if the
