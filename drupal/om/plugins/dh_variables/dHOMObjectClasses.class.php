@@ -654,7 +654,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       if (count($path) == 0) {
         // if path is zero length it means that this is an exact match, so set the vahydro_hydroid prop 
         // on the OM element 
-        $this->setRemoteProp($entity, $elid, array('vahydro_hydroid', $entity->propname), $entity->pid, 'textField');
+        $this->setRemoteProp($entity, $elid, array('value', 'vahydro_hydroid'), $entity->pid, 'textField');
       }
     }
   }
