@@ -651,6 +651,11 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // if we are doing an insert from an import, we wouldn't want to do this.
     if ($elid > 0) {
       $this->setAllRemoteProperties($entity, $elid, $path);
+      if (count($path) == 0) {
+        // if path is zero length it means that this is an exact match, so set the vahydro_hydroid prop 
+        // on the OM element 
+        $this->setRemoteProp($entity, $elid, array('vahydro_hydroid', $entity->propname), $entity->pid, 'textField');
+      }
     }
   }
   
