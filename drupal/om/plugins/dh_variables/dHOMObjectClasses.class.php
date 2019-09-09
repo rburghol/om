@@ -666,7 +666,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE, $mode = '') {
-    if ($this->set_remote === '0') {
+    if ( ($this->set_remote === '0') or ($entity->set_remote === 0)) {
       //error_log("set_remote = FALSE - returning without setting $entity->propname");
       return;
     } else {
