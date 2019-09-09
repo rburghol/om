@@ -214,6 +214,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
     //dpm($props,'props from getDefaults');
+    error_log("Handling properties on $entity->propname " . print_r($props,1));
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
