@@ -106,6 +106,15 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
   // can create framework here to set properties that are needed, similar to object_class properties
   // being automatically added.
   // will use standard editing for now, but...
+  public function convert_attributes_to_dh_props($entity) {
+    // this will be called after a form submittal, the added form fields from attached props will be/
+    // added as plain fields on the entity, we then grab them by name and handle their contents.
+    $props = $this->getDefaults($entity);
+    //dpm($props,'props from getDefaults');
+    error_log("Handling properties on $entity->propname " . print_r($props,1));
+    error_log("P: $entity->province, A: $entity->area, DA: $entity->drainage_area ");
+    return parent::convert_attributes_to_dh_props($entity);
+  }
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
