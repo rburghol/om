@@ -137,9 +137,9 @@ foreach ($data as $element) {
     // - all others expect the varkey to use 
     if ($model_varkey == 'varcode') {
       // 
-      $model_varkey = dh_varcode2varid(get_class($object), TRUE);
+      $model_varkey = dh_varcode2varid($object->object_class, TRUE);
       $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
-      error_log("Object class: " . get_class($object) . " Using variable key from Varcode query: $model_varkey ");
+      error_log("Object class: " . $object->object_class . " Using variable key from Varcode query: $model_varkey ");
     }
     $om_model = FALSE;
     switch($query_type) {
