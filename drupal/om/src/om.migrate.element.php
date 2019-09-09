@@ -250,6 +250,7 @@ foreach ($data as $element) {
       //$om_model->set_remote = 0;
       // handle object class settings if specified 
       om_translate_to_dh($object, $om_model);
+      error_log("A: $om_model->area, DA: $om_model->drainage_area ");
       $om_model->save();
       // finally, restore the link setting to enable saves from dH to OM if requested.
       $om_link->propcode = $link_set_remote;
