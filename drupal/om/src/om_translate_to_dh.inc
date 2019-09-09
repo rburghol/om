@@ -80,9 +80,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   
   }
   foreach ($default_subprops as $thisprop) {
-    if (property_exists($om_comp, $thisprop->propname)) {
-      error_log("Setting $thisprop->propname to " . $om_comp->{$thisprop->propname});
-      $dh_prop->{$thisprop->propname} = $om_comp->{$thisprop->propname};
+    if (property_exists($om_comp, $thisprop['propname'])) {
+      error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
+      $dh_prop->{$thisprop['propname']} = $om_comp->{$thisprop['propname']};
     }
   }
   if ($translated) {
