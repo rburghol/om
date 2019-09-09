@@ -241,6 +241,8 @@ foreach ($data as $element) {
       }
       $om_link->propcode = $link_set_remote;
       $om_link->save();
+      // finally, save the model element
+      $om_model->save();
     }
   } else {
     error_log("Could not find: elementid=$elid ");
