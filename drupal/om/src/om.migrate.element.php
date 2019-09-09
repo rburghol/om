@@ -173,11 +173,17 @@ foreach ($data as $element) {
         'varkey' => $model_varkey,
         'propname' => $object->name,
       );
+      // If the model prop does not exist yet, this will create AND save it.
       $om_model = om_model_getSetProperty($values, $search_mode);
     }
     error_log("Searched mode $search_mode, found Model = $om_model->propname - $om_model->propcode ");
     // see if the
     if (is_object($om_model)) {
+      // we now have a saved dH object, with defaults if specified by the class plugin.
+      // Now we:
+      // 1. disable the element link back save so we can handle everything first.
+      // 2. update all properties with their OM object values 
+      // 3. Save the dH model element afterwards
       // set the object class value ??
       // Currently this is not used.  The object_class is a function of the plugin, which is set by the 
       // varkey.  We need to either have a lookup or 
@@ -239,12 +245,15 @@ foreach ($data as $element) {
           error_log("Skipping Classes - $object_class");
         }
       }
-      $om_link->propcode = $link_set_remote;
-      $om_link->save();
-      // finally, save the model element
+      // Now, save the model element
       // wait: does this already get done when we save the remote link?
       //$om_model->set_remote = 0;
-      //$om_model->save();
+      // handle object class settings if specified 
+      om_translate_to_dh($object, $om_model);
+      $om_model->save();
+      // finally, restore the link setting to enable saves from dH to OM if requested.
+      $om_link->propcode = $link_set_remote;
+      $om_link->save();
     }
   } else {
     error_log("Could not find: elementid=$elid ");
