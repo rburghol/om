@@ -157,7 +157,7 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
         'propvalue_default' => 1,
         'propname' => 'province',
         'singularity' => 'name_singular',
-        'vardesc' => '1 of 4 eco-regional provinces used in USGS model of stgream morphology in VA: # 1 - Appalachian Plateau, # 2 - Valley and Ridge, # 3 - Piedmont, # 4 - Coastal Plain.',
+        'vardesc' => '1 of 4 eco-regional provinces used in USGS model of stream morphology in VA: # 1 - Appalachian Plateau, # 2 - Valley and Ridge, # 3 - Piedmont, # 4 - Coastal Plain.',
         'varname' => 'Ecoregional Province',
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
