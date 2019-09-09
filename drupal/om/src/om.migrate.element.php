@@ -137,26 +137,35 @@ foreach ($data as $element) {
     // - all others expect the varkey to use 
     if ($model_varkey == 'varcode') {
       // 
-      $model_varkey = dh_varcode2varid(get_class($object), TRUE);
+      $model_varkey = dh_varcode2varid($object->object_class, TRUE);
       $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
-      error_log("Using variable key from Varcode query: $model_varkey ");
+      error_log("Object class: " . $object->object_class . " Using variable key from Varcode query: $model_varkey ");
     }
+    $om_model = FALSE;
     switch($query_type) {
       case 'pid':
-      // this is a reference to a direct model pid, no need to query
-      $om_model = entity_load_single('dh_properties', $om_fid);
-      error_log("Using query_mode PID to load model element directly.");
       break;
       
       case 'prop_feature':
+      $search_mode = 'name';
       $model_entity_type = 'dh_properties';
       error_log("Using query_mode PROP_FEATURE to load model element");
+      break;
+      
       case 'feature':
       default:
+      $search_mode = 'propcode_singular';
       error_log("Using query_mode FEATURE to load model element");
       $om_feature = entity_load_single($model_entity_type, $om_fid);
       error_log("Found $om_feature->name ($om_feature->hydroid)");
-      $om_model = FALSE;
+      break;
+    }
+    if ($query_type == 'pid') {
+      // this is a reference to a direct model pid, no need to query
+      $om_model = entity_load_single('dh_properties', $om_fid);
+      error_log("Using query_mode PID to load model element directly.");
+    } else {
+      error_log("Searching Model " . print_r($values,1));
       $values = array(
         'entity_type' => $model_entity_type,
         'featureid' => $om_fid,
@@ -164,13 +173,17 @@ foreach ($data as $element) {
         'varkey' => $model_varkey,
         'propname' => $object->name,
       );
-      error_log("Searching Model " . print_r($values,1));
-      $om_model = om_model_getSetProperty($values, 'propcode_singular');
-      break;
+      // If the model prop does not exist yet, this will create AND save it.
+      $om_model = om_model_getSetProperty($values, $search_mode);
     }
-    error_log("Model = $om_model->propname - $om_model->propcode ");
+    error_log("Searched mode $search_mode, found Model = $om_model->propname - $om_model->propcode ");
     // see if the
     if (is_object($om_model)) {
+      // we now have a saved dH object, with defaults if specified by the class plugin.
+      // Now we:
+      // 1. disable the element link back save so we can handle everything first.
+      // 2. update all properties with their OM object values 
+      // 3. Save the dH model element afterwards
       // set the object class value ??
       // Currently this is not used.  The object_class is a function of the plugin, which is set by the 
       // varkey.  We need to either have a lookup or 
@@ -232,6 +245,14 @@ foreach ($data as $element) {
           error_log("Skipping Classes - $object_class");
         }
       }
+      // Now, save the model element
+      // wait: does this already get done when we save the remote link?
+      //$om_model->set_remote = 0;
+      // handle object class settings if specified 
+      om_translate_to_dh($object, $om_model);
+      //error_log("Post save: A: $om_model->area, DA: $om_model->drainage_area ");
+      $om_model->save();
+      // finally, restore the link setting to enable saves from dH to OM if requested.
       $om_link->propcode = $link_set_remote;
       $om_link->save();
     }

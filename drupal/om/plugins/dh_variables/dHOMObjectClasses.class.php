@@ -214,6 +214,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
     //dpm($props,'props from getDefaults');
+    //error_log("Handling properties on $entity->propname " . print_r($props,1));
     foreach ($props as $thisvar) {
       $convert_value = FALSE; // flag to see if we need to convert (in case we are called multiple times)
       $load_property = FALSE;
@@ -578,6 +579,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         'varid' => dh_varkey2varid('om_object_class', TRUE),
       );
       dh_update_properties($values, 'singular');
+      error_log("Saving object_class: " . print_r($values,1));
     }
   }
   public function getDefaults($entity, &$defaults = array()) {
@@ -665,7 +667,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE, $mode = '') {
-    if ($this->set_remote === '0') {
+    if ( ($this->set_remote === '0') or ($entity->set_remote === 0)) {
       //error_log("set_remote = FALSE - returning without setting $entity->propname");
       return;
     } else {

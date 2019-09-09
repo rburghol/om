@@ -7,7 +7,144 @@ module_load_include('module', 'dh');
 $plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
 //dpm("so far so good");
-class dHOMHydroImpoundment extends dHOMModelElement {
+class dHOMHydroObject extends dHOMModelElement {
+  var $object_class = 'hydroObject';
+  var $attach_method = 'contained';
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
+    return $hidden;
+  }
+  // can create framework here to set properties that are needed, similar to object_class properties
+  // being automatically added.
+  // will use standard editing for now, but...
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    
+    $defaults += array(
+      'Qin' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Qin',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'Qout' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Qout',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'Iold' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Iold',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'depth' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'depth',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'tol' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0001,
+        'propname' => 'tol',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'Storage' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Storage',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'n' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.025,
+        'propname' => 'n',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'slope' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.01,
+        'propname' => 'slope',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'slength' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 100.0,
+        'propname' => 'slength',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'area',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'totalflow' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'totalflow',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'totalinflow' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'totalinflow',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+    );
+    return $defaults;
+  }
+   
+  // Advanced embedded properties in form   
+  // these properties can also be added to the main form, and handled with an entity map
+  // or handled directly
+  // how to automatically include properties on the form?
+  // 1. load the prop
+  // 2. load its plugins
+  // 3. create a 
+  // 4. pass the form to prop->plugin->formRowEdit
+}
+class dHOMHydroImpoundment extends dHOMHydroObject {
   var $object_class = 'hydroImpoundment';
   var $attach_method = 'contained';
   
@@ -95,17 +232,13 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
 
 }
 
-class dHOMUSGSChannelGeomObject extends dHOMModelElement {
+class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
   var $object_class = 'USGSChannelGeomObject';
   var $base; // base width of channel in feet
   var $length; // channel length in feet
   var $drainage_area; // in square miles
   var $Z; // side slope Z
   var $n; // Manning's n
-  
-  // can create framework here to set properties that are needed, similar to object_class properties
-  // being automatically added.
-  // will use standard editing for now, but...
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
@@ -135,6 +268,30 @@ class dHOMUSGSChannelGeomObject extends dHOMModelElement {
         'propvalue_default' => 1.0,
         'propname' => 'drainage_area',
         'singularity' => 'name_singular',
+        'vardesc' => 'Contributing area of entire watershed above outlet of this segment.',
+        'varname' => 'Watershed Drainage Area',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'area',
+        'singularity' => 'name_singular',
+        'vardesc' => 'Contributing area to only this specific section of channel.',
+        'varname' => 'Local Drainage Area',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'province' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1,
+        'propname' => 'province',
+        'singularity' => 'name_singular',
+        'vardesc' => '1 of 4 eco-regional provinces used in USGS model of stream morphology in VA: # 1 - Appalachian Plateau, # 2 - Valley and Ridge, # 3 - Piedmont, # 4 - Coastal Plain.',
+        'varname' => 'Ecoregional Province',
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
