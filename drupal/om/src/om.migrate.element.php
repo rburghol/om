@@ -242,8 +242,9 @@ foreach ($data as $element) {
       $om_link->propcode = $link_set_remote;
       $om_link->save();
       // finally, save the model element
-      $om_model->set_remote = 0;
-      $om_model->save();
+      // wait: does this already get done when we save the remote link?
+      //$om_model->set_remote = 0;
+      //$om_model->save();
     }
   } else {
     error_log("Could not find: elementid=$elid ");
