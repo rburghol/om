@@ -69,6 +69,11 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       $dh_prop->propcode = $om_comp->value;
       $translated = TRUE;
     break;
+    case 'USGSChannelGeomObject':
+      $dh_prop->province = $om_comp->province;
+      $dh_prop->drainage_area = $om_comp->drainage_area;
+      $translated = TRUE;
+    break;
   
   }
   if ($translated) {
