@@ -915,7 +915,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   }
 }
 
-class dHOMConstant extends dHOMBaseObjectClass {
+class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
   // this can be a stand-alone property, with it's own save() method unlike
   //   unlike the alphanumeric constants that are just embedded in the object edit form and 
