@@ -299,8 +299,8 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'propname' => 'base',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => 'Channel base width.',
-        'varname' => 'Mean channel base width is calculated automatically (TBD: see setChjannelGeom() function, call during save()).',
+        'varname' => 'Channel base width.',
+        'vardesc' => 'Mean channel base width is calculated automatically (TBD: see setChjannelGeom() function, call during save()).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'drainage_area' => array(
