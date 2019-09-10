@@ -244,7 +244,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     // length, drainage_area, Z, base, province
-    $defaults += array(
+    $defaults = array(
       'length' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -252,6 +252,8 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'propname' => 'length',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Channel mainstem length (ft)',
+        'vardesc' => 'Local channel mainstem.  Channel length is used to compute volume of storage and travel time.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'base' => array(
@@ -296,7 +298,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
-    );
+    ) + $defaults;
     return $defaults;
   }
    
