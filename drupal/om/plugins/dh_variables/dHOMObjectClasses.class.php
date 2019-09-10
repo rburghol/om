@@ -415,18 +415,18 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   }
   
   // @todo: move this into dh module once we are satisifed that it is robust
-  public function attachNamedForm(&$rowform, $row) {
-    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+  public function attachNamedForm(&$rowform, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
     }
     $formshell = array();
     // use standard formatting to enable choices.
-    $this->formRowEdit($formshell, $row);
-    $mname = $this->handleFormPropname($row->propname);
+    $this->formRowEdit($formshell, $entity);
+    $mname = $this->handleFormPropname($entity->propname);
     $rowform[$mname] = $formshell['propvalue'];
-    $rowform[$mname]['#title'] = t($varinfo->varname);
-    $rowform[$mname]['#description'] = t($varinfo->vardesc);
+    $rowform[$mname]['#title'] = t($entity->varname);
+    $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -943,8 +943,8 @@ class dHOMConstant extends dHVariablePluginNumericAttribute {
       return FALSE;
     }
     parent::formRowEdit($rowform, $entity);
-    $rowform['propvalue']['#title'] = 'Value';
-    $rowform['propvalue']['#description'] = 'Numerical constant.';
+    $rowform['propvalue']['#title'] = t($entity->varname);
+    $rowform['propvalue']['#description'] = $entity->vardesc;
   }
   
   public function applyEntityAttribute($property, $value) {
