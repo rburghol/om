@@ -233,6 +233,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
 }
 
 class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
+  var $attach_method = 'contained';
   var $object_class = 'USGSChannelGeomObject';
   var $base; // base width of channel in feet
   var $length; // channel length in feet
