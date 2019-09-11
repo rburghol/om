@@ -167,6 +167,30 @@ class dHOMHydroObject extends dHOMModelElement {
   // 2. load its plugins
   // 3. create a 
   // 4. pass the form to prop->plugin->formRowEdit
+  
+  /*
+  // not needed? Constants and others should call setAllRemoteProperties() themselves on save()
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    // this is to be done on save.  The base class saves nothing
+    // subclasses can save other things
+    $defaults = $this->getDefaults($entity);
+    foreach ($defaults as $thisone) {
+      if ($thisone['propname'] == 'area') {
+        // just test with area
+        if (is_object($entity->{$thisone['propname']})) {
+          $prop = $entity->{$thisone['propname']};
+          $plugin = array_shift($prop->dh_variables_plugins);
+          if (is_object($plugin)) {
+            // this should actually be done in the constants plugin?
+            $plugin->setAllRemoteProperties($prop, $elid, $path);
+          }
+        }
+      }
+    }
+  }
+  */
+  
 }
 class dHOMHydroImpoundment extends dHOMHydroObject {
   var $object_class = 'hydroImpoundment';

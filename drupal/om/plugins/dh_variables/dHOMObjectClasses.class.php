@@ -917,12 +917,15 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   }
 }
 
-class dHOMConstant extends dHVariablePluginNumericAttribute {
+class dHOMConstant extends dHOMBaseObjectClass {
+  // changed inheritance to support remote OM editing.
+//class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
   // this can be a stand-alone property, with it's own save() method unlike
   //   unlike the alphanumeric constants that are just embedded in the object edit form and 
   //   do not have their own save methods.
   //   This will be seldom used, as virtually all setting fields will be attached to something (like run_mode)
+  // But WILL be used for object class attributes in OM (like area, slope, etc.)
   var $object_class = FALSE;
   var $default_value = 0;
   
@@ -934,7 +937,8 @@ class dHOMConstant extends dHVariablePluginNumericAttribute {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // this is to be done on save.  The base class does nothing except format 
-    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
+    array_shift($path);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, FALSE);
   }
   
   public function formRowEdit(&$rowform, $entity) {
@@ -954,6 +958,7 @@ class dHOMConstant extends dHVariablePluginNumericAttribute {
   public function getPropertyAttribute($property) {
     return $property->propvalue;
   }
+  
 }
 
 class dHOMModelElement extends dHOMBaseObjectClass {
