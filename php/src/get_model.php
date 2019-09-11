@@ -37,7 +37,7 @@ if ($elementid === FALSE) {
   $thisobject->components = getChildComponentType($listobject, $elementid);
 
   $thisname = $thisobject->name;
-  $thisobject->debug = 1;
+  $thisobject->debug = 0;
   $thisobject->outdir = $outdir;
   $thisobject->outurl = $outurl;
   if (!$include_geom) {
