@@ -247,7 +247,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       if ($load_property) {
         //dsm("Loading property $pn");
-        $this->loadProperties($entity, FALSE, $propname);
+        $this->loadProperties($entity, FALSE, $pn);
       }
       // now, apply the stashed value to the property
       if ($convert_value and is_object($entity->{$propname})) {
