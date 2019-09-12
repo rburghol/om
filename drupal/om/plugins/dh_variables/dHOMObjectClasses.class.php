@@ -415,16 +415,18 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   }
   
   // @todo: move this into dh module once we are satisifed that it is robust
-  public function attachNamedForm(&$rowform, $row) {
-    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+  public function attachNamedForm(&$rowform, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
     }
     $formshell = array();
     // use standard formatting to enable choices.
-    $this->formRowEdit($formshell, $row);
-    $mname = $this->handleFormPropname($row->propname);
+    $this->formRowEdit($formshell, $entity);
+    $mname = $this->handleFormPropname($entity->propname);
     $rowform[$mname] = $formshell['propvalue'];
+    $rowform[$mname]['#title'] = t($entity->varname);
+    $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -916,11 +918,14 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
 }
 
 class dHOMConstant extends dHOMBaseObjectClass {
+  // changed inheritance to support remote OM editing.
+//class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
   // this can be a stand-alone property, with it's own save() method unlike
   //   unlike the alphanumeric constants that are just embedded in the object edit form and 
   //   do not have their own save methods.
   //   This will be seldom used, as virtually all setting fields will be attached to something (like run_mode)
+  // But WILL be used for object class attributes in OM (like area, slope, etc.)
   var $object_class = FALSE;
   var $default_value = 0;
   
@@ -932,7 +937,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // this is to be done on save.  The base class does nothing except format 
-    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, FALSE);
   }
   
   public function formRowEdit(&$rowform, $entity) {
@@ -941,8 +946,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
       return FALSE;
     }
     parent::formRowEdit($rowform, $entity);
-    $rowform['propvalue']['#title'] = 'Value';
-    $rowform['propvalue']['#description'] = 'Numerical constant.';
+    $rowform['propvalue']['#title'] = t($entity->varname);
+    $rowform['propvalue']['#description'] = $entity->vardesc;
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -952,6 +957,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
   public function getPropertyAttribute($property) {
     return $property->propvalue;
   }
+  
 }
 
 class dHOMModelElement extends dHOMBaseObjectClass {

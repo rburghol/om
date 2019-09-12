@@ -30,6 +30,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'Qin',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Qin",
+        'vardesc' => 'Total Inflow during last timestep(transient).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'Qout' => array(
@@ -39,6 +41,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'Qout',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Qout",
+        'vardesc' => 'Total outflow during last timestep(transient).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'Iold' => array(
@@ -48,6 +52,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'Iold',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Iold",
+        'vardesc' => 'Inflow during last timestep(transient).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'depth' => array(
@@ -57,6 +63,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'depth',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "depth",
+        'vardesc' => 'depth.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'tol' => array(
@@ -66,6 +74,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'tol',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Tolerance in iterative solutions",
+        'vardesc' => 'Tolerance in iterative solutions.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'Storage' => array(
@@ -75,6 +85,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'Storage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Storage",
+        'vardesc' => 'Storage.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'n' => array(
@@ -84,6 +96,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'n',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => "Manning's n",
+        'vardesc' => 'Roughness coefficient for use in model runoff and channel flow simualtions.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'slope' => array(
@@ -93,6 +107,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'slope',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'slope',
+        'vardesc' => 'slope.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'slength' => array(
@@ -102,6 +118,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'slength',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'slength',
+        'vardesc' => 'slength.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'area' => array(
@@ -111,6 +129,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'area',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'area',
+        'vardesc' => 'area.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'totalflow' => array(
@@ -120,6 +140,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'totalflow',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'totalflow',
+        'vardesc' => 'totalflow.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'totalinflow' => array(
@@ -129,6 +151,8 @@ class dHOMHydroObject extends dHOMModelElement {
         'propname' => 'totalinflow',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'totalinflow',
+        'vardesc' => 'totalinflow.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
     );
@@ -143,6 +167,30 @@ class dHOMHydroObject extends dHOMModelElement {
   // 2. load its plugins
   // 3. create a 
   // 4. pass the form to prop->plugin->formRowEdit
+  
+  /*
+  // not needed? Constants and others should call setAllRemoteProperties() themselves on save()
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    // this is to be done on save.  The base class saves nothing
+    // subclasses can save other things
+    $defaults = $this->getDefaults($entity);
+    foreach ($defaults as $thisone) {
+      if ($thisone['propname'] == 'area') {
+        // just test with area
+        if (is_object($entity->{$thisone['propname']})) {
+          $prop = $entity->{$thisone['propname']};
+          $plugin = array_shift($prop->dh_variables_plugins);
+          if (is_object($plugin)) {
+            // this should actually be done in the constants plugin?
+            $plugin->setAllRemoteProperties($prop, $elid, $path);
+          }
+        }
+      }
+    }
+  }
+  */
+  
 }
 class dHOMHydroImpoundment extends dHOMHydroObject {
   var $object_class = 'hydroImpoundment';
@@ -158,7 +206,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
   
   public function getDefaults($entity, &$defaults = array()) {
     parent::getDefaults($entity, $defaults);
-    $defaults += array(
+    $defaults = array(
       'initstorage' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -166,6 +214,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'initstorage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Initial Storage (ac-ft)',
+        'vardesc' => 'Reservoir storage at model simulation timestep 0.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'maxcapacity' => array(
@@ -175,6 +225,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'maxcapacity',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Maximum Storage (ac-ft)',
+        'vardesc' => 'Reservoir maximum storage, includes unusable storage.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'unusable_storage' => array(
@@ -184,6 +236,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'unusable_storage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Unusable Storage (ac-ft)',
+        'vardesc' => 'Storage that is unusable based on water quality or intake depth limitations.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'riser_diameter' => array(
@@ -193,6 +247,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'riser_diameter',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Riser Diameter(ft)',
+        'vardesc' => 'Riser diameter(ft).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'riser_length' => array(
@@ -202,6 +258,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'riser_length',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Riser Length(ft)',
+        'vardesc' => 'Riser.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'storage_stage_area' => array(
@@ -209,11 +267,13 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propcode_default' => NULL,
         'propvalue_default' => 10.0,
         'propname' => 'storage_stage_area',
+        'varname' => 'Stage-Storage-SA',
+        'vardesc' => 'Lookup table to provide stage and surface area for a given storage value.',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_DataMatrix', TRUE),
       ), 
-    );
+    ) + $defaults;
     return $defaults;
   }
    
@@ -233,6 +293,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
 }
 
 class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
+  var $attach_method = 'contained';
   var $object_class = 'USGSChannelGeomObject';
   var $base; // base width of channel in feet
   var $length; // channel length in feet
@@ -243,7 +304,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     // length, drainage_area, Z, base, province
-    $defaults += array(
+    $defaults = array(
       'length' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -251,6 +312,8 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'propname' => 'length',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Channel mainstem length (ft)',
+        'vardesc' => 'Local channel mainstem.  Channel length is used to compute volume of storage and travel time.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'base' => array(
@@ -260,6 +323,8 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'propname' => 'base',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
+        'varname' => 'Channel base width.',
+        'vardesc' => 'Mean channel base width is calculated automatically (TBD: see setChjannelGeom() function, call during save()).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'drainage_area' => array(
@@ -295,7 +360,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
-    );
+    ) + $defaults;
     return $defaults;
   }
    
