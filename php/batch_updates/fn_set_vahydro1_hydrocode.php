@@ -28,7 +28,7 @@ foreach ($wds as $thiswd) {
   $q = "update scen_model_element set hydrocode = '$hydrocode' where elementid = $wd_elid";
   $listobject->querystring = $q;
   error_log($q);
-  $listobject->performQuery();
+  //$listobject->performQuery();
 }
 
 ?>
