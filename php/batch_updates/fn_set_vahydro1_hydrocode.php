@@ -15,7 +15,7 @@ if (count($argv) < 2) {
    die;
 }
 error_log(print_r($argv,1));
-die;
+$riverseg = $argv[1];
 
 $elid = getCOVACBPContainer($listobject, $scenarioid, $riverseg);
 $wds = getCOVAWithdrawals($listobject, $elid);
