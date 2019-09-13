@@ -30,7 +30,7 @@ if ($riverseg == 'all') {
 
 foreach ($rsegs as $seg) {
   $elid = $seg['elementid'];
-  $riveseg = $seg['custom2'];
+  $riverseg = $seg['custom2'];
   $wds = getCOVAWithdrawals($listobject, $elid);
   
   foreach ($wds as $thiswd) {
