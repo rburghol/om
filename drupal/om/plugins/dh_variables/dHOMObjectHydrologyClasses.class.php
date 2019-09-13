@@ -363,88 +363,86 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
     ) + $defaults;
     return $defaults;
   }
-   
-   function setChannelGeom() {
-      switch ($this->province) {
-         case 1:
-            # Appalachian Plateau
-            # bank full stage
-            $hc = 2.030;
-            $he = 0.2310;
-            # bank full width
-            $bfc = 12.175;
-            $bfe = 0.4711;
-            # base width
-            $bc = 5.389;
-            $be = 0.5349;
-            $n = 0.036; # these are mannings N, using only the median numbers from USGS study,
-                        # later we should incorporate the changing N as it is for high median and low flows
-         break;
-         case 2:
-            # Valley and Ridge
-            $hc = 1.435;
-            $he = 0.2830;
-            $bfc = 13.216;
-            $bfe = 0.4532;
-            $bc = 4.667;
-            $be = 0.5489;
-            $n = 0.038;
-         break;
-         case 3:
-            # Piedmont
-            $hc = 2.137;
-            $he = 0.2561;
-            $bfc = 14.135;
-            $bfe = 0.4111;
-            $bc = 6.393;
-            $be = 0.4604;
-            $n = 0.095;
-         break;
-         case 4:
-            # Coastal Plain
-            $hc = 2.820;
-            $he = 0.2000;
-            $bfc = 15.791;
-            $bfe = 0.3758;
-            $bc = 6.440;
-            $be = 0.4442;
-            $n = 0.040;
-         break;
-         
-         default:
-            $hc = 2.030;
-            $he = 0.2000;
-            $bfc = 12.175;
-            $bfe = 0.4711;
-            $bc = 5.389;
-            $be = 0.5349;
-            $n = 0.036;
-         break;
-      }
-         
-      $h = $hc * pow($this->drainage_area, $he);
-      $bf = $bfc * pow($this->drainage_area, $bfe);
-      $b = $bc * pow($this->drainage_area, $be);
-      $z = 0.5 * ($bf - $b) / $h; 
-         # since Z is increase slope of a single side, 
-         # the top width increases (relative to the bottom) at a rate of (2 * Z * h)
-      # only use these derived values if they are non-zero, otherwise, use defaults
-      if ($z > 0) {
-         $this->Z = $z;
-      } else {
-         dsm("Calculated Z value from (0.5 * ($bf - $b) / $h) less than zero, using default " . $this->Z);
-      }
-      if ($b > 0) {
-         $this->base = $b;
-      } else {
-         dsm("Calculated base value from ($bc * pow($this->drainage_area, $be)) less than zero, using default " . $this->base);
-      }
-      dsm("Calculated base value from ($bc * pow($this->drainage_area, $be)), = $b / " . $this->base . " Province: $this->province");
-      $this->n = $n;
 
-      return;
+  function setChannelGeom() {
+    // @tbd: implement this on save() or update()?
+    switch ($this->province) {
+      case 1:
+        # Appalachian Plateau
+        # bank full stage
+        $hc = 2.030;
+        $he = 0.2310;
+        # bank full width
+        $bfc = 12.175;
+        $bfe = 0.4711;
+        # base width
+        $bc = 5.389;
+        $be = 0.5349; 
+        $n = 0.036; # these are mannings N, using only the median numbers from USGS study,
+                    # later we should incorporate the changing N as it is for high median and low flows
+      break;
+      case 2:
+        # Valley and Ridge
+        $hc = 1.435;
+        $he = 0.2830;
+        $bfc = 13.216;
+        $bfe = 0.4532;
+        $bc = 4.667;
+        $be = 0.5489;
+        $n = 0.038;
+      break;
+      case 3:
+        # Piedmont
+        $hc = 2.137;
+        $he = 0.2561;
+        $bfc = 14.135;
+        $bfe = 0.4111;
+        $bc = 6.393;
+        $be = 0.4604;
+        $n = 0.095;
+      break;
+      case 4:
+        # Coastal Plain
+        $hc = 2.820;
+        $he = 0.2000;
+        $bfc = 15.791;
+        $bfe = 0.3758;
+        $bc = 6.440;
+        $be = 0.4442;
+        $n = 0.040;
+      break;
 
-   }
+      default:
+        $hc = 2.030;
+        $he = 0.2000;
+        $bfc = 12.175;
+        $bfe = 0.4711;
+        $bc = 5.389;
+        $be = 0.5349;
+        $n = 0.036;
+      break;
+    }
+    $h = $hc * pow($this->drainage_area, $he);
+    $bf = $bfc * pow($this->drainage_area, $bfe);
+    $b = $bc * pow($this->drainage_area, $be);
+    $z = 0.5 * ($bf - $b) / $h; 
+    # since Z is increase slope of a single side, 
+    # the top width increases (relative to the bottom) at a rate of (2 * Z * h)
+    # only use these derived values if they are non-zero, otherwise, use defaults
+    if ($z > 0) {
+      $this->Z = $z;
+    } else {
+      dsm("Calculated Z value from (0.5 * ($bf - $b) / $h) less than zero, using default " . $this->Z);
+    }
+    if ($b > 0) {
+      $this->base = $b;
+    } else {
+      dsm("Calculated base value from ($bc * pow($this->drainage_area, $be)) less than zero, using default " . $this->base);
+    }
+    dsm("Calculated base value from ($bc * pow($this->drainage_area, $be)), = $b / " . $this->base . " Province: $this->province");
+    $this->n = $n;
+    return;
+  }
    
 }
 
