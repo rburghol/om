@@ -17,18 +17,32 @@ if (count($argv) < 2) {
 error_log(print_r($argv,1));
 $riverseg = $argv[1];
 
-$elid = getCOVACBPContainer($listobject, $scenarioid, $riverseg);
-$wds = getCOVAWithdrawals($listobject, $elid);
+if ($riverseg == 'all') {
+  $listobject->querystring = "select elementid from scen_model_element where custom1 = 'cova_ws_container' and scenarioid = $scenarioid ";
+  $listobject->performQuery();
+  $rsegs = $listobject->queryrecords;
+} else {
+  $elid = getCOVACBPContainer($listobject, $scenarioid, $riverseg);
+  $rsegs = array(
+    0 => array( 'elementid' => $elid )
+  );
+}
 
-foreach ($wds as $thiswd) {
-  $wd_elid = $thiswd['elementid'];
-  $loadres = unSerializeSingleModelObject($wd_elid);
-  $wdobject = $loadres['object'];
-  $hydrocode = $wdobject->id1;
-  $q = "update scen_model_element set hydrocode = '$hydrocode' where elementid = $wd_elid";
-  $listobject->querystring = $q;
-  error_log($q);
-  //$listobject->performQuery();
+foreach ($rsegs as $seg) {
+  $elid = $seg['elementid'];
+  $wds = getCOVAWithdrawals($listobject, $elid);
+  
+  foreach ($wds as $thiswd) {
+    $wd_elid = $thiswd['elementid'];
+    $loadres = unSerializeSingleModelObject($wd_elid);
+    $wdobject = $loadres['object'];
+    $hydrocode = $wdobject->id1;
+    $q = "update scen_model_element set hydrocode = '$hydrocode' where elementid = $wd_elid";
+    $listobject->querystring = $q;
+    error_log($q);
+    $listobject->performQuery();
+  }
+  
 }
 
 ?>
