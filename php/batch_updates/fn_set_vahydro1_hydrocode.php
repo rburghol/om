@@ -38,7 +38,8 @@ foreach ($rsegs as $seg) {
     $loadres = unSerializeSingleModelObject($wd_elid);
     $wdobject = $loadres['object'];
     $hydrocode = $wdobject->id1;
-    $q = "update scen_model_element set hydrocode = '$hydrocode', riverseg = '$riverseg' where elementid = $wd_elid";
+    $wdtype = $wdobject->wdtype;
+    $q = "update scen_model_element set hydrocode = '$hydrocode', wdtype = '$wdtype', riverseg = '$riverseg' where elementid = $wd_elid";
     $listobject->querystring = $q;
     error_log($q);
     $listobject->performQuery();
