@@ -83,7 +83,7 @@ function om_flow_mode_options() {
 }
 
 // Generic function to get or set property.  Need to migrate to dh at some time.
-function om_model_getSetProperty($values, $singularity = 'name') {
+function om_model_getSetProperty($values, $singularity = 'name', $save = TRUE) {
   $om_model = dh_properties_enforce_singularity($values, $singularity);
   if (!is_object($om_model)) {
     if (isset($values['propvalue_default'])) {
@@ -95,7 +95,9 @@ function om_model_getSetProperty($values, $singularity = 'name') {
     // create a model element
     //error_log("$values[varkey] does not exist...creating");
     $om_model = entity_create('dh_properties', $values);
-    $om_model->save();
+    if ($save) {
+      $om_model->save();
+    }
     //error_log("Created $om_model->propname");
   } else {
     //error_log("Found $om_model->propname");
