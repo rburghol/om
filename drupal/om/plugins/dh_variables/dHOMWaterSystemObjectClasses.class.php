@@ -56,6 +56,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         $form[$pn]['#weight'] = $thisvar['#weight'];
       }
     }
+    dpm($form, 'final form');
   }
   
   public function getDefaults($entity, &$defaults = array()) {
