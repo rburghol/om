@@ -379,7 +379,7 @@ function getAtLargeWithdrawals($listobject, $elementid, $criteria, $debug) {
   $tops = getChildComponentCustom1($listobject, $elementid, 'cova_pswd', $limit = -1, $debug);
   foreach ($tops as $thistop) {
     $gid = $thistop['elementid'];
-    $child_types = array('wsp_waterUser','wsp_vpdesvwuds');
+    $child_types = array('wsp_waterUser','wsp_vpdesvwuds','cova_withdrawal');
     error_log("Getting At-Large withdrawals");
     foreach ($child_types as $ct) {
        $childrecs = getChildComponentType($listobject, $gid, $ct, -1, $debug);
