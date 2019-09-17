@@ -38,9 +38,10 @@ foreach ($rsegs as $seg) {
     $wd_elid = $thiswd['elementid'];
     $loadres = unSerializeSingleModelObject($wd_elid);
     $wdobject = $loadres['object'];
+    // check first for new method, with props.
     // this is the VWUDS/VADEQ UserID value
-    $hydrocode = $wdobject->id1;
-    $wdtype = $wdobject->wdtype;
+    $hydrocode = $wdobject->getProp('id1');
+    $wdtype = $wdobject->getProp('wdtype');
     $q = "update scen_model_element set hydrocode = '$hydrocode', wdtype = '$wdtype', riverseg = '$riverseg' where elementid = $wd_elid";
     $listobject->querystring = $q;
     error_log($q);
