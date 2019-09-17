@@ -1181,6 +1181,14 @@ class dHOMtextField extends dHOMSubComp {
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
   }
+  
+  public function applyEntityAttribute($property, $value) {
+    $property->propcode = $value;
+  }
+  
+  public function getPropertyAttribute($property) {
+    return $property->propcode;
+  }
 }
 
 class dHOMObjectClass extends dHOMAlphanumericConstant {
