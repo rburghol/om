@@ -68,6 +68,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function update(&$entity) {
+    dpm($entity,'update()');
     // check for transition from for value to prop
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
