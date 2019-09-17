@@ -150,6 +150,27 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   return $translated;
 }
 
+// Model querying tools
+// - Get a model attached to a given vahydro feature
+// - Get a sub-model of a model 
+// Query Methods:
+// - Query by name 
+// - Query by code 
+
+function om_get_vahydro_model_element($entity_type, $featureid, $name, $code, $fetch_refs = FALSE) {
+  // return a given model object
+  // $fetch_refs handles special case of when the object found is an om_map_model_linkage
+}
+
+function om_get_vahydro_feature_model($hydrocode, $bundle, $ftype, $model_version = 'vahydro-1.0') {
+  // return the final parent feature
+}
+
+function om_get_vahydro_model_feature($vahydro_model) {
+  // searches up the tree until it finds a dh_feature element 
+  // returns false if does not end at a dh_feature 
+}
+
 function om_get_dh_varkey($om_comp) {
   $duplicates = array(
     'USGSGageSubComp' => 'USGSGageObject'

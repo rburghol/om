@@ -81,6 +81,7 @@ if ($elementid == 'file') {
   error_log("File requested: $filepath");
 }
 
+$om = 'http://deq2.bse.vt.edu/om/get_model.php';
 
 // classes = array() empty mean all
 
@@ -115,9 +116,12 @@ foreach ($data as $element) {
   if (!isset($element['om_fid']) and is_numeric($hydrocode)) {
     $element['om_fid'] = $hydrocode;
   }
+  $uri = $om . "?elementid=$elid";
   $model_entity_type = isset($element['model_entity_type']) ? $element['model_entity_type'] : $model_entity_type;
-
-  $om_object = om_get_om_model($elid);
+  error_log("Opening $uri ");
+  $json = file_get_contents ($uri);
+  //error_log("json:" . $json);
+  $om_model_element = json_decode($json);
   // Check to see if we have passed in a drupal prop featureid as om_fid
   // otherwise, try to load the drupal object with matching hydrocode
   $om_fid = isset($element['om_fid']) ? $element['om_fid'] : dh_search_feature($hydrocode, $bundle, $ftype);
@@ -127,10 +131,109 @@ foreach ($data as $element) {
     // skip to the next one
     continue;
   }
-  if (is_object($om_object)) {
-    $dh_model = om_load_dh_model($query_type, $om_fid, $om_object->name);
-    if (is_object($dh_model)) {
-      om_object2dh($elid, $om_object, $dh_model, $classes, $one_proc);
+  if (is_object($om_model_element)) {
+    // check the model_varkey 
+    // - varcode = search the database for a variable whose varcode matches the OM objectclass of this object 
+    // - all others expect the varkey to use 
+    if ($model_varkey == 'varcode') {
+      // 
+      $model_varkey = dh_varcode2varid(get_class($om_model_element), TRUE);
+      $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
+      error_log("Using variable key from Varcode query: $model_varkey ");
+    }
+    switch($query_type) {
+      case 'pid':
+      // this is a reference to a direct model pid, no need to query
+      $vahydro_model_element = entity_load_single('dh_properties', $om_fid);
+      error_log("Using query_mode PID to load model element directly.");
+      break;
+      
+      case 'prop_feature':
+      $model_entity_type = 'dh_properties';
+      error_log("Using query_mode PROP_FEATURE to load model element");
+      case 'feature':
+      default:
+      error_log("Using query_mode FEATURE to load model element");
+      $om_feature = entity_load_single($model_entity_type, $om_fid);
+      error_log("Found $om_feature->name ($om_feature->hydroid)");
+      $vahydro_model_element = FALSE;
+      $values = array(
+        'entity_type' => $model_entity_type,
+        'featureid' => $om_fid,
+        'propcode'=>$model_scenario,
+        'varkey' => $model_varkey,
+        'propname' => $om_model_element->name,
+      );
+      error_log("Searching Model " . print_r($values,1));
+      $vahydro_model_element = om_model_getSetProperty($values, 'propcode_singular');
+      break;
+    }
+    error_log("Model = $vahydro_model_element->propname - $vahydro_model_element->propcode ");
+    // see if the
+    if (is_object($vahydro_model_element)) {
+      // set the object class value ??
+      // Currently this is not used.  The object_class is a function of the plugin, which is set by the 
+      // varkey.  We need to either have a lookup or 
+      //$vahydro_model_element->object_class;
+      error_log("Model with pid = $vahydro_model_element->pid");
+      // first, disable set_remote to prevent looping
+      // add the element link
+      $link_props = array(
+        'entity_type' => 'dh_properties',
+        'featureid' => $vahydro_model_element->pid,
+        'propname' => 'OM Element Link',
+        'propvalue' => $elid,
+        'varkey'=>'om_element_connection'
+      );
+      // retrieve or create the link
+      $om_link = om_model_getSetProperty($link_props, 'varid');
+      // now, we stash the link set_remote property, since it needs to be disabled here
+      //   to prevent saving and then resaving on om
+      error_log("om_link PID for this entity: $om_link->pid");
+      $link_set_remote = $om_link->propcode;
+      $om_link->propcode = '0';
+      $om_link->save();
+      $props = dh_get_dh_propnames('dh_properties', $vahydro_model_element->pid);
+      error_log("Prop names for this entity: " . print_r($props,1));
+      // now add these components.
+      $procs = $om_model_element->processors;
+      $procnames = array_keys($procs);
+      error_log(count($om_model_element->processors) . " Processor names for om model: " . print_r($procnames,1));
+      foreach ($procs as $procname => $proc) {
+        // just do one
+        if (($one_proc <> 'all') and ($procname <> $one_proc)) {
+          continue;
+        }
+        $om_model_element_class = $proc->object_class;
+        error_log("Found $procname : $om_model_element_class");
+        if (empty($classes) or in_array($om_model_element_class, $classes)) {
+          $proc_data = array(
+            'propname' => $procname,
+            'entity_type' => 'dh_properties',
+            'featureid' => $vahydro_model_element->pid,
+            'varkey' => om_get_dh_varkey($proc),
+          );
+          // load or establish the property (do not save until sure if we've handled it)
+          error_log("Looking for: " . print_r($proc_data,1));
+          $prop = om_model_getSetProperty($proc_data, 'name');
+          if (is_object($prop)) {
+            error_log("Prop loaded for $prop->propname ");
+          }
+          $translated = om_translate_to_dh($proc, $prop);
+          $prop->set_remote = FALSE;
+          error_log("Translated $om_model_element_class = $translated ");
+          if ($translated) {
+            error_log("Saving $procname .");
+            $prop->save();
+          } else {
+            error_log("Translation failed.");
+          }
+        } else {
+          error_log("Skipping Classes - $om_model_element_class");
+        }
+      }
+      $om_link->propcode = $link_set_remote;
+      $om_link->save();
     }
   } else {
     error_log("Could not find: elementid=$elid ");

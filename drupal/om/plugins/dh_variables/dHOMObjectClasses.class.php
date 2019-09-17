@@ -985,6 +985,12 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
     //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
   }
+  
+  public function delete($entity) {
+    // @todo: ask if we want to delete the corresponding remote
+    // @todo: enable to delete the corresponding remote
+    //dpm($entity,'plugin delete() method called');
+  }
 }
 
 class dHOMModelContainer extends dHOMModelElement {
@@ -1019,6 +1025,32 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       array_unshift($path, 'description');
       $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+    }
+  }
+  
+  public function delete($entity) {
+    dpm($entity,'plugin delete() method called');
+    $comp_path = array(); // initialize the path var. 
+                     // We will than use it later to determine if we should 
+                     // Delete the remote element 
+    $propname = $entity->propname;
+    $elid = $this->findRemoteOMElement($entity, $comp_path);
+    dpm($comp_path,'Delete subcomp path');
+    dpm($elid,'Delete subcomp elid');
+    // findRemoteElement
+    // Check path depth - if this is a 1st level sub-comp delete, if not, return 
+    switch (count($comp_path)) {
+      case 2:
+        list($propname, $parentname) = $path;
+        // this is a property on a subcomp of the element
+        $setstr = "php delete_subcomp.php $elid $propname ";
+      break;
+    }
+    if ($setstr and !$test_only) {
+      $cmd = "cd $this->path \n";
+      $cmd .= $setstr;
+      dpm( $cmd, "Executing ");
+      shell_exec($cmd);
     }
   }
 }
@@ -1512,30 +1544,37 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     }
   }
   
+  function getLinkedEntity(&$entity) {
+    $entity->src_entity_type = $entity->propcode;
+    $entity->src_entity_id = $entity->propvalue;
+    $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
+    return $entity->src_entity;
+  }
+  
   function getLocalhostLinkedValue(&$entity) {
-    $src_entity_type = $entity->propcode;
-    $src_entity_id = $entity->propvalue;
-    $src_entity = entity_load_single($src_entity_type, $src_entity_id);
-    //dpm($entity,'entity');
-    //dpm($src_entity,'src_entity');
-    if (is_object($src_entity)) {
+    //dpm($entity,'getLocalhostLinkedValue entity');
+    //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
+    if (!$entity->src_entity) {
+      $this->getLinkedEntity($entity);
+    }
+    if (is_object($entity->src_entity)) {
       // check if prop already exists, if so, just grab it,
       // otherwise, try to load a dh_property with the target name 
       if (!empty($entity->src_prop->propcode)) {
         $src_prop = $entity->src_prop->propcode;
-        if (property_exists($src_entity, $src_prop)) {
-          $linked_value = $src_entity->{$src_prop};
+        if (property_exists($entity->src_entity, $src_prop)) {
+          $linked_value = $entity->src_entity->{$src_prop};
         } else {
           $conds = array();
           $conds[] = array(
             'name' => 'propname',
             'value' => $src_prop
           );
-          $loaded = $src_entity->loadComponents($conds);
-          //dpm($src_entity,'source entity');
+          $loaded = $entity->src_entity->loadComponents($conds);
+          //dpm($entity->src_entity,'source entity');
           if (count($loaded) > 0) {
             $loname = strtolower($src_prop);
-            $src_object = $src_entity->dh_properties[$loname];
+            $src_object = $entity->src_entity->dh_properties[$loname];
             // @todo: support linking propcode or other values on dh_properties
             $linked_value = $src_object->propvalue;
           } else {
@@ -1565,6 +1604,26 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     return 0;
   }
   
+  public function buildContent(&$content, &$entity, $view_mode) {
+    // @todo: handle teaser mode and full mode with plugin support
+    parent::buildContent($content, $entity, $view_mode);
+    $this->getLinkedEntity($entity);
+    //dpm($entity->src_entity,'ent to content');
+    switch ($view_mode) {
+      case 'plugin':
+      case 'teaser':
+      default:
+        if (is_object($entity->src_entity) and method_exists($entity->src_entity, 'entityType')) {
+          // this is a local drupal entity, we can handle it 
+          $content['remote'] = array(
+            '#type' => 'link',
+            '#title' => "From: " . $entity->src_entity->label(),
+            '#href' => "admin/content/" . $entity->src_entity->entityType() . "/manage/" . $entity->src_entity->identifier() . "/view",
+          );
+        }
+      break;
+    }
+  }  
 }
 
 
