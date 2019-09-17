@@ -68,7 +68,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function update(&$entity) {
-    dpm($entity,'update()');
+    //dpm($entity,'update()');
     // check for transition from for value to prop
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
@@ -150,7 +150,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           if (!is_object($entity->{$thisvar['propname']})) {
             // this has been set by the form API as a value 
             // so we need to load/create a property then set the value
-            //dpm($thisvar, "Creating object before saving ");
+            dpm($thisvar, "Creating object before saving ");
             $thisvar['featureid'] = $entity->{$this->row_map['id']};
             //@todo: this needs to use the plugin handler for this instead of assuming propvalue instead of propcode
             //       why isn't this already an object after convert_attributes_to_dh_props is called?
@@ -163,13 +163,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
               $plugin->applyEntityAttribute($prop, $entity->{$thisvar['propname']});
             }
             dpm($prop, "object after plugins");
-            dsm("Saving preloaded object " . $thisvar['propname']);
+            dsm("Saving Newly loaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           } else {
             $prop = $entity->{$thisvar['propname']};
             // already a loaded form object, so just let it rip.
             //dpm($prop, "object from parent");
-            //dsm("Saving preloaded object " . $thisvar['propname']);
+            dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           }
         }
