@@ -958,6 +958,19 @@ class dHOMConstant extends dHOMBaseObjectClass {
     return $property->propvalue;
   }
   
+  public function attachNamedForm(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    // create a blank to house the original form info
+    $pform = array();
+    $this->formRowEdit($pform, $entity);
+    // harvest pieces I want to keep
+    $mname = $this->handleFormPropname($entity->propname);
+    $form[$mname] = $pform['propvalue'];
+  }
+  
 }
 
 class dHOMModelElement extends dHOMBaseObjectClass {
@@ -1153,6 +1166,18 @@ class dHOMtextField extends dHOMSubComp {
       '#description' => 'Value for this text variable',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
+  }
+  public function attachNamedForm(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    // create a blank to house the original form info
+    $pform = array();
+    $this->formRowEdit($pform, $entity);
+    // harvest pieces I want to keep
+    $mname = $this->handleFormPropname($entity->propname);
+    $form[$mname] = $pform['propcode'];
   }
 }
 
