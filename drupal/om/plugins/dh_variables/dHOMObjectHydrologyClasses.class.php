@@ -28,7 +28,7 @@ class dHOMHydroObject extends dHOMModelElement {
               dsm("Using attachNamedForm()");
               $plugin->attachNamedForm($form, $dopple);
             } else {
-              dsm("Using formRowEdit()");
+              dsm("Using formRowEdit() for $pn");
               $plugin->formRowEdit($dopple_form, $dopple);
               $form[$pn] = $dopple_form['propvalue'];
             }
