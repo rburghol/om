@@ -351,7 +351,7 @@ function getWithdrawalTypeGroups($listobject, $elementid, $criteria = array(), $
 function getCOVAWithdrawals($listobject, $elementid, $criteria = array(), $debug = 0) {
    // $criteria will be some screening facility, but for now it does not work, all are obtained
    $children = array();
-   $child_types = array('wsp_waterUser','wsp_vpdesvwuds');
+   $child_types = array('wsp_waterUser','wsp_vpdesvwuds','blankShell');
    $containers = getWithdrawalTypeGroups($listobject, $elementid, $criteria, $debug);
    if ($debug) {
       print("Looking for withdrawals in $elementid <br>\n");
@@ -379,7 +379,7 @@ function getAtLargeWithdrawals($listobject, $elementid, $criteria, $debug) {
   $tops = getChildComponentCustom1($listobject, $elementid, 'cova_pswd', $limit = -1, $debug);
   foreach ($tops as $thistop) {
     $gid = $thistop['elementid'];
-    $child_types = array('wsp_waterUser','wsp_vpdesvwuds');
+    $child_types = array('wsp_waterUser','wsp_vpdesvwuds','blankShell');
     error_log("Getting At-Large withdrawals");
     foreach ($child_types as $ct) {
        $childrecs = getChildComponentType($listobject, $gid, $ct, -1, $debug);
