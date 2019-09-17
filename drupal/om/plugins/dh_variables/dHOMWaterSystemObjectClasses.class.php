@@ -33,6 +33,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
+          dpm($plugin,'plug');
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
               dsm("Using attachNamedForm()");
