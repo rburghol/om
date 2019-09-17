@@ -7,6 +7,7 @@ module_load_include('module', 'dh');
 $plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
 //dpm("so far so good");
+
 class dHOMHydroObject extends dHOMModelElement {
   var $object_class = 'hydroObject';
   var $attach_method = 'contained';
@@ -155,43 +156,22 @@ class dHOMHydroObject extends dHOMModelElement {
         'vardesc' => 'totalinflow.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
+      'riverseg' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'riverseg',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'riverseg',
+        'vardesc' => 'riverseg.',
+        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+      ), 
     );
     return $defaults;
   }
-   
-  // Advanced embedded properties in form   
-  // these properties can also be added to the main form, and handled with an entity map
-  // or handled directly
-  // how to automatically include properties on the form?
-  // 1. load the prop
-  // 2. load its plugins
-  // 3. create a 
-  // 4. pass the form to prop->plugin->formRowEdit
-  
-  /*
-  // not needed? Constants and others should call setAllRemoteProperties() themselves on save()
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    // this is to be done on save.  The base class saves nothing
-    // subclasses can save other things
-    $defaults = $this->getDefaults($entity);
-    foreach ($defaults as $thisone) {
-      if ($thisone['propname'] == 'area') {
-        // just test with area
-        if (is_object($entity->{$thisone['propname']})) {
-          $prop = $entity->{$thisone['propname']};
-          $plugin = array_shift($prop->dh_variables_plugins);
-          if (is_object($plugin)) {
-            // this should actually be done in the constants plugin?
-            $plugin->setAllRemoteProperties($prop, $elid, $path);
-          }
-        }
-      }
-    }
-  }
-  */
-  
 }
+
 class dHOMHydroImpoundment extends dHOMHydroObject {
   var $object_class = 'hydroImpoundment';
   var $attach_method = 'contained';
