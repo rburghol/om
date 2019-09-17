@@ -917,7 +917,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   }
 }
 
-class dHOMConstant extends dHOMBaseObjectClass {
+class dHOMConstant extends dHOMSubComp {
   // changed inheritance to support remote OM editing.
 //class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
