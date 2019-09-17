@@ -12,43 +12,6 @@ class dHOMHydroObject extends dHOMModelElement {
   var $object_class = 'hydroObject';
   var $attach_method = 'contained';
   
-  public function addAttachedProperties(&$form, &$entity) {
-    dpm($entity, 'addAttachedProperties');
-    $dopples = $this->getDefaults($entity);
-    foreach ($dopples as $thisvar) {
-      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        $pn = $this->handleFormPropname($thisvar['propname']);
-        $dopple = $entity->{$thisvar['propname']};
-        // @todo: if this is a code variable, we should get propcode?
-        switch ($this->attach_method) {
-          case 'contained':
-          $plugin = dh_variables_getPlugins($dopple);
-          if ($plugin) {
-            if (method_exists($plugin, 'attachNamedForm')) {
-              dsm("Using attachNamedForm()");
-              $plugin->attachNamedForm($form, $dopple);
-            } else {
-              dsm("Using formRowEdit() for $pn");
-              $plugin->formRowEdit($dopple_form, $dopple);
-              $form[$pn] = $dopple_form['propvalue'];
-            }
-          }
-          break;
-          default:
-          $dopple_form = array();
-          dsm("Not attaching $pn");
-          dh_variables_formRowPlugins($dopple_form, $dopple);
-          $form[$pn] = $dopple_form['propvalue'];
-          break;
-        }
-      }
-      if (isset($thisvar['#weight'])) {
-        $form[$pn]['#weight'] = $thisvar['#weight'];
-      }
-    }
-    dpm($form, 'final form');
-  }
-  
   public function hiddenFields() {
     $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
     return $hidden;

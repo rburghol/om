@@ -19,46 +19,6 @@ class dHOMWaterSystemObject extends dHOMModelElement {
     $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
     return $hidden;
   }
-  // can create framework here to set properties that are needed, similar to object_class properties
-  // being automatically added.
-  // will use standard editing for now, but...
-  public function addAttachedProperties(&$form, &$entity) {
-    dpm($entity, 'addAttachedProperties');
-    $dopples = $this->getDefaults($entity);
-    foreach ($dopples as $thisvar) {
-      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        $pn = $this->handleFormPropname($thisvar['propname']);
-        $dopple = $entity->{$thisvar['propname']};
-        // @todo: if this is a code variable, we should get propcode?
-        switch ($this->attach_method) {
-          case 'contained':
-          $plugin = dh_variables_getPlugins($dopple);
-          dpm($plugin,'plug');
-          if ($plugin) {
-            if (method_exists($plugin, 'attachNamedForm')) {
-              dsm("Using attachNamedForm()");
-              $plugin->attachNamedForm($form, $dopple);
-            } else {
-              dsm("Using formRowEdit()");
-              $plugin->formRowEdit($dopple_form, $dopple);
-              $form[$pn] = $dopple_form['propvalue'];
-            }
-          }
-          break;
-          default:
-          $dopple_form = array();
-          dsm("Not attaching $pn");
-          dh_variables_formRowPlugins($dopple_form, $dopple);
-          $form[$pn] = $dopple_form['propvalue'];
-          break;
-        }
-      }
-      if (isset($thisvar['#weight'])) {
-        $form[$pn]['#weight'] = $thisvar['#weight'];
-      }
-    }
-    dpm($form, 'final form');
-  }
   
   public function getDefaults($entity, &$defaults = array()) {
     parent::getDefaults($entity, $defaults);
