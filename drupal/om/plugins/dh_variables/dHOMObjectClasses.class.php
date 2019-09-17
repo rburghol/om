@@ -968,6 +968,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     $this->formRowEdit($pform, $entity);
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
+    dpm($pform,'pform');
     $form[$mname] = $pform['propvalue'];
   }
   
