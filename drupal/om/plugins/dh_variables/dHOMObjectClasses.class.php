@@ -161,8 +161,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
               // the default method will guess location based on the value unless overridden by the plugin
               $plugin->applyEntityAttribute($prop, $entity->{$thisvar['propname']});
             }
-            //dpm($prop, "object after plugins");
-            //dsm("Saving preloaded object " . $thisvar['propname']);
+            dpm($prop, "object after plugins");
+            dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           } else {
             $prop = $entity->{$thisvar['propname']};
