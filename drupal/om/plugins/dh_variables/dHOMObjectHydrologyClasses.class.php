@@ -46,6 +46,7 @@ class dHOMHydroObject extends dHOMModelElement {
         $form[$pn]['#weight'] = $thisvar['#weight'];
       }
     }
+    dpm($form, 'final form');
   }
   
   public function hiddenFields() {
