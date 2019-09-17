@@ -6,7 +6,9 @@ module_load_include('module', 'dh');
 $plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
 
-class dHOMWaterSystemObject extends dHOMModelContainer {
+// changed parent cause it wasn't embedding 
+//class dHOMWaterSystemObject extends dHOMModelContainer {
+class dHOMWaterSystemObject extends dHOMModelElement {
   // takes over some duties from wsp_vpdesvwuds, and wsp_waterUser
   //   since most of their function was bacjend database connections 
   // See getDefaults() for default subcomps and properties
