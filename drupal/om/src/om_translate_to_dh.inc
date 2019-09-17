@@ -2,7 +2,63 @@
 
 // load routines needed for tablefield handling
 module_load_include('module', 'dh_wsp');
+global $om;
+$om = 'http://deq2.bse.vt.edu/om/get_model.php';
+function om_get_om_model($elid) {
+  global $om;
+  $uri = $om . "?elementid=$elid";
+  error_log("Opening $uri ");
+  $json = file_get_contents ($uri);
+  //error_log("json:" . $json);
+  $om_object = json_decode($json);
+  return $om_object;
+}
 
+function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_model_element', $object_class = 'modelContainer') {
+  if ($model_varkey == 'varcode') {
+    // 
+    $model_varkey = dh_varcode2varid($om_object->object_class, TRUE);
+    $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
+    error_log("Object class: " . $om_object->object_class . " Using variable key from Varcode query: $model_varkey ");
+  }
+  $dh_model = FALSE;
+  switch($query_type) {
+    case 'pid':
+    break;
+    
+    case 'prop_feature':
+    $search_mode = 'name';
+    $model_entity_type = 'dh_properties';
+    error_log("Using query_mode PROP_FEATURE to load model element");
+    break;
+    
+    case 'feature':
+    default:
+    $search_mode = 'propcode_singular';
+    error_log("Using query_mode FEATURE to load model element");
+    $om_feature = entity_load_single($model_entity_type, $om_fid);
+    error_log("Found $om_feature->name ($om_feature->hydroid)");
+    break;
+  }
+  if ($query_type == 'pid') {
+    // this is a reference to a direct model pid, no need to query
+    $dh_model = entity_load_single('dh_properties', $om_fid);
+    error_log("Using query_mode PID to load model element directly.");
+  } else {
+    error_log("Searching Model " . print_r($values,1));
+    $values = array(
+      'entity_type' => $model_entity_type,
+      'featureid' => $om_fid,
+      'propcode'=>$model_scenario,
+      'varkey' => $model_varkey,
+      'propname' => $model_name,
+    );
+    // If the model prop does not exist yet, this will create AND save it.
+    $dh_model = om_model_getSetProperty($values, $search_mode);
+    error_log("Searched mode $search_mode, found Model = $dh_model->propname - $dh_model->propcode ");
+  }
+  return $dh_model;
+}
 
 function om_get_property($values, $singularity = 'name') {
   $pids = dh_get_properties($values, $singularity);
@@ -117,4 +173,84 @@ function dh_get_dh_propnames($entity_type, $entity_id) {
   $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type));
   $props = $result->fetchCol();
   return $props;
+}
+
+function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_proc = 'all') {
+  // function om_object2dh($elid, $om_object, $dh_model, $classes = array(), $one_proc = 'all')
+  // we now have a saved dH object, with defaults if specified by the class plugin.
+  // Now we:
+  // 1. disable the element link back save so we can handle everything first.
+  // 2. update all properties with their OM object values 
+  // 3. Save the dH model element afterwards
+  // set the object class value ??
+  // Currently this is not used.  The object_class is a function of the plugin, which is set by the 
+  // varkey.  We need to either have a lookup or 
+  //$dh_model->object_class;
+  error_log("Model with pid = $dh_model->pid");
+  // first, disable set_remote to prevent looping
+  // add the element link
+  $link_props = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $dh_model->pid,
+    'propname' => 'OM Element Link',
+    'propvalue' => $elid,
+    'varkey'=>'om_element_connection'
+  );
+  // retrieve or create the link
+  $om_link = dh_model_getSetProperty($link_props, 'varid');
+  // now, we stash the link set_remote property, since it needs to be disabled here
+  //   to prevent saving and then resaving on om
+  error_log("om_link PID for this entity: $om_link->pid");
+  $link_set_remote = $om_link->propcode;
+  $om_link->propcode = '0';
+  $om_link->save();
+  $props = dh_get_dh_propnames('dh_properties', $dh_model->pid);
+  error_log("Prop names for this entity: " . print_r($props,1));
+  // now add these components.
+  $procs = $om_object->processors;
+  $procnames = array_keys($procs);
+  error_log(count($om_object->processors) . " Processor names for om model: " . print_r($procnames,1));
+  foreach ($procs as $procname => $proc) {
+    // just do one
+    if (($one_proc <> 'all') and ($procname <> $one_proc)) {
+      continue;
+    }
+    $om_object_class = $proc->object_class;
+    error_log("Found $procname : $om_object_class");
+    if (empty($classes) or in_array($om_object_class, $classes)) {
+      $proc_data = array(
+        'propname' => $procname,
+        'entity_type' => 'dh_properties',
+        'featureid' => $dh_model->pid,
+        'varkey' => om_get_dh_varkey($proc),
+      );
+      // load or establish the property (do not save until sure if we've handled it)
+      error_log("Looking for: " . print_r($proc_data,1));
+      $prop = dh_model_getSetProperty($proc_data, 'name');
+      if (is_object($prop)) {
+        error_log("Prop loaded for $prop->propname ");
+      }
+      $translated = om_translate_to_dh($proc, $prop);
+      $prop->set_remote = FALSE;
+      error_log("Translated $om_object_class = $translated ");
+      if ($translated) {
+        error_log("Saving $procname .");
+        $prop->save();
+      } else {
+        error_log("Translation failed.");
+      }
+    } else {
+      error_log("Skipping Classes - $om_object_class");
+    }
+  }
+  // Now, save the model element
+  // wait: does this already get done when we save the remote link?
+  //$dh_model->set_remote = 0;
+  // handle object class settings if specified 
+  om_translate_to_dh($om_object, $dh_model);
+  //error_log("Post save: A: $dh_model->area, DA: $dh_model->drainage_area ");
+  $dh_model->save();
+  // finally, restore the link setting to enable saves from dH to OM if requested.
+  $om_link->propcode = $link_set_remote;
+  $om_link->save();
 }

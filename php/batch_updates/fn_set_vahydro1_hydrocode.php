@@ -5,6 +5,7 @@ $projectid = 3;
 $userid = 1;
 $scenarioid = 37;
 $wd_template_id = 284895;
+# New Generic Surface Water User: 340402
 
 include_once('xajax_modeling.element.php');
 //error_reporting(E_ALL);
@@ -37,6 +38,7 @@ foreach ($rsegs as $seg) {
     $wd_elid = $thiswd['elementid'];
     $loadres = unSerializeSingleModelObject($wd_elid);
     $wdobject = $loadres['object'];
+    // this is the VWUDS/VADEQ UserID value
     $hydrocode = $wdobject->id1;
     $wdtype = $wdobject->wdtype;
     $q = "update scen_model_element set hydrocode = '$hydrocode', wdtype = '$wdtype', riverseg = '$riverseg' where elementid = $wd_elid";
@@ -44,7 +46,8 @@ foreach ($rsegs as $seg) {
     error_log($q);
     $listobject->performQuery();
   }
-  
 }
+
+
 
 ?>
