@@ -43,7 +43,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'varid' => dh_varkey2varid('om_class_textField', TRUE),
       ), 
     ) + $defaults;
-    dpm($defaults,'defs');
+    //dpm($defaults,'defs');
     return $defaults;
   }
 }
