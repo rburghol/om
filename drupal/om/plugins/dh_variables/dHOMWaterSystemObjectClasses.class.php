@@ -22,6 +22,10 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   // can create framework here to set properties that are needed, similar to object_class properties
   // being automatically added.
   // will use standard editing for now, but...
+  public function addAttachedProperties(&$form, &$entity) {
+    dpm($entity, 'addAttachedProperties');
+    parent::addAttachedProperties($form, $entity);
+  }
   
   public function getDefaults($entity, &$defaults = array()) {
     parent::getDefaults($entity, $defaults);
