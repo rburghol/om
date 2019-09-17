@@ -28,7 +28,7 @@ class dHOMWaterSystemObject extends dHOMModelContainer {
     // - historic_annual 
     // - consumption
     // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
-    $defaults += array(
+    $defaults = array(
       'riverseg' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -40,7 +40,7 @@ class dHOMWaterSystemObject extends dHOMModelContainer {
         'vardesc' => 'riverseg.',
         'varid' => dh_varkey2varid('om_class_textField', TRUE),
       ), 
-    );
+    ) + $defaults;
     return $defaults;
   }
 }
