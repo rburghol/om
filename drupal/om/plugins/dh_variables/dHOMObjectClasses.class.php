@@ -1095,7 +1095,10 @@ class dHOMConstant extends dHOMBaseObjectClass {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMtextField");
+    // this sets only the variable on the base object
+    dpm($path,'path 1');
+    array_shift($path);
+    dpm($path, ' after shift');
     $this->setRemoteProp($entity, $elid, array($entity->propname), $entity->propvalue, $this->object_class);
   }
   
