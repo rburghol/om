@@ -918,63 +918,6 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   }
 }
 
-class dHOMConstant extends dHOMSubComp {
-  // changed inheritance to support remote OM editing.
-//class dHOMConstant extends dHVariablePluginNumericAttribute {
-  // numeric constant 
-  // this can be a stand-alone property, with it's own save() method unlike
-  //   unlike the alphanumeric constants that are just embedded in the object edit form and 
-  //   do not have their own save methods.
-  //   This will be seldom used, as virtually all setting fields will be attached to something (like run_mode)
-  // But WILL be used for object class attributes in OM (like area, slope, etc.)
-  var $object_class = FALSE;
-  var $default_value = 0;
-  
-  public function hiddenFields() {
-    $hidden = array_merge(array('propcode', 'startdate', 'enddate'), parent::hiddenFields());
-    return $hidden;
-  }
-  
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    // this is to be done on save.  The base class does nothing except format 
-    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, FALSE);
-  }
-  
-  public function formRowEdit(&$rowform, $entity) {
-    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
-    if (!$varinfo) {
-      return FALSE;
-    }
-    parent::formRowEdit($rowform, $entity);
-    $rowform['propvalue']['#title'] = t($entity->varname);
-    $rowform['propvalue']['#description'] = $entity->vardesc;
-  }
-  
-  public function applyEntityAttribute($property, $value) {
-    $property->propvalue = $value;
-  }
-  
-  public function getPropertyAttribute($property) {
-    return $property->propvalue;
-  }
-  
-  public function attachNamedForm(&$form, $entity) {
-    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
-    if (!$varinfo) {
-      return FALSE;
-    }
-    // create a blank to house the original form info
-    $pform = array();
-    $this->formRowEdit($pform, $entity);
-    // harvest pieces I want to keep
-    $mname = $this->handleFormPropname($entity->propname);
-    //dpm($pform,'pform');
-    $form[$mname] = $pform['propvalue'];
-  }
-  
-}
-
 class dHOMModelElement extends dHOMBaseObjectClass {
   // All objects of this class and inherited by this class
   // should assume that propcode is used to describe the primary 
@@ -1130,6 +1073,63 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
         );
       break;
     }
+  }
+}
+
+
+class dHOMConstant extends dHOMSubComp {
+  // changed inheritance to support remote OM editing.
+//class dHOMConstant extends dHVariablePluginNumericAttribute {
+  // numeric constant 
+  // this can be a stand-alone property, with it's own save() method unlike
+  //   unlike the alphanumeric constants that are just embedded in the object edit form and 
+  //   do not have their own save methods.
+  //   This will be seldom used, as virtually all setting fields will be attached to something (like run_mode)
+  // But WILL be used for object class attributes in OM (like area, slope, etc.)
+  var $object_class = FALSE;
+  var $default_value = 0;
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propcode', 'startdate', 'enddate'), parent::hiddenFields());
+    return $hidden;
+  }
+  
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    //dsm("setAllRemoteProperties from dHOMtextField");
+    array_unshift($path, 'value');
+    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
+  
+  public function formRowEdit(&$rowform, $entity) {
+    parent::formRowEdit($rowform, $entity);
+    if (!$varinfo) {
+      return FALSE;
+    }
+    $rowform['propvalue']['#title'] = t($entity->varname);
+    $rowform['propvalue']['#description'] = $entity->vardesc;
+  }
+  
+  public function applyEntityAttribute($property, $value) {
+    $property->propvalue = $value;
+  }
+  
+  public function getPropertyAttribute($property) {
+    return $property->propvalue;
+  }
+  
+  public function attachNamedForm(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    // create a blank to house the original form info
+    $pform = array();
+    $this->formRowEdit($pform, $entity);
+    // harvest pieces I want to keep
+    $mname = $this->handleFormPropname($entity->propname);
+    //dpm($pform,'pform');
+    $form[$mname] = $pform['propvalue'];
   }
 }
 
