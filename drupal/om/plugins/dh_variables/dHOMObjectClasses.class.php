@@ -1103,7 +1103,7 @@ class dHOMConstant extends dHOMSubComp {
   
   public function formRowEdit(&$rowform, $entity) {
     parent::formRowEdit($rowform, $entity);
-    if (!$varinfo) {
+    if (!$entity->varid) {
       return FALSE;
     }
     $rowform['propvalue']['#title'] = t($entity->varname);
