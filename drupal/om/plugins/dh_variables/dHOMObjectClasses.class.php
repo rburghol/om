@@ -54,6 +54,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
+    dpm($rowform, "form in base OM class");
     $this->loadProperties($row);
     // apply custom settings here
     $this->addAttachedProperties($rowform, $row);
@@ -136,8 +137,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function updateProperties(&$entity) {
     // @todo: move this to the base plugin class 
     $props = $this->getDefaults($entity);
-    dpm($entity, "Calling updateProperties");
-    dpm($props, "Iterating over attached properties");
+    //dpm($entity, "Calling updateProperties");
+    //dpm($props, "Iterating over attached properties");
     foreach ($props as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         //dsm("Saving " . $thisvar['propname']);
