@@ -54,7 +54,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
-    dpm($rowform, "form in base OM class");
     $this->loadProperties($row);
     // apply custom settings here
     $this->addAttachedProperties($rowform, $row);
@@ -1010,7 +1009,6 @@ class dHOMEquation extends dHOMSubComp {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    dsm("setAllRemoteProperties from dHOMEquation");
     array_unshift($path, 'equation');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
@@ -1107,8 +1105,12 @@ class dHOMConstant extends dHOMSubComp {
     if (!$entity->varid) {
       return FALSE;
     }
-    $rowform['propvalue']['#title'] = t($entity->varname);
-    $rowform['propvalue']['#description'] = $entity->vardesc;
+    $form['propvalue'] = array(
+      '#title' => t($entity->varname),
+      '#type' => 'textfield',
+      '#description' => $entity->vardesc,
+      '#default_value' => $entity->propvalue,
+    );
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -1129,7 +1131,6 @@ class dHOMConstant extends dHOMSubComp {
     $this->formRowEdit($pform, $entity);
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
-    dpm($pform,'pform');
     $form[$mname] = $pform['propvalue'];
   }
 }

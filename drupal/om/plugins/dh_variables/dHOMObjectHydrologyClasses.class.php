@@ -154,7 +154,7 @@ class dHOMHydroObject extends dHOMModelElement {
         'featureid' => $entity->identifier(),
         'varname' => 'totalinflow',
         'vardesc' => 'totalinflow.',
-        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'riverseg' => array(
         'entity_type' => $entity->entityType(),
