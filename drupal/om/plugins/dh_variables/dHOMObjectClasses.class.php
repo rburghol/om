@@ -1076,7 +1076,7 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 }
 
 
-class dHOMConstant extends dHOMSubComp {
+class dHOMConstant extends dHOMBaseObjectClass {
   // changed inheritance to support remote OM editing.
 //class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
@@ -1096,11 +1096,7 @@ class dHOMConstant extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     //dsm("setAllRemoteProperties from dHOMtextField");
-    //array_unshift($path, 'value');
-    dpm($path,'path');
-    // remove
-    array_shift($path);
-    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
+    $this->setRemoteProp($entity, $elid, array($entity->propname), $entity->propvalue, $this->object_class);
   }
   
   public function formRowEdit(&$form, $entity) {
