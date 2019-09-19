@@ -1096,8 +1096,11 @@ class dHOMConstant extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     //dsm("setAllRemoteProperties from dHOMtextField");
-    array_unshift($path, 'value');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+    //array_unshift($path, 'value');
+    dpm($path,'path');
+    // remove
+    array_shift($path);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
   }
   
   public function formRowEdit(&$form, $entity) {
