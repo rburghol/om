@@ -1100,8 +1100,8 @@ class dHOMConstant extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
   
-  public function formRowEdit(&$rowform, $entity) {
-    parent::formRowEdit($rowform, $entity);
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
     if (!$entity->varid) {
       return FALSE;
     }
