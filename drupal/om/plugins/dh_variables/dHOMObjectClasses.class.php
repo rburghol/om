@@ -697,7 +697,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //     but really should be handled by the 2 parent code
     // Ex: run_mode on the parent model object should resolve 2 1 parent, but comes in as 2
     // Equations ARE handled correctly however, since the 
-    //dpm($path,'path');
+    dpm($path,'path');
     //dpm($entity,'entity');
     //dsm("Handling a property on a subcomp of the element ($elid) depth = " . count($path));
     switch (count($path)) {
@@ -1097,7 +1097,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // this sets only the variable on the base object
     dpm($path,'path to constant');
-    array_shift($path);
+    //array_shift($path);
     $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
   }
   
