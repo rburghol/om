@@ -931,7 +931,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function pullFromRemote($entity) {
     global $base_url;
-    $cmd = "cd " . $base_url . drupal_get_path('module', 'om') . "/src/ \n";
+    $cmd = "cd " . DRUPAL_ROOT . drupal_get_path('module', 'om') . "/src/ \n";
     $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
     dpm( $cmd, "Executing ");
     //shell_exec($cmd);
