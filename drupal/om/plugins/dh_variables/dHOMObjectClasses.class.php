@@ -930,7 +930,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function pullFromRemote($entity) {
     $cmd = "cd $this->path \n";
-    $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->pid ";
+    $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
     dpm( $cmd, "Executing ");
     //shell_exec($cmd);
   }
