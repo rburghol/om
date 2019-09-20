@@ -37,19 +37,19 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
     default:
     $search_mode = 'propcode_singular';
     error_log("Using query_mode FEATURE to load model element");
-    $om_feature = entity_load_single($model_entity_type, $om_fid);
+    $om_feature = entity_load_single($model_entity_type, $fid);
     error_log("Found $om_feature->name ($om_feature->hydroid)");
     break;
   }
   if ($query_type == 'pid') {
     // this is a reference to a direct model pid, no need to query
-    $dh_model = entity_load_single('dh_properties', $om_fid);
-    error_log("Using query_mode PID to load model element $om_fid directly.");
+    $dh_model = entity_load_single('dh_properties', $fid);
+    error_log("Using query_mode PID to load model element $fid directly.");
   } else {
     error_log("Searching Model " . print_r($values,1));
     $values = array(
       'entity_type' => $model_entity_type,
-      'featureid' => $om_fid,
+      'featureid' => $fid,
       'propcode'=>$model_scenario,
       'varkey' => $model_varkey,
       'propname' => $model_name,
