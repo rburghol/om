@@ -118,6 +118,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           // apply over-rides if given
           $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
           $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
+          $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
           $entity->{$prop->propname} = $prop;
         }
       }
@@ -363,6 +364,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
       return FALSE;
     }
     switch ($varinfo->datatype) {
+      // @todo: datatype does not actually get copied from vardef to props by the base class, it only grabs varid, varunits and varname, so we need to add datatype to make this work.
       case 'percent':
       $opts = $this->pct_list($this->pct_range);
       $rowform['propvalue'] = array(
@@ -739,16 +741,16 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      dpm( $path, "Exec Path ");
-      dpm( $cmd, "Executing ");
+      //dpm( $path, "Exec Path ");
+      //dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
       $cmd = "Testing Only. \n";
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      dpm( $path, "Testing Path ");
-      dpm( $cmd, "Testing to execute ");
+      //dpm( $path, "Testing Path ");
+      //dpm( $cmd, "Testing to execute ");
     }
   }
   
@@ -809,7 +811,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      dpm( $cmd, "Executing ");
+      //dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
   }
@@ -1108,7 +1110,7 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 }
 
 
-class dHOMConstant extends dHOMSubComp {
+class dHOMConstant extends dHOMBaseObjectClass {
   // changed inheritance to support remote OM editing.
 //class dHOMConstant extends dHVariablePluginNumericAttribute {
   // numeric constant 
@@ -1119,6 +1121,7 @@ class dHOMConstant extends dHOMSubComp {
   // But WILL be used for object class attributes in OM (like area, slope, etc.)
   var $object_class = FALSE;
   var $default_value = 0;
+  var $pct_range = array('<5', 10, 25, 50, 75, 90, 100); // @todo - allow default can be over-ridden in getDefaults() code
   
   public function hiddenFields() {
     $hidden = array_merge(array('propcode', 'startdate', 'enddate'), parent::hiddenFields());
@@ -1127,9 +1130,9 @@ class dHOMConstant extends dHOMSubComp {
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMtextField");
-    array_unshift($path, 'value');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+    // this sets only the variable on the base object
+    //array_shift($path);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propvalue, $this->object_class);
   }
   
   public function formRowEdit(&$form, $entity) {
@@ -1143,6 +1146,41 @@ class dHOMConstant extends dHOMSubComp {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
+    if (property_exists($varinfo, 'datatype')) {
+      switch ($varinfo->datatype) {
+        case 'percent':
+        $opts = $this->pct_list($this->pct_range);
+        $rowform['propvalue']['#type'] = 'select';
+        $rowform['propvalue']['#options'] = $opts;
+        $rowform['propvalue']['#empty_option'] = 'n/a';
+        break;
+        case 'boolean':
+        $opts = array(0 => 'False', 1 => 'True');
+        $rowform['propvalue']['#type'] = 'select';
+        $rowform['propvalue']['#options'] = $opts;
+        $rowform['propvalue']['#default_value'] = !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default";
+        break;
+      }
+    }
+  }
+  
+  public function pct_list($inc = 10) {
+    $pcts = array();
+    if (is_array($inc)) {
+      // we already have our list of percents, just work it out
+      foreach ($inc as $i) {
+        $dec = floatval(preg_replace('/\D/', '', $i)) / 100.0;
+        $pcts["$dec"] = $i . " %";
+      }
+    } else {
+      $i = $inc;
+      while ($i <= 100) {
+        $dec = floatval($i) / 100.0;
+        $pcts["$dec"] = $i . " %";
+        $i += $inc;
+      }
+    }
+    return $pcts;
   }
   
   public function applyEntityAttribute($property, $value) {

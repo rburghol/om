@@ -340,6 +340,18 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'reset_channelprops' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1,
+        'propname' => 'reset_channelprops',
+        'singularity' => 'name_singular',
+        'datatype' => 'boolean',
+        'vardesc' => 'If TRUE, will re-calculate channel properties side-slope, base-width based on drainage area and physiographic province.',
+        'varname' => 'Re-calculcate Channel Morphology?',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     ) + $defaults;
     return $defaults;
   }
