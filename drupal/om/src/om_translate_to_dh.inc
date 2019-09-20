@@ -44,7 +44,7 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   if ($query_type == 'pid') {
     // this is a reference to a direct model pid, no need to query
     $dh_model = entity_load_single('dh_properties', $om_fid);
-    error_log("Using query_mode PID to load model element directly.");
+    error_log("Using query_mode PID to load model element $om_fid directly.");
   } else {
     error_log("Searching Model " . print_r($values,1));
     $values = array(

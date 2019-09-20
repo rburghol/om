@@ -919,12 +919,13 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     );
     
   }
-  public function formRowSave(&$form_values, $entity) {
-    if ($form_values['propcode'] == 'pull_once') {
+  public function save(&$entity) {
+    parent::save($entity);
+    if ($entity->propcode == 'pull_once') {
       // pull from remote, then set this back to previous entity value 
       $this->pullFromRemote($entity);
-      dsm("Entity pull setting: $entity->propcode");
-      $form_values['propcode'] = $entity->propcode;
+      // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
+      $entity->propcode = '1';
     }
   }
   
