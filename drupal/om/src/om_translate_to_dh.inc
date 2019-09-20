@@ -198,7 +198,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
     'varkey'=>'om_element_connection'
   );
   // retrieve or create the link
-  $om_link = dh_model_getSetProperty($link_props, 'varid');
+  $om_link = om_model_getSetProperty($link_props, 'varid');
   // now, we stash the link set_remote property, since it needs to be disabled here
   //   to prevent saving and then resaving on om
   error_log("om_link PID for this entity: $om_link->pid");
@@ -227,7 +227,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
       );
       // load or establish the property (do not save until sure if we've handled it)
       error_log("Looking for: " . print_r($proc_data,1));
-      $prop = dh_model_getSetProperty($proc_data, 'name');
+      $prop = om_model_getSetProperty($proc_data, 'name');
       if (is_object($prop)) {
         error_log("Prop loaded for $prop->propname ");
       }
