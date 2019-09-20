@@ -37,19 +37,19 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
     default:
     $search_mode = 'propcode_singular';
     error_log("Using query_mode FEATURE to load model element");
-    $om_feature = entity_load_single($model_entity_type, $om_fid);
+    $om_feature = entity_load_single($model_entity_type, $fid);
     error_log("Found $om_feature->name ($om_feature->hydroid)");
     break;
   }
   if ($query_type == 'pid') {
     // this is a reference to a direct model pid, no need to query
-    $dh_model = entity_load_single('dh_properties', $om_fid);
-    error_log("Using query_mode PID to load model element directly.");
+    $dh_model = entity_load_single('dh_properties', $fid);
+    error_log("Using query_mode PID to load model element $fid directly.");
   } else {
     error_log("Searching Model " . print_r($values,1));
     $values = array(
       'entity_type' => $model_entity_type,
-      'featureid' => $om_fid,
+      'featureid' => $fid,
       'propcode'=>$model_scenario,
       'varkey' => $model_varkey,
       'propname' => $model_name,
@@ -214,12 +214,12 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   $link_props = array(
     'entity_type' => 'dh_properties',
     'featureid' => $dh_model->pid,
-    'propname' => 'OM Element Link',
+    'propname' => 'om_element_connection',
     'propvalue' => $elid,
     'varkey'=>'om_element_connection'
   );
   // retrieve or create the link
-  $om_link = dh_model_getSetProperty($link_props, 'varid');
+  $om_link = om_model_getSetProperty($link_props, 'varid');
   // now, we stash the link set_remote property, since it needs to be disabled here
   //   to prevent saving and then resaving on om
   error_log("om_link PID for this entity: $om_link->pid");
@@ -248,7 +248,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
       );
       // load or establish the property (do not save until sure if we've handled it)
       error_log("Looking for: " . print_r($proc_data,1));
-      $prop = dh_model_getSetProperty($proc_data, 'name');
+      $prop = om_model_getSetProperty($proc_data, 'name');
       if (is_object($prop)) {
         error_log("Prop loaded for $prop->propname ");
       }

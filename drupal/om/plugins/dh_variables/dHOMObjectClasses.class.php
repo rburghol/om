@@ -892,6 +892,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
 
 class dHOMElementConnect extends dHOMBaseObjectClass {
   var $object_class = FALSE;
+  var $can_embed = FALSE; // om_element_connection can never be embedded.
   
   public function findRemoteOMElement($entity, &$path) {
     // since this connector is the final model container, we know the elid is by definition the propvalue
@@ -912,11 +913,28 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $form['propcode'] = array(
       '#title' => t('Automatically Push Changes to Remote?'),
       '#type' => 'select',
-      '#options' => array('0'=>'False', '1'=>'True'),
+      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
     
+  }
+  public function save(&$entity) {
+    parent::save($entity);
+    if ($entity->propcode == 'pull_once') {
+      // pull from remote, then set this back to previous entity value 
+      $this->pullFromRemote($entity);
+      // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
+      $entity->propcode = '1';
+    }
+  }
+  
+  public function pullFromRemote($entity) {
+    global $base_url;
+    $cmd = "cd " . DRUPAL_ROOT . '/' . drupal_get_path('module', 'om') . "/src/ \n";
+    $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
+    dpm( $cmd, "Executing ");
+    shell_exec($cmd);
   }
 }
 
