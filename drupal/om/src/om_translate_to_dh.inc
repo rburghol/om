@@ -193,7 +193,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   $link_props = array(
     'entity_type' => 'dh_properties',
     'featureid' => $dh_model->pid,
-    'propname' => 'om_element_link',
+    'propname' => 'om_element_connection',
     'propvalue' => $elid,
     'varkey'=>'om_element_connection'
   );
