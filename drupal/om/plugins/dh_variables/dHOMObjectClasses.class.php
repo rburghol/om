@@ -892,6 +892,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
 
 class dHOMElementConnect extends dHOMBaseObjectClass {
   var $object_class = FALSE;
+  var $can_embed = FALSE; // om_element_connection can never be embedded.
   
   public function findRemoteOMElement($entity, &$path) {
     // since this connector is the final model container, we know the elid is by definition the propvalue
@@ -912,11 +913,26 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $form['propcode'] = array(
       '#title' => t('Automatically Push Changes to Remote?'),
       '#type' => 'select',
-      '#options' => array('0'=>'False', '1'=>'True'),
+      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
     
+  }
+  public function formRowSave(&$form_values, $entity) {
+    if ($form_values['propcode'] == 'pull_once') {
+      // pull from remote, then set this back to previous entity value 
+      $this->pullFromRemote($entity);
+      dsm("Entity pull setting: $entity->propcode");
+      $form_values['propcode'] = $entity->propcode;
+    }
+  }
+  
+  public function pullFromRemote($entity) {
+    $cmd = "cd $this->path \n";
+    $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->pid ";
+    dpm( $cmd, "Executing ");
+    //shell_exec($cmd);
   }
 }
 
