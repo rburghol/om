@@ -127,6 +127,7 @@ foreach ($data as $element) {
     } else {
       $model_prop->propvalue = $propvalue;
     }
+    $model_prop->save();
   }
 }
 
