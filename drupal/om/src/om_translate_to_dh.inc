@@ -179,7 +179,7 @@ function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = F
   }
   # in one of the props attached to this model 
   error_log($q);
-  $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type, ':code' => $code , ':name' => $name ));
+  $result = db_query($q, array(':entity_type' => $entity_type, ':code' => $code , ':name' => $name ));
   $pids = $result->fetchCol();
   return $pids;
 }
