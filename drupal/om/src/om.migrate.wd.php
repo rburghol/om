@@ -36,11 +36,11 @@ if (count($args) >= 4) {
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.wd.php query_type=[feature/file] featureid coverage_hydrocode coverage_name [varkey=''(all)] [propvalue=] ");
+  error_log("Usage: om.migrate.wd.php query_type=[feature/file] featureid feature_name coverage_hydrocode coverage_name [varkey=''(all)] [propvalue=] ");
   die;
 }
 
-error_log("query_type = $query_type, featureid = $featureid, coverage_hydrocode = $coverage_hydrocode, varkey = $varkey, propvalue=$propvalue");
+error_log("query_type = $query_type, featureid = $featureid, feature_name = $feature_name, coverage_hydrocode = $coverage_hydrocode, varkey = $varkey, propvalue=$propvalue");
 
 
 // read csv of featureid / coverage_hydrocode pairs
@@ -69,12 +69,21 @@ if (!($featureid and $coverage_hydrocode)) {
   error_log("File opened with records: " . count($data));
 } else {
   $data = array();
-  $data[] = array('featureid' => $featureid, 'coverage_hydrocode' => $coverage_hydrocode);
+  $data[] = array(
+    'featureid' => $featureid, 
+    'coverage_hydrocode' => $coverage_hydrocode,
+    'featureid' => $featureid, 
+    'feature_name' => $feature_name,
+    'coverage_hydrocode' => $coverage_hydrocode,
+    'coverage_name' => $coverage_name,
+    'varkey' => $varkey,
+    'propvalue' => $propvalue,
+  );
 }
 
 foreach ($data as $element) {
   $featureid = $element['featureid'];
-  $coverage_hydrocode = $element['coverage_hydrocode'];
+  $riverseg = substr($element['coverage_hydrocode'], -13);
   $coverage_name = $element['coverage_name'];
   $varkey = isset($element['varkey']) ? $element['varkey'] : FALSE;
   $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
@@ -83,14 +92,17 @@ foreach ($data as $element) {
   // If requested, add another equation prop 
   $values = array(
     'varkey' => 'om_water_system_element', 
-    'propname' => $name . ':' . $coverage_name,
+    'propname' => $feature_name . ':' . $coverage_name,
     'propvalue' => NULL,
     'propcode' => 'vahydro-1.0', 
     'entity_type' => 'dh_feature',
   );
+  error_log("Values: " . print_r($values,1);
+  /*
   $dh_model = om_model_getSetProperty($values, 'name', FALSE);
-  $dh_model->riverseg = $coverage_hydrocode;
+  $dh_model->riverseg = $riverseg;
   $dh_model->save();
+  */
 }
 
 ?>
