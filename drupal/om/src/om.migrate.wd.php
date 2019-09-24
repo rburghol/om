@@ -26,13 +26,14 @@ if (count($args) >= 4) {
   // $coverage_hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
   $query_type = $args[0];
   $featureid = $args[1];
-  $coverage_hydrocode = $args[2];
-  $coverage_name = $args[3];
-  if (isset($args[4])) {
-    $varkey = $args[4];
-  }
+  $feature_name = $args[2];
+  $coverage_hydrocode = $args[3];
+  $coverage_name = $args[4];
   if (isset($args[5])) {
-    $propvalue = $args[5];
+    $varkey = $args[5];
+  }
+  if (isset($args[6])) {
+    $propvalue = $args[6];
   }
 } else {
   // warn and quit
@@ -85,6 +86,7 @@ foreach ($data as $element) {
   $featureid = $element['featureid'];
   $riverseg = substr($element['coverage_hydrocode'], -13);
   $coverage_name = $element['coverage_name'];
+  $feature_name = $element['feature_name'];
   $varkey = isset($element['varkey']) ? $element['varkey'] : FALSE;
   $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
   // add a new model if one does not exist - propname match 
