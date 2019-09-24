@@ -109,16 +109,13 @@ foreach ($data as $element) {
   $dh_model_pid = FALSE;
   $rseg_pid = om_get_search_model_subprops('dh_feature', $feature_hydroid, 'riverseg', TRUE, $riverseg, $model_scenario);
   if ($rseg_pid) {
-    error_log("Found $rseg_pid");
+    //error_log("Found $rseg_pid");
     // now that pid parent is the model in question
     $riverseg_prop = entity_load_single('dh_properties', $rseg_pid);
     $dh_model_pid = $riverseg_prop->featureid;
-    error_log("Found Matching model: $dh_model_pid");
+    //error_log("Found Matching model: $dh_model_pid");
   }
   if (!dh_model_pid) {
-    if (!$prop_varkey and $propname) {
-      $prop_varkey = 'om_class_Equation';
-    }
     // add a new model if one does not exist - propname match 
     // add a riverseg prop to model 
     // If requested, add another equation prop 
@@ -143,7 +140,9 @@ foreach ($data as $element) {
     $dh_model->propname = $feature_name . ':' . $coverage_name;
   }
   $dh_model->save();
-  
+  if (!$prop_varkey and $propname) {
+    $prop_varkey = 'om_class_Equation';
+  }
   if ($prop_varkey) {
     $values = array(
       'varkey' => $prop_varkey, 
