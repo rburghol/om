@@ -1,77 +1,60 @@
 #!/user/bin/env drush
 <?php
-// Migrate Land-River Segment runoff models from OM to vahydro 2.0
+// Create Facility:riverseg model element in dH
+// or create MP:riverseg model element in dH
 module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
 $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
 }
+// input file cmd:
+// mp_hydroid, mp_name, riverseg, model_scenario 
 
-// Defaults
-// dH Settings
-$bundle = 'watershed';
-$ftype = 'vahydro';
-// single proc settings
-$one_proc = 'all';
 // all batch element settings
-$elementid = FALSE;
-$hydrocode = FALSE;
+$featureid = FALSE;
+$riverseg_hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
 $model_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
-// command line class override
-$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp', 'textField');
-//$classes = array('Equation');
 
 // Is single command line arg?
-if (count($args) >= 2) {
+if (count($args) >= 4) {
   // Do command line, single element settings
   // set these if doing a single -- will fail if both not set
-  // $elementid = 340385; // set these if doing a single
-  // $hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
+  // $featureid = 340385; // set these if doing a single
+  // $riverseg_hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
   $query_type = $args[0];
-  $elementid = $args[1];
-  $hydrocode = $args[2];
-  if (isset($args[3])) {
-    $one_proc = $args[3];
-  }
+  $featureid = $args[1];
+  $riverseg_hydrocode = $args[2];
+  $coverage_name = $args[3];
   if (isset($args[4])) {
-    $bundle = $args[4];
+    $varkey = $args[4];
   }
   if (isset($args[5])) {
-    $ftype = $args[5];
-  }
-  if (isset($args[6])) {
-    $model_scenario = $args[6];
-  }
-  if (isset($args[7])) {
-    $model_varkey = $args[7];
-  }
-  if (isset($args[8])) {
-    $classes = explode(',',$args[8]);
+    $propvalue = $args[5];
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.wd.php query_type=[feature]|pid,prop_feature elementid hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=varcode (queries for varcode matching OM class)] [classes=" . implode(',', $classes) . "]");
-  error_log("If query_type = feature and hydrocode is integer, will assume a hydroid of the parent of the model element has been submitted ");
-  error_log("If query_type = pid and hydrocode is integer, will assume a pid for the model element has been submitted ");
-  error_log("If query_type = prop_feature and hydrocode is integer, will assume a pid for the model element that is the parent of the model element has been submitted");
+  error_log("Usage: om.migrate.wd.php query_type=[feature]|pid,prop_feature featureid riverseg_hydrocode [procname=''(all)] [bundle=watershed] [ftype=vahydro] [model_scenario=vahydro-1.0] [model_varkey=varcode (queries for varcode matching OM class)] [classes=" . implode(',', $classes) . "]");
+  error_log("If query_type = feature and riverseg_hydrocode is integer, will assume a hydroid of the parent of the model element has been submitted ");
+  error_log("If query_type = pid and riverseg_hydrocode is integer, will assume a pid for the model element has been submitted ");
+  error_log("If query_type = prop_feature and riverseg_hydrocode is integer, will assume a pid for the model element that is the parent of the model element has been submitted");
   die;
 }
 
-error_log("elementid = $elementid, hydrocode = $hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype");
+error_log("featureid = $featureid, riverseg_hydrocode = $riverseg_hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype");
 
 
-// read csv of elementid / hydrocode pairs
+// read csv of featureid / riverseg_hydrocode pairs
 // find dh feature -- report error if it does not exist
-// name = hydrocode + vah-1.0
+// name = riverseg_hydrocode + vah-1.0
 // iterate through properties
 
-if ($elementid == 'file') {
-  $filepath = $hydrocode;
-  $elementid = FALSE;
-  $hydrocode = FALSE;
+if ($featureid == 'file') {
+  $filepath = $featureid;
+  $featureid = FALSE;
+  $riverseg_hydrocode = FALSE;
   error_log("File requested: $filepath");
 }
 
@@ -79,7 +62,7 @@ $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 
 // classes = array() empty mean all
 
-if (!($elementid and $hydrocode)) {
+if (!($featureid and $riverseg_hydrocode)) {
   $data = array();
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
@@ -89,42 +72,28 @@ if (!($elementid and $hydrocode)) {
   error_log("File opened with records: " . count($data));
 } else {
   $data = array();
-  $data[] = array('elementid' => $elementid, 'hydrocode' => $hydrocode);
+  $data[] = array('featureid' => $featureid, 'riverseg_hydrocode' => $riverseg_hydrocode);
 }
 
 foreach ($data as $element) {
-  $elid = $element['elementid'];
-  $hydrocode = $element['hydrocode'];
-  // if hydrocode is numeric, we are passing a pid for the target model element in
-  if (!isset($element['om_fid']) and is_numeric($hydrocode)) {
-    $element['om_fid'] = $hydrocode;
-  }
-  $om_object = om_get_om_model($elid);
-  // set model entity type 
-  $model_entity_type = isset($element['model_entity_type']) ? $element['model_entity_type'] : $model_entity_type;
-  // Check to see if we have passed in a drupal prop featureid as om_fid
-  // otherwise, try to load the drupal object with matching hydrocode
-  $om_fid = isset($element['om_fid']) ? $element['om_fid'] : dh_search_feature($hydrocode, $bundle, $ftype);
-  if (!$om_fid) {
-    error_log("Could not load dh feature with bundle=$bundle, ftype = $ftype and hydrocode = $hydrocode");
-    watchdog('om', "Could not load dh feature with ftype = $ftype and hydrocode = $hydrocode");
-    // skip to the next one
-    continue;
-  }
-  if (is_object($om_object)) {
-    // check the model_varkey 
-    // - varcode = search the database for a variable whose varcode matches the OM objectclass of this object 
-    // - all others expect the varkey to use 
-    // function om_load_dh_model($query_type, $fid, $model_name, $model_varkey, $object_class = 'om_model_element')
-    $dh_model = om_load_dh_model($query_type, $om_fid, $om_object->name);
-    // see if the
-    if (is_object($dh_model)) {
-      om_object2dh($elid, $om_object, $dh_model, $classes, $one_proc);
-    }
-  } else {
-    error_log("Could not find: elementid=$elid ");
-  }
-
+  $featureid = $element['featureid'];
+  $riverseg_hydrocode = $element['riverseg_hydrocode'];
+  $coverage_name = $element['coverage_name'];
+  $varkey = isset($element['varkey']) ? $element['varkey'] : FALSE;
+  $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
+  // add a new model if one does not exist - propname match 
+  // add a riverseg prop to model 
+  // If requested, add another equation prop 
+  $values = array(
+    'varkey' => 'om_water_system_element', 
+    'propname' => $name . ':' . $coverage_name,
+    'propvalue' => NULL,
+    'propcode' => 'vahydro-1.0', 
+    'entity_type' => 'dh_feature',
+  );
+  $dh_model = om_model_getSetProperty($values, 'name', FALSE);
+  $dh_model->riverseg = $riverseg_hydrocode;
+  $dh_model->save();
 }
 
 ?>
