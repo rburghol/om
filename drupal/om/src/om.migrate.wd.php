@@ -160,6 +160,7 @@ foreach ($data as $element) {
       $model_prop->propvalue = $propvalue;
     }
     $model_prop->save();
+    error_log("Set: " . $propname . ' = ' . $propvalue);
   }
 }
 
