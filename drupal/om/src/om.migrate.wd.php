@@ -138,6 +138,7 @@ foreach ($data as $element) {
     $dh_model = om_model_getSetProperty($values, 'name', FALSE);
     $dh_model->riverseg = $riverseg;
   } else {
+    error_log("Updating: " . $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
     $dh_model = entity_load_single('dh_properties', $dh_model_pid);
     $dh_model->propname = $feature_name . ':' . $coverage_name;
   }
