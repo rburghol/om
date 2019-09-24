@@ -164,6 +164,7 @@ function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = F
   // searches models on a feature with attribute propval or propcode
   $q = "  select pid from {dh_properties} ";
   $q .= " where entity_type = :entity_type";
+  $bind = array(':entity_type' => $entity_type);
   if (!is_array($featureid)) {
     $featureid = array($featureid);
   }
@@ -172,14 +173,16 @@ function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = F
   if ($code) {
     // search a specific model scenario, like vahydro-1.0
     $q .= " and propcode = :code ";
+    $bind['code'] = $code;
   }
   if ($name) {
     // search a specific model scenario, like vahydro-1.0
     $q .= " and propname = :name ";
+    $bind['name'] = $name;
   }
   # in one of the props attached to this model 
   error_log($q);
-  $result = db_query($q, array(':entity_type' => $entity_type, ':code' => $code , ':name' => $name ));
+  $result = db_query($q, $bind);
   $pids = $result->fetchCol();
   return $pids;
 }
