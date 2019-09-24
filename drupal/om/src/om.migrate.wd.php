@@ -74,6 +74,7 @@ if (!($featureid and $coverage_hydrocode)) {
     $data[] = array_combine($header,$line);
   }
   error_log("File opened with records: " . count($data));
+  error_log("Record 1: " . print_r($data[0],1));
 } else {
   $data = array();
   $data[] = array(
