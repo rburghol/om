@@ -17,6 +17,8 @@ $coverage_hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
 $model_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
+$varkey = FALSE;
+$propvalue = FALSE;
 
 // Is single command line arg?
 if (count($args) >= 4) {
@@ -37,7 +39,7 @@ if (count($args) >= 4) {
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.wd.php query_type=[feature/file] featureid feature_name coverage_hydrocode coverage_name [varkey=''(all)] [propvalue=] ");
+  error_log("Usage: om.migrate.wd.php query_type=[cmd/file] featureid feature_name coverage_hydrocode coverage_name [varkey=''(all)] [propvalue=] ");
   die;
 }
 
@@ -100,11 +102,14 @@ foreach ($data as $element) {
     'entity_type' => 'dh_feature',
   );
   error_log("Values: " . print_r($values,1));
-  /*
+  
   $dh_model = om_model_getSetProperty($values, 'name', FALSE);
   $dh_model->riverseg = $riverseg;
   $dh_model->save();
-  */
+  
+  if ($varkey) {
+    
+  }
 }
 
 ?>
