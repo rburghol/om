@@ -83,6 +83,7 @@ if (!($featureid and $coverage_hydrocode)) {
     'feature_name' => $feature_name,
     'coverage_hydrocode' => $coverage_hydrocode,
     'coverage_name' => $coverage_name,
+    'propname' => $propname,
     'varkey' => $varkey,
     'propvalue' => $propvalue,
   );
