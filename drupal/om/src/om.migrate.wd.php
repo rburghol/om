@@ -15,9 +15,9 @@ while ($arg = drush_shift()) {
 $feature_hydroid = FALSE;
 $coverage_hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
-$model_varkey = 'varcode';
+$model_prop_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
-$varkey = FALSE;
+$prop_varkey = FALSE;
 $propname = FALSE;
 $propvalue = FALSE;
 
@@ -36,18 +36,18 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
     $propname = $args[5];
   }
   if (isset($args[6])) {
-    $varkey = $args[6];
+    $prop_varkey = $args[6];
   }
   if (isset($args[7])) {
     $propvalue = $args[7];
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.wd.php query_type=[cmd/file] featureid feature_name coverage_hydrocode coverage_name [propname=varkey] [varkey='om_class_Equation'(all)] [propvalue=]");
+  error_log("Usage: om.migrate.wd.php query_type=[cmd/file] featureid feature_name coverage_hydrocode coverage_name [propname=prop_varkey] [prop_varkey='om_class_Equation'(all)] [propvalue=]");
   die;
 }
 
-error_log("query_type = $query_type, featureid = $feature_hydroid, feature_name = $feature_name, coverage_hydrocode = $coverage_hydrocode, varkey = $varkey, propvalue=$propvalue");
+error_log("query_type = $query_type, featureid = $feature_hydroid, feature_name = $feature_name, coverage_hydrocode = $coverage_hydrocode, prop_varkey = $prop_varkey, propvalue=$propvalue");
 
 
 // read csv of featureid / coverage_hydrocode pairs
@@ -74,6 +74,7 @@ if (!($feature_hydroid and $coverage_hydrocode)) {
     $header = fgetcsv($file, 0, "\t");
   }
   while ($line = fgetcsv($file, 0, "\t")) {
+    
     $data[] = array_combine($header,$line);
   }
   error_log("File opened with records: " . count($data));
@@ -89,7 +90,7 @@ if (!($feature_hydroid and $coverage_hydrocode)) {
     'feature_hydrocode' => $feature_hydrocode,
     'coverage_name' => $coverage_name,
     'propname' => $propname,
-    'varkey' => $varkey,
+    'prop_varkey' => $prop_varkey,
     'propvalue' => $propvalue,
   );
 }
@@ -99,9 +100,13 @@ foreach ($data as $element) {
   $riverseg = substr($element['coverage_hydrocode'], -13);
   $coverage_name = $element['coverage_name'];
   $feature_name = $element['feature_name'];
-  $varkey = isset($element['varkey']) ? $element['varkey'] : FALSE;
+  $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'];
   $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
   $propname = isset($element['propname']) ? $element['propname'] : FALSE;
+  // add a default var class for files that come in without one.
+  if (!$prop_varkey and $proname) {
+    $prop_varkey = 'om_class_Equation';
+  }
   // add a new model if one does not exist - propname match 
   // add a riverseg prop to model 
   // If requested, add another equation prop 
@@ -119,14 +124,14 @@ foreach ($data as $element) {
   $dh_model->riverseg = $riverseg;
   $dh_model->save();
   
-  if ($varkey) {
+  if ($prop_varkey) {
     $values = array(
-      'varkey' => $varkey, 
+      'varkey' => $prop_varkey, 
       'propname' => $propname,
       'featureid' => $dh_model->pid,
       'entity_type' => 'dh_properties',
     );
-    error_log("Adding $propname $varkey" . print_r($values,1));
+    error_log("Adding $propname $prop_varkey" . print_r($values,1));
     $model_prop = om_model_getSetProperty($values, 'name', FALSE);
     $plugin = array_shift($model_prop->dh_variables_plugins);
     if (method_exists($plugin, 'applyEntityAttribute')) {
