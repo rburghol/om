@@ -100,11 +100,11 @@ foreach ($data as $element) {
   $riverseg = substr($element['coverage_hydrocode'], -13);
   $coverage_name = $element['coverage_name'];
   $feature_name = $element['feature_name'];
-  $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'];
+  $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
   $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
   $propname = isset($element['propname']) ? $element['propname'] : FALSE;
   // add a default var class for files that come in without one.
-  if (!$prop_varkey and $proname) {
+  if (!$prop_varkey and $propname) {
     $prop_varkey = 'om_class_Equation';
   }
   // add a new model if one does not exist - propname match 
