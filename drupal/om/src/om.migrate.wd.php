@@ -118,7 +118,8 @@ foreach ($data as $element) {
     'propcode' => 'vahydro-1.0', 
     'entity_type' => 'dh_feature',
   );
-  error_log("Values: " . print_r($values,1));
+  error_log("Adding: " $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
+  if ($debug) error_log("Values: " . print_r($values,1));
   
   $dh_model = om_model_getSetProperty($values, 'name', FALSE);
   $dh_model->riverseg = $riverseg;
@@ -131,7 +132,7 @@ foreach ($data as $element) {
       'featureid' => $dh_model->pid,
       'entity_type' => 'dh_properties',
     );
-    error_log("Adding $propname $prop_varkey - $propvalue" . print_r($values,1));
+    if ($debug) error_log("Adding $propname $prop_varkey - $propvalue " . print_r($values,1));
     $model_prop = om_model_getSetProperty($values, 'name', FALSE);
     $plugin = array_shift($model_prop->dh_variables_plugins);
     if (method_exists($plugin, 'applyEntityAttribute')) {
