@@ -70,6 +70,9 @@ if (!($featureid and $coverage_hydrocode)) {
   $data = array();
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
+  if (count($header) == 0) {
+    $header = fgetcsv($file, 0, "\t");
+  }
   while ($line = fgetcsv($file, 0, "\t")) {
     $data[] = array_combine($header,$line);
   }
