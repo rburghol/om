@@ -43,7 +43,7 @@ if (count($args) >= 4) {
   die;
 }
 
-error_log("featureid = $featureid, riverseg_hydrocode = $riverseg_hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype");
+error_log("query_type = $query_type, featureid = $featureid, riverseg_hydrocode = $riverseg_hydrocode, varkey = $varkey, propvalue=$propvalue");
 
 
 // read csv of featureid / riverseg_hydrocode pairs
@@ -51,7 +51,7 @@ error_log("featureid = $featureid, riverseg_hydrocode = $riverseg_hydrocode, pro
 // name = riverseg_hydrocode + vah-1.0
 // iterate through properties
 
-if ($featureid == 'file') {
+if ($query_type == 'file') {
   $filepath = $featureid;
   $featureid = FALSE;
   $riverseg_hydrocode = FALSE;
