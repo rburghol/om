@@ -97,7 +97,7 @@ if (!($feature_hydroid and $coverage_hydrocode)) {
 
 foreach ($data as $element) {
   $feature_hydroid = $element['feature_hydroid'];
-  $riverseg = substr($element['coverage_hydrocode'], -13);
+  $riverseg = str_replace('vahydrosw_wshed_', '', $element['coverage_hydrocode']);
   $coverage_name = $element['coverage_name'];
   $feature_name = $element['feature_name'];
   $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
@@ -120,7 +120,9 @@ foreach ($data as $element) {
   );
   error_log("Adding: " . $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
   if ($debug) error_log("Values: " . print_r($values,1));
-  
+  // alternative: query the riverseg propcodes on all model children and select the matching one
+  // so all models: featureid = $feature_hydroid and propcode = vahydro-1.0$riverseg
+  // Then, get all children properties with name "riverseg" and propcode = $riverseg 
   $dh_model = om_model_getSetProperty($values, 'name', FALSE);
   $dh_model->riverseg = $riverseg;
   $dh_model->save();

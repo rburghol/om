@@ -157,9 +157,31 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
 // - Query by name 
 // - Query by code 
 
-function om_get_vahydro_model_element($entity_type, $featureid, $name, $code, $fetch_refs = FALSE) {
+function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = FALSE, $varids = FALSE) {
+  // @todo: enable varids or even vocab searching
   // return a given model object
-  // $fetch_refs handles special case of when the object found is an om_map_model_linkage
+  // $fetch_refs handles special case of when the object found is an om_map_model_linkage{
+  // searches models on a feature with attribute propval or propcode
+  $q = "  select pid from {dh_properties} ";
+  $q .= " where entity_type = :entity_type";
+  if (!is_array($featureid)) {
+    $featureid = array($featureid);
+  }
+  $fids = implode(', ', $featureid);
+  $q .= " and featureid in ($fids) ";
+  if ($code) {
+    // search a specific model scenario, like vahydro-1.0
+    $q .= " and propcode = :code ";
+  }
+  if ($name) {
+    // search a specific model scenario, like vahydro-1.0
+    $q .= " and propname = :name ";
+  }
+  # in one of the props attached to this model 
+  error_log($q);
+  $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type, ':code' => $code , ':name' => $name ));
+  $pids = $result->fetchCol();
+  return $pids;
 }
 
 function om_get_vahydro_feature_model($hydrocode, $bundle, $ftype, $model_version = 'vahydro-1.0') {
@@ -169,6 +191,16 @@ function om_get_vahydro_feature_model($hydrocode, $bundle, $ftype, $model_versio
 function om_get_vahydro_model_feature($vahydro_model) {
   // searches up the tree until it finds a dh_feature element 
   // returns false if does not end at a dh_feature 
+}
+
+function om_get_search_model_subprops($entity_type, $featureid, $subprop_name, $first = TRUE, $subprop_code = FALSE, $model_propcode = FALSE, $model_propname = FALSE, $model_varkey = FALSE) {
+  // searches models on a feature with attribute propval or propcode
+  $models = om_get_model_element($entity_type, $featureid, $model_propname, $model_propcode, $pids);
+  $submodels = om_get_model_element('dh_properties', $models, $subprop_name, $subprop_code); 
+  if ($first) {
+    return array_shift($submodels);
+  }
+  return $submodels;
 }
 
 function om_get_dh_varkey($om_comp) {
