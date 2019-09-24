@@ -18,6 +18,7 @@ $model_scenario = 'vahydro-1.0';
 $model_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
 $varkey = FALSE;
+$propname = FALSE;
 $propvalue = FALSE;
 
 // Is single command line arg?
@@ -32,14 +33,17 @@ if (count($args) >= 4) {
   $coverage_hydrocode = $args[3];
   $coverage_name = $args[4];
   if (isset($args[5])) {
-    $varkey = $args[5];
+    $propname = $args[5];
   }
   if (isset($args[6])) {
-    $propvalue = $args[6];
+    $varkey = $args[6];
+  }
+  if (isset($args[7])) {
+    $propvalue = $args[7];
   }
 } else {
   // warn and quit
-  error_log("Usage: om.migrate.wd.php query_type=[cmd/file] featureid feature_name coverage_hydrocode coverage_name [varkey=''(all)] [propvalue=] ");
+  error_log("Usage: om.migrate.wd.php query_type=[cmd/file] featureid feature_name coverage_hydrocode coverage_name [propname=varkey] [varkey='om_class_Equation'(all)] [propvalue=]");
   die;
 }
 
@@ -91,6 +95,7 @@ foreach ($data as $element) {
   $feature_name = $element['feature_name'];
   $varkey = isset($element['varkey']) ? $element['varkey'] : FALSE;
   $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
+  $propname = isset($element['propname']) ? $element['propname'] : FALSE;
   // add a new model if one does not exist - propname match 
   // add a riverseg prop to model 
   // If requested, add another equation prop 
@@ -109,7 +114,19 @@ foreach ($data as $element) {
   $dh_model->save();
   
   if ($varkey) {
-    
+    $values = array(
+      'varkey' => $varkey, 
+      'propname' => $propname,
+      'featureid' => $dh_model->pid,
+      'entity_type' => 'dh_properties',
+    );
+    $model_prop = om_model_getSetProperty($values, 'name', FALSE);
+    $plugin = array_shift($model_prop->dh_variables_plugins);
+    if (method_exists($plugin, 'applyEntityAttribute')) {
+      $plugin->applyEntityAttribute($model_prop, $propvalue);
+    } else {
+      $model_prop->propvalue = $propvalue;
+    }
   }
 }
 

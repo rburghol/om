@@ -1064,6 +1064,10 @@ class dHOMEquation extends dHOMSubComp {
     array_unshift($path, 'equation');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
+  
+  public function applyEntityAttribute($property, $value) {
+    $property->propcode = $value;
+  }
 }
 
 class dHOMAlphanumericConstant extends dHVariablePluginDefault {
