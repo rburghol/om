@@ -97,6 +97,7 @@ foreach ($data as $element) {
   $values = array(
     'varkey' => 'om_water_system_element', 
     'propname' => $feature_name . ':' . $coverage_name,
+    'featureid' => $featureid,
     'propvalue' => NULL,
     'propcode' => 'vahydro-1.0', 
     'entity_type' => 'dh_feature',
