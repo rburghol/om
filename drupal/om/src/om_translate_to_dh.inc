@@ -181,7 +181,7 @@ function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = F
     $bind['name'] = $name;
   }
   # in one of the props attached to this model 
-  error_log($q);
+  //error_log($q);
   $result = db_query($q, $bind);
   $pids = $result->fetchCol();
   return $pids;
