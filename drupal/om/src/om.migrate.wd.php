@@ -118,7 +118,7 @@ foreach ($data as $element) {
     'propcode' => 'vahydro-1.0', 
     'entity_type' => 'dh_feature',
   );
-  error_log("Adding: " $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
+  error_log("Adding: " . $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
   if ($debug) error_log("Values: " . print_r($values,1));
   
   $dh_model = om_model_getSetProperty($values, 'name', FALSE);
