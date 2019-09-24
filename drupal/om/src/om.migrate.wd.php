@@ -131,7 +131,7 @@ foreach ($data as $element) {
       'featureid' => $dh_model->pid,
       'entity_type' => 'dh_properties',
     );
-    error_log("Adding $propname $prop_varkey" . print_r($values,1));
+    error_log("Adding $propname $prop_varkey - $propvalue" . print_r($values,1));
     $model_prop = om_model_getSetProperty($values, 'name', FALSE);
     $plugin = array_shift($model_prop->dh_variables_plugins);
     if (method_exists($plugin, 'applyEntityAttribute')) {
