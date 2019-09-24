@@ -12,7 +12,7 @@ while ($arg = drush_shift()) {
 // mp_hydroid, mp_name, riverseg, model_scenario 
 
 // all batch element settings
-$featureid = FALSE;
+$feature_hydroid = FALSE;
 $coverage_hydrocode = FALSE;
 $model_scenario = 'vahydro-1.0';
 $model_varkey = 'varcode';
@@ -25,10 +25,10 @@ $propvalue = FALSE;
 if ( (count($args) >= 4) or ($args[0] == 'file')) {
   // Do command line, single element settings
   // set these if doing a single -- will fail if both not set
-  // $featureid = 340385; // set these if doing a single
+  // $feature_hydroid = 340385; // set these if doing a single
   // $coverage_hydrocode = 'vahydrosw_wshed_JB0_7050_0000_yarmouth';
   $query_type = $args[0];
-  $featureid = $args[1];
+  $feature_hydroid = $args[1];
   $feature_name = $args[2];
   $coverage_hydrocode = $args[3];
   $coverage_name = $args[4];
@@ -47,7 +47,7 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
   die;
 }
 
-error_log("query_type = $query_type, featureid = $featureid, feature_name = $feature_name, coverage_hydrocode = $coverage_hydrocode, varkey = $varkey, propvalue=$propvalue");
+error_log("query_type = $query_type, featureid = $feature_hydroid, feature_name = $feature_name, coverage_hydrocode = $coverage_hydrocode, varkey = $varkey, propvalue=$propvalue");
 
 
 // read csv of featureid / coverage_hydrocode pairs
@@ -56,8 +56,8 @@ error_log("query_type = $query_type, featureid = $featureid, feature_name = $fea
 // iterate through properties
 
 if ($query_type == 'file') {
-  $filepath = $featureid;
-  $featureid = FALSE;
+  $filepath = $feature_hydroid;
+  $feature_hydroid = FALSE;
   $coverage_hydrocode = FALSE;
   error_log("File requested: $filepath");
 }
@@ -66,7 +66,7 @@ $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 
 // classes = array() empty mean all
 
-if (!($featureid and $coverage_hydrocode)) {
+if (!($feature_hydroid and $coverage_hydrocode)) {
   $data = array();
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
@@ -82,11 +82,11 @@ if (!($featureid and $coverage_hydrocode)) {
 } else {
   $data = array();
   $data[] = array(
-    'featureid' => $featureid, 
+    'feature_hydroid' => $feature_hydroid, 
+    'coverage_hydroid' => $coverage_hydroid,
     'coverage_hydrocode' => $coverage_hydrocode,
-    'featureid' => $featureid, 
     'feature_name' => $feature_name,
-    'coverage_hydrocode' => $coverage_hydrocode,
+    'feature_hydrocode' => $feature_hydrocode,
     'coverage_name' => $coverage_name,
     'propname' => $propname,
     'varkey' => $varkey,
@@ -95,7 +95,7 @@ if (!($featureid and $coverage_hydrocode)) {
 }
 
 foreach ($data as $element) {
-  $featureid = $element['featureid'];
+  $feature_hydroid = $element['feature_hydroid'];
   $riverseg = substr($element['coverage_hydrocode'], -13);
   $coverage_name = $element['coverage_name'];
   $feature_name = $element['feature_name'];
@@ -108,7 +108,7 @@ foreach ($data as $element) {
   $values = array(
     'varkey' => 'om_water_system_element', 
     'propname' => $feature_name . ':' . $coverage_name,
-    'featureid' => $featureid,
+    'featureid' => $feature_hydroid,
     'propvalue' => NULL,
     'propcode' => 'vahydro-1.0', 
     'entity_type' => 'dh_feature',
