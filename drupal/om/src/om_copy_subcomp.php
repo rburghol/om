@@ -20,10 +20,39 @@ if (count($args) >= 3) {
 if ($query_type == 'file') {
   $filepath = $src_id;
   error_log("File requested: $filepath");
+  $data = array();
+  $file = fopen($filepath, 'r');
+  $header = fgetcsv($file, 0, "\t");
+  if (count($header) == 0) {
+    $header = fgetcsv($file, 0, "\t");
+  }
+  while ($line = fgetcsv($file, 0, "\t")) {
+    
+    $data[] = array_combine($header,$line);
+  }
+  error_log("File opened with records: " . count($data));
+  error_log("Header: " . print_r($header,1));
+  error_log("Record 1: " . print_r($data[0],1));
+} else {
+  $data = array();
+  $data[] = array(
+    'feature_hydroid' => $feature_hydroid, 
+    'coverage_hydroid' => $coverage_hydroid,
+    'coverage_hydrocode' => $coverage_hydrocode,
+    'feature_name' => $feature_name,
+    'feature_hydrocode' => $feature_hydrocode,
+    'coverage_name' => $coverage_name,
+    'propname' => $propname,
+    'prop_varkey' => $prop_varkey,
+    'propvalue' => $propvalue,
+  );
+}
+
+foreach ($data as $element) {
+  $src_prop = om_load_dh_model($query_type, $src_id, $model_name);
+  $dest_prop = om_load_dh_model($query_type, $dest_id, $model_name);
 }
 
 
-$src_prop = om_load_dh_model($query_type, $src_id, $model_name);
-$dest_prop = om_load_dh_model($query_type, $dest_id, $model_name);
 
 ?>
