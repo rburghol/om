@@ -9,7 +9,6 @@ module_load_include('module', 'om');
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $run_id_options = om_run_id_options(); // will determine what a user can run
-  dpm($run_id_options,'opts');
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
