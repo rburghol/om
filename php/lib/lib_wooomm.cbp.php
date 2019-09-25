@@ -673,6 +673,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
       parent::wake();
       // @todo: move this to parent class after testing
       $this->getFileInfo();
+      // @todo: check for sub-comps that override version, scenario, landseg based on runid or run_mode, need to use code to initialize these 
       $this->setDBCacheName();
       // @todo: make this persistent, and shared
       $this->datatemp = 'tmp_crosstab' . $this->componentid;

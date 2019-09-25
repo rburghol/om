@@ -584,7 +584,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         'varid' => dh_varkey2varid('om_object_class', TRUE),
       );
       dh_update_properties($values, 'singular');
-      error_log("Saving object_class: " . print_r($values,1));
+      //error_log("Saving object_class: " . print_r($values,1));
     }
   }
   public function getDefaults($entity, &$defaults = array()) {
@@ -1063,6 +1063,10 @@ class dHOMEquation extends dHOMSubComp {
     parent::setAllRemoteProperties($entity, $elid, $path);
     array_unshift($path, 'equation');
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
+  
+  public function applyEntityAttribute($property, $value) {
+    $property->propcode = $value;
   }
 }
 
