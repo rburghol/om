@@ -30,9 +30,9 @@ function om_run_id_options() {
         '21' => t('2015 SWRP Current 2010 (#21)'),
         '22' => t('2015 SWRP Future 2040 (#22)'),
     );
-    for ($i = 100; $i <= 1000; $i++) {
-      $options[$i] = "Custom User Run #$i";
-    }
+  }
+  for ($i = 100; $i <= 1000; $i++) {
+    $options[$i] = "Custom User Run #$i";
   }
   return $options;
 }
