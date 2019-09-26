@@ -115,7 +115,7 @@ foreach ($data as $element) {
     $dh_model_pid = $riverseg_prop->featureid;
     //error_log("Found Matching model: $dh_model_pid");
   }
-  if (!dh_model_pid) {
+  if (!$dh_model_pid) {
     // add a new model if one does not exist - propname match 
     // add a riverseg prop to model 
     // If requested, add another equation prop 
@@ -133,13 +133,16 @@ foreach ($data as $element) {
     // so all models: featureid = $feature_hydroid and propcode = vahydro-1.0$riverseg
     // Then, get all children properties with name "riverseg" and propcode = $riverseg 
     $dh_model = om_model_getSetProperty($values, 'name', FALSE);
+    $dh_model->save();
     $dh_model->riverseg = $riverseg;
+    // now add the riverseg prop
   } else {
-    error_log("Updating: " . $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
+    error_log("Updating: $dh_model_pid " . $feature_name . ':' . $coverage_name . " to " . $feature_hydroid);
     $dh_model = entity_load_single('dh_properties', $dh_model_pid);
     $dh_model->propname = $feature_name . ':' . $coverage_name;
   }
   $dh_model->save();
+
   if (!$prop_varkey and $propname) {
     $prop_varkey = 'om_class_Equation';
   }
