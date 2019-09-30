@@ -14,7 +14,7 @@ include('./xajax_modeling.element.php');
 error_reporting(E_ERROR);
 
 if (count($argv) < 2) {
-   print("Usage: php copy_element.php mode[silent/verbose] dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [param_name1=param_val1|param_name2|param_val2,...] \n");
+   error_log("Usage: php copy_element.php mode[silent/verbose] dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [param_name1=param_val1|param_name2|param_val2,...] \n");
    die;
 }
 
@@ -77,7 +77,7 @@ switch ($copychildren) {
          $innerHTML .= "New object group $newelid inserted underneath $destination <br>";
          $innerHTML .= createObjectLink($projectid, $scenid, $newelid, $destination, 1);
       } else {
-         print($cloneresult['innerHTML'] . "\n");
+         error_log($cloneresult['innerHTML'] . "\n");
       }
    break;
       
@@ -91,25 +91,25 @@ switch ($copychildren) {
    );
    $output = copyModelGroupFull($cbp_copy_params, 1);
 
-   print_r($output);
+   error_log(print_r($output,1));
    $newelid = $output['elementid'];
    if ($destination > 0) {
       $oldparentid = getElementContainer($listobject, $elementid);
-      print("Changing direct links from the old parent to the new parent for the copied element");
+      error_log("Changing direct links from the old parent to the new parent for the copied element");
       // we should update any links that the copied object had to its old parent to the new parent
       $listobject->querystring = " update map_model_linkages set dest_id = $destination where src_id = $newelid and linktype = 2";
-      print("$listobject->querystring ; \n");
+      error_log("$listobject->querystring ; \n");
       $listobject->performQuery();
       $listobject->querystring = " update map_model_linkages set src_id = $destination where src_id = $oldparentid and dest_id = $newelid and linktype = 2 ";
-      print("$listobject->querystring ; \n");
+      error_log("$listobject->querystring ; \n");
       $listobject->performQuery();
    }
    break;
 }
 if ( !($newelid > 0) ) {
-   print("Error copying elements\n");
+   error_log("Error copying elements\n");
 } else {
-   print("New object created with elementid $newelid \n");
+   error_log("New object created with elementid $newelid \n");
    global $unserobjects;
    error_log("Trying to set params: " . print_r($params,1));
    if ( (count($params) > 0) ) {
@@ -118,7 +118,7 @@ if ( !($newelid > 0) ) {
       $loadres = loadModelElement($newelid, array(), 0);
       $thisobject = $loadres['object'];
       if (is_object($thisobject)) {
-         print("Object Type: " . get_class($thisobject) . "\n");
+         error_log("Object Type: " . get_class($thisobject) . "\n");
          foreach ($params as $thisparam) {
             $key = $thisparam['key'];
             $val = $thisparam['val'];
@@ -131,9 +131,9 @@ if ( !($newelid > 0) ) {
                }
                $targs =  explode('~', $val);
                if (count($targs) == 1) {
-                  print("Sub-comp $key exists, but data must be given in format key=prop|val to edit sub-comp properties\n");
+                  error_log("Sub-comp $key exists, but data must be given in format key=prop|val to edit sub-comp properties\n");
                } else {
-                  print("Updating $elemname ($newelid) $subcomp_name -> " . $targs[0] ."  = " . $targs[1] . " \n");
+                  error_log("Updating $elemname ($newelid) $subcomp_name -> " . $targs[0] ."  = " . $targs[1] . " \n");
                   $thisobject->processors[$key]->setProp($targs[0], $targs[1]);
                   if ( (count($rec_list) > 0) and ($rec_list[0] <> '') ) {
                      //error_log("$key has rec list: " . print_r($rec_list,1));
@@ -152,15 +152,15 @@ if ( !($newelid > 0) ) {
               if (in_array($key, $props)) {
                 saveModelObject($elementid, $thisobject, array($key => $val), $debug) ;
               } else {
-                 print("$key not found in processors\n");
+                 error_log("$key not found in processors\n");
                 $pparms[$key] = $val;
                 if ($debug) {
-                   print(print_r(array_keys($thisobject->processors),1) . "\n");
+                   error_log(print_r(array_keys($thisobject->processors),1) . "\n");
                 }
               }
             }
          }
-         print("Saving sub-comps \n");
+         error_log("Saving sub-comps \n");
          foreach (array_keys($recreate[$newelid]) as $thisprop) {
             if (is_object($thisobject->processors[$thisprop])) {
                error_log("Calling reCreate() on sub-comp $thisprop");
@@ -169,11 +169,11 @@ if ( !($newelid > 0) ) {
          }
          saveObjectSubComponents($listobject, $thisobject, $newelid, 1);
       
-         print("Setting " . print_r($pparms,1) . "\n");
+         error_log("Setting " . print_r($pparms,1) . "\n");
          $res = updateObjectProps($projectid, $newelid, $pparms, $debug);
-         print("Result: " . print_r($res['innerHTML'],1) . "\n");
+         error_log("Result: " . print_r($res['innerHTML'],1) . "\n");
       } else { 
-         print("Object $thiselid is not a valid object \n");
+         error_log("Object $thiselid is not a valid object \n");
       }
          
    }  

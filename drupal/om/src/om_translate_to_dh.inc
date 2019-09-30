@@ -5,6 +5,8 @@
 module_load_include('module', 'dh_wsp');
 global $om;
 $om = 'http://deq2.bse.vt.edu/om/get_model.php';
+$php_path = "/var/www/html/om/";
+
 function om_get_om_model($elid) {
   global $om;
   $uri = $om . "?elementid=$elid";
@@ -310,4 +312,14 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   // finally, restore the link setting to enable saves from dH to OM if requested.
   $om_link->propcode = $link_set_remote;
   $om_link->save();
+}
+
+function om_copy_element($scenarioid, $template_elementid, $parentid = -1) {
+  global $php_path;
+  $cmd = "cd $php_path \n";
+  $cmd .= "php copy_element.php $scenarioid $template_elementid $parentid ";
+  //dpm( $php_path, "Exec Path ");
+  //dpm( $cmd, "Executing ");
+  error_log("$cmd");
+  //shell_exec($cmd);
 }
