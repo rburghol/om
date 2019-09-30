@@ -177,6 +177,6 @@ if ( !($newelid > 0) ) {
       }
       
    }
-   echo $newelid
+   echo $newelid;
 }
 ?>
