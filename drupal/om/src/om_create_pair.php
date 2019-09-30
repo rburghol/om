@@ -8,7 +8,6 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 // add om_element_connection with pull_once from OM to VAHydro 
 
 // test: cmd 210453 4696374 om_model_element 340393 
-$template_id = ;
 $scenarioid = 37;
 $args = array();
 while ($arg = drush_shift()) {
@@ -60,7 +59,10 @@ foreach ($data as $element) {
   $vahydro_parentid = $data['vahydro_parentid'];
   $varkey = $data['varkey'];
   $template_id = $data['template_id'];
-  
+  if (!$template_id) {
+    error_log("Missing template_id cannot process");
+    die;
+  }
   $om_parent = om_get_om_model($om_parentid);
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
   om_copy_element($scenarioid, $template_id, $parentid);
