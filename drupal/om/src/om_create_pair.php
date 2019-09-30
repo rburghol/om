@@ -7,25 +7,33 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 // create a shell on VAHydro 
 // add om_element_connection with pull_once from OM to VAHydro 
 
-// test: pid 210453 4696374 om_model_element 340393 
+// test: cmd 210453 4696374 om_model_element 340393 
+$template_id = ;
+$scenarioid = 37;
 $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
 }
-error_log("Hello world!");
 
 // Is single command line arg?
-if (count($args) >= 3) {
+if (
+     ( ($args[0] == 'file') and (count($args) == 2) )
+      or (count($args) >= 3)
+  ) {
   $query_type = $args[0];
-  $om_parentid = $args[1];
-  $vahydro_parentid = $args[2];
+  $template_id = $args[1];
+  $om_parentid = $args[2];
+  $vahydro_parentid = $args[3];
+  $varkey = $args[4];
+  $template_id = $args[5];
+  $scenarioid = $scenarioid[6];
 } else {
-  print("Usage: php om_create_pair.php query_type om_parentid vahydro_parentid varkey template_id  \n");
+  print("Usage: php om_create_pair.php query_type om_parentid vahydro_parentid varkey template_id scenarioid [37] \n");
   die;
 }
 
 if ($query_type == 'file') {
-  $filepath = $src_id;
+  $filepath = $om_parentid;
   error_log("File requested: $filepath");
   $data = array();
   $file = fopen($filepath, 'r');
@@ -58,7 +66,7 @@ foreach ($data as $element) {
   
   $om_parent = om_get_om_model($om_parentid);
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
-  
+  om_copy_element($scenarioid, $template_id, $parentid);
   
 }
 

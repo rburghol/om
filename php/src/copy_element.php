@@ -14,7 +14,7 @@ include('./xajax_modeling.element.php');
 error_reporting(E_ERROR);
 
 if (count($argv) < 2) {
-   error_log("Usage: php copy_element.php mode[silent/verbose] dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [param_name1=param_val1|param_name2|param_val2,...] \n");
+   error_log("Usage: php copy_element.php dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [param_name1=param_val1|param_name2|param_val2,...] \n");
    die;
 }
 
