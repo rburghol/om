@@ -321,5 +321,6 @@ function om_copy_element($scenarioid, $template_elementid, $parentid = -1) {
   //dpm( $php_path, "Exec Path ");
   //dpm( $cmd, "Executing ");
   error_log("$cmd");
-  //shell_exec($cmd);
+  $elid = shell_exec($cmd);
+  return $elid;
 }

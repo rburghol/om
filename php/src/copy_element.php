@@ -175,7 +175,8 @@ if ( !($newelid > 0) ) {
       } else { 
          error_log("Object $thiselid is not a valid object \n");
       }
-         
-   }  
+      
+   }
+   echo $newelid
 }
 ?>
