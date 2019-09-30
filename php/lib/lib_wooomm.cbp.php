@@ -92,7 +92,7 @@ class CBPLandDataConnectionBase extends XMLDataConnection {
       $Qafps = 0.0;
       $area_ac = 0.0;
       $landuse_var = $this->state['landuse_var'];
-      $thisyear = $this->state['year'];
+      $thisyear = isset($this->state['luyear']) ? $this->state['luyear'] : $this->state['year'];
       if (!($thisyear > 0)) {
          if ($this->debug) {
             $this->logDebug("Something is wrong with the year in the state array calling setStateTimerVars()<br>\n");
@@ -742,14 +742,14 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
          $this->logDebug("<b>$this->name Sub-processors executed at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . " week " . $this->state['week'] . " month " . $this->state['month'] . ".</b><br>\n");
       }
       // now do local flow routing manipulations
-      // need to multiply landuse matrix values by the appropriate ifow, agwo, and suro for that land use
+      // need to multiply landuse matrix values by the appropriate ifwo, agwo, and suro for that land use
       // aggregate the results into a Qout variable or some area weighted value as well
       // get landuse matrix
       $Qout = 0.0;
       $Qafps = 0.0;
       $area_ac = 0.0;
       $landuse_var = $this->state['landuse_var'];
-      $thisyear = $this->state['year'];
+      $thisyear = isset($this->state['luyear']) ? $this->state['luyear'] : $this->state['year'];
       if (!($thisyear > 0)) {
          if ($this->debug) {
             $this->logDebug("Something is wrong with the year in the state array calling setStateTimerVars()<br>\n");
