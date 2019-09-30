@@ -16,10 +16,7 @@ while ($arg = drush_shift()) {
 }
 
 // Is single command line arg?
-if (
-     ( ($args[0] == 'file') and (count($args) == 2) )
-      or (count($args) >= 3)
-  ) {
+if (count($args) >= 2) {
   $query_type = $args[0];
   $template_id = $args[1];
   $om_parentid = $args[2];
