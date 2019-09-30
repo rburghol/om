@@ -47,8 +47,8 @@ if ($query_type == 'file') {
 } else {
   $data = array();
   $data[] = array(
-    'om_parentid' => $feature_hydroid, 
-    'vahydro_parentid' => $coverage_hydroid,
+    'om_parentid' => $om_parentid, 
+    'vahydro_parentid' => $vahydro_parentid,
     'varkey' => $varkey,
     'template_id' => $template_id,
     'scenarioid' => $scenarioid,
@@ -56,7 +56,7 @@ if ($query_type == 'file') {
 }
 
 foreach ($data as $element) {
-  $om_elementid = $element['om_elementid'];
+  $om_parentid = $element['om_parentid'];
   $vahydro_parentid = $element['vahydro_parentid'];
   $varkey = $element['varkey'];
   $template_id = $element['template_id'];
@@ -68,7 +68,7 @@ foreach ($data as $element) {
   $om_parent = om_get_om_model($om_parentid);
     error_log(print_r($element,1));
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
-  om_copy_element($scenarioid, $template_id, $om_elementid);
+  om_copy_element($scenarioid, $template_id, $om_parentid);
   
 }
 
