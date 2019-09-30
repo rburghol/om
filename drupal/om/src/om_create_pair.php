@@ -12,6 +12,7 @@ $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
 }
+error_log("Hello world!");
 
 // Is single command line arg?
 if (count($args) >= 3) {
