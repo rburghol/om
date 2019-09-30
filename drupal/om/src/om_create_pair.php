@@ -66,6 +66,7 @@ foreach ($data as $element) {
     die;
   }
   $om_parent = om_get_om_model($om_parentid);
+    error_log(print_r($element,1));
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
   om_copy_element($scenarioid, $template_id, $om_elementid);
   
