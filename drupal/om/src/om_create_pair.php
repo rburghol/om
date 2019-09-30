@@ -21,8 +21,7 @@ if (count($args) >= 2) {
   $om_parentid = $args[2];
   $vahydro_parentid = $args[3];
   $varkey = $args[4];
-  $template_id = $args[5];
-  $scenarioid = $scenarioid[6];
+  $scenarioid = isset($args[5]) ? $args[5] : $scenarioid;
 } else {
   print("Usage: php om_create_pair.php query_type om_parentid vahydro_parentid varkey template_id scenarioid [37] \n");
   die;
