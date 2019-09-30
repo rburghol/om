@@ -50,17 +50,19 @@ if ($query_type == 'file') {
     'om_parentid' => $feature_hydroid, 
     'vahydro_parentid' => $coverage_hydroid,
     'varkey' => $varkey,
-    'template_id' => $varkey
+    'template_id' => $template_id,
+    'scenarioid' => $scenarioid,
   );
 }
 
 foreach ($data as $element) {
-  $om_elementid = $data['om_elementid'];
-  $vahydro_parentid = $data['vahydro_parentid'];
-  $varkey = $data['varkey'];
-  $template_id = $data['template_id'];
+  $om_elementid = $element['om_elementid'];
+  $vahydro_parentid = $element['vahydro_parentid'];
+  $varkey = $element['varkey'];
+  $template_id = $element['template_id'];
   if (!$template_id) {
     error_log("Missing template_id cannot process");
+    error_log(print_r($element,1));
     die;
   }
   $om_parent = om_get_om_model($om_parentid);
