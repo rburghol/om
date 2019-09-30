@@ -3,7 +3,7 @@
 // load routines needed for tablefield handling
 // New Generic Surface Water User: 340402
 module_load_include('module', 'dh_wsp');
-global $om;
+global $om, $php_path;
 $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 $php_path = "/var/www/html/om/";
 
