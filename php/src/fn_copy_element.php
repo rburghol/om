@@ -14,7 +14,7 @@ include('./xajax_modeling.element.php');
 error_reporting(E_ERROR);
 
 if (count($argv) < 2) {
-   error_log("Usage: php copy_element.php dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [param_name1=param_val1|param_name2|param_val2,...] \n");
+   error_log("Usage: php copy_element.php dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [name=''] \n");
    die;
 }
 $debug = 0;
@@ -31,15 +31,9 @@ if (isset($argv[4])) {
    $copychildren = 1;
 }
 $params = array();
+$name = '';
 if (isset($argv[5])) {
-   $params2set = $argv[5];
-   error_log("Params = " . $params2set . "\n");
-   $pairs = explode("|", $params2set);
-   
-   foreach ($pairs as $thispair) {
-      list($param, $val) = explode("=", $thispair);
-      $params[] = array('key'=>$param, 'val'=>$val);
-   }
+   $name = $argv[5];
 }
 // place holder for list of sub-comps or props that require a call to reCreate()
 $recreate = array();
@@ -113,71 +107,13 @@ if ( !($newelid > 0) ) {
    error_log("New object created with elementid $newelid \n");
    global $unserobjects;
    error_log("Trying to set params: " . print_r($params,1));
-   if ( (count($params) > 0) ) {
+   if ( !empty($name) ) {
       //$loadres = unSerializeSingleModelObject($newelid);
       //$thisobject = $loadres['object'];
       $loadres = loadModelElement($newelid, array(), 0);
       $thisobject = $loadres['object'];
-      if (is_object($thisobject)) {
-         error_log("Object Type: " . get_class($thisobject) . "\n");
-         foreach ($params as $thisparam) {
-            $key = $thisparam['key'];
-            $val = $thisparam['val'];
-            error_log("Searching el $newelid for property $key > $val\n");
-            if (isset($thisobject->processors[$key])) {
-               if (property_exists(get_class($thisobject->processors[$key]), 'recreate_list')) {
-                  $rec_list = explode(',', trim($thisobject->processors[$key]->recreate_list));
-               } else {
-                  $rec_list = array();
-               }
-               $targs =  explode('~', $val);
-               if (count($targs) == 1) {
-                  error_log("Sub-comp $key exists, but data must be given in format key=prop|val to edit sub-comp properties\n");
-               } else {
-                  error_log("Updating $elemname ($newelid) $subcomp_name -> " . $targs[0] ."  = " . $targs[1] . " \n");
-                  $thisobject->processors[$key]->setProp($targs[0], $targs[1]);
-                  if ( (count($rec_list) > 0) and ($rec_list[0] <> '') ) {
-                     //error_log("$key has rec list: " . print_r($rec_list,1));
-                     if (in_array($targs[0], $rec_list)) {
-                        //error_log("Found $propname in Recreate List");
-                        //error_log("Comparing $propval to " . $thisobject->getProp($propname));
-                        if ($propval <> $thisobject->getProp($propname)) {
-                           $recreate[$newelid][$key] = 1;
-                        }
-                     }
-                  }
-               }
-               $thisobject->processors[$key]->wake();
-            } else {
-              $props = array('name');
-              if (in_array($key, $props)) {
-                error_log("Renaming object to $val\n");
-                saveModelObject($elementid, $thisobject, array($key => $val), $debug) ;
-              } else {
-                 error_log("$key not found in processors\n");
-                $pparms[$key] = $val;
-                if ($debug) {
-                   error_log(print_r(array_keys($thisobject->processors),1) . "\n");
-                }
-              }
-            }
-         }
-         error_log("Saving sub-comps \n");
-         foreach (array_keys($recreate[$newelid]) as $thisprop) {
-            if (is_object($thisobject->processors[$thisprop])) {
-               error_log("Calling reCreate() on sub-comp $thisprop");
-               $thisobject->processors[$thisprop]->reCreate();
-            }
-         }
-         saveObjectSubComponents($listobject, $thisobject, $newelid, 1);
-      
-         error_log("Setting " . print_r($pparms,1) . "\n");
-         $res = updateObjectProps($projectid, $newelid, $pparms, $debug);
-         error_log("Result: " . print_r($res['innerHTML'],1) . "\n");
-      } else { 
-         error_log("Object $thiselid is not a valid object \n");
-      }
-      
+      error_log("Renaming object to $val\n");
+      saveModelObject($elementid, $thisobject, array($key => $val), $debug) ;
    }
    echo $newelid;
 }
