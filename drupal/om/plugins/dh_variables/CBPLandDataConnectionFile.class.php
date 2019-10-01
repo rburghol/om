@@ -7,6 +7,7 @@ $class = ctools_plugin_get_class($plugin_def, 'handler');
 
 class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   var $object_class = 'CBPLandDataConnectionFile';
+  var $om_template_id = 340398; // remote server template ID, set FALSE if not used.
   
   public function getDefaults($entity, &$defaults = array()) {
     // needs:
@@ -28,6 +29,38 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'vardesc' => 'Initial value.',
         'varname' => 'Initial Value',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'om_template_id' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'om_template_id',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Template ID.',
+        'varname' => 'Initial Value',
+        'varid' => dh_varkey2varid('om_class_OMConstant', TRUE),
+      ),
+      'landuse' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'landuse',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'embed' => FALSE,
+        'vardesc' => 'Base matrix for land use over time.',
+        'varname' => 'Default Landuse Table',
+        'varid' => dh_varkey2varid('om_class_dHOMDataMatrix', TRUE),
+      ),
+      'luyear' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'luyear',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'embed' => FALSE,
+        'vardesc' => "Land Use year (set to thisyear if dynamic, or single value if static).",
+        'varname' => 'Default Landuse Table',
+        'varid' => dh_varkey2varid('om_class_dHOMEquation', TRUE),
       ),
     );
     return $defaults;

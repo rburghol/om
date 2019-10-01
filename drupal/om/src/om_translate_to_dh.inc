@@ -3,8 +3,10 @@
 // load routines needed for tablefield handling
 // New Generic Surface Water User: 340402
 module_load_include('module', 'dh_wsp');
-global $om;
+global $om, $php_path;
 $om = 'http://deq2.bse.vt.edu/om/get_model.php';
+$php_path = "/var/www/html/om/";
+
 function om_get_om_model($elid) {
   global $om;
   $uri = $om . "?elementid=$elid";
@@ -238,6 +240,19 @@ function dh_get_dh_propnames($entity_type, $entity_id) {
   return $props;
 }
 
+function om_link2dh($elid, &$dh_model) {
+  $link_props = array(
+    'entity_type' => $dh_model->entityType(),
+    'featureid' => $dh_model->pid,
+    'propname' => 'om_element_connection',
+    'propvalue' => $elid,
+    'varkey'=>'om_element_connection'
+  );
+  // retrieve or create the link
+  $om_link = om_model_getSetProperty($link_props, 'varid');
+  return $om_link;
+}
+
 function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_proc = 'all') {
   // function om_object2dh($elid, $om_object, $dh_model, $classes = array(), $one_proc = 'all')
   // we now have a saved dH object, with defaults if specified by the class plugin.
@@ -316,4 +331,18 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   // finally, restore the link setting to enable saves from dH to OM if requested.
   $om_link->propcode = $link_set_remote;
   $om_link->save();
+}
+
+function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_name = '', $copy_children = 0) {
+  global $php_path;
+  $cmd = "cd $php_path \n";
+  $cmd .= "php fn_copy_element.php $scenarioid $template_elementid $parentid $copy_children";
+  if (!empty($new_name)) {
+    $cmd .= " \"name=$new_name\" ";
+  }
+  //dpm( $php_path, "Exec Path ");
+  //dpm( $cmd, "Executing ");
+  error_log("$cmd");
+  $elid = shell_exec($cmd);
+  return $elid;
 }
