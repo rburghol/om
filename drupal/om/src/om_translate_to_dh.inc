@@ -327,10 +327,13 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   $om_link->save();
 }
 
-function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_name, $copy_children = 0) {
+function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_name = '', $copy_children = 0) {
   global $php_path;
   $cmd = "cd $php_path \n";
-  $cmd .= "php fn_copy_element.php $scenarioid $template_elementid $parentid $copy_children \"name=$new_name\" ";
+  $cmd .= "php fn_copy_element.php $scenarioid $template_elementid $parentid $copy_children";
+  if (!empty($new_name)) {
+    $cmd .= " \"name=$new_name\" ";
+  }
   //dpm( $php_path, "Exec Path ");
   //dpm( $cmd, "Executing ");
   error_log("$cmd");
