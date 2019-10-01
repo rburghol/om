@@ -234,6 +234,19 @@ function dh_get_dh_propnames($entity_type, $entity_id) {
   return $props;
 }
 
+function om_link2dh($elid, &$dh_model) {
+  $link_props = array(
+    'entity_type' => $dh_model->entityType(),
+    'featureid' => $dh_model->pid,
+    'propname' => 'om_element_connection',
+    'propvalue' => $elid,
+    'varkey'=>'om_element_connection'
+  );
+  // retrieve or create the link
+  $om_link = om_model_getSetProperty($link_props, 'varid');
+  return $om_link;
+}
+
 function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_proc = 'all') {
   // function om_object2dh($elid, $om_object, $dh_model, $classes = array(), $one_proc = 'all')
   // we now have a saved dH object, with defaults if specified by the class plugin.
