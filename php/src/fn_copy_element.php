@@ -33,7 +33,7 @@ if (isset($argv[4])) {
 $params = array();
 if (isset($argv[5])) {
    $params2set = $argv[5];
-   print("Params = " . $params2set . "\n");
+   error_log("Params = " . $params2set . "\n");
    $pairs = explode("|", $params2set);
    
    foreach ($pairs as $thispair) {
@@ -44,7 +44,9 @@ if (isset($argv[5])) {
 // place holder for list of sub-comps or props that require a call to reCreate()
 $recreate = array();
 
-print("Creating a copy and setting these params: " . print_r($params,1) . "\n");
+if ($debug) {
+  error_log("Creating a copy and setting these params: " . print_r($params,1) . "\n");
+}
 
 
 if ($destination > 0) {
