@@ -151,6 +151,7 @@ if ( !($newelid > 0) ) {
             } else {
               $props = array('name');
               if (in_array($key, $props)) {
+                error_log("Renaming object to $val\n");
                 saveModelObject($elementid, $thisobject, array($key => $val), $debug) ;
               } else {
                  error_log("$key not found in processors\n");
