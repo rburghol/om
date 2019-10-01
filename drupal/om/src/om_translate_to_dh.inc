@@ -170,6 +170,9 @@ function om_get_model_element($entity_type, $featureid, $name = FALSE, $code = F
   if (!is_array($featureid)) {
     $featureid = array($featureid);
   }
+  if (empty($featureid)) {
+    return array();
+  }
   $fids = implode(', ', $featureid);
   $q .= " and featureid in ($fids) ";
   if ($code) {
@@ -202,6 +205,9 @@ function om_get_search_model_subprops($entity_type, $featureid, $subprop_name, $
   // searches models on a feature with attribute propval or propcode
   $models = om_get_model_element($entity_type, $featureid, $model_propname, $model_propcode, $pids);
   $submodels = om_get_model_element('dh_properties', $models, $subprop_name, $subprop_code); 
+  if (empty($submodels)) {
+    return FALSE;
+  }
   if ($first) {
     return array_shift($submodels);
   }
