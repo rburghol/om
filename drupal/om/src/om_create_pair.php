@@ -64,6 +64,9 @@ foreach ($data as $element) {
   $varkey = $element['varkey'];
   $model_name = $element['model_name'];
   $template_id = $element['template_id'];
+  $object_class = $element['object_class'];
+  $elid = $element['om_elementid'];
+  $vahydro_pid = $element['vahydro_pid'];
   if (!$template_id) {
     error_log("Missing template_id cannot process");
     error_log(print_r($element,1));
@@ -72,8 +75,11 @@ foreach ($data as $element) {
   $om_parent = om_get_om_model($om_parentid);
     error_log(print_r($element,1));
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
-  $elid = om_copy_element($scenarioid, $template_id, $om_parentid, $model_name, -1);
-  error_log("Returned $elid ");
+  if (!$elid) {
+    // need to create in OM
+    $elid = om_copy_element($scenarioid, $template_id, $om_parentid, $model_name, -1);
+    error_log("om_copy_element() Returned $elid ");
+  }
   // add the VAHydro model or retrieve if it does not exist
   $vahydro_child = om_load_dh_model('prop_feature', $vahydro_parentid, $model_name, $varkey, $object_class);
   $link_obj = om_link2dh($elid, $vahydro_child);
