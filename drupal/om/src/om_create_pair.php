@@ -76,7 +76,6 @@ foreach ($data as $element) {
   error_log("Returned $elid ");
   // add the VAHydro model or retrieve if it does not exist
   $vahydro_child = om_load_dh_model('prop_feature', $vahydro_parentid, $model_name, $varkey, $object_class);
-  die;
   $link_obj = om_link2dh($elid, $vahydro_child);
   $link_obj->propcode = 'pull_once';
   error_log("Saving Link/pull_once from: $link_obj->propvalue to $link_obj->featureid");

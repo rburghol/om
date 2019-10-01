@@ -106,7 +106,7 @@ if ( !($newelid > 0) ) {
 } else {
    error_log("New object created with elementid $newelid \n");
    global $unserobjects;
-   error_log("Trying to set params: " . print_r($params,1));
+   error_log("Renaming to: $name");
    if ( !empty($name) ) {
       //$loadres = unSerializeSingleModelObject($newelid);
       //$thisobject = $loadres['object'];
