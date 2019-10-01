@@ -72,7 +72,7 @@ foreach ($data as $element) {
   $om_parent = om_get_om_model($om_parentid);
     error_log(print_r($element,1));
   $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
-  $elid = om_copy_element($scenarioid, $template_id, $om_parentid, -1);
+  $elid = om_copy_element($scenarioid, $template_id, $om_parentid, -1, $model_name);
   error_log("Returned $elid ");
   // add the VAHydro model or retrieve if it does not exist
   $vahydro_child = om_load_dh_model('prop_feature', $vahydro_parentid, $model_name, $varkey, $object_class);
@@ -81,7 +81,4 @@ foreach ($data as $element) {
   error_log("Saving Link/pull_once from: $link_obj->propvalue to $link_obj->featureid");
   $link_obj->save();
 }
-
-
-
 ?>
