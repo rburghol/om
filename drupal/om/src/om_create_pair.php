@@ -22,10 +22,11 @@ if (count($args) >= 2) {
   $vahydro_parentid = $args[3];
   $varkey = $args[4];
   $model_name = $args[5];
-  $object_class = isset($args[6]) ? $args[6] : 'modelObject';
-  $scenarioid = isset($args[7]) ? $args[7] : $scenarioid;
+  $vahydro_search_type = $args[5] ? $args[6] : 'prop_feature';
+  $object_class = isset($args[7]) ? $args[7] : 'modelObject';
+  $scenarioid = isset($args[8]) ? $args[8] : $scenarioid;
 } else {
-  print("Usage: php om_create_pair.php query_type template_id om_parentid vahydro_parentid varkey model_name  [object_class=modelObject] [scenarioid=37] \n");
+  print("Usage: php om_create_pair.php query_type template_id om_parentid vahydro_parentid varkey model_name vahydro_search_type [object_class=modelObject] [scenarioid=37] \n");
   die;
 }
 
@@ -53,6 +54,7 @@ if ($query_type == 'file') {
     'varkey' => $varkey,
     'template_id' => $template_id,
     'model_name' => $model_name,
+    'vahydro_search_type' => $vahydro_search_type,
     'object_class' => $object_class,
     'scenarioid' => $scenarioid,
   );
@@ -63,6 +65,7 @@ foreach ($data as $element) {
   $vahydro_parentid = $element['vahydro_parentid'];
   $varkey = $element['varkey'];
   $model_name = $element['model_name'];
+  $vahydro_search_type = $element['vahydro_search_type'];
   $template_id = $element['template_id'];
   $object_class = $element['object_class'];
   $elid = $element['om_elementid'];
@@ -73,15 +76,15 @@ foreach ($data as $element) {
     die;
   }
   $om_parent = om_get_om_model($om_parentid);
-    error_log(print_r($element,1));
-  $vahydro_parent = om_load_dh_model('pid', $vahydro_parentid);
+  error_log(print_r($element,1));
+  $vahydro_parent = om_load_dh_model($vahydro_search_type, $vahydro_parentid);
   if (!$elid) {
     // need to create in OM
     $elid = om_copy_element($scenarioid, $template_id, $om_parentid, $model_name, -1);
     error_log("om_copy_element() Returned $elid ");
   }
   // add the VAHydro model or retrieve if it does not exist
-  $vahydro_child = om_load_dh_model('prop_feature', $vahydro_parentid, $model_name, $varkey, $object_class);
+  $vahydro_child = om_load_dh_model($vahydro_search_type, $vahydro_parentid, $model_name, $varkey, $object_class);
   $link_obj = om_link2dh($elid, $vahydro_child);
   $link_obj->propcode = 'pull_once';
   error_log("Saving Link/pull_once from: $link_obj->propvalue to $link_obj->featureid");
