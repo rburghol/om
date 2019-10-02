@@ -80,7 +80,7 @@ foreach ($data as $element) {
   if (is_object($plugin )) {
     error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
-      error_log("Setting csv" . print_r($csv,1));
+      //error_log("Setting csv" . print_r($csv,1));
       $plugin->setCSVTableField($vahydro_lu, $csv);
     }
   }
