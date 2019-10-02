@@ -70,9 +70,11 @@ foreach ($data as $element) {
   $vahydro_lu->filepath = implode('/', array($basepath, $scenario, 'eos', $landseg, '_0111-0211-0411.csv'));
   // e.g.: /media/NAS/omdata/p6/out/land/CFBASE30Y20180615/eos/N51121_0111-0211-0411.csv
   $plugin = dh_variables_getPlugins($vahydro_lu);
+  $csv = file_get_contents($vahydro_lu->filepath);
   if (is_object($plugin )) {
-  if (method_exists($plugin, 'setCSVTableField')) {
-    $plugin->setCSVTableField($vahydro_lu, $csv);
+    if (method_exists($plugin, 'setCSVTableField')) {
+      $plugin->setCSVTableField($vahydro_lu, $csv);
+    }
   }
   $vahydro_lu->save();
 }
