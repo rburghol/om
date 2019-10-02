@@ -78,6 +78,7 @@ foreach ($data as $element) {
   $om_parent = om_get_om_model($om_parentid);
   error_log(print_r($element,1));
   foreach($om_parent->components as $key => $prop) {
+    error_log("prop:" . print_r(array_keys((array)$prop),1));
     if ($prop['elemname'] == $model_name) {
       error_log("prop:" . print_r(array_keys((array)$prop),1));
       $elid = $prop['elementid'];
