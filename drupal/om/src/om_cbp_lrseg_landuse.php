@@ -9,7 +9,7 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
 // test: cmd 210453 4696374 om_model_element 340393 
 $scenario = 'CFBASE30Y20180615';
-$basepath = '/media/NAS/omdata/p6/out/land/';
+$basepath = '/media/NAS/omdata/p6/out/land';
 $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
