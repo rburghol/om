@@ -77,13 +77,7 @@ foreach ($data as $element) {
   }
   $om_parent = om_get_om_model($om_parentid);
   error_log(print_r($element,1));
-  foreach($om_parent->components as $key => $prop) {
-    error_log("Handling OM sub-comp component: $prop->name ");
-    if ($prop->name == $model_name) {
-      error_log("prop:" . print_r(array_keys((array)$prop),1));
-      
-    }
-  }
+  error_log("Comps: " . print_r($om_parent->components));
   $vahydro_parent = om_load_dh_model($vahydro_search_type, $vahydro_parentid);
   if (!$elid) {
     // need to create in OM
