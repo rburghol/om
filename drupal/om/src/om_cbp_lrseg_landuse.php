@@ -52,7 +52,7 @@ if ($query_type == 'file') {
 foreach ($data as $element) {
   $model_name = $element['model_name'];
   $vahydro_pid = $element['vahydro_pid']; 
-  $landseg = substr($model_name, 1, 6);
+  $landseg = substr($model_name, 0, 6);
   $riverseg = substr($model_name, 8, 13);
   if (!$vahydro_pid) {
     error_log("Missing model ID cannot process");
