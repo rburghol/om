@@ -17,7 +17,7 @@ function om_get_om_model($elid) {
   return $om_object;
 }
 
-function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_model_element', $object_class = 'modelContainer') {
+function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_model_element', $object_class = 'modelContainer', $model_scenario = 'vahydro-1.0') {
   if ($model_varkey == 'varcode') {
     // 
     $model_varkey = dh_varcode2varid($om_object->object_class, TRUE);
