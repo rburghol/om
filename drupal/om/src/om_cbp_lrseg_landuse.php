@@ -61,7 +61,7 @@ foreach ($data as $element) {
   }
   $vahydro_model = om_load_dh_model('pid', $vahydro_pid, $model_name);
   $vahydro_lu = om_load_dh_model('prop_feature', $vahydro_pid, 'landuse');
-  
+  error_log("Foudn land use element: " $vahydro_lu->pid);
   $vahydro_lu->rowkey = '';
   $vahydro_lu->colkey = 'luyear';
   $vahydro_lu->scenario = $scenario;
@@ -71,6 +71,7 @@ foreach ($data as $element) {
   // e.g.: /media/NAS/omdata/p6/out/land/CFBASE30Y20180615/eos/N51121_0111-0211-0411.csv
   $plugin = dh_variables_getPlugins($vahydro_lu);
   $csv = file_get_contents($vahydro_lu->filepath);
+  error_log("Opening " . $vahydro_lu->filepath);
   if (is_object($plugin )) {
     if (method_exists($plugin, 'setCSVTableField')) {
       $plugin->setCSVTableField($vahydro_lu, $csv);
