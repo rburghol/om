@@ -246,6 +246,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
         'propvalue_default' => 10.0,
+        'bundle' => 'om_data_matrix',
         'propname' => 'storage_stage_area',
         'varname' => 'Stage-Storage-SA',
         'vardesc' => 'Lookup table to provide stage and surface area for a given storage value.',

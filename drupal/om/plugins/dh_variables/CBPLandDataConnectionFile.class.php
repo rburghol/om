@@ -44,6 +44,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
         'propname' => 'landuse',
+        'bundle' => 'om_data_matrix',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'embed' => FALSE,

@@ -62,6 +62,7 @@ foreach ($data as $element) {
   $vahydro_model = om_load_dh_model('pid', $vahydro_pid, $model_name);
   $vahydro_lu = om_load_dh_model('prop_feature', $vahydro_pid, 'landuse');
   error_log("Found land use element: " . $vahydro_lu->pid);
+  error_log("VARID land use element: " . $vahydro_lu->varid);
   $vahydro_lu->rowkey = '';
   $vahydro_lu->colkey = 'luyear';
   $vahydro_lu->scenario = $scenario;
