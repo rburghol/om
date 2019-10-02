@@ -50,7 +50,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'embed' => FALSE,
         'vardesc' => 'Base matrix for land use over time.',
         'varname' => 'Default Landuse Table',
-        'varid' => dh_varkey2varid('om_class_dHOMDataMatrix', TRUE),
+        'varid' => dh_varkey2varid('om_class_DataMatrix', TRUE),
       ), 
       'luyear' => array(
         'entity_type' => $entity->entityType(),
