@@ -72,7 +72,8 @@ foreach ($data as $element) {
   // e.g.: /media/NAS/omdata/p6/out/land/CFBASE30Y20180615/eos/N51121_0111-0211-0411.csv
   $plugin = dh_variables_getPlugins($vahydro_lu);
   // Now set the Land use import file path 
-  $lu_filepath = implode('/', array($basepath, $scenario, 'lutable_' . $model_name . '.csv'));
+  $lupath = "/opt/model/p6/p6_gb604/out/land";
+  $lu_filepath = implode('/', array($lupath, $scenario, 'lutable_' . $model_name . '.csv'));
   $csv = file_get_contents($lu_filepath);
   error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
