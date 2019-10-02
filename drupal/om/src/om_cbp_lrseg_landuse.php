@@ -67,11 +67,14 @@ foreach ($data as $element) {
   $vahydro_lu->scenario = $scenario;
   $vahydro_lu->landseg = $landseg;
   $vahydro_lu->riverseg = $riverseg;
+  // set the Runoff File Path
   $vahydro_lu->filepath = implode('/', array($basepath, $scenario, 'eos', $landseg . '_0111-0211-0411.csv'));
   // e.g.: /media/NAS/omdata/p6/out/land/CFBASE30Y20180615/eos/N51121_0111-0211-0411.csv
   $plugin = dh_variables_getPlugins($vahydro_lu);
-  $csv = file_get_contents($vahydro_lu->filepath);
-  error_log("Opening " . $vahydro_lu->filepath);
+  // Now set the Land use import file path 
+  $lu_filepath = implode('/', array($basepath, $scenario, 'lutable_' . $model_name . '.csv'));
+  $csv = file_get_contents($lu_filepath);
+  error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
     error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
