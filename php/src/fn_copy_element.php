@@ -113,7 +113,7 @@ if ( !($newelid > 0) ) {
       $loadres = loadModelElement($newelid, array(), 0);
       $thisobject = $loadres['object'];
       error_log("Renaming object to $name\n");
-      saveModelObject($elementid, $thisobject, array('name' => $name), $debug) ;
+      saveModelObject($newelid, $thisobject, array('name' => $name), $debug) ;
    }
    echo $newelid;
 }
