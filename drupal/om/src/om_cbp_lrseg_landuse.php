@@ -75,12 +75,12 @@ foreach ($data as $element) {
   // Now set the Land use import file path 
   $lupath = "/opt/model/p6/p6_gb604/out/land";
   $lu_filepath = implode('/', array($lupath, $scenario, 'landuse', 'lutable_' . $model_name . '.csv'));
-  $csv = file_get_contents($lu_filepath);
+  $csv = om_readDelimitedFile($lu_filepath);
   error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
     error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
-      error_log("Setting csv");
+      error_log("Setting csv" . print_r($csv,1));
       $plugin->setCSVTableField($vahydro_lu, $csv);
     }
   }

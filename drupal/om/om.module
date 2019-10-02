@@ -9,6 +9,62 @@ function om_entity_info() {
   return $return;
 }
 
+function om_readDelimitedFile($filename,$delimiter=',', $headerline=0, $numlines = -1) {
+   # $headerline = 1 indicates that the first line contains column names,
+   #                 if this is the case, we create an associative array to return
+   
+   if ($headerline) {
+      $outarr = om_buildStock($filename, $delimiter);
+      return $outarr;
+   }
+   $fp = fopen($filename,"r");
+   $maxlinewidth = 8192;
+   $thisarr = array();
+   $outarr = array();
+   
+   if ($numlines == -1) {
+
+      while($thisarr = fgetcsv($fp,$maxlinewidth, $delimiter)) {
+         array_push($outarr,$thisarr);
+      }
+   } else {
+      $numread = 1;
+      while( ($thisarr = fgetcsv($fp,$maxlinewidth, $delimiter)) and ($numread <= $numlines)) {
+         array_push($outarr,$thisarr);
+         $numread++;
+      }
+   }
+   fclose($fp);
+   return $outarr;
+}
+
+function om_buildStock($filename, $delimiter=',', $debug = 0) {
+   $handle = fopen($filename, "r");
+   $fields = fgetcsv($handle, 0, "$delimiter");
+   while($data = fgetcsv($handle, 0, "$delimiter")) {
+      $detail[] = $data;
+   }
+   $x = 0;
+   $y = 0;
+   $stock = array();
+   if (count($detail) > 0) {
+      foreach($detail as $i) {
+         foreach($fields as $z) {
+             $stock[$x][$z] = $i[$y];
+             if ($debug) {
+                $val = $i[$y];
+                error_log("setting [ $x ] [ $z ] = $val ($i [ $y ]) \n");
+             }
+             $y++;
+         }
+         $y = 0;
+         $x++;
+      }
+   }
+   fclose($handle);
+   return $stock;
+}
+
 function om_run_id_options() {
   global $user;
   $options = array();
