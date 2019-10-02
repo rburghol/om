@@ -73,6 +73,7 @@ foreach ($data as $element) {
   $csv = file_get_contents($vahydro_lu->filepath);
   error_log("Opening " . $vahydro_lu->filepath);
   if (is_object($plugin )) {
+    error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
       error_log("Setting csv");
       $plugin->setCSVTableField($vahydro_lu, $csv);
