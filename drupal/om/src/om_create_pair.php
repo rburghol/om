@@ -82,7 +82,6 @@ foreach ($data as $element) {
       $elid = $prop->elementid;
     }
   }
-  $vahydro_parent = om_load_dh_model($vahydro_search_type, $vahydro_parentid);
   if (!$elid) {
     // need to create in OM
     $elid = om_copy_element($scenarioid, $template_id, $om_parentid, $model_name, -1);
@@ -92,6 +91,7 @@ foreach ($data as $element) {
     om_setprop($elid, 'custom2', $element['custom2']);
   }
   // add the VAHydro model or retrieve if it does not exist
+  // we use pid 
   $vahydro_child = om_load_dh_model($vahydro_search_type, $vahydro_parentid, $model_name, $varkey, $object_class);
   $link_obj = om_link2dh($elid, $vahydro_child);
   $link_obj->propcode = 'pull_once';
