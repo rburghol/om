@@ -38,6 +38,7 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
     case 'feature':
     default:
     $search_mode = 'propcode_singular';
+    $model_entity_type = 'dh_feature';
     error_log("Using query_mode FEATURE to load model element");
     $om_feature = entity_load_single($model_entity_type, $fid);
     error_log("Found $om_feature->name ($om_feature->hydroid)");
