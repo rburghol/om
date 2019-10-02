@@ -105,6 +105,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
+        error_log("Translating matrix to tablefield");
         $plugin->setCSVTableField($dh_prop, $in);
       }
       $translated = TRUE;
