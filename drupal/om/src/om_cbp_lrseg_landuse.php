@@ -9,7 +9,7 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
 // test: cmd 210453 4696374 om_model_element 340393 
 $scenario = 'CFBASE30Y20180615';
-$basepath = '/media/NAS/omdata/p6/out/land/';
+$basepath = '/media/NAS/omdata/p6/out/land';
 $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
@@ -52,7 +52,7 @@ if ($query_type == 'file') {
 foreach ($data as $element) {
   $model_name = $element['model_name'];
   $vahydro_pid = $element['vahydro_pid']; 
-  $landseg = substr($model_name, 1, 6);
+  $landseg = substr($model_name, 0, 6);
   $riverseg = substr($model_name, 8, 13);
   if (!$vahydro_pid) {
     error_log("Missing model ID cannot process");
@@ -61,18 +61,27 @@ foreach ($data as $element) {
   }
   $vahydro_model = om_load_dh_model('pid', $vahydro_pid, $model_name);
   $vahydro_lu = om_load_dh_model('prop_feature', $vahydro_pid, 'landuse');
-  
+  error_log("Found land use element: " . $vahydro_lu->pid);
   $vahydro_lu->rowkey = '';
   $vahydro_lu->colkey = 'luyear';
   $vahydro_lu->scenario = $scenario;
   $vahydro_lu->landseg = $landseg;
   $vahydro_lu->riverseg = $riverseg;
-  $vahydro_lu->filepath = implode('/', array($basepath, $scenario, 'eos', $landseg, '_0111-0211-0411.csv'));
+  // set the Runoff File Path
+  $vahydro_lu->filepath = implode('/', array($basepath, $scenario, 'eos', $landseg . '_0111-0211-0411.csv'));
   // e.g.: /media/NAS/omdata/p6/out/land/CFBASE30Y20180615/eos/N51121_0111-0211-0411.csv
   $plugin = dh_variables_getPlugins($vahydro_lu);
+  // Now set the Land use import file path 
+  $lupath = "/opt/model/p6/p6_gb604/out/land";
+  $lu_filepath = implode('/', array($lupath, $scenario, 'landuse', 'lutable_' . $model_name . '.csv'));
+  $csv = file_get_contents($lu_filepath);
+  error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
-  if (method_exists($plugin, 'setCSVTableField')) {
-    $plugin->setCSVTableField($vahydro_lu, $csv);
+    error_log("Checking plugin " . get_class($plugin));
+    if (method_exists($plugin, 'setCSVTableField')) {
+      error_log("Setting csv");
+      $plugin->setCSVTableField($vahydro_lu, $csv);
+    }
   }
   $vahydro_lu->save();
 }
