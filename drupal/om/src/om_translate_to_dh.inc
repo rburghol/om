@@ -347,3 +347,14 @@ function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_
   $elid = shell_exec($cmd);
   return $elid;
 }
+
+function om_setprop($elementid, $propname, $propval) {
+  global $php_path;
+  $cmd = "cd $php_path \n";
+  $cmd .= "php setprop.php $elementid $propname=\"$propval\"";
+  //dpm( $php_path, "Exec Path ");
+  //dpm( $cmd, "Executing ");
+  error_log("$cmd");
+  $elid = shell_exec($cmd);
+  return $elid;
+}
