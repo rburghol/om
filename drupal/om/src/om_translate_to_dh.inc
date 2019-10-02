@@ -338,7 +338,7 @@ function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_
   $cmd = "cd $php_path \n";
   $cmd .= "php fn_copy_element.php $scenarioid $template_elementid $parentid $copy_children";
   if (!empty($new_name)) {
-    $cmd .= " \"name=$new_name\" ";
+    $cmd .= " \"$new_name\" ";
   }
   //dpm( $php_path, "Exec Path ");
   //dpm( $cmd, "Executing ");
