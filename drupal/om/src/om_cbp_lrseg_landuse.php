@@ -73,7 +73,7 @@ foreach ($data as $element) {
   $plugin = dh_variables_getPlugins($vahydro_lu);
   // Now set the Land use import file path 
   $lupath = "/opt/model/p6/p6_gb604/out/land";
-  $lu_filepath = implode('/', array($lupath, $scenario, 'lutable_' . $model_name . '.csv'));
+  $lu_filepath = implode('/', array($lupath, $scenario, 'landuse', 'lutable_' . $model_name . '.csv'));
   $csv = file_get_contents($lu_filepath);
   error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
