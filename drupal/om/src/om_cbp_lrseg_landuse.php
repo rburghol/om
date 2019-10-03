@@ -54,7 +54,7 @@ foreach ($data as $element) {
   $model_name = $element['model_name'];
   $vahydro_pid = $element['vahydro_pid']; 
   $landseg = substr($model_name, 0, 6);
-  $riverseg = substr($model_name, 8, 13);
+  $riverseg = substr($model_name, 7, 13);
   if (!$vahydro_pid) {
     error_log("Missing model ID cannot process");
     error_log(print_r($element,1));
