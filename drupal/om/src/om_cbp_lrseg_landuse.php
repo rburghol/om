@@ -69,6 +69,7 @@ foreach ($data as $element) {
   $vahydro_lu->colkey = 'luyear';
   // set model container properties
   $vahydro_model->scenario = $scenario;
+  $vahydro_model->version = $version;
   $vahydro_model->landseg = $landseg;
   $vahydro_model->riverseg = $riverseg;
   // set the Runoff File Path
