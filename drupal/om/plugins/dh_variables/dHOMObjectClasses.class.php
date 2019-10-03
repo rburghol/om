@@ -1293,7 +1293,7 @@ class dHOMtextField extends dHOMSubComp {
   }
 }
 
-class dHOMObjectClass extends dHOMAlphanumericConstant {
+class dHOMObjectClass extends dHVariablePluginCodeAttribute {
   
 }
 
