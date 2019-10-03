@@ -107,6 +107,28 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'varname' => 'Version',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
+      'filepath' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'filepath',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'embed' => FALSE,
+        'vardesc' => "Unit area runoff file location.",
+        'varname' => 'File Path',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'lufile' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'lufile',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'embed' => FALSE,
+        'vardesc' => "Landuse CSV file location.",
+        'varname' => 'LU File',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
     );
     return $defaults;
   }
