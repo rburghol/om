@@ -11,6 +11,7 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 // drush scr modules/om/src/om_cbp_lrseg_landuse.php cmd N51045_JU1_7690_7490 4745316
 $scenario = 'CFBASE30Y20180615';
 $basepath = '/media/NAS/omdata/p6/out/land';
+$version = 'p6';
 $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
