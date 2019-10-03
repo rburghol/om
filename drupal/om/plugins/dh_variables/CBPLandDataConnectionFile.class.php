@@ -58,7 +58,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'luyear',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "Land Use year (set to thisyear if dynamic, or single value if static).",
         'varname' => 'Default Landuse Table',
         'varid' => dh_varkey2varid('om_class_dHOMEquation', TRUE),
@@ -69,7 +68,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'landseg',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "Land Segment.",
         'varname' => 'Land Segment',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -80,7 +78,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'riverseg',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "River Segment.",
         'varname' => 'River Segment',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -91,7 +88,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'scenario',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "Model Scenario.",
         'varname' => 'Scenario',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -102,7 +98,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'version',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "model Version.",
         'varname' => 'Version',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -113,7 +108,6 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'filepath',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "Unit area runoff file location.",
         'varname' => 'File Path',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -124,13 +118,12 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'lufile',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'embed' => FALSE,
         'vardesc' => "Landuse CSV file location.",
         'varname' => 'LU File',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     );
-    error_log("Defaults:" . print_r(array_keys($defaults),1));
+    //error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
   }
   
