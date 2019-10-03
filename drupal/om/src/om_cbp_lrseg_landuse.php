@@ -87,6 +87,7 @@ foreach ($data as $element) {
       $plugin->setCSVTableField($vahydro_lu, $csv);
     }
   }
-  $vahydro_lu->save();
+  // we save the parent model element, which saves all attached properties, including the landuse matrix
+  $vahydro_model->save();
 }
 ?>
