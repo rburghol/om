@@ -130,6 +130,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     );
+    error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
   }
   
