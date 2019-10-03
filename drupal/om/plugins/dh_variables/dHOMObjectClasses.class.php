@@ -1070,7 +1070,8 @@ class dHOMEquation extends dHOMSubComp {
   }
 }
 
-class dHOMAlphanumericConstant extends dHVariablePluginDefault {
+//class dHOMAlphanumericConstant extends dHVariablePluginDefault {
+class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
   var $object_class = 'textField';
   
   public function hiddenFields() {
@@ -1128,6 +1129,13 @@ class dHOMAlphanumericConstant extends dHVariablePluginDefault {
         );
       break;
     }
+  }
+  
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    // this sets only the variable on the base object
+    //array_shift($path);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
 }
 
