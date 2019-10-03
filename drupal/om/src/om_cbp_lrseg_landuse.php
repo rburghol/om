@@ -28,7 +28,7 @@ if (count($args) >= 2) {
 }
 
 if ($query_type == 'file') {
-  $filepath = $om_parentid;
+  $filepath = $model_name;
   error_log("File requested: $filepath");
   $data = array();
   $file = fopen($filepath, 'r');
