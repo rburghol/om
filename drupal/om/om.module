@@ -39,6 +39,7 @@ function om_readDelimitedFile($filename,$delimiter=',', $headerline=0, $numlines
 }
 
 function om_tablefield_tablefield($field) {
+  // unpack the hinky-ass 
   $tablefield = isset($field['und'][0]['tablefield']) ? $field['und'][0]['tablefield'] : $field['und'][0]['tabledata'];
   return $tablefield;
 }
