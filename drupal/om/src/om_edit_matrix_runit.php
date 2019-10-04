@@ -79,8 +79,8 @@ foreach ($data as $element) {
       $plugin->setCSVTableField($dh_prop, $csv);
     }
   }
-  // we save the parent model element, which saves all attached properties, except the landuse matrix
-  $dh_prop->save();
   */
+  // we save the matrix
+  $dh_prop->save();
 }
 ?>
