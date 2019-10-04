@@ -1443,21 +1443,12 @@ class dHOMDataMatrix extends dHOMSubComp {
     // translate tablefield to 1-D array, with values from rows left to right, top to bottom as 
     // comes from an HTML form submission in OM
     $ttrans = array('rows' => 0, 'cols' => $cols, 'array-1d' => array());
-    // New: try this:
-    $trat = tablefield_value_array_get($field['und'][0], array());
-    error_log("Raw" . print_r($trat,1));
-    $trat = tablefield_to_array($trat);
-    $rowkey = 0;
-    foreach ($trat as $rowix => $rowvals) {
-      foreach ($rowvals as $ix => $val) {
-        $ttrans['array-1d'][] = $val;
-      }
-    }
-    return $ttrans;
-    // Old code
-    $ttrans['cols'] = $field['und'][0]['tablefield']['rebuild']['count_cols'];
-    $ttrans['rows'] = $field['und'][0]['tablefield']['rebuild']['count_rows'];
-    $trat = $field['und'][0]['tablefield']['tabledata'];
+    // This relies upon finding the column and row counts in this location
+    //  This is ONLY true after a tablefield is saved, which is nutso, so we insert a layer of code to handle this.
+    $tablefield = om_tablefield_tablefield($field);
+    $ttrans['cols'] = $tablefield['rebuild']['count_cols'];
+    $ttrans['rows'] = $tablefield['rebuild']['count_rows'];
+    $trat = $tablefield['tabledata'];
     //dpm($trat,'data');
     $rowkey = 0;
     foreach ($trat as $rowix => $rowvals) {
