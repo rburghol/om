@@ -60,7 +60,7 @@ foreach ($data as $element) {
   $dh_prop = entity_load_single('dh_properties', $vahydro_pid);
   $fields = get_object_vars($dh_prop);
   //$tf = tablefield_value_array_get($dh_prop->field_dh_matrix,array(), "", "", "");
-  $tf = tablefield_value_array_get($dh_prop->field_dh_matrix, array());
+  $tf = tablefield_value_array_get($dh_prop->field_dh_matrix['und'][0], array());
   error_log("field_dh_matrix: " . print_r($tf,1));
   $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
