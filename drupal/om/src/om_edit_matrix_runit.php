@@ -68,6 +68,7 @@ foreach ($data as $element) {
   $new_matrix[] = array(6, 'Qcbp6_unit');
   
   error_log("Matrix: " . print_r($om_matrix,1));
+  error_log("New Matrix: " . print_r($new_matrix,1));
   $plugin->setCSVTableField($dh_prop, $new_matrix);
   /*
   $csv = om_readDelimitedFile($lu_filepath);
