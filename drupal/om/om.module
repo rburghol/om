@@ -38,6 +38,12 @@ function om_readDelimitedFile($filename,$delimiter=',', $headerline=0, $numlines
    return $outarr;
 }
 
+function om_tablefield_tablefield($field) {
+  // unpack the hinky-ass 
+  $tablefield = isset($field['und'][0]['tablefield']) ? $field['und'][0]['tablefield'] : $field['und'][0]['tabledata'];
+  return $tablefield;
+}
+
 function om_buildStock($filename, $delimiter=',', $debug = 0) {
    $handle = fopen($filename, "r");
    $fields = fgetcsv($handle, 0, "$delimiter");
