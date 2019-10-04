@@ -58,7 +58,7 @@ foreach ($data as $element) {
   }
   $dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $plugin = dh_variables_getPlugins($dh_prop);
-  $om_matrix = $plugin->tablefieldToOMMatrix($entity->field_dh_matrix);
+  $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
   error_log("Matrix: " . print_r($om_matrix,1));
   /*
   $csv = om_readDelimitedFile($lu_filepath);
