@@ -58,7 +58,7 @@ foreach ($data as $element) {
   }
   //$dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $dh_prop = entity_load_single('dh_properties', $vahydro_pid);
-  error_log("Props and Fields: " . print_r(array_keys((array)$dh_prop),1));
+  error_log("Props and Fields: " . print_r(get_object_vars ($dh_prop),1));
   error_log("propname: " . $dh_prop->propname);
   error_log("pid: " . $dh_prop->pid);
   error_log("Varid: " . $dh_prop->varid);
