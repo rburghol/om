@@ -20,8 +20,7 @@ while ($arg = drush_shift()) {
 // Is single command line arg?
 if (count($args) >= 2) {
   $query_type = $args[0];
-  $model_name = $args[1];
-  $vahydro_pid = $args[2];
+  $vahydro_pid = $args[1];
 } else {
   print("Usage: php om_edit_matrix_runit.php query_type vahydro_pid \n");
   die;
