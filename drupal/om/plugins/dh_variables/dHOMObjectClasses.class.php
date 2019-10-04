@@ -570,6 +570,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function load(&$entity) {
+    $this->loadProperties(&$entity);
     // get field default basics
   }
   public function saveObjectClass(&$entity) {
@@ -1384,6 +1385,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
+    parent::load($entity);
     if ($entity->is_new or $entity->reset_defaults) {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
