@@ -1445,6 +1445,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $ttrans = array('rows' => 0, 'cols' => $cols, 'array-1d' => array());
     // New: try this:
     $trat = tablefield_value_array_get($field['und'][0], array());
+    $trat = dh_tablefield_to_associative($trat);
     error_log("Raw" . print_r($trat,1));
     $rowkey = 0;
     foreach ($trat as $rowix => $rowvals) {
