@@ -1445,7 +1445,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $ttrans = array('rows' => 0, 'cols' => $cols, 'array-1d' => array());
     $ttrans['cols'] = $field['und'][0]['tablefield']['rebuild']['count_cols'];
     $ttrans['rows'] = $field['und'][0]['tablefield']['rebuild']['count_rows'];
-    $trat = tablefield_value_array_get($$field['und'][0], array());
+    $trat = tablefield_value_array_get($field['und'][0], array());
     //dpm($trat,'data');
     $rowkey = 0;
     foreach ($trat as $rowix => $rowvals) {
