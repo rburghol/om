@@ -59,14 +59,12 @@ foreach ($data as $element) {
   //$dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $dh_prop = entity_load_single('dh_properties', $vahydro_pid);
   $fields = get_object_vars($dh_prop);
-  foreach ($fields as $fname => $fprop) {
-	  error_log("$fname" );
-  }
   error_log("propname: " . $dh_prop->propname);
   error_log("pid: " . $dh_prop->pid);
   error_log("Varid: " . $dh_prop->varid);
   error_log("bundle: " . $dh_prop->bundle);
   error_log("Varkey: " . $dh_prop->varkey);
+  error_log("field_dh_matrix: " . print_r($dh_prop->field_dh_matrix,1));
   $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
   error_log("Matrix: " . print_r($om_matrix,1));
