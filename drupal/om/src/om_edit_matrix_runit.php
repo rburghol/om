@@ -57,6 +57,7 @@ foreach ($data as $element) {
     die;
   }
   $dh_prop = om_load_dh_model('pid', $vahydro_pid);
+  $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
   error_log("Matrix: " . print_r($om_matrix,1));
   /*
