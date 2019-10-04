@@ -59,14 +59,14 @@ foreach ($data as $element) {
   $dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
-  $new_matrix = array(
-    0 => array(1, 'Qbaseline_unit'),
-    0 => array(2, 'Qsynth_unit'),
-    0 => array(3, 'Qvahydro_unit'),
-    0 => array(4, 'Qcbp6_unit'),
-    0 => array(5, 'Qcbp6_unit'),
-    0 => array(6, 'Qcbp6_unit'),
-  );
+  $new_matrix = array();
+  $new_matrix[] = array(1, 'Qbaseline_unit');
+  $new_matrix[] = array(2, 'Qsynth_unit');
+  $new_matrix[] = array(3, 'Qvahydro_unit');
+  $new_matrix[] = array(4, 'Qcbp6_unit');
+  $new_matrix[] = array(5, 'Qcbp6_unit');
+  $new_matrix[] = array(6, 'Qcbp6_unit');
+  
   error_log("Matrix: " . print_r($om_matrix,1));
   $plugin->setCSVTableField($dh_prop, $new_matrix);
   /*
