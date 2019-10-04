@@ -1401,7 +1401,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     // If sub-component omit the object_class since they should fail if they do not exist, rather than adding
     if (property_exists($entity, 'field_dh_matrix')) {
       $cols = $entity->field_dh_matrix['und'][0]['tablefield']['rebuild']['count_cols'];
-      $om_matrix = $this->tablefieldToOMMAtrix($entity->field_dh_matrix);
+      $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
       $rows = $om_matrix['rows'];
       $cols = $om_matrix['cols'];
       // set rows
@@ -1439,7 +1439,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     return $table;
   }
   
-  public function tablefieldToOMMAtrix($field) {
+  public function tablefieldToOMMatrix($field) {
     // translate tablefield to 1-D array, with values from rows left to right, top to bottom as 
     // comes from an HTML form submission in OM
     $ttrans = array('rows' => 0, 'cols' => $cols, 'array-1d' => array());
