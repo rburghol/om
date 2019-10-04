@@ -48,6 +48,14 @@ if ($query_type == 'file') {
     'vahydro_pid' => $vahydro_pid,
   );
 }
+$new_matrix = array();
+$new_matrix[] = array(1, 'Qbaseline_unit');
+$new_matrix[] = array(2, 'Qsynth_unit');
+$new_matrix[] = array(3, 'Qvahydro_unit');
+$new_matrix[] = array(4, 'Qcbp6_unit');
+$new_matrix[] = array(5, 'Qcbp6_unit');
+$new_matrix[] = array(6, 'Qcbp6_unit');
+error_log("New Matrix: " . print_r($new_matrix,1));
 
 foreach ($data as $element) {
   $vahydro_pid = $element['vahydro_pid']; 
@@ -59,28 +67,9 @@ foreach ($data as $element) {
   $dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
-  $new_matrix = array();
-  $new_matrix[] = array(1, 'Qbaseline_unit');
-  $new_matrix[] = array(2, 'Qsynth_unit');
-  $new_matrix[] = array(3, 'Qvahydro_unit');
-  $new_matrix[] = array(4, 'Qcbp6_unit');
-  $new_matrix[] = array(5, 'Qcbp6_unit');
-  $new_matrix[] = array(6, 'Qcbp6_unit');
   
-  error_log("Matrix: " . print_r($om_matrix,1));
-  error_log("New Matrix: " . print_r($new_matrix,1));
+  error_log("Updating: $pid : $dh_prop->propname");
   $plugin->setCSVTableField($dh_prop, $new_matrix);
-  /*
-  $csv = om_readDelimitedFile($lu_filepath);
-  error_log("Opening " . $lu_filepath);
-  if (is_object($plugin )) {
-    error_log("Checking plugin " . get_class($plugin));
-    if (method_exists($plugin, 'setCSVTableField')) {
-      //error_log("Setting csv" . print_r($csv,1));
-      $plugin->setCSVTableField($dh_prop, $csv);
-    }
-  }
-  */
   // we save the matrix
   $dh_prop->save();
 }
