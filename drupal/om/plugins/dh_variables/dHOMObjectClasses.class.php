@@ -570,8 +570,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function load(&$entity) {
-    error_log("Load() called");
-    $this->loadProperties($entity);
     // get field default basics
   }
   public function saveObjectClass(&$entity) {
@@ -695,6 +693,15 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 
     $setstr = FALSE;
     $test_only = FALSE;
+    // handle when the propvalue is an object, if it has a plugin
+    if (is_object($propvalue)) {
+      $plugin = dh_variables_getPlugins($propvalue);
+      if (method_exists($plugin, 'getPropertyAttribute')) {
+        $propvalue = $plugin->getPropertyAttribute($propvalue);
+      } else {
+        $propvalue = $propvalue->propvalue;
+      }
+    }
     // @todo
     // constants should have 1 layer lower, 
     // Ex: a max_storage property on an impoundment comes in as 3 parents, 
