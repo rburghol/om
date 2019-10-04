@@ -56,8 +56,9 @@ foreach ($data as $element) {
     error_log(print_r($element,1));
     die;
   }
-  $prop = om_load_dh_model('pid', $vahydro_pid);
-  $om_matrix = $prop->tablefieldToOMMatrix($entity->field_dh_matrix);
+  $dh_prop = om_load_dh_model('pid', $vahydro_pid);
+  $plugin = dh_variables_getPlugins($dh_prop);
+  $om_matrix = $plugin->tablefieldToOMMatrix($entity->field_dh_matrix);
   error_log("Matrix: " . print_r($om_matrix,1));
   /*
   $csv = om_readDelimitedFile($lu_filepath);
@@ -66,11 +67,11 @@ foreach ($data as $element) {
     error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
       //error_log("Setting csv" . print_r($csv,1));
-      $plugin->setCSVTableField($prop, $csv);
+      $plugin->setCSVTableField($dh_prop, $csv);
     }
   }
   // we save the parent model element, which saves all attached properties, except the landuse matrix
-  $prop->save();
+  $dh_prop->save();
   */
 }
 ?>
