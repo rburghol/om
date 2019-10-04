@@ -570,6 +570,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function load(&$entity) {
+    error_log("Load() called");
     $this->loadProperties($entity);
     // get field default basics
   }
