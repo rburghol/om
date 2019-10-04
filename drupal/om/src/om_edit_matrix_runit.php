@@ -59,6 +59,8 @@ foreach ($data as $element) {
   $dh_prop = om_load_dh_model('pid', $vahydro_pid);
   $plugin = dh_variables_getPlugins($dh_prop);
   error_log("Props and Fields: " . print_r(array_keys((array)$dh_prop),1));
+  error_log("Varid: " . $dh_prop->varid;
+  error_log("Varkey: " . $dh_prop->varkey;
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
   error_log("Matrix: " . print_r($om_matrix,1));
   /*
