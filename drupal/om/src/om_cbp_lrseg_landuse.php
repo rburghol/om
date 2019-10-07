@@ -84,7 +84,7 @@ foreach ($data as $element) {
   $csv = om_readDelimitedFile($lu_filepath);
   error_log("Opening " . $lu_filepath);
   if (is_object($plugin )) {
-    error_log("Checking plugin " . get_class($plugin));
+    //error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
       error_log("Setting csv" . print_r($csv,1));
       $plugin->setCSVTableField($vahydro_lu, $csv);
@@ -93,7 +93,7 @@ foreach ($data as $element) {
   // we save the parent model element, which saves all attached properties, except the landuse matrix
   $vahydro_model->save();
   // save the lu matrix (cannot be embedded ... yet)
-  error_log("saving LU as bundle " . $vahydro_lu->bundle);
+  //error_log("saving LU as bundle " . $vahydro_lu->bundle);
   $vahydro_lu->save();
 }
 ?>
