@@ -17,7 +17,7 @@ hdrcols=`head -n 1 $filename`
 echo "Populating $tablename "
 
 set -f
-csql=' create table $tablename as select * from cbp_p6_cfbase30y20180615_n51161 limit 0;'
+csql=" create table $tablename as select * from cbp_p6_cfbase30y20180615_n51161 limit 0;"
 isql="copy $tablename ($hdrcols) from '$filename' WITH CSV HEADER "
 isql="$isql; update $tablename set timestamp = extract(epoch from thisdate) "
 isql="$isql; create index ${tablename}_tix on $tablename (timestamp) "
