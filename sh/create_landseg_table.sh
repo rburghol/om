@@ -21,5 +21,6 @@ csql=' create table $tablename as select * from cbp_p6_cfbase30y20180615_n51161 
 isql="copy $tablename ($hdrcols) from '$filename' WITH CSV HEADER "
 isql="$isql; update $tablename set timestamp = extract(epoch from thisdate) "
 isql="$isql; create index ${tablename}_tix on $tablename (timestamp) "
-echo "BEGIN; $csql; $isql; COMMIT;" | psql -U postgres -p 5444 model_scratch
+#echo "BEGIN; $csql; $isql; COMMIT;" | psql -U postgres -p 5444 model_scratch
+echo "BEGIN; $csql; $isql; COMMIT;" 
 set +f
