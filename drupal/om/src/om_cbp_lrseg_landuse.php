@@ -9,6 +9,7 @@ module_load_include('inc', 'om', 'src/om_translate_to_dh');
 
 // test: cmd 210453 4696374 om_model_element 340393 
 // drush scr modules/om/src/om_cbp_lrseg_landuse.php cmd N51045_JU1_7690_7490 4745316
+// drush scr modules/om/src/om_cbp_lrseg_landuse.php cmd N51161_JU1_7690_7490 4836252
 $scenario = 'CFBASE30Y20180615';
 $basepath = '/media/NAS/omdata/p6/out/land';
 $version = 'p6';
@@ -85,13 +86,14 @@ foreach ($data as $element) {
   if (is_object($plugin )) {
     error_log("Checking plugin " . get_class($plugin));
     if (method_exists($plugin, 'setCSVTableField')) {
-      //error_log("Setting csv" . print_r($csv,1));
+      error_log("Setting csv" . print_r($csv,1));
       $plugin->setCSVTableField($vahydro_lu, $csv);
     }
   }
   // we save the parent model element, which saves all attached properties, except the landuse matrix
   $vahydro_model->save();
   // save the lu matrix (cannot be embedded ... yet)
+  error_log("saving LU as bundle " . $vahydro_lu->bundle);
   $vahydro_lu->save();
 }
 ?>

@@ -10835,7 +10835,7 @@ function loadSessionTable($thisobject, $elementid, $runid = -1, $data_element = 
       }
    }
    $dbcoltypes = $thisobject->dbcolumntypes;
-   error_log("Data types:" . print_r($dbcoltypes, 1));
+   //error_log("Data types:" . print_r($dbcoltypes, 1));
    $tableinfo = checkSessionTable($thisobject, $elementid, $runid, $data_element);
    $file_exists = $tableinfo['file_exists'];
    $remote_file = $tableinfo['remote'];
