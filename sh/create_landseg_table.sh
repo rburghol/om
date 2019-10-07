@@ -14,7 +14,6 @@ filename='/media/NAS/omdata/p6/out/land/$scenario/eos/${landseg}_0111-0211-0411.
 tablename="cbp_p6_${scenario}_${landseg}"
 tablename=`echo $tablename | tr '[:upper:]' '[:lower:]'`
 echo $tablename 
-exit
 
 set -f
 csql="create table $tablename as select * from cbp_p6_cfbase30y20180615_n51161 limit 0;"
