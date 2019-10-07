@@ -693,6 +693,15 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 
     $setstr = FALSE;
     $test_only = FALSE;
+    // handle when the propvalue is an object, if it has a plugin
+    if (is_object($propvalue)) {
+      $plugin = dh_variables_getPlugins($propvalue);
+      if (method_exists($plugin, 'getPropertyAttribute')) {
+        $propvalue = $plugin->getPropertyAttribute($propvalue);
+      } else {
+        $propvalue = $propvalue->propvalue;
+      }
+    }
     // @todo
     // constants should have 1 layer lower, 
     // Ex: a max_storage property on an impoundment comes in as 3 parents, 
@@ -1384,6 +1393,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
+    parent::load($entity);
     if ($entity->is_new or $entity->reset_defaults) {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
@@ -1394,6 +1404,8 @@ class dHOMDataMatrix extends dHOMSubComp {
   // @todo: add basic handling of things other than descriptions
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
+    // @todo: move this to the base class if it checks out as OK
+    $this->loadProperties($entity, FALSE);
     //dpm($path, 'original path to setAllRemoteProperties()');
     //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     
