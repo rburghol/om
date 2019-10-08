@@ -198,7 +198,7 @@ function om_run_model_form_controls(&$form, &$form_state) {
 // @todo: move this to the base module?
 function om_run_model($config) {
   //$test_only = TRUE;
-  //dpm($config,'submitted to run model');
+  dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   // run the model 
   $run_id = $config['run_id'];
