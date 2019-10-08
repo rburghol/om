@@ -979,14 +979,14 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       $status_update = verifyRunStatus($listobject, $recid);
       $recent_status = $status_update['status_flag'];
       if (!in_array($recent_status, $running)) {
-         print("Forking $recid with params " . print_r($run_params,1) . "\n");
+         error_log("Forking $recid with params " . print_r($run_params,1) . "\n");
          
          //setStatus($listobject, $recid, "Model Run for Element $recid Forked", $sip, 1, $run_id);
          forkRun($run_params);
       }
       //if ($debug) {
-         print("Model Run for Element $recid Forked \n");
-         print("With parameters: " . print_r($run_params,1) . " \n");
+         error_log("Model Run for Element $recid Forked \n");
+         error_log("With parameters: " . print_r($run_params,1) . " \n");
       //}
       deleteRunRecord($listobject, $recid, $run_id);
    }
