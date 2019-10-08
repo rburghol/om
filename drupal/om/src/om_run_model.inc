@@ -226,6 +226,8 @@ function om_run_model($config) {
     //  strict = -1 - do not verify, assume it is OK
     $run_mode = $config['run_mode']; // run_mode - model setting for use by internal lists etc. select list of 1-100?
     $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $startdate $enddate $cache_date $force_overwrite $scid $strict $run_mode ";
+    // @todo: this does not do anything.  The run_model.php script and the forkRun() routines are not able to handle this
+    //        so for now this is a placeholder.
     if ($flow_mode) {
       $setstr .= "normal flow_mode=$flow_mode";
     }
@@ -331,6 +333,17 @@ function om_run_model_form_run(&$form, &$form_state) {
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
   $cd = $model_config['cache_date'];
+  $flow_mode = $model_config['flow_mode'];
+  // set the model flow_mode property here, it will cascade a change back to the OM database before running.
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'flow_mode',
+    'propvalue' => $flow_mode,
+  );
+  // If the flow_mode prop does not exist yet, this will create AND save it.
+  $flow_mode = om_model_getSetProperty($values, 'name');
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
