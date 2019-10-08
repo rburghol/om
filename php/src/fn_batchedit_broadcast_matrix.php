@@ -19,7 +19,7 @@ if ( count($argv) < 3 ) {
 
 $scenarioid = $argv[1];
 $subcomp_name = $argv[2];
-list($prop,$value) = split('=', $argv[3]);
+list($prop,$value) = explode('=', $argv[3]);
 
 if (isset($argv[4])) {
    $elid = $argv[4];
