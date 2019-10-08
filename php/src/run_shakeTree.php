@@ -231,7 +231,7 @@ while (count($outlets) > 0) {
 
    
    print("Shaking the tree on $recid (IP: $serverip)\n");
-   error_log("Calling: shakeTree(listobject, serverip = $serverip, max_simultaneous = $max_simultaneous, recid = $recid, run_id = $run_id, startdate = $startdate, enddate = $enddate, cache_date = $cache_date, debug = $debug, strict = $strict, run_mode = $run_mode, url_params);");
+   error_log("Calling: shakeTree(listobject, serverip = $serverip, max_simultaneous = $max_simultaneous, recid = $recid, run_id = $run_id, startdate = $startdate, enddate = $enddate, cache_date = $cache_date, debug = $debug, strict = $strict, run_mode = $run_mode, url_params = argv[12]);");
    //die;
    $run_finished = shakeTree($listobject, $serverip, $max_simultaneous, $recid, $run_id, $startdate, $enddate, $cache_date, $debug, $strict, $run_mode, $url_params);
    if (!$run_finished) {
