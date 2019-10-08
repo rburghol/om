@@ -958,6 +958,15 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
    $num_running = count($active_models);
    if ($num_running < $num_sim) {
       // spawn a new one
+      $run_params = array();
+      $run_params['elements'] = $recid;
+      $run_params['runid'] = $run_id;
+      $run_params['startdate'] = $startdate;
+      $run_params['enddate'] = $enddate;
+      $run_params['cache_level'] = $cache_date;
+      foreach ($extra_params as $key => $val) {
+         $run_params[$key] = $val;
+      }
       if ($debug) {
          // allows objects own debug setting
          $prop_array = array('run_mode' => $run_mode);
@@ -969,15 +978,6 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
         $prop_array['flow_mode'] = $run_params['flow_mode'];
       }
       updateObjectProps($projectid, $recid, $prop_array);
-      $run_params = array();
-      $run_params['elements'] = $recid;
-      $run_params['runid'] = $run_id;
-      $run_params['startdate'] = $startdate;
-      $run_params['enddate'] = $enddate;
-      $run_params['cache_level'] = $cache_date;
-      foreach ($extra_params as $key => $val) {
-         $run_params[$key] = $val;
-      }
       // check status one last time just in case another thread has called this one in the interim
       $status_update = verifyRunStatus($listobject, $recid);
       $recent_status = $status_update['status_flag'];
