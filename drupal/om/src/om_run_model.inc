@@ -249,6 +249,7 @@ function om_run_model($config) {
       // this runs in the same process
       //shell_exec($cmd);
       // this runs in a separate process.
+      error_log("Executing Run Type: $config[runtype] : $cmd");
       $forkout = exec( "$cmd > /dev/null &", $cmd_output );
     }
   }
