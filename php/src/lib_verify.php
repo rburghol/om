@@ -965,6 +965,9 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
          // forces object and children to run silently
          $prop_array = array('run_mode' => $run_mode, 'debug' => 0, 'cascadedebug' => 1);
       }
+      if (isset($run_params['flow_mode'])) {
+        $prop_array['flow_mode'] = $run_params['flow_mode'];
+      }
       updateObjectProps($projectid, $recid, $prop_array);
       $run_params = array();
       $run_params['elements'] = $recid;
