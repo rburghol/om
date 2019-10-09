@@ -105,11 +105,11 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
       'modelpath' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => '/media/NAS/omdata/p6',
-        'propname' => 'filepath',
+        'propname' => 'modelpath',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => "Model base path (for files).",
-        'varname' => 'File Path',
+        'varname' => 'Model Path',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'filepath' => array(
