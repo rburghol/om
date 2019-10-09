@@ -270,6 +270,37 @@ function om_field_widget_info() {
   );
 }
 
+function om_find_parent_feature($prop) {
+  // just keep going till you find a feature then return 
+  $plugin = dh_variables_getPlugins($prop);
+  $parent = $plugin->getParentEntity($prop);
+  while ($parent->entityType() <> 'dh_feature') {
+    $parent = om_find_parent_feature($parent);
+  }
+  return $parent;
+}
+
+function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children = TRUE, $spatial = TRUE, $upstream = TRUE, $remote = TRUE) {
+  // retrieve based on specified connectivity. Default is to pull everything upstream and remotely pulled in.
+  // $scenario defaults to object propcode value if null
+  // get Upstream via upstream dh_nextdown_id 
+  // this involves finding the topmost feature for this entity 
+  // this only works for the $controller object, since we restrict for tree having 1 element
+  // dh_get_flow_links($eid, $etype = 'dh_feature')
+  $plugin = dh_variables_getPlugins($model);
+  if (count($tree) == 1) {
+    // find parent feature 
+    $ptype = $model->entity_type;
+    $feature_tree = dh_hydro_findTribs($featureid);
+    // search these for models, and add them, including spatial 
+  }
+  
+  // get parent feature if $spatial or $upstream is true 
+  
+  // get OM linkages
+  
+}
+
 
 /**
  * Implements hook_field_widget_form().
