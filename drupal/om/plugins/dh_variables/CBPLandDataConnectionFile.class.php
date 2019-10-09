@@ -158,8 +158,10 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     } else {
       $entity->filepath = $filepath;
     }
-    
-    $entity->lufile = implode("/", array($modelpath, 'out/land', $scenario, 'eos', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
+    // @todo: lu file needs to be generated for other scenarios, maybe static?
+    // for now, we hard-wire the scenario and dsm to let users know 
+    $luscenario = 'CFBASE30Y20180615';
+    $entity->lufile = implode("/", array($modelpath, 'out/land', $luscenario, 'landuse', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
   }
   
   public function formRowEdit(&$rowform, $entity) {
