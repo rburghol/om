@@ -102,6 +102,16 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'varname' => 'Version',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
+      'modelpath' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => '/media/NAS/omdata/p6',
+        'propname' => 'filepath',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => "Model base path (for files).",
+        'varname' => 'File Path',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
       'filepath' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -125,6 +135,29 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     );
     //error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
+  }
+  
+  function update(&$entity) {
+    //
+    parent::update($entity);
+    $this->setFilePath($entity);
+  }
+  
+  public function setFilePath($entity) {
+    $modelpath = $this->getPropValue($entity->modelpath);
+    dpm($modelpath,'modelpath');
+  }
+  
+  public function getPropValue($prop) {
+    // is this an attribute? is this a sub-prop? 
+    if (is_object($prop)) {
+      if (method_exists($prop, 'dh_getValue')) {
+        return $prop->dh_getValue();
+      }
+      return FALSE;
+    }
+    // not an object, so must be an attribute 
+    return $prop;
   }
   
   public function formRowEdit(&$rowform, $entity) {
