@@ -628,6 +628,8 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   function getFileName() {
     // This overrides the parent method which used a file browser no longer desired.
     // handles file movement in the background, choices among source types
+    // could do 
+    // filepath (base dir) + out/land/ + scenario + eos + landseg 
     $retfile = $this->filepath;
     return $retfile;
   }

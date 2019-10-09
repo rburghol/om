@@ -102,13 +102,23 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'varname' => 'Version',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
+      'modelpath' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => '/media/NAS/omdata/p6',
+        'propname' => 'modelpath',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => "Model base path (for files).",
+        'varname' => 'Model Path',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
       'filepath' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
         'propname' => 'filepath',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => "Unit area runoff file location.",
+        'vardesc' => "Unit area runoff file location (auto-generated).",
         'varname' => 'File Path',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
@@ -118,13 +128,40 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'lufile',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => "Landuse CSV file location.",
+        'vardesc' => "Landuse CSV file location (auto-generated).",
         'varname' => 'LU File',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     );
     //error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
+  }
+  
+  function update(&$entity) {
+    //
+    parent::update($entity);
+    $this->setFilePath($entity);
+  }
+  
+  public function setFilePath($entity) {
+    $defs = $this->getDefaults($entity);
+    $modelpath = is_object($entity->modelpath) ? $entity->modelpath->propcode : $entity->modelpath;
+    if (empty($modelpath)) {
+      $modelpath = $defs['modelpath']['propcode_default'];
+    }
+    $scenario = is_object($entity->scenario) ? $entity->scenario->propcode : $entity->scenario;
+    $landseg = is_object($entity->landseg) ? $entity->landseg->propcode : $entity->landseg;
+    $riverseg = is_object($entity->riverseg) ? $entity->riverseg->propcode : $entity->riverseg;
+    $filepath = implode("/", array($modelpath, 'out/land', $scenario, 'eos', $landseg .'_0111-0211-0411.csv' ));
+    if (is_object($entity->filepath)) {
+      $entity->filepath->propcode = $filepath;
+    } else {
+      $entity->filepath = $filepath;
+    }
+    // @todo: lu file needs to be generated for other scenarios, maybe static?
+    // for now, we hard-wire the scenario and dsm to let users know 
+    $luscenario = 'CFBASE30Y20180615';
+    $entity->lufile = implode("/", array($modelpath, 'out/land', $luscenario, 'landuse', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
   }
   
   public function formRowEdit(&$rowform, $entity) {

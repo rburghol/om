@@ -110,6 +110,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
 		  ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
           $prop = $this->insureProperty($entity, $thisvar);
+          //dpm($thisvar, "Insuring ");
           if (!$prop) {
             watchdog('om', 'Could not Add Properties in plugin loadProperties');
             return FALSE;
@@ -339,6 +340,10 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
   }
+  public function dh_getValue($entity, $ts = FALSE, $propname = FALSE, $config = array()) {
+    // @todo: implement om routines
+    return $this->getPropertyAttribute($entity);
+  }
   
   public function applyEntityAttribute($property, $value) {
     $property->propcode = $value;
@@ -438,6 +443,11 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   
   public function getPropertyAttribute($property) {
     return $property->propvalue;
+  }
+  
+  public function dh_getValue($entity, $ts = FALSE, $propname = FALSE, $config = array()) {
+    // @todo: implement om routines getPropertyAttribute() in base class 
+    return $this->getPropertyAttribute($entity);
   }
 }
 
@@ -896,6 +906,19 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // if so, offer to add them automatically on save.
     // make this weight 20 so it's last thing before save button
     $defprops = $this->getDefaults($entity);
+  }
+  
+  public function applyEntityAttribute($property, $value) {
+    $property->propvalue = $value;
+  }
+  
+  public function getPropertyAttribute($property) {
+    return $property->propvalue;
+  }
+  
+  public function dh_getValue($entity, $ts = FALSE, $propname = FALSE, $config = array()) {
+    // @todo: implement om routines getPropertyAttribute() in base class 
+    return $this->getPropertyAttribute($entity);
   }
 }
 
