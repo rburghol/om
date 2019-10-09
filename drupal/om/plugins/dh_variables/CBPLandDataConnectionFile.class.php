@@ -151,7 +151,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     }
     $scenario = is_object($entity->scenario) ? $entity->scenario->propcode : $entity->scenario;
     $landseg = is_object($entity->landseg) ? $entity->landseg->propcode : $entity->landseg;
-    $filepath = implode("/", array($modelpath, 'out/land', $scenario, 'eos', $landseg, '_0111-0211-0411.csv' ));
+    $filepath = implode("/", array($modelpath, 'out/land', $scenario, 'eos', $landseg .'_0111-0211-0411.csv' ));
     if (is_object($entity->filepath)) {
       $entity->filepath->propcode = $filepath;
     } else {
