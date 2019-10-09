@@ -152,6 +152,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     $scenario = $this->getPropValue($entity->scenario);
     $landseg = $this->getPropValue($entity->landseg);
     $filepath = implode("/", array($modelpath, 'out/land/', $scenario, 'eos', $landseg );
+    dsm($filepath);
   }
   
   public function getPropValue($prop) {
