@@ -159,7 +159,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
       $entity->filepath = $filepath;
     }
     
-    $entity->lufile = implode("/", $modelpath, 'out/land', $scenario, 'eos', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
+    $entity->lufile = implode("/", array($modelpath, 'out/land', $scenario, 'eos', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
   }
   
   public function formRowEdit(&$rowform, $entity) {
