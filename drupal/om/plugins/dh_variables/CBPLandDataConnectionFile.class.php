@@ -148,6 +148,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     $modelpath = $this->getPropValue($entity->modelpath);
     if (empty($modelpath)) {
       $modelpath = $defs['modelpath']['propcode_default'];
+      dsm('Need default modelpath');
     }
     dpm($modelpath,'modelpath');
   }
