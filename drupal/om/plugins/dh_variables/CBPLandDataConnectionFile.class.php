@@ -118,7 +118,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'filepath',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => "Unit area runoff file location.",
+        'vardesc' => "Unit area runoff file location (auto-generated).",
         'varname' => 'File Path',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
@@ -128,7 +128,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'propname' => 'lufile',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => "Landuse CSV file location.",
+        'vardesc' => "Landuse CSV file location (auto-generated).",
         'varname' => 'LU File',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
@@ -151,12 +151,15 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     }
     $scenario = is_object($entity->scenario) ? $entity->scenario->propcode : $entity->scenario;
     $landseg = is_object($entity->landseg) ? $entity->landseg->propcode : $entity->landseg;
+    $riverseg = is_object($entity->riverseg) ? $entity->riverseg->propcode : $entity->riverseg;
     $filepath = implode("/", array($modelpath, 'out/land', $scenario, 'eos', $landseg .'_0111-0211-0411.csv' ));
     if (is_object($entity->filepath)) {
       $entity->filepath->propcode = $filepath;
     } else {
       $entity->filepath = $filepath;
     }
+    
+    $entity->lufile = implode("/", $modelpath, 'out/land', $scenario, 'eos', 'lutable_' . $landseg .'_' . $riverseg . '.csv' ));
   }
   
   public function formRowEdit(&$rowform, $entity) {
