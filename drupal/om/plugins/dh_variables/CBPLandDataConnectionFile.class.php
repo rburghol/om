@@ -145,26 +145,18 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   
   public function setFilePath($entity) {
     $defs = $this->getDefaults($entity);
-    $modelpath = $this->getPropValue($entity->modelpath);
+    $modelpath = is_object($entity->modelpath) ? $entity->modelpath->propcode : $entity->modelpath;
     if (empty($modelpath)) {
       $modelpath = $defs['modelpath']['propcode_default'];
     }
-    $scenario = $this->getPropValue($entity->scenario);
-    $landseg = $this->getPropValue($entity->landseg);
-    $filepath = implode("/", array($modelpath, 'out/land/', $scenario, 'eos', $landseg ));
-    dsm($filepath);
-  }
-  
-  public function getPropValue($prop) {
-    // is this an attribute? is this a sub-prop? 
-    if (is_object($prop)) {
-      if (method_exists($prop, 'dh_getValue')) {
-        return $prop->dh_getValue();
-      }
-      return FALSE;
+    $scenario = is_object($entity->scenario) ? $entity->scenario->propcode : $entity->scenario;
+    $landseg = is_object($entity->landseg) ? $entity->landseg->propcode : $entity->landseg;
+    $filepath = implode("/", array($modelpath, 'out/land', $scenario, 'eos', $landseg ));
+    if (is_object($entity->filepath)) {
+      $entity->filepath->propcode = $filepath;
+    } else {
+      $entity->filepath = $filepath;
     }
-    // not an object, so must be an attribute 
-    return $prop;
   }
   
   public function formRowEdit(&$rowform, $entity) {
