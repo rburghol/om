@@ -54,7 +54,7 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
       ), 
       'luyear' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
+        'propcode_default' => 'year',
         'propname' => 'luyear',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
