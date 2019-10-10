@@ -136,6 +136,15 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     //error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
   }
+
+  function getPublicVars($entity, &$publix = array()) {
+    parent::getPublicVars($entity, $publix);
+    //dpm($this,"called getPublicVars()");
+    // gets all viewable variables
+    $publix += array('luyear');
+    sort($publix);
+    return $publix;
+  }
   
   function update(&$entity) {
     //
