@@ -627,6 +627,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   }
 
   function getFileName() {
+    global $run_mode, $flow_mode;
     // This overrides the parent method which used a file browser no longer desired.
     // handles file movement in the background, choices among source types
     // could do 
