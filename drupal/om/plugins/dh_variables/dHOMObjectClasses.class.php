@@ -1409,6 +1409,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
+      'lutype1' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'colkey',
+        'vardesc' => 'Row Lookup Type.',
+        'varname' => 'Row Lookup Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
@@ -1461,6 +1471,14 @@ class dHOMDataMatrix extends dHOMSubComp {
       $this->setRemoteProp($entity, $elid, $spath, $scsv, $this->object_class, 'json-1d');
       $debug_json = json_decode(stripslashes($scsv), TRUE);
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+      
+      // set lutypes 
+      /*
+      $spath = $path;
+      array_unshift($spath, 'lutype1');
+      $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      */
     }
   }
   
@@ -1520,6 +1538,19 @@ class dHOMDataMatrix extends dHOMSubComp {
     $entity->{$this->matrix_field} = array(
       'und' => $default
     );
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    // now, format the lookup type fields 
+    $form['lutype1']['#type'] = 'select';
+    $form['lutype1']['#options'] = array(
+      0 => "Exact Match",
+      1 => "Interpolated",
+      2 => "Stair Step",
+      3 => "Key Interpolate"
+    );
+    $form['lutype1']['#size'] = 1;
   }
  
 }
