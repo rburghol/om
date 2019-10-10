@@ -13,7 +13,7 @@ if ( count($argv) < 5 ) {
   // @todo: change syntax from elid comp_name "subprop_name=value" comp_class overwrite
   //        to:
   //        elid comp_name comp_class subprop_name subprop_value comp_class setprop_mode overwrite 
-  print("Usage: edit_subprop.php elementid comp_name comp_class subprop_name subprop_value [setprop_mode=''] [overwrite=FALSE] \n");
+  error_log("Usage: edit_subprop.php elementid comp_name comp_class subprop_name subprop_value [setprop_mode=''] [overwrite=FALSE] \n");
   die;
 }
 
@@ -40,14 +40,14 @@ $thisobject = $loadres['object'];
 
 if (is_object($thisobject)) {
   // this is a subcomp, so add if need be
-  print("Trying to set $comp_name -> $subprop_name = $subprop_value \n");
+  error_log("Trying to set $comp_name -> $subprop_name = $subprop_value \n");
   if ( $overwrite or (!isset($thisobject->processors[$comp_name])) ) {
     if (!class_exists($comp_class)) {
-      print("Cannot find object_class = $comp_class -- skipping.");
+      error_log("Cannot find object_class = $comp_class -- skipping.");
       die;
     }
     if (empty($supported) or in_array($comp_class, $supported)) {
-     print("Adding $comp_name of type $comp_class\n");
+     error_log("Adding $comp_name of type $comp_class\n");
      $syobj = new $comp_class;
      $thisobject->addOperator($comp_name, $syobj);
      $res = saveObjectSubComponents($listobject, $thisobject, $recid, 1, 0);
