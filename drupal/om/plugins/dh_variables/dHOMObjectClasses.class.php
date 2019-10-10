@@ -760,8 +760,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      dpm( $path, "Exec Path ");
-      dpm( $cmd, "Executing ");
+      //dpm( $path, "Exec Path ");
+      //dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
@@ -1430,7 +1430,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     // @todo: move this to the base class if it checks out as OK
     $this->loadProperties($entity, FALSE);
     //dpm($path, 'original path to setAllRemoteProperties()');
-    dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+    //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     
     // create Separate handlers for this if it is a component or sub-subcomponent
     // If sub-component omit the object_class since they should fail if they do not exist, rather than adding
