@@ -1481,12 +1481,10 @@ class dHOMDataMatrix extends dHOMSubComp {
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
       
       // set lutypes 
-      dpm($entity->lutype1,'lutype');
-      /*
       $spath = $path;
       array_unshift($spath, 'lutype1');
       $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '')
       */
     }
   }
