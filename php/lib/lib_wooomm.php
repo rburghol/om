@@ -5594,8 +5594,8 @@ function compactObject(&$thisobject, &$debugHTML = '', &$retarr = array(), $debu
      }
      $thisobject->dbcolumntypes = '';
   }
-  error_log("Compacted Object: " . print_r(array_keys((array)$thisobject),1));
-  error_log("Object Proc List: " . print_r(array_keys((array)$thisobject->processors),1));
+  //error_log("Compacted Object: " . print_r(array_keys((array)$thisobject),1));
+  //error_log("Object Proc List: " . print_r(array_keys((array)$thisobject->processors),1));
 
 }
 
