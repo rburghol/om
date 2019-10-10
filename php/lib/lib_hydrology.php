@@ -4572,7 +4572,7 @@ class dataMatrix extends modelSubObject {
       // has occured.  This happens automatically when the step() method is called, as well as the evaluate() method,
       // so it will occur during any reasonable invocation.  Other methods that call this dynamically, need to make sure 
       // that step() or evaluate(), or formatMatrix() has been called before calling evaluateMatrix()
-      //error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
+      error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
       if ($this->debug) {
          error_log("RISER evaluateMatrix() called on $this->name, lookup-type = $this->lutype1, value-type = $this->valuetype with keys: '$key1' and '$key2' <br>");
          $this->logDebug("evaluateMatrix() called on $this->name with keys: '$key1' and '$key2' <br>");
