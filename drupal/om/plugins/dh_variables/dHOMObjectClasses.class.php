@@ -1383,6 +1383,9 @@ class dHOMDataMatrix extends dHOMSubComp {
   }
   
   public function getPublicVars($entity, &$publix = array()) {
+    // @todo: if this works, move to the dHOMSubComp class
+    dsm("getPublicVars called on $entity->propname");
+    return;
     $parent = $this->getParentEntity($entity);
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
