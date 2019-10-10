@@ -1382,6 +1382,18 @@ class dHOMDataMatrix extends dHOMSubComp {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
   }
   
+  public function getPublicVars($entity, &$publix = array()) {
+    $parent = $this->getParentEntity($entity);
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicVars')) {
+        $plugin->getPublicVars($entity, $publix);
+      }
+    }
+    return $publix;
+  }
+  
   public function entityDefaults(&$entity) {
     //dpm($entity,'entity');
     // special render handlers when displaying in a grouped property block
