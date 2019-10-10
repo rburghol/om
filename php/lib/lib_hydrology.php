@@ -850,15 +850,15 @@ class modelObject {
     }
     // handle global mode variables 
     global $run_mode, $flow_mode;
-    if (is_object($this->parentobject) and $this->mode_global) {
+    if (!($run_mode === NULL) and $this->mode_global) {
       // if this is not the simulation root, and global requested, grab them 
       $this->flow_mode = $this->flow_mode;
       $this->run_mode = $this->run_mode;
       $this->state['run_mode'] = $this->run_mode;
       $this->state['flow_mode'] = $this->flow_mode;
     } else {
-      if (!is_object($this->parentobject)) {
-        // this is a standalone entity, so set the global values
+      if ($run_mode === NULL) {
+        // this is the first simulation entity, so set the global values
         $run_mode = $this->run_mode;
         $flow_mode = $this->flow_mode;
       }
