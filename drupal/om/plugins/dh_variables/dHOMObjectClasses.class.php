@@ -648,6 +648,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //$entity->propname = 'blankShell';
     $this->saveObjectClass($entity);
     parent::update($entity);
+    $this->synchronize($entity);
   }
   
   public function save(&$entity) {
@@ -658,6 +659,11 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
+    $this->synchronize($entity);
+  }
+  
+  public function synchronize(&$entity) {
+    dsm("New synchronize method used");
     $elid = $this->findRemoteOMElement($entity, $path);
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
