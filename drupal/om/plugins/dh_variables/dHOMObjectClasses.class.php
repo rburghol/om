@@ -1362,7 +1362,7 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
     if ($plugin) {
     //dpm($plugin,'plugin');
       if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($entity, $publix);
+        $plugin->getPublicVars($parent, $publix);
       }
     }
     return $publix;
