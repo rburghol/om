@@ -648,7 +648,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //$entity->propname = 'blankShell';
     $this->saveObjectClass($entity);
     parent::update($entity);
-    $this->synchronize($entity);
+    // should we do this here?
+    //$this->synchronize($entity);
   }
   
   public function save(&$entity) {
@@ -1444,10 +1445,10 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
-    dpm($entity, 'before loadProp()');
-    $this->loadProperties($entity, FALSE);
+    //dpm($entity, 'before loadProp()');
+    //$this->loadProperties($entity, FALSE);
     //dpm($path, 'original path to setAllRemoteProperties()');
-    dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+    //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     
     // create Separate handlers for this if it is a component or sub-subcomponent
     // If sub-component omit the object_class since they should fail if they do not exist, rather than adding
