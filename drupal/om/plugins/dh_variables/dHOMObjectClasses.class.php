@@ -1163,12 +1163,12 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     }
   }
   
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    // this sets only the variable on the base object
-    //array_shift($path);
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  }
+  //public function setAllRemoteProperties($entity, $elid, $path) {
+  //  parent::setAllRemoteProperties($entity, $elid, $path);
+  //  // this sets only the variable on the base object
+  //  //array_shift($path);
+  //  $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  //}
 }
 
 
