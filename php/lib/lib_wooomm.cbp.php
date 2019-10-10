@@ -639,7 +639,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     if (isset($this->processors['flow_scenario'])) {
       $dbc = $this->processors['flow_scenario']->debug;
       $this->processors['flow_scenario']->debug = 1;
-      $this->processors['flow_scenario']->evaluateMatrix('flow_mode');
+      $this->processors['flow_scenario']->evaluateMatrix($flow_mode);
       $flow_scenario = $this->processors['flow_scenario']->result;
       error_log("flow_scenario prop found: $flow_scenario ");
       error_log("State array:" . print_r($this->state,1));
