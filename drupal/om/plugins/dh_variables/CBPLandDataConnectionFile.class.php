@@ -139,10 +139,11 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
 
   function getPublicVars($entity, &$publix = array()) {
     parent::getPublicVars($entity, $publix);
-    //dpm($this,"called getPublicVars()");
+    dpm($this,"called getPublicVars()");
     // gets all viewable variables
     $publix += array('luyear');
     sort($publix);
+    dpm($publix,"called getPublicVars()");
     return $publix;
   }
   
