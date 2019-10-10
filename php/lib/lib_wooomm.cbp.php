@@ -637,7 +637,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     // if component flow_scenario is set, 
     // then override the scenario setting and the file name 
     if (isset($this->processors['flow_scenario'])) {
-      $this->processors['flow_scenario']->evaluateMatrix('flow_mode');{
+      $this->processors['flow_scenario']->evaluateMatrix('flow_mode');
       $flow_scenario = $this->processors['flow_scenario']->result;
       error_log("flow_scenario prop found: $flow_scenario ");
       error_log("State array:" . print_r($this->state,1));
