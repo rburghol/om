@@ -1111,7 +1111,7 @@ class dHOMEquation extends dHOMSubComp {
 
 //class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
-  var $object_class = 'textField';
+  var $object_class = FALSE;
   
   public function hiddenFields() {
     return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propname','propvalue','dh_link_admin_pr_condition');
@@ -1170,12 +1170,12 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     }
   }
   
-  //public function setAllRemoteProperties($entity, $elid, $path) {
-  //  parent::setAllRemoteProperties($entity, $elid, $path);
-  //  // this sets only the variable on the base object
-  //  //array_shift($path);
-  //  $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  //}
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    // this sets only the variable on the base object
+    //array_shift($path);
+    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+  }
 }
 
 
