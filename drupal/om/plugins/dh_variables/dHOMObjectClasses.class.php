@@ -1412,7 +1412,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       'lutype1' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propname' => 'colkey',
+        'propname' => 'lutype1',
         'vardesc' => 'Row Lookup Type.',
         'varname' => 'Row Lookup Type',
         'singularity' => 'name_singular',
