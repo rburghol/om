@@ -587,6 +587,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   // with a facility for multiplying outputs by the land use areas DataMatrix
   // for modeling the landuse change effects
   var $lunames = array();
+  var $scenarios = array();
   var $scid = -1;
   var $id1 = 'land'; # model data class: river, land, or met
   var $version = ''; # model version: i.e., cbp6
@@ -633,7 +634,17 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     // could do 
     // filepath (base dir) + out/land/ + scenario + eos + landseg 
     error_log("Modes: $this->run_mode, $this->flow_mode ");
-    $retfile = $this->filepath;
+    // if component flow_scenario is set, 
+    // then override the scenario setting and the file name 
+    if (isset($this->processors['flow_scenario'])) {
+      $this->processors['flow_scenario']->evaluate();
+      $this->scenario = $this->processors['flow_scenario']->result;
+      error_log("flow_scenario prop found: $this->scenario ");
+      error_log("State array:" . print_r($this->state,1));
+      $retfile = $this->filepath;
+    } else {
+      $retfile = $this->filepath;
+    }
     return $retfile;
   }
   
@@ -671,26 +682,34 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    }
    
    function sleep() {
+     $this->scenarios = NULL;
      parent::sleep();
    }
    
-   function wake() {
-      parent::wake();
-      // @todo: move this to parent class after testing
-      $this->getFileInfo();
-      // @todo: check for sub-comps that override version, scenario, landseg based on runid or run_mode, need to use code to initialize these 
+  function wake() {
+    // set scenario var options here 
+    $this->scenarios = array(
+      0 => '',
+      0 => '',
+      0 => '',
+      0 => '',
+    );
+    parent::wake();
+    // @todo: move this to parent class after testing
+    $this->getFileInfo();
+    // @todo: check for sub-comps that override version, scenario, landseg based on runid or run_mode, need to use code to initialize these 
+    error_log("Calling getLandUses()");
+    $this->setDBCacheName();
+    // @todo: make this persistent, and shared
+    $this->datatemp = 'tmp_crosstab' . $this->componentid;
+    $this->lunames = array();
+    //if ($this->debug) 
       error_log("Calling getLandUses()");
-      $this->setDBCacheName();
-      // @todo: make this persistent, and shared
-      $this->datatemp = 'tmp_crosstab' . $this->componentid;
-      $this->lunames = array();
-      //if ($this->debug) 
-        error_log("Calling getLandUses()");
-      // @todo: check sub-comps for a 'filepath' variable.
-      //        this can be used to over-ride the default filepath property
-      $this->getLandUses();
-   }
-   
+    // @todo: check sub-comps for a 'filepath' variable.
+    //        this can be used to over-ride the default filepath property
+    $this->getLandUses();
+  }
+
    function setDBCacheName() {
       # set a name for the temp table that will not hose the db
       if ($this->debug) {

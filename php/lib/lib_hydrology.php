@@ -850,7 +850,7 @@ class modelObject {
     }
     // handle global mode variables 
     global $run_mode, $flow_mode;
-    error_log("$this->name Checking Modes: $run_mode, $flow_mode");
+    //error_log("$this->name Checking Modes: $run_mode, $flow_mode");
     if (!($run_mode === NULL) and $this->mode_global) {
       // if this is not the simulation root, and global requested, grab them 
       $this->flow_mode = $this->flow_mode;
