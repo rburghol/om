@@ -664,7 +664,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function synchronize(&$entity) {
-    dsm("New synchronize method used");
+    //dsm("New synchronize method used");
     $elid = $this->findRemoteOMElement($entity, $path);
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
