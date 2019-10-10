@@ -2,6 +2,7 @@
 if (!function_exists('green_ampt')) {
    include_once('./lib_hydro.php');
 }
+global $run_mode, $flow_mode;
 
 class modelObject {
   // ******************************************
@@ -31,7 +32,9 @@ class modelObject {
    // 0 - store log in memory, 1 - store log in temp db table (should save memory, but may slow things down due to frequent db writes)
    // equation execution hierarchy, if conflict
    // 0 is default, least favored, unlimited number
-  var $run_mode = 0; // for modelControl broadcast, or linear linkage
+  var $run_mode = 0; // for operational modelControl broadcast, or linear linkage
+  var $flow_mode = 1; // for meteorology/landuse modelControl broadcast, or linear linkage
+  var $mode_global = FALSE; // whether or not to use the global run and flow modes or to allow override (via prop links, broadcasts, etc)
   var $cacheable = 1; 
   // ******************************************
   // ******* END - Settable Properties ********
@@ -452,9 +455,10 @@ class modelObject {
              'time'=>'timestamp',
              'timestamp'=>'bigint',
              'run_mode'=>'float8',
+             'flow_mode'=>'float8',
              'season'=>'varchar(8)'
     );
-    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode');
+    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode', 'flow_mode');
     foreach ($dcs as $thisdc) {
        $this->data_cols[] = $thisdc;
     }
@@ -485,6 +489,7 @@ class modelObject {
              'time'=>'%s',
              'timestamp'=>'%s',
              'run_mode'=>'%u',
+             'flow_mode'=>'%u',
              'season'=>'%u'
     );
     
@@ -842,6 +847,21 @@ class modelObject {
        }
     } else {
        $this->inputs = array();
+    }
+    // handle global mode variables 
+    global $run_mode, $flow_mode;
+    if (is_object($this->parentobject) and $this->mode_global) {
+      // if this is not the simulation root, and global requested, grab them 
+      $this->flow_mode = $this->flow_mode;
+      $this->run_mode = $this->run_mode;
+      $this->state['run_mode'] = $this->run_mode;
+      $this->state['flow_mode'] = $this->flow_mode;
+    } else {
+      if (!is_object($this->parentobject)) {
+        // this is a standalone entity, so set the global values
+        $run_mode = $this->run_mode;
+        $flow_mode = $this->flow_mode;
+      }
     }
     
   }
@@ -1267,7 +1287,7 @@ class modelObject {
   function getPublicProps() {
     // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
     //$publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode');
-    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
+    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'flow_mode', 'timestamp');
 
     return $publix;
   }

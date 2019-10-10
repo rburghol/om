@@ -601,6 +601,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   var $datecolumn = 'thisdatetime';
   var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
   var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+  var $mode_global = TRUE; // retrieves 
    
 	// Needs to Support:
   // - Using Text File instead of XML connection
@@ -630,6 +631,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     // handles file movement in the background, choices among source types
     // could do 
     // filepath (base dir) + out/land/ + scenario + eos + landseg 
+    error_log("Modes: $this->run_mode, $this->flow_mode ");
     $retfile = $this->filepath;
     return $retfile;
   }

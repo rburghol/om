@@ -280,24 +280,45 @@ function om_find_parent_feature($prop) {
   return $parent;
 }
 
-function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children = TRUE, $spatial = TRUE, $upstream = TRUE, $remote = TRUE) {
+function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children = TRUE, $remote = TRUE, $linked = TRUE, $spatial = TRUE, $upstream = TRUE) {
   // retrieve based on specified connectivity. Default is to pull everything upstream and remotely pulled in.
   // $scenario defaults to object propcode value if null
   // get Upstream via upstream dh_nextdown_id 
   // this involves finding the topmost feature for this entity 
   // this only works for the $controller object, since we restrict for tree having 1 element
-  // dh_get_flow_links($eid, $etype = 'dh_feature')
+  $tree[$model->pid] = $model;
   $plugin = dh_variables_getPlugins($model);
-  if (count($tree) == 1) {
+  if ( (count($tree) == 1) and $upstream) {
     // find parent feature 
-    $ptype = $model->entity_type;
-    $feature_tree = dh_hydro_findTribs($featureid);
+    $feature = om_find_parent_feature($model);
+    $feature_tree = dh_hydro_findTribs($feature->hydroid);
     // search these for models, and add them, including spatial 
   }
-  
+  dpm($feature_tree);
   // get parent feature if $spatial or $upstream is true 
-  
-  // get OM linkages
+  if ($spatial) {
+    // get features that are contained
+    // add to list of features 
+    
+  }
+  // get OM child-parent linkages
+  if ($children) {
+    // direct links (link_type = 1)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
+  // get OM input linkages
+  if ($linked) {
+    // direct links (link_type = 2)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
+  // get OM remote linkages
+  if ($remote) {
+    // direct links (link_type = 3)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
   
 }
 
