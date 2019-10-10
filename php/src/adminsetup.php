@@ -748,6 +748,7 @@
               "landseg"=>array("type"=>1,"params"=>"","label"=>"Land Segment (fipsab)","visible"=>1, "readonly"=>0, "width"=>32),
               "location_type"=>array("type"=>3,"params"=>"0|Local File,1|Remote URL:ltid:ltname::0:","label"=>"File Location Type","visible"=>1, "readonly"=>0, "width"=>12),
               "filepath"=>array("type"=>1,"params"=>"","label"=>"File Path or URL", "visible"=>1, "readonly"=>0, "width"=>80),
+              "modelpath"=>array("type"=>1,"params"=>"","label"=>"Model Base Path or URL", "visible"=>1, "readonly"=>0, "width"=>80),
               "log2db"=>array("type"=>3,"params"=>"0|Memory,1|Database,2|File:lid:lname::0:","label"=>"Runtime Logging Option ","visible"=>1, "readonly"=>0, "width"=>6),
               "cache_log"=>array("type"=>3,"params"=>"0|False,1|True:clid:clname::0:","label"=>"Store Run Data in Text File? ","visible"=>1, "readonly"=>0, "width"=>6),
               "debug"=>array("type"=>3,"params"=>"0|False,1|True,2|Verbose:smid:smname::0","label"=>"Run in debug mode? ","visible"=>1, "readonly"=>0, "width"=>6),
