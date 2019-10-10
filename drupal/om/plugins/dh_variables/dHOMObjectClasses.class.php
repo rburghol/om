@@ -1444,6 +1444,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
+    dpm($entity, 'before loadProp()');
     $this->loadProperties($entity, FALSE);
     //dpm($path, 'original path to setAllRemoteProperties()');
     dpm($entity, 'subcomp entity to setAllRemoteProperties()');
