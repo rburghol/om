@@ -1552,6 +1552,9 @@ class dHOMDataMatrix extends dHOMSubComp {
       3 => "Key Interpolate"
     );
     $form['lutype1']['#size'] = 1;
+    $form['lutype1']["#empty_value"] = "";
+    $form['lutype1']["#empty_option"] = "Not Set";
+    $form['lutype1']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
   }
  
 }
