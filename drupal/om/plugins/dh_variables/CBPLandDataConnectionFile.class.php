@@ -59,8 +59,8 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => "Land Use year (set to thisyear if dynamic, or single value if static).",
-        'varname' => 'Default Landuse Table',
-        'varid' => dh_varkey2varid('om_class_dHOMEquation', TRUE),
+        'varname' => 'Landuse Year',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ),
       'landseg' => array(
         'entity_type' => $entity->entityType(),
