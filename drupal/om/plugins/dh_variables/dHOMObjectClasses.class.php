@@ -78,12 +78,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     return $defaults;
   }
   
-  public function load(&$entity) {
-    // get field default basics
-    //dpm($entity, 'load()');
-    $this->loadProperties($entity);
-  }
-  
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     // check for transition from ts to prop
@@ -349,6 +343,12 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       '#description' => $varinfo->vardesc,
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
+  }
+  
+  public function load(&$entity) {
+    // get field default basics
+    //dpm($entity, 'load()');
+    $this->loadProperties($entity);
   }
   
   // @todo: move this into dh module once we are satisifed that it is robust
