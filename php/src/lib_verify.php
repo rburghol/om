@@ -850,7 +850,7 @@ function retrieveRunSummary($listobject, $elid, $runid) {
 }
 
 function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $enddate, $cache_date, $debug = 0, $strict=1, $run_mode = NULL, $extra_params = array() ) {
-   print("strictness setting: $strict \n");
+   error_log("strictness setting: $strict \n");
    // Introduce - run_params ()
    // run_type
    // cache_runid
@@ -882,32 +882,32 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
    */
    $elemname = getElementName($listobject, $recid);
    $cacheable = getElementCacheable($listobject, $recid);
-   //if ($debug) {
-      print("Element $elemname ($recid) Cacheable Mode - $cacheable \n");
-   //}
+   if ($debug) {
+      error_log("Element $elemname ($recid) Cacheable Mode - $cacheable \n");
+   }
    switch ($cacheable) {
       case 0:
-      print("Item can not be cached, returning 1 \n");
+      error_log("Item can not be cached, returning 1 \n");
       return 1;
       break;
       
       case 2:
       // proceed on, but since this object can not be cached by itself, it will return 1 when it gets to the 
       // step to be run
-      print("Item permits pass-through caching, checking for cacheable/runnable children \n");
+      error_log("Item permits pass-through caching, checking for cacheable/runnable children \n");
       break;
       
       default:
       // proceed on, this is a fully stand-alone object, capable of separate running and caching
-      print("Item permits full caching, checking last run date \n");
+      error_log("Item permits full caching, checking last run date \n");
       break;
       
    }
    summarizeRun($listobject, $recid, $run_id, $startdate, $enddate, 0, $strict);
    
-   //if ($debug) {
-      print("Tree Check - $tree_check : checkTreeRunDate(listobject, $recid, $run_id, $startdate, $enddate, $cache_date);\n");
-   //}
+   if ($debug) {
+      error_log("Tree Check - $tree_check : checkTreeRunDate(listobject, $recid, $run_id, $startdate, $enddate, $cache_date);\n");
+   }
    $tree_check = checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $cache_date, $debug);
    
    if ($tree_check) {
@@ -918,7 +918,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
    $status_vars = verifyRunStatus($listobject, $recid, $run_id, $sip);
    $status = $status_vars['status_flag'];
    if ($debug) {
-      print("Run status Check -  $status \n");
+      error_log("Run status Check -  $status \n");
    }
    if (in_array($status, $running)) {
       // this element is currently running, return 0 (not finished)
@@ -939,18 +939,18 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       $check = shakeTree($listobject, $sip, $num_sim, $childid, $run_id, $startdate, $enddate, $cache_date, 0, $strict, $run_mode, $extra_params);
       $child_status = $child_status & $check;
       if ($debug) {
-         print("Result of shakeTree($childid) - $check / (group status - $child_status) \n");
+         error_log("Result of shakeTree($childid) - $check / (group status - $child_status) \n");
       }
    }
    
    if (!$child_status) {
-      print("Children of object $recid currently running - returning \n");
+      error_log("Children of object $recid currently running - returning \n");
       return 0;
    }
    if ($cacheable == 2) {
       // this is a special type of object, which can not be cached, but may contain cacheable children
       // since we reached this step, all of its children have been verified so we go home
-      print("Object $recid is un-cacheable, all children run or cached - returning \n");
+      error_log("Object $recid is un-cacheable, all children run or cached - returning \n");
       return 1;
    } 
 

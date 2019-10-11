@@ -54,13 +54,13 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
       ), 
       'luyear' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
+        'propcode_default' => 'year',
         'propname' => 'luyear',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => "Land Use year (set to thisyear if dynamic, or single value if static).",
-        'varname' => 'Default Landuse Table',
-        'varid' => dh_varkey2varid('om_class_dHOMEquation', TRUE),
+        'varname' => 'Landuse Year',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ),
       'landseg' => array(
         'entity_type' => $entity->entityType(),
@@ -135,6 +135,16 @@ class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
     );
     //error_log("Defaults:" . print_r(array_keys($defaults),1));
     return $defaults;
+  }
+
+  function getPublicVars($entity, &$publix = array()) {
+    parent::getPublicVars($entity, $publix);
+    //dpm($this,"called getPublicVars()");
+    // gets all viewable variables
+    $publix = array_unique(array_merge(array('luyear'), $publix));
+    sort($publix);
+    //dpm($publix,"called getPublicVars()");
+    return $publix;
   }
   
   function update(&$entity) {

@@ -9,6 +9,21 @@ module_load_include('module', 'om');
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $run_id_options = om_run_id_options(); // will determine what a user can run
+  if (is_object($model)) {
+    $plugin = dh_variables_getPlugins($model);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'loadProperties')) {
+        $plugin->loadProperties($model);
+        //dsm("loadProperties called");
+        $flow_mode = $model->flow_mode->propvalue;
+        $run_mode = $model->run_mode->propvalue;
+      }
+    }
+  } else {
+    dsm("Model object not set");
+  }
+  
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
@@ -82,7 +97,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $run_mode_options,
     '#size' => 1,
-    '#default_value' => empty($model->run_mode) ? 2 : $model->run_mode
+    '#default_value' => empty($run_mode) ? 2 : $run_mode,
   );
   $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
   $form['Advanced']['flow_mode'] = array(
@@ -90,7 +105,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $flow_mode_options,
     '#size' => 1,
-    '#default_value' => empty($model->flow_mode) ? 3 : $model->flow_mode
+    '#default_value' => empty($flow_mode) ? 3 : $flow_mode,
   );
   //dpm($model,'model');
   //dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
@@ -198,7 +213,7 @@ function om_run_model_form_controls(&$form, &$form_state) {
 // @todo: move this to the base module?
 function om_run_model($config) {
   //$test_only = TRUE;
-  dpm($config,'submitted to run model');
+  //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   // run the model 
   $run_id = $config['run_id'];
@@ -333,17 +348,9 @@ function om_run_model_form_run(&$form, &$form_state) {
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
   $cd = $model_config['cache_date'];
-  $flow_mode = $model_config['flow_mode'];
-  // set the model flow_mode property here, it will cascade a change back to the OM database before running.
-  $values = array(
-    'entity_type' => 'dh_properties',
-    'featureid' => $model->pid,
-    'varkey' => 'om_class_Constant',
-    'propname' => 'flow_mode',
-    'propvalue' => $flow_mode,
-  );
-  // If the flow_mode prop does not exist yet, this will create AND save it.
-  $flow_mode = om_model_getSetProperty($values, 'name');
+  // stash flow and run modes on the object, to be used as defaults next time
+  // and to be used by remote object during requested run.
+  om_run_stash_modes($model, $model_config);
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
@@ -419,6 +426,33 @@ function om_run_model_form_run(&$form, &$form_state) {
   //$element['status_message']['#markup'] = $message;
   $element['status_message']['#markup'] = render($content);
   return $element;
+}
+
+function om_run_stash_modes($model, $model_config) {
+  // Save items on object needed for current run, and future stashing
+  // set the model run_mode property here, it will cascade a change back to the OM database before running.
+  $run_mode = $model_config['run_mode'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'run_mode',
+    'propvalue' => $run_mode,
+  );
+  $run_mode = om_model_getSetProperty($values, 'name');
+  $run_mode->save();
+  
+  // set the model flow_mode property here
+  $flow_mode = $model_config['flow_mode'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'flow_mode',
+    'propvalue' => $flow_mode,
+  );
+  $flow_mode = om_model_getSetProperty($values, 'name');
+  $flow_mode->save();
 }
 
 /* USAGE

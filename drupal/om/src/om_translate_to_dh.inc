@@ -35,12 +35,6 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
     error_log("Using query_mode PROP_FEATURE to load model element");
     break;
     
-    case 'feature_propname':
-    $search_mode = 'name';
-    $model_entity_type = 'dh_feature';
-    error_log("Using query_mode PROP_FEATURE to load model element");
-    break;
-    
     case 'feature':
     default:
     $search_mode = 'propcode_singular';

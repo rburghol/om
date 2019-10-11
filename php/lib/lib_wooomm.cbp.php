@@ -582,11 +582,13 @@ class CBPLandDataConnectionBase extends XMLDataConnection {
 class CBPLandDataConnectionFile extends timeSeriesFile {
 //   var $feed_address = 'http://deq1.bse.vt.edu/wooommdev/remote/rss_cbp_land_data.php?actiontype=4';
   var $filepath = '/tmp/text';
+  var $modelpath = '/media/text';
 
   // element for connecting to land use parameters, and outputs, 
   // with a facility for multiplying outputs by the land use areas DataMatrix
   // for modeling the landuse change effects
   var $lunames = array();
+  var $scenarios = array();
   var $scid = -1;
   var $id1 = 'land'; # model data class: river, land, or met
   var $version = ''; # model version: i.e., cbp6
@@ -601,6 +603,7 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   var $datecolumn = 'thisdatetime';
   var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
   var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
+  var $mode_global = TRUE; // retrieves 
    
 	// Needs to Support:
   // - Using Text File instead of XML connection
@@ -626,10 +629,23 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   }
 
   function getFileName() {
+    global $run_mode, $flow_mode;
     // This overrides the parent method which used a file browser no longer desired.
     // handles file movement in the background, choices among source types
     // could do 
     // filepath (base dir) + out/land/ + scenario + eos + landseg 
+    error_log("Global Modes: $run_mode, $flow_mode ");
+    // if component flow_scenario is set, 
+    // then override the scenario setting and the file name 
+    if (isset($this->processors['flow_scenario'])) {
+      $flow_scenario = $this->processors['flow_scenario']->evaluateMatrix($flow_mode);
+      //error_log("flow_scenario prop found: $flow_scenario ");
+      //error_log("State array:" . print_r($this->state,1));
+      $this->scenario = $flow_scenario;
+      $this->filepath = implode("/", array($this->modelpath, 'out/land', $this->scenario, 'eos', $this->landseg .'_0111-0211-0411.csv' ));
+      error_log("Scenario: $this->scenario, Filepath: $this->filepath");
+      $this->setDBCacheName();
+    }
     $retfile = $this->filepath;
     return $retfile;
   }
@@ -668,26 +684,27 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
    }
    
    function sleep() {
+     $this->scenarios = NULL;
      parent::sleep();
    }
    
-   function wake() {
-      parent::wake();
-      // @todo: move this to parent class after testing
-      $this->getFileInfo();
-      // @todo: check for sub-comps that override version, scenario, landseg based on runid or run_mode, need to use code to initialize these 
+  function wake() {
+    parent::wake();
+    // @todo: move this to parent class after testing
+    $this->getFileInfo();
+    // @todo: check for sub-comps that override version, scenario, landseg based on runid or run_mode, need to use code to initialize these 
+    error_log("Calling getLandUses()");
+    $this->setDBCacheName();
+    // @todo: make this persistent, and shared
+    $this->datatemp = 'tmp_crosstab' . $this->componentid;
+    $this->lunames = array();
+    //if ($this->debug) 
       error_log("Calling getLandUses()");
-      $this->setDBCacheName();
-      // @todo: make this persistent, and shared
-      $this->datatemp = 'tmp_crosstab' . $this->componentid;
-      $this->lunames = array();
-      //if ($this->debug) 
-        error_log("Calling getLandUses()");
-      // @todo: check sub-comps for a 'filepath' variable.
-      //        this can be used to over-ride the default filepath property
-      $this->getLandUses();
-   }
-   
+    // @todo: check sub-comps for a 'filepath' variable.
+    //        this can be used to over-ride the default filepath property
+    $this->getLandUses();
+  }
+
    function setDBCacheName() {
       # set a name for the temp table that will not hose the db
       if ($this->debug) {

@@ -140,7 +140,9 @@ function om_flow_mode_options() {
     '2' => t('USGS Paired, Synthetic Hydrograph (seldom used) (#2)'),
     '3' => t('VAHydro 1.0/CBP5.3 (#3)'),
     '4' => t('CBP Phase 6 (#4)'),
-    '5' => t('CBP Phase 6 (#5)'),
+    '5' => t('CBP Phase 6 CC1(#5)'),
+    '6' => t('CBP Phase 6 CC2(#6)'),
+    '7' => t('CBP Phase 6 CC3(#7)'),
   );
   return $options;
 }
@@ -268,6 +270,58 @@ function om_field_widget_info() {
       'field types' => array('om_config'),
     ),
   );
+}
+
+function om_find_parent_feature($prop) {
+  // just keep going till you find a feature then return 
+  $plugin = dh_variables_getPlugins($prop);
+  $parent = $plugin->getParentEntity($prop);
+  while ($parent->entityType() <> 'dh_feature') {
+    $parent = om_find_parent_feature($parent);
+  }
+  return $parent;
+}
+
+function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children = TRUE, $remote = TRUE, $linked = TRUE, $spatial = TRUE, $upstream = TRUE) {
+  // retrieve based on specified connectivity. Default is to pull everything upstream and remotely pulled in.
+  // $scenario defaults to object propcode value if null
+  // get Upstream via upstream dh_nextdown_id 
+  // this involves finding the topmost feature for this entity 
+  // this only works for the $controller object, since we restrict for tree having 1 element
+  $tree[$model->pid] = $model;
+  $plugin = dh_variables_getPlugins($model);
+  if ( (count($tree) == 1) and $upstream) {
+    // find parent feature 
+    $feature = om_find_parent_feature($model);
+    $feature_tree = dh_hydro_findTribs($feature->hydroid);
+    // search these for models, and add them, including spatial 
+  }
+  dpm($feature_tree);
+  // get parent feature if $spatial or $upstream is true 
+  if ($spatial) {
+    // get features that are contained
+    // add to list of features 
+    
+  }
+  // get OM child-parent linkages
+  if ($children) {
+    // direct links (link_type = 1)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
+  // get OM input linkages
+  if ($linked) {
+    // direct links (link_type = 2)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
+  // get OM remote linkages
+  if ($remote) {
+    // direct links (link_type = 3)
+    // this should use a method attached to the plugin getChildren() 
+    
+  }
+  
 }
 
 

@@ -2,6 +2,7 @@
 if (!function_exists('green_ampt')) {
    include_once('./lib_hydro.php');
 }
+global $run_mode, $flow_mode;
 
 class modelObject {
   // ******************************************
@@ -31,7 +32,9 @@ class modelObject {
    // 0 - store log in memory, 1 - store log in temp db table (should save memory, but may slow things down due to frequent db writes)
    // equation execution hierarchy, if conflict
    // 0 is default, least favored, unlimited number
-  var $run_mode = 0; // for modelControl broadcast, or linear linkage
+  var $run_mode = 0; // for operational modelControl broadcast, or linear linkage
+  var $flow_mode = 1; // for meteorology/landuse modelControl broadcast, or linear linkage
+  var $mode_global = FALSE; // whether or not to use the global run and flow modes or to allow override (via prop links, broadcasts, etc)
   var $cacheable = 1; 
   // ******************************************
   // ******* END - Settable Properties ********
@@ -452,9 +455,10 @@ class modelObject {
              'time'=>'timestamp',
              'timestamp'=>'bigint',
              'run_mode'=>'float8',
+             'flow_mode'=>'float8',
              'season'=>'varchar(8)'
     );
-    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode');
+    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode', 'flow_mode');
     foreach ($dcs as $thisdc) {
        $this->data_cols[] = $thisdc;
     }
@@ -485,6 +489,7 @@ class modelObject {
              'time'=>'%s',
              'timestamp'=>'%s',
              'run_mode'=>'%u',
+             'flow_mode'=>'%u',
              'season'=>'%u'
     );
     
@@ -842,6 +847,23 @@ class modelObject {
        }
     } else {
        $this->inputs = array();
+    }
+    // handle global mode variables 
+    global $run_mode, $flow_mode;
+    //error_log("$this->name Checking Modes: $run_mode, $flow_mode");
+    if (!($run_mode === NULL) and $this->mode_global) {
+      // if this is not the simulation root, and global requested, grab them 
+      $this->flow_mode = $this->flow_mode;
+      $this->run_mode = $this->run_mode;
+      $this->state['run_mode'] = $this->run_mode;
+      $this->state['flow_mode'] = $this->flow_mode;
+    } else {
+      if ($run_mode === NULL) {
+        // this is the first simulation entity, so set the global values
+        $run_mode = $this->run_mode;
+        $flow_mode = $this->flow_mode;
+        error_log("Model Controller Setting run_mode = $run_mode, flow_mode = $flow_mode");
+      }
     }
     
   }
@@ -1267,7 +1289,7 @@ class modelObject {
   function getPublicProps() {
     // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
     //$publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode');
-    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'timestamp');
+    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'flow_mode', 'timestamp');
 
     return $publix;
   }
@@ -4553,23 +4575,8 @@ class dataMatrix extends modelSubObject {
       // that step() or evaluate(), or formatMatrix() has been called before calling evaluateMatrix()
       //error_log("evaluateMatrix() called on $this->name  with keys: '$key1' and '$key2' <br>");
       if ($this->debug) {
-         error_log("RISER evaluateMatrix() called on $this->name, lookup-type = $this->lutype1, value-type = $this->valuetype with keys: '$key1' and '$key2' <br>");
+         error_log("evaluateMatrix() called on $this->name, lookup-type = $this->lutype1, value-type = $this->valuetype with keys: '$key1' and '$key2' <br>");
          $this->logDebug("evaluateMatrix() called on $this->name with keys: '$key1' and '$key2' <br>");
-         // go through the matrix rows, assign column names for each piece of data
-         // column names will be the contents of the first row if a 2-column lookup, 
-         // or will be numerical indices if 1-column or no lookup.
-         // adminsetup option to not show column names will be set if 1 or no column lookup
-         if (is_object($this->listobject)) {
-            if (method_exists($this->listobject, 'showList')) {
-               $this->listobject->queryrecords = $this->printFormat();
-               //$this->listobject->showlabels = 0;
-               $this->listobject->adminsetup = 'raw';
-               // make it silent, outputted to listobject->outstring
-               $this->listobject->show = 0;
-               $this->listobject->showList();
-               //$this->logDebug($this->listobject->outstring . "<br>");
-            }
-         }
       }
       // need to see if this is a normal array, 1 or 2 column lookup
       switch ($this->valuetype) {
@@ -4680,11 +4687,14 @@ class dataMatrix extends modelSubObject {
        // check for a valid json object, transform to array
        switch ($view) {
          case 'json-1d':
+         $raw_json = $propvalue;
          $propvalue = json_decode($propvalue, TRUE);
          if (is_array($propvalue)) {
            //error_log("Array located, handling " . print_r($propvalue,1));
            $this->matrix = $propvalue;
-         } 
+         } else {
+           error_log("JSON decode failed wih $propvalue for $raw_json");
+         }
          break;
          
          default:

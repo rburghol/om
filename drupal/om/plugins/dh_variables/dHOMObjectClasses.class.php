@@ -58,6 +58,25 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // apply custom settings here
     $this->addAttachedProperties($rowform, $row);
   }
+  public function getDefaults($entity, &$defaults = array()) {
+    // Example:
+    /*
+    $defaults += array(
+      'berry_weight_g' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Berry Weight',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varkey' => 'berry_weight_g',
+        'varid' => dh_varkey2varid('berry_weight_g', TRUE),
+        'embed' => TRUE, // defaults to TRUE, set this to FALSE to prevent embedding
+      ),
+    );
+    */
+    return $defaults;
+  }
   
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
@@ -475,6 +494,13 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     );
     return $hidden;
   }
+  
+  public function load(&$entity) {
+    // get field default basics
+    //dpm($entity, 'load()');
+    // can't call loadProperties here, it causes some kind of endless loop
+    //$this->loadProperties($entity);
+  }
 
   function getPublicVars($entity, &$publix = array()) {
     //dpm($this,"called getPublicVars()");
@@ -579,9 +605,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //dpm($entity, 'setUp()');
   }
   
-  public function load(&$entity) {
-    // get field default basics
-  }
   public function saveObjectClass(&$entity) {
     // get field default basics
     // @todo: this should be done in getDefaults() function 
@@ -648,6 +671,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //$entity->propname = 'blankShell';
     $this->saveObjectClass($entity);
     parent::update($entity);
+    // should we do this here?
+    //$this->synchronize($entity);
   }
   
   public function save(&$entity) {
@@ -658,6 +683,11 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
+    $this->synchronize($entity);
+  }
+  
+  public function synchronize(&$entity) {
+    //dsm("New synchronize method used");
     $elid = $this->findRemoteOMElement($entity, $path);
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
@@ -1001,6 +1031,33 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     // @todo: enable to delete the corresponding remote
     //dpm($entity,'plugin delete() method called');
   }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'run_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 2, // default to "current" mode 
+        'propname' => 'run_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Run Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Run Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'flow_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 3, // default to "CBP Phase 5.3" mode 
+        'propname' => 'flow_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Flow Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Flow Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+    );
+    return $defaults;
+  }
 }
 
 class dHOMModelContainer extends dHOMModelElement {
@@ -1104,7 +1161,7 @@ class dHOMEquation extends dHOMSubComp {
 
 //class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
-  var $object_class = 'textField';
+  var $object_class = FALSE;
   
   public function hiddenFields() {
     return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propname','propvalue','dh_link_admin_pr_condition');
@@ -1355,7 +1412,7 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
     if ($plugin) {
     //dpm($plugin,'plugin');
       if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($entity, $publix);
+        $plugin->getPublicVars($parent, $publix);
       }
     }
     return $publix;
@@ -1373,6 +1430,19 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
+  
+  public function getPublicVars($entity, &$publix = array()) {
+    // @todo: if this works, move to the dHOMSubComp class
+    $parent = $this->getParentEntity($entity);
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicVars')) {
+        $plugin->getPublicVars($parent, $publix);
+      }
+    }
+    return $publix;
   }
   
   public function entityDefaults(&$entity) {
@@ -1409,6 +1479,26 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
+      'lutype1' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'lutype1',
+        'vardesc' => 'Row Lookup Type.',
+        'varname' => 'Row Lookup Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'lutype2' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'lutype2',
+        'vardesc' => 'Column Lookup Type (2-dimensional lookups).',
+        'varname' => 'Column Lookup Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
@@ -1428,7 +1518,8 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
-    $this->loadProperties($entity, FALSE);
+    //dpm($entity, 'before loadProp()');
+    //$this->loadProperties($entity, FALSE);
     //dpm($path, 'original path to setAllRemoteProperties()');
     //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
     
@@ -1455,12 +1546,24 @@ class dHOMDataMatrix extends dHOMSubComp {
       $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
       // set table matrix data
       $spath = $path;
+      array_unshift($spath, 'keycol2');
+      $this->setRemoteProp($entity, $elid, $spath, $entity->colkey, $this->object_class, '');
+      // set table matrix data
+      $spath = $path;
       array_unshift($spath, 'matrix');
       $formatted = $om_matrix['array-1d'];
       $scsv = addslashes(json_encode($formatted));
       $this->setRemoteProp($entity, $elid, $spath, $scsv, $this->object_class, 'json-1d');
       $debug_json = json_decode(stripslashes($scsv), TRUE);
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+      
+      // set lutypes 
+      /*
+      $spath = $path;
+      array_unshift($spath, 'lutype1');
+      $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      */
     }
   }
   
@@ -1520,6 +1623,31 @@ class dHOMDataMatrix extends dHOMSubComp {
     $entity->{$this->matrix_field} = array(
       'und' => $default
     );
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    //dpm($form,'form');
+    // now, format the lookup type fields 
+    $lutypes = array(
+      0 => "Exact Match",
+      1 => "Interpolated",
+      2 => "Stair Step",
+      3 => "Key Interpolate"
+    );
+    $form['lutype1']['#type'] = 'select';
+    $form['lutype1']['#options'] = $lutypes;
+    $form['lutype1']['#size'] = 1;
+    $form['lutype1']["#empty_value"] = "";
+    $form['lutype1']["#empty_option"] = "Not Set";
+    $form['lutype1']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+    // column lookup 
+    $form['lutype2']['#type'] = 'select';
+    $form['lutype2']['#options'] = $lutypes;
+    $form['lutype2']['#size'] = 1;
+    $form['lutype2']["#empty_value"] = "";
+    $form['lutype2']["#empty_option"] = "Not Set";
+    $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
   }
  
 }
