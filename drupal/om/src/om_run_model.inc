@@ -9,6 +9,17 @@ module_load_include('module', 'om');
 
 function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $run_id_options = om_run_id_options(); // will determine what a user can run
+  if (is_object($model)) {
+    $plugin = dh_variables_getPlugins($model);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'loadProperties')) {
+        $plugin->loadProperties($model);
+      }
+    }
+    
+  }
+  
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
