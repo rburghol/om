@@ -34,7 +34,6 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#multiple' => FALSE,
     '#weight' => 1,
   );
-  dpm($model,'model');
   $date_format = 'Y-m-d';
   $form['startdate'] = array(
     '#title' => t('Start Date'),
