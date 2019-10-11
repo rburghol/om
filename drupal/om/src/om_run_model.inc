@@ -348,8 +348,20 @@ function om_run_model_form_run(&$form, &$form_state) {
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
   $cd = $model_config['cache_date'];
-  $flow_mode = $model_config['flow_mode'];
+  // set the model run_mode property here, it will cascade a change back to the OM database before running.
+  $run_mode = $model_config['run_mode'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'run_mode',
+    'propvalue' => $run_mode,
+  );
+  //dpm($values,'setting run_mode');
+  // If the run_mode prop does not exist yet, this will create AND save it.
+  $run_mode = om_model_getSetProperty($values, 'name');
   // set the model flow_mode property here, it will cascade a change back to the OM database before running.
+  $flow_mode = $model_config['flow_mode'];
   $values = array(
     'entity_type' => 'dh_properties',
     'featureid' => $model->pid,
@@ -357,10 +369,10 @@ function om_run_model_form_run(&$form, &$form_state) {
     'propname' => 'flow_mode',
     'propvalue' => $flow_mode,
   );
-  dpm($values,'setting flow_mode');
+  //dpm($values,'setting flow_mode');
   // If the flow_mode prop does not exist yet, this will create AND save it.
   $flow_mode = om_model_getSetProperty($values, 'name');
-  dpm($flow_mode,'flow_mode');
+  //dpm($flow_mode,'flow_mode');
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
