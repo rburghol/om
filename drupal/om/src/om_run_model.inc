@@ -16,6 +16,8 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       if (method_exists($plugin, 'loadProperties')) {
         $plugin->loadProperties($model);
         //dsm("loadProperties called");
+        $flow_mode = $model->flow_mode->propvalue;
+        $run_mode = $model->run_mode->propvalue;
       }
     }
   } else {
@@ -96,7 +98,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $run_mode_options,
     '#size' => 1,
-    '#default_value' => empty($model->run_mode) ? 2 : $model->run_mode->propvalue,
+    '#default_value' => empty($run_mode) ? 2 : $run_mode,
   );
   $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
   $form['Advanced']['flow_mode'] = array(
@@ -104,7 +106,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => $flow_mode_options,
     '#size' => 1,
-    '#default_value' => empty($model->flow_mode) ? 3 : $model->flow_mode->propvalue,
+    '#default_value' => empty($flow_mode) ? 3 : $flow_mode,
   );
   //dpm($model,'model');
   //dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
