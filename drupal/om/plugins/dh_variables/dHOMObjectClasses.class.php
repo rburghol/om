@@ -498,7 +498,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
-    $this->loadProperties($entity);
+    // can't call loadProperties here, it causes some kind of endless loop
+    //$this->loadProperties($entity);
   }
 
   function getPublicVars($entity, &$publix = array()) {
