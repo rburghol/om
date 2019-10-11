@@ -345,12 +345,6 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     );
   }
   
-  public function load(&$entity) {
-    // get field default basics
-    //dpm($entity, 'load()');
-    //$this->loadProperties($entity);
-  }
-  
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $row) {
     $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
@@ -499,6 +493,12 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       'varname'
     );
     return $hidden;
+  }
+  
+  public function load(&$entity) {
+    // get field default basics
+    //dpm($entity, 'load()');
+    $this->loadProperties($entity);
   }
 
   function getPublicVars($entity, &$publix = array()) {
