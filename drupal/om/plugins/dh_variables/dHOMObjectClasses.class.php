@@ -1577,19 +1577,23 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
-    dpm($form,'form');
+    //dpm($form,'form');
     // now, format the lookup type fields 
-    $form['lutype1']['#type'] = 'select';
-    $form['lutype1']['#options'] = array(
+    $lutypes = array(
       0 => "Exact Match",
       1 => "Interpolated",
       2 => "Stair Step",
       3 => "Key Interpolate"
     );
+    $form['lutype1']['#type'] = 'select';
+    $form['lutype1']['#options'] = $lutypes;
     $form['lutype1']['#size'] = 1;
     $form['lutype1']["#empty_value"] = "";
     $form['lutype1']["#empty_option"] = "Not Set";
     $form['lutype1']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+    // column lookup 
+    $form['lutype2']['#type'] = 'select';
+    $form['lutype2']['#options'] = $lutypes;
     $form['lutype2']['#size'] = 1;
     $form['lutype2']["#empty_value"] = "";
     $form['lutype2']["#empty_option"] = "Not Set";
