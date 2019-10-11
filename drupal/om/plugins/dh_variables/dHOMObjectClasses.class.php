@@ -58,11 +58,30 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // apply custom settings here
     $this->addAttachedProperties($rowform, $row);
   }
+  public function getDefaults($entity, &$defaults = array()) {
+    // Example:
+    /*
+    $defaults += array(
+      'berry_weight_g' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Berry Weight',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varkey' => 'berry_weight_g',
+        'varid' => dh_varkey2varid('berry_weight_g', TRUE),
+        'embed' => TRUE, // defaults to TRUE, set this to FALSE to prevent embedding
+      ),
+    );
+    */
+    return $defaults;
+  }
   
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
-    //$this->loadProperties($entity);
+    $this->loadProperties($entity);
   }
   
   public function insert(&$entity) {
