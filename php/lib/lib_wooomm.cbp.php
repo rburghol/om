@@ -645,10 +645,9 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
       //error_log("State array:" . print_r($this->state,1));
       $this->scenario = $flow_scenario;
       //$this->processors['flow_scenario']->debug = $dbc;
-      $retfile = implode("/", array($this->modelpath, 'out/land', $this->scenario, 'eos', $this->landseg .'_0111-0211-0411.csv' ));
-    } else {
-      $retfile = $this->filepath;
+      $this->filepath = implode("/", array($this->modelpath, 'out/land', $this->scenario, 'eos', $this->landseg .'_0111-0211-0411.csv' ));
     }
+    $retfile = $this->filepath;
     return $retfile;
   }
   
