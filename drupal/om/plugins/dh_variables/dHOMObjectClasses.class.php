@@ -1034,6 +1034,7 @@ class dHOMModelElement extends dHOMBaseObjectClass {
       ),
     );
     return $defaults;
+  }
 }
 
 class dHOMModelContainer extends dHOMModelElement {
