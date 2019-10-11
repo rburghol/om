@@ -581,6 +581,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function load(&$entity) {
     // get field default basics
+    dpm($entity, 'load()');
   }
   public function saveObjectClass(&$entity) {
     // get field default basics
