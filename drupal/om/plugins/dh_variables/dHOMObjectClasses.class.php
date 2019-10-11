@@ -1590,6 +1590,10 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['lutype1']["#empty_value"] = "";
     $form['lutype1']["#empty_option"] = "Not Set";
     $form['lutype1']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+    $form['lutype2']['#size'] = 1;
+    $form['lutype2']["#empty_value"] = "";
+    $form['lutype2']["#empty_option"] = "Not Set";
+    $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
   }
  
 }
