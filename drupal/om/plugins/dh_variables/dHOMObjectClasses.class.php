@@ -1439,6 +1439,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'lutype2' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'lutype2',
+        'vardesc' => 'Column Lookup Type (2-dimensional lookups).',
+        'varname' => 'Column Lookup Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
@@ -1498,10 +1508,12 @@ class dHOMDataMatrix extends dHOMSubComp {
       //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
       
       // set lutypes 
+      /*
       $spath = $path;
       array_unshift($spath, 'lutype1');
       $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      */
     }
   }
   
