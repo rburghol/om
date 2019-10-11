@@ -369,10 +369,10 @@ function om_run_model_form_run(&$form, &$form_state) {
     'propname' => 'flow_mode',
     'propvalue' => $flow_mode,
   );
-  //dpm($values,'setting flow_mode');
+  dpm($values,'setting flow_mode');
   // If the flow_mode prop does not exist yet, this will create AND save it.
   $flow_mode = om_model_getSetProperty($values, 'name');
-  //dpm($flow_mode,'flow_mode');
+  dpm($flow_mode,'flow_mode');
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
