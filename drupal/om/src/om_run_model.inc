@@ -372,6 +372,7 @@ function om_run_model_form_run(&$form, &$form_state) {
   dpm($values,'setting flow_mode');
   // If the flow_mode prop does not exist yet, this will create AND save it.
   $flow_mode = om_model_getSetProperty($values, 'name');
+  $flow_mode->save();
   dpm($flow_mode,'flow_mode');
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
