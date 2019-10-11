@@ -15,10 +15,13 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     //dpm($plugin,'plugin');
       if (method_exists($plugin, 'loadProperties')) {
         $plugin->loadProperties($model);
+        dsm("loadProperties called");
       }
     }
-    
+  } else {
+    dsm("Model object not set");
   }
+  dpm($model,'model');
   
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
