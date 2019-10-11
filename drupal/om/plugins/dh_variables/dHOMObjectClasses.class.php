@@ -348,7 +348,7 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
-    $this->loadProperties($entity);
+    //$this->loadProperties($entity);
   }
   
   // @todo: move this into dh module once we are satisifed that it is robust
