@@ -348,32 +348,9 @@ function om_run_model_form_run(&$form, &$form_state) {
   $sd = $model_config['startdate'];
   $ed = $model_config['enddate'];
   $cd = $model_config['cache_date'];
-  // set the model run_mode property here, it will cascade a change back to the OM database before running.
-  $run_mode = $model_config['run_mode'];
-  $values = array(
-    'entity_type' => 'dh_properties',
-    'featureid' => $model->pid,
-    'varkey' => 'om_class_Constant',
-    'propname' => 'run_mode',
-    'propvalue' => $run_mode,
-  );
-  //dpm($values,'setting run_mode');
-  // If the run_mode prop does not exist yet, this will create AND save it.
-  $run_mode = om_model_getSetProperty($values, 'name');
-  // set the model flow_mode property here, it will cascade a change back to the OM database before running.
-  $flow_mode = $model_config['flow_mode'];
-  $values = array(
-    'entity_type' => 'dh_properties',
-    'featureid' => $model->pid,
-    'varkey' => 'om_class_Constant',
-    'propname' => 'flow_mode',
-    'propvalue' => $flow_mode,
-  );
-  dpm($values,'setting flow_mode');
-  // If the flow_mode prop does not exist yet, this will create AND save it.
-  $flow_mode = om_model_getSetProperty($values, 'name');
-  $flow_mode->save();
-  dpm($flow_mode,'flow_mode');
+  // stash flow and run modes on the object, to be used as defaults next time
+  // and to be used by remote object during requested run.
+  $this->om_run_stash_modes($model, $model_config);
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
@@ -449,6 +426,33 @@ function om_run_model_form_run(&$form, &$form_state) {
   //$element['status_message']['#markup'] = $message;
   $element['status_message']['#markup'] = render($content);
   return $element;
+}
+
+function om_run_stash_modes($model, $model_config) {
+  // Save items on object needed for current run, and future stashing
+  // set the model run_mode property here, it will cascade a change back to the OM database before running.
+  $run_mode = $model_config['run_mode'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'run_mode',
+    'propvalue' => $run_mode,
+  );
+  $run_mode = om_model_getSetProperty($values, 'name');
+  $run_mode->save();
+  
+  // set the model flow_mode property here
+  $flow_mode = $model_config['flow_mode'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'flow_mode',
+    'propvalue' => $flow_mode,
+  );
+  $flow_mode = om_model_getSetProperty($values, 'name');
+  $flow_mode->save();
 }
 
 /* USAGE
