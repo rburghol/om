@@ -62,7 +62,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function load(&$entity) {
     // get field default basics
     //dpm($entity, 'load()');
-    $this->loadProperties($entity);
+    //$this->loadProperties($entity);
   }
   
   public function insert(&$entity) {
