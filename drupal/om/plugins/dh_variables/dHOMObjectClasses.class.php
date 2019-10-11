@@ -59,6 +59,12 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     $this->addAttachedProperties($rowform, $row);
   }
   
+  public function load(&$entity) {
+    // get field default basics
+    //dpm($entity, 'load()');
+    $this->loadProperties($entity);
+  }
+  
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     // check for transition from ts to prop
@@ -579,10 +585,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //dpm($entity, 'setUp()');
   }
   
-  public function load(&$entity) {
-    // get field default basics
-    dpm($entity, 'load()');
-  }
   public function saveObjectClass(&$entity) {
     // get field default basics
     // @todo: this should be done in getDefaults() function 
