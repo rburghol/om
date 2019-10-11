@@ -1486,6 +1486,10 @@ class dHOMDataMatrix extends dHOMSubComp {
       $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
       // set table matrix data
       $spath = $path;
+      array_unshift($spath, 'keycol2');
+      $this->setRemoteProp($entity, $elid, $spath, $entity->colkey, $this->object_class, '');
+      // set table matrix data
+      $spath = $path;
       array_unshift($spath, 'matrix');
       $formatted = $om_matrix['array-1d'];
       $scsv = addslashes(json_encode($formatted));
