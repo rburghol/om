@@ -36,3 +36,9 @@ for i in $llist; do
   echo create_landseg_table.sh $i CFBASE30Y20180615
   ./create_landseg_table.sh $i CFBASE30Y20180615
 done 
+
+for i in $llist; do
+   echo create_landseg_table.sh $i CBASE1808L55CY55R45P50R45P50Y;   
+   ./create_landseg_table.sh $i CBASE1808L55CY55R45P50R45P50Y; 
+done
+
