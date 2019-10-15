@@ -84,7 +84,7 @@ foreach ($data as $element) {
   $propname = $element['propname'];
   
   $src_entity = entity_load_single($src_entity_type, $src_id);
-  $dest_entity = entity_load_single($dest_entity_type, $src_id);
+  $dest_entity = entity_load_single($dest_entity_type, $dest_id);
   // cache and disable object synch if it exists
   $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
   $result = om_copy_properties($src_entity, $dest_entity, $propname);
