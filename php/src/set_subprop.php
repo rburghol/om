@@ -69,6 +69,7 @@ if (is_object($thisobject)) {
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
     error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);");
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
+    $thisobject->processors[$comp_name]->objectclass = $comp_class;
   }
   $result_html = saveObjectSubComponents($listobject, $thisobject, $elid );
   //error_log("Save result: $result_html");
