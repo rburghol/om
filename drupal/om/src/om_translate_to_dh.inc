@@ -391,7 +391,7 @@ function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
   return $om_link;
 }
 
-function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE) {
+function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
   $src_prop = om_load_dh_model('object', $src_entity, $propname);
   $values = array(
     'entity_type' => $dest_entity->entityType(),
@@ -401,7 +401,6 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALS
     'bundle' => $src_prop->bundle,
   );
   $info = $src_prop->entityInfo();
-  $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
   error_log("Copyable " . print_r($copyable,1));
   foreach ($copyable as $pname) {
@@ -412,11 +411,14 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALS
   // add or replace new property with copy values 
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
-  // @todo: handle entity reference fields, changing the destid 
-  //    handle om link fields map_model_linkage and om_element_connection
-  foreach (array_keys($fields) as $fieldname) {
-    if (isset($src_prop->{$fieldname})) {
-      $copy->{$fieldname} = $src_prop->{$fieldname};
+  if ($fields) {
+    $propfields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
+    // @todo: handle entity reference fields, changing the destid 
+    //    handle om link fields map_model_linkage and om_element_connection
+    foreach (array_keys($propfields) as $fieldname) {
+      if (isset($src_prop->{$fieldname})) {
+        $copy->{$fieldname} = $src_prop->{$fieldname};
+      }
     }
   }
   $copy->save();
