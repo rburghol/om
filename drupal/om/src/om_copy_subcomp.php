@@ -65,6 +65,14 @@ if ($query_type == 'file') {
 }
 
 foreach ($data as $element) {
+  if (
+    empty($element['entity_type'])
+    or empty($element['propname'])
+    or empty($element['src_id'])
+  ) {
+    error_log("Could not process " . print_r($element,1));
+    continue;
+  }
   $values = array(
     'entity_type' => $element['entity_type'],
     'propname' => $element['propname'],
@@ -78,12 +86,13 @@ foreach ($data as $element) {
   $copyable = array_unique(array_merge(array('varid'), array_values($info['property info']), array_keys($fields)));
   error_log("array_keys(fields):" . print_r(array_keys($fields),1));
   error_log("copyable:" . print_r($copyable,1));
-  die;
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
-      $copy_values[$pname] = $src_prop->{$pname};
+      $values[$pname] = $src_prop->{$pname};
     }
   }
+  error_log("To copy:" . print_r($values,1));
+  die;
   // add or replace new property with copy values 
 }
 
