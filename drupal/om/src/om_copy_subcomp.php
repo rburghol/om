@@ -77,9 +77,10 @@ foreach ($data as $element) {
   $values = array(
     'entity_type' => $element['entity_type'],
     'propname' => $element['propname'],
-    'featureid' => $element['dest_id']
+    'featureid' => $element['src_id']
   );
   $src_prop = om_get_property($values, 'name');
+  $values['featureid'] = $dest_id;
   //error_log("prop:" . print_r((array)$src_prop));
   $copy_values = array();
   $info = $src_prop->entityInfo();
