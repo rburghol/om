@@ -21,7 +21,7 @@ if ( count($argv) < 5 ) {
 $supported = array();
 
 list($script, $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite) = $argv;
-//error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite");
+error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, overwrite=$overwrite");
 $setprop_mode = ($setprop_mode === NULL) ? '' : $setprop_mode;
 $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 // this is the object class of the parent component.
@@ -67,7 +67,7 @@ if (is_object($thisobject)) {
     // if this was a sub-sub-comp, like storage_stage_area on hydroImpSmall we should be called ONLY once:
     //    $thisobject->processors['impoundment']->setProp('storage_stage_area', 'JSON storage table');
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
-    error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode); on object of class " . $thisobject->processors[$comp_name]->objectclass);
+    error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode); on object of class " . get_class($thisobject->processors[$comp_name]));
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
     $thisobject->processors[$comp_name]->objectclass = $comp_class;
   }

@@ -64,6 +64,11 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   return $dh_model;
 }
 
+function om_get_dh_model($query_type, $fid, $model_name) {
+  
+  
+}
+
 function om_get_property($values, $singularity = 'name') {
   $pids = dh_get_properties($values, $singularity);
   error_log("Pids:" . print_r((array)$pids, 1)); 
