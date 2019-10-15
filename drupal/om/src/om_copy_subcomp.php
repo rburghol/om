@@ -111,7 +111,7 @@ foreach ($data as $element) {
   }
   foreach ($fields as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
-      $copy->{$fieldname} = $src_prop->{$pname};
+      $copy->{$fieldname} = $src_prop->{$fieldname};
     }
   }
   error_log("Made copy:" . print_r($copy,1));
