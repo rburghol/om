@@ -77,7 +77,7 @@ foreach ($data as $element) {
   $copyable = array('varid') + $info['property info'];
   error_log("Info:" . print_r($copyable,1));
   $fields = field_info_instances('dh_properies', $src_prop->bundle);
-  error_log("fields:" . print_r($fields,1));
+  error_log("fields: on $src_prop->bundle" . print_r($fields,1));
   die;
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
