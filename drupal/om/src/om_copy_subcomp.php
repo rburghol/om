@@ -97,12 +97,25 @@ foreach ($data as $element) {
   // add or replace new property with copy values 
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   error_log("Made copy:" . print_r($copy,1));
-  $copy->save();
+  
+  $plugin = dh_variables_getPlugins($src_prop);
+  if (is_object($plugin )) {
+    error_log("Calling getDefaults on " . get_class($plugin ));
+    $default_subprops = $plugin->getDefaults($src_prop);
+    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
+  }
+  foreach ($default_subprops as $thisprop) {
+    if (property_exists($src_prop, $thisprop['propname'])) {
+      //error_log("Setting $thisprop[propname] to " . $src_prop->{$thisprop['propname']});
+      $copy->{$thisprop['propname']} = $src_prop->{$thisprop['propname']};
+    }
+  }
   foreach ($fields as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
       $copy->{$fieldname} = $src_prop->{$pname};
     }
   }
+  $copy->save();
   //$copy->save();
   error_log("Property $copy->propname created with pid = $copy->pid");
 }
