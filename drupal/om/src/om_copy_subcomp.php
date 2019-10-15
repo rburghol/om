@@ -74,7 +74,7 @@ foreach ($data as $element) {
   //error_log("prop:" . print_r((array)$src_prop));
   $copy_values = array();
   $info = $src_prop->entityInfo();
-  $copyable = array('varid') + $info['properties'];
+  $copyable = array('varid') + $info['property info'];
   error_log("Info:" . print_r($copyable,1));
   $fields = field_info_instances('dh_properies', $src_prop->bundle);
   error_log("fields:" . print_r($fields,1));
