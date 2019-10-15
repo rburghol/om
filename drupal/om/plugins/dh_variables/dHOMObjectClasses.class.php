@@ -762,11 +762,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         list($propname, $parentname) = $path;
         // this is a property on a subcomp of the element
         // setprop_mode = 'json' for matrices, '' is default
-        $setstr = "php set_subprop.php $elid $parentname \"$propname=$propvalue\" $object_class 0 ";
-        // @todo: change syntax from elid propname "subpropname=value" parent_object_class overwrite
-        //        to:
-        //        elid propname subpropname subpropvalue parent_object_class setprop_mode overwrite 
-        $setstr = "php set_subprop.php $elid $parentname \"$object_class\" $propname \"$propvalue\" \"$mode\" 0 ";
+        $setstr = "php set_subprop.php $elid $parentname \"$object_class\" $propname \"$propvalue\" \"$mode\" 1 ";
       break;
       case 3:
       // @todo: this would be a sub-comp of a sub-comp,
