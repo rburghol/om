@@ -85,7 +85,7 @@ foreach ($data as $element) {
   $copy_values = array();
   $info = $src_prop->entityInfo();
   $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
-  $copyable = array_unique(array_merge(array('varid'), array_values($info['property info']), array_keys($fields)));
+  $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info']), array_keys($fields)));
   error_log("array_keys(fields):" . print_r(array_keys($fields),1));
   error_log("copyable:" . print_r($copyable,1));
   foreach ($copyable as $pname) {
@@ -94,8 +94,10 @@ foreach ($data as $element) {
     }
   }
   error_log("To copy:" . print_r($values,1));
-  die;
   // add or replace new property with copy values 
+  $copy = om_create_property($values, 'name');
+  $copy->save();
+  error_log("Property $copy->propname created with pid = $copy->pid");
 }
 
 
