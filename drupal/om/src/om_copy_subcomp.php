@@ -95,14 +95,15 @@ foreach ($data as $element) {
   }
   error_log("To copy:" . print_r($values,1));
   // add or replace new property with copy values 
-  $copy = om_model_getSetProperty($values, 'name');
-  $copy->save();
+  $copy = om_model_getSetProperty($values, 'name'. FALSE);
+  error_log("Made copy:" . print_r($copy,1));
+  //$copy->save();
   foreach ($fields as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
       $copy->{$fieldname} = $src_prop->{$pname};
     }
   }
-  $copy->save();
+  //$copy->save();
   error_log("Property $copy->propname created with pid = $copy->pid");
 }
 
