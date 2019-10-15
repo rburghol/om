@@ -57,6 +57,7 @@ if ($query_type == 'file') {
 } else {
   $data = array();
   $data[] = array(
+    'entity_type' => $entity_type, 
     'src_id' => $src_id, 
     'dest_id' => $dest_id,
     'propname' => $propname,
@@ -69,7 +70,8 @@ foreach ($data as $element) {
     'propname' => $element['propname'],
     'featureid' => $element['src_id']
   );
-  $src_prop = om_get_property($values, 'name');
+  $src_prop = om_get_property((array)$src_prop, 'name');
+  error_log("Info:" . print_r($copyable));
   $copy_values = array();
   $copyable = $src_prop->entityInfo();
   error_log("Info:" . print_r($copyable));
