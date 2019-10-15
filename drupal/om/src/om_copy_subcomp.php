@@ -75,7 +75,7 @@ foreach ($data as $element) {
   $copy_values = array();
   $info = $src_prop->entityInfo();
   $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
-  $copyable = array('varid') + $info['property info'] + array_keys($fields);
+  $copyable = array('varid') + array_values($info['property info']) + array_keys($fields);
   error_log("array_keys(fields):" . print_r(array_keys($fields),1));
   error_log("copyable:" . print_r($copyable,1));
   die;
