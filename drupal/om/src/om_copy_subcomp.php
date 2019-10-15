@@ -109,7 +109,7 @@ foreach ($data as $element) {
       $copy->{$thisprop['propname']} = $src_prop->{$thisprop['propname']};
     }
   }
-  foreach ($fields as $fieldname) {
+  foreach (array_keys($fields) as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
       $copy->{$fieldname} = $src_prop->{$fieldname};
     }
