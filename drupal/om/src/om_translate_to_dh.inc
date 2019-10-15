@@ -409,6 +409,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     }
   }
   // add or replace new property with copy values 
+  error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
   if ($fields) {
