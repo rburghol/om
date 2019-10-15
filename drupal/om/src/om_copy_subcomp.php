@@ -65,7 +65,7 @@ foreach ($data as $element) {
   $src_prop = om_get_property($values, 'name');
   $copy_values = array();
   $copyable = $src_prop->entityInfo();
-  error_log("Info:" . print_r($copyable);
+  error_log("Info:" . print_r($copyable));
   die;
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
