@@ -76,11 +76,11 @@ foreach ($data as $element) {
     error_log("Could not process " . print_r($element,1));
     continue;
   }
-  $values = array(
-    'src_entity_type' => $element['entity_type'],
-    'dest_entity_type' => $element['entity_type'],
-    'propname' => $element['propname'],
-  $src_entity $element['src_id'];
+  $src_entity_type = $element['src_entity_type'];
+  $src_id = $element['src_id'];
+  $dest_entity_type = $element['dest_entity_type'];
+  $dest_id = $element['dest_id'];
+  $propname = $element['propname'];
   
   $src_entity = entity_load_single($src_entity_type, $src_id);
   $dest_entity = entity_load_single($dest_entity_type, $src_id);
@@ -91,7 +91,7 @@ foreach ($data as $element) {
   //$copy->save();
   error_log("Property $copy->propname created with pid = $copy->pid");
   // restore original object synch if it exists
-  om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
+  $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
 }
 
 
