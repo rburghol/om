@@ -69,6 +69,7 @@ foreach ($data as $element) {
     empty($element['entity_type'])
     or empty($element['propname'])
     or empty($element['src_id'])
+    or empty($element['dest_id'])
   ) {
     error_log("Could not process " . print_r($element,1));
     continue;
@@ -76,7 +77,7 @@ foreach ($data as $element) {
   $values = array(
     'entity_type' => $element['entity_type'],
     'propname' => $element['propname'],
-    'featureid' => $element['src_id']
+    'featureid' => $element['dest_id']
   );
   $src_prop = om_get_property($values, 'name');
   //error_log("prop:" . print_r((array)$src_prop));
