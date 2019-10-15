@@ -79,7 +79,6 @@ foreach ($data as $element) {
   }
   $src_entity_type = $element['src_entity_type'];
   $src_id = $element['src_id'];
-  die;
   $dest_entity_type = $element['dest_entity_type'];
   $dest_id = $element['dest_id'];
   $propname = $element['propname'];
