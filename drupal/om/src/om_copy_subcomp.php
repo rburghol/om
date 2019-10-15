@@ -97,7 +97,7 @@ foreach ($data as $element) {
   // add or replace new property with copy values 
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   error_log("Made copy:" . print_r($copy,1));
-  //$copy->save();
+  $copy->save();
   foreach ($fields as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
       $copy->{$fieldname} = $src_prop->{$pname};
