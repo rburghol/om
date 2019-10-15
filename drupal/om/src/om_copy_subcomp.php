@@ -95,7 +95,7 @@ foreach ($data as $element) {
   }
   error_log("To copy:" . print_r($values,1));
   // add or replace new property with copy values 
-  $copy = om_model_getSetProperty($values, 'name'. FALSE);
+  $copy = om_model_getSetProperty($values, 'name', FALSE);
   error_log("Made copy:" . print_r($copy,1));
   //$copy->save();
   foreach ($fields as $fieldname) {
