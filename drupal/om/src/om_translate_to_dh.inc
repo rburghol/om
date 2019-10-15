@@ -429,7 +429,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       $default_subprops = $plugin->getDefaults($src_prop);
     }
     foreach ($default_subprops as $thisprop) {
-      om_copy_properties($src_entity, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
     }
   }
   // @todo: handle allprops if requested
