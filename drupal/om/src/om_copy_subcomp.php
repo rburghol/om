@@ -13,8 +13,25 @@ if (count($args) >= 3) {
   $src_id = $args[1];
   $dest_id = $args[2];
 } else {
-  print("Usage: php copy_subcomps.php query_type src_id dest_id [all/sub1[|newname],sub2,...] [cascade=0/1] \n");
+  error_log("Usage: php copy_subcomps.php query_type src_id dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Note: 'all' is not yet enabled");
   die;
+}
+
+function om_get_copyable($src_prop) {
+  // standard fields
+  $copyable = array(
+    'propname' = array('required', 
+    'propvalue', 
+    'startdate', 
+    'enddate', 
+    'propcode', 
+    'varid'
+  );
+  // load field info
+  
+  
+  return $copyable;
 }
 
 if ($query_type == 'file') {
@@ -36,21 +53,24 @@ if ($query_type == 'file') {
 } else {
   $data = array();
   $data[] = array(
-    'feature_hydroid' => $feature_hydroid, 
-    'coverage_hydroid' => $coverage_hydroid,
-    'coverage_hydrocode' => $coverage_hydrocode,
-    'feature_name' => $feature_name,
-    'feature_hydrocode' => $feature_hydrocode,
-    'coverage_name' => $coverage_name,
+    'src_id' => $src_id, 
+    'dest_id' => $dest_id,
     'propname' => $propname,
-    'prop_varkey' => $prop_varkey,
-    'propvalue' => $propvalue,
   );
 }
 
 foreach ($data as $element) {
-  $src_prop = om_load_dh_model($query_type, $src_id, $model_name);
-  $dest_prop = om_load_dh_model($query_type, $dest_id, $model_name);
+  $src_prop = om_get_property($values, 'name');
+  $copy_values = array();
+  $copyable = $src_prop->entityInfo();
+  error_log("Info:" . print_r($copyable);
+  die;
+  foreach ($copyable as $pname) {
+    if (isset($src_prop->{$pname})) {
+      $copy_values[$pname] = $src_prop->{$pname};
+    }
+  }
+  // add or replace new property with copy values 
 }
 
 
