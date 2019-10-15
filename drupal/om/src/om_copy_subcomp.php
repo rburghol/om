@@ -73,8 +73,11 @@ foreach ($data as $element) {
   $src_prop = om_get_property($values, 'name');
   //error_log("prop:" . print_r((array)$src_prop));
   $copy_values = array();
-  $copyable = $src_prop->entityInfo();
+  $info = $src_prop->entityInfo();
+  $copyable = array('varid') + $info['properties'];
   error_log("Info:" . print_r($copyable,1));
+  $fields = field_info_instances('dh_properies', $src_prop->bundle);
+  error_log("fields:" . print_r($fields,1));
   die;
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
