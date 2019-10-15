@@ -20,6 +20,7 @@ if (count($args) >= 3) {
 
 function om_get_copyable($src_prop) {
   // standard fields
+/*
   $copyable = array(
     'propname' = array('required', 
     'propvalue', 
@@ -28,6 +29,7 @@ function om_get_copyable($src_prop) {
     'propcode', 
     'varid'
   );
+  */
   // load field info
   
   
