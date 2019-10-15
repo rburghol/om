@@ -79,45 +79,25 @@ foreach ($data as $element) {
     'propname' => $element['propname'],
     'featureid' => $element['src_id']
   );
-  $src_prop = om_get_property($values, 'name');
-  $values['featureid'] = $dest_id;
-  //error_log("prop:" . print_r((array)$src_prop));
-  $copy_values = array();
-  $info = $src_prop->entityInfo();
-  $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
-  $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
-  error_log("array_keys(fields):" . print_r(array_keys($fields),1));
-  error_log("copyable:" . print_r($copyable,1));
-  foreach ($copyable as $pname) {
-    if (isset($src_prop->{$pname})) {
-      $values[$pname] = $src_prop->{$pname};
-    }
+  $src_entity = om_load_dh_model('object', $fid, $model_name);
+  $om_link = om_load_dh_model('object', $src_entity, 'om_element_connection');
+  $dest_entity = om_load_dh_model('object', $fid, $model_name);
+  $om_link = om_load_dh_model('object', $src_entity, 'om_element_connection');
+  // cache and disable object synch if it exists
+  if (!($om_link->pid === NULL)) {
+    $cc = $om_link->propcode;
+    $om_link->propcode = '0';
+    $om_link->save();
   }
-  error_log("To copy:" . print_r($values,1));
-  // add or replace new property with copy values 
-  $copy = om_model_getSetProperty($values, 'name', FALSE);
   
-  $plugin = dh_variables_getPlugins($src_prop);
-  if (is_object($plugin )) {
-    error_log("Calling getDefaults on " . get_class($plugin ));
-    $default_subprops = $plugin->getDefaults($src_prop);
-    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
-  }
-  foreach ($default_subprops as $thisprop) {
-    if (property_exists($src_prop, $thisprop['propname'])) {
-      error_log("Setting $thisprop[propname] to " . $src_prop->{$thisprop['propname']});
-      $copy->{$thisprop['propname']} = $src_prop->{$thisprop['propname']};
-    }
-  }
-  foreach (array_keys($fields) as $fieldname) {
-    if (isset($src_prop->{$fieldname})) {
-      $copy->{$fieldname} = $src_prop->{$fieldname};
-    }
-  }
-  error_log("Made copy:" . print_r($copy,1));
-  $copy->save();
+  $result = om_copy_subcomp($src_entity, $dest_entity, $propname);
   //$copy->save();
   error_log("Property $copy->propname created with pid = $copy->pid");
+  // restore original object synch if it exists
+  if (!($om_link->pid === NULL)) {
+    $om_link->propcode = $cc;
+    $om_link->save();
+  }
 }
 
 

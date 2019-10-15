@@ -26,6 +26,12 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   }
   $dh_model = FALSE;
   switch($query_type) {
+    case 'object':
+      $search_mode = 'name';
+      $model_entity_type = $fid->entityType();
+      $fid = $fid->identifier();
+    break;
+    
     case 'pid':
     break;
     
@@ -363,4 +369,46 @@ function om_setprop($elementid, $propname, $propval) {
   error_log("$cmd");
   $elid = shell_exec($cmd);
   return $elid;
+}
+
+function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE) {
+  $src_prop = om_load_dh_model('object', $src_entity, $propname);
+  $values = array(
+    'entity_type' => $dest_entity->entityType(),
+    'propname' => $propname,
+    'featureid' => $dest_entity->identifier(),
+    'varid' => $src_prop->varid,
+    'bundle' => $src_prop->bundle,
+  );
+  $info = $src_prop->entityInfo();
+  $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
+  $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
+  
+  foreach ($copyable as $pname) {
+    if (isset($src_prop->{$pname})) {
+      $values[$pname] = $src_prop->{$pname};
+    }
+  }
+  // add or replace new property with copy values 
+  $copy = om_model_getSetProperty($values, 'name', FALSE);
+  
+  foreach (array_keys($fields) as $fieldname) {
+    if (isset($src_prop->{$fieldname})) {
+      $copy->{$fieldname} = $src_prop->{$fieldname};
+    }
+  }
+  // Copy default properties defined in getDefaults()?
+  if ($defprops) {
+    $plugin = dh_variables_getPlugins($src_prop);
+    if (is_object($plugin )) {
+      $default_subprops = $plugin->getDefaults($src_prop);
+    }
+    foreach ($default_subprops as $thisprop) {
+      if (property_exists($src_prop, $thisprop['propname'])) {
+        $copy->{$thisprop['propname']} = $src_prop->{$thisprop['propname']};
+      }
+    }
+  }
+  error_log("Made copy:" . print_r($copy,1));
+  $copy->save();
 }
