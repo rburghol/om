@@ -70,8 +70,8 @@ foreach ($data as $element) {
     'propname' => $element['propname'],
     'featureid' => $element['src_id']
   );
-  $src_prop = om_get_property((array)$src_prop, 'name');
-  error_log("Info:" . print_r($copyable));
+  $src_prop = om_get_property($values, 'name');
+  error_log("Info:" . print_r((array)$src_prop));
   $copy_values = array();
   $copyable = $src_prop->entityInfo();
   error_log("Info:" . print_r($copyable));
