@@ -388,6 +388,7 @@ function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
     $om_link->propcode = $cc;
     $om_link->save();
   }
+  return $om_link;
 }
 
 function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE) {
@@ -402,7 +403,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALS
   $info = $src_prop->entityInfo();
   $fields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
-  
+  error_log("Copyable " . print_r($copyable,1));
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
       $values[$pname] = $src_prop->{$pname};
