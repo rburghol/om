@@ -60,8 +60,8 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
       'entity_type' => $model_entity_type,
       'featureid' => $fid,
       'propcode'=>$model_scenario,
-      'varkey' => $model_varkey,
       'propname' => $model_name,
+      'varkey' => $model_varkey,
     );
     // If the model prop does not exist yet, this will create AND save it.
     $dh_model = om_model_getSetProperty($values, $search_mode);
@@ -70,9 +70,17 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   return $dh_model;
 }
 
-function om_get_dh_model($query_type, $fid, $model_name) {
-  
-  
+function om_load_dh_property($entity, $model_name) {
+
+  $model_entity_type = $entity->entityType();
+  $fid = $entity->identifier();
+  $values = array(
+    'entity_type' => $model_entity_type,
+    'featureid' => $fid,
+    'propname' => $model_name,
+  );
+  $model = om_get_property($values);
+  return $model;
 }
 
 function om_get_property($values, $singularity = 'name') {
@@ -392,7 +400,7 @@ function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
 }
 
 function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
-  $src_prop = om_load_dh_model('object', $src_entity, $propname);
+  $src_prop = om_load_dh_property($src_entity, $propname);
   $values = array(
     'entity_type' => $dest_entity->entityType(),
     'propname' => $propname,
