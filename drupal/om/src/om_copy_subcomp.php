@@ -10,10 +10,12 @@ while ($arg = drush_shift()) {
 // Is single command line arg?
 if (count($args) >= 3) {
   $query_type = $args[0];
-  $src_id = $args[1];
-  $dest_id = $args[2];
+  $entity_type = $args[1];
+  $src_id = $args[2];
+  $dest_id = $args[3];
+  $propname = $args[4];
 } else {
-  error_log("Usage: php copy_subcomps.php query_type src_id dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Usage: php copy_subcomps.php query_type entity_type src_id dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
@@ -62,6 +64,11 @@ if ($query_type == 'file') {
 }
 
 foreach ($data as $element) {
+  $values = array(
+    'entity_type' => $element['entity_type'],
+    'propname' => $element['propname'],
+    'featureid' => $element['src_id']
+  );
   $src_prop = om_get_property($values, 'name');
   $copy_values = array();
   $copyable = $src_prop->entityInfo();
