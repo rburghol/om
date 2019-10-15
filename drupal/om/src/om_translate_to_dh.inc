@@ -371,6 +371,25 @@ function om_setprop($elementid, $propname, $propval) {
   return $elid;
 }
 
+function om_dh_stashlink($entity, $linkname='om_element_connection') {
+  $om_link = om_load_dh_model('object', $entity, $linkname);
+  $cc = FALSE;
+  if (!($om_link->pid === NULL)) {
+    $cc = $om_link->propcode;
+    $om_link->propcode = '0';
+    $om_link->save();
+  }
+  return $cc;
+}
+
+function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
+  $om_link = om_load_dh_model('object', $entity, $linkname);
+  if (!($om_link->pid === NULL)) {
+    $om_link->propcode = $cc;
+    $om_link->save();
+  }
+}
+
 function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE) {
   $src_prop = om_load_dh_model('object', $src_entity, $propname);
   $values = array(
@@ -391,12 +410,15 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALS
   }
   // add or replace new property with copy values 
   $copy = om_model_getSetProperty($values, 'name', FALSE);
-  
+  // Now copy fields
+  // @todo: handle entity reference fields, changing the destid 
+  //    handle om link fields map_model_linkage and om_element_connection
   foreach (array_keys($fields) as $fieldname) {
     if (isset($src_prop->{$fieldname})) {
       $copy->{$fieldname} = $src_prop->{$fieldname};
     }
   }
+  $copy->save();
   // Copy default properties defined in getDefaults()?
   if ($defprops) {
     $plugin = dh_variables_getPlugins($src_prop);
@@ -404,11 +426,13 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALS
       $default_subprops = $plugin->getDefaults($src_prop);
     }
     foreach ($default_subprops as $thisprop) {
-      if (property_exists($src_prop, $thisprop['propname'])) {
-        $copy->{$thisprop['propname']} = $src_prop->{$thisprop['propname']};
-      }
+      om_copy_properties($src_entity, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
     }
   }
-  error_log("Made copy:" . print_r($copy,1));
-  $copy->save();
+  // @todo: handle allprops if requested
+  if ($allprops) {
+    
+  }
+  error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid);
+  return $copy;
 }

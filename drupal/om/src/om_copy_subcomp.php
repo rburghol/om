@@ -15,7 +15,7 @@ if (count($args) >= 3) {
   $dest_id = $args[3];
   $propname = $args[4];
 } else {
-  error_log("Usage: php copy_subcomps.php query_type entity_type src_id dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
@@ -57,7 +57,8 @@ if ($query_type == 'file') {
 } else {
   $data = array();
   $data[] = array(
-    'entity_type' => $entity_type, 
+    'src_entity_type' => $src_entity_type, 
+    'dest_entity_type' => $dest_entity_type, 
     'src_id' => $src_id, 
     'dest_id' => $dest_id,
     'propname' => $propname,
@@ -66,7 +67,8 @@ if ($query_type == 'file') {
 
 foreach ($data as $element) {
   if (
-    empty($element['entity_type'])
+    empty($element['src_entity_type'])
+    or empty($element['src_entity_type'])
     or empty($element['propname'])
     or empty($element['src_id'])
     or empty($element['dest_id'])
@@ -75,29 +77,21 @@ foreach ($data as $element) {
     continue;
   }
   $values = array(
-    'entity_type' => $element['entity_type'],
+    'src_entity_type' => $element['entity_type'],
+    'dest_entity_type' => $element['entity_type'],
     'propname' => $element['propname'],
-    'featureid' => $element['src_id']
-  );
-  $src_entity = om_load_dh_model('object', $fid, $model_name);
-  $om_link = om_load_dh_model('object', $src_entity, 'om_element_connection');
-  $dest_entity = om_load_dh_model('object', $fid, $model_name);
-  $om_link = om_load_dh_model('object', $src_entity, 'om_element_connection');
-  // cache and disable object synch if it exists
-  if (!($om_link->pid === NULL)) {
-    $cc = $om_link->propcode;
-    $om_link->propcode = '0';
-    $om_link->save();
-  }
+  $src_entity $element['src_id'];
   
+  $src_entity = entity_load_single($src_entity_type, $src_id);
+  $dest_entity = entity_load_single($dest_entity_type, $src_id);
+  // cache and disable object synch if it exists
+  $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
   $result = om_copy_subcomp($src_entity, $dest_entity, $propname);
+  // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
   //$copy->save();
   error_log("Property $copy->propname created with pid = $copy->pid");
   // restore original object synch if it exists
-  if (!($om_link->pid === NULL)) {
-    $om_link->propcode = $cc;
-    $om_link->save();
-  }
+  om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
 }
 
 
