@@ -29,7 +29,7 @@ $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 
 
 if (isset($argv[6])) {
-   $overwrite = ( ($argv[6] == 1) or (strtolower($argv[6]) == 'true')) ? TRUE : FALSE;
+   $overwrite = ( ($overwrite == 1) or (strtolower($overwrite) == 'true')) ? TRUE : FALSE;
 } else {
    $overwrite = FALSE;
 }
