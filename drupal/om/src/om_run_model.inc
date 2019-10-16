@@ -18,6 +18,10 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
         //dsm("loadProperties called");
         $flow_mode = $model->flow_mode->propvalue;
         $run_mode = $model->run_mode->propvalue;
+        $cache_date = is_object($model->cache_date) ? date('Y-m-d', $model->cache_date->startdate) : date('Y-m-d');
+        $startdate = is_object($model->run_info) ? date('Y-m-d', $model->run_info->startdate) : '2000-01-01';
+        $enddate = is_object($model->run_info) ? date('Y-m-d', $model->run_info->enddate) : '2000-12-31';
+        $run_id = is_object($model->run_info) ? $model->run_info->propvalue : 100;
       }
     }
   } else {
@@ -27,7 +31,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $form['run_id'] = array(
     '#title' => t('Model Run ID'),
     '#type' => 'select',
-    '#default_value' => empty($model->run_id) ? 100 : $model->run_id,
+    '#default_value' => $run_id,
     '#options' => $run_id_options,
     '#description' => t('Unique Identifier for a model run.'),
     '#required' => TRUE,
@@ -39,15 +43,15 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#title' => t('Start Date'),
     '#description' => t('Start date for model run.'),
     '#required' => FALSE,
-    '#default_value' => empty($model->startdate) ? '2000-01-01' : date($date_format,$model->startdate),
+    '#default_value' => $startdate,
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-100:+5',
   );
   $form['enddate'] = array(
-    '#title' => t('End/Expiration Date'),
-    '#description' => t('End/Expiration date for property enabled.'),
-    '#default_value' => empty($model->enddate) ? '2000-12-31' : date($date_format,$model->enddate),
+    '#title' => t('Model End Date'),
+    '#description' => t('End date for selected model run.'),
+    '#default_value' => $enddate,
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-100:+5',
@@ -113,7 +117,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $form['Advanced']['cache_date'] = array(
     '#title' => t('Cache Date'),
     '#description' => t('Date to determine if cacheable components are re-run or not.'),
-    '#default_value' => empty($model->cache_date) ? date('Y-m-d'): date($date_format,$model->cache_date),
+    '#default_value' => $cache_date),
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-20:+0',
@@ -453,6 +457,31 @@ function om_run_stash_modes($model, $model_config) {
   );
   $flow_mode = om_model_getSetProperty($values, 'name');
   $flow_mode->save();
+  
+  // set the model flow_mode property here
+  $cache_date = $model_config['cache_date'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'cache_date',
+    'startdate' => $cache_date,
+  );
+  $cache_date = om_model_getSetProperty($values, 'name');
+  $cache_date->save();
+  
+  // set the model flow_mode property here
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'run_info',
+    'startdate' => $model_config['startdate'],
+    'enddate' => $model_config['enddate'],
+    'propvalue' => $model_config['run_id'],
+  );
+  $run_info = om_model_getSetProperty($values, 'name');
+  $run_info->save();
 }
 
 /* USAGE

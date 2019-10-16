@@ -1051,6 +1051,26 @@ class dHOMModelElement extends dHOMBaseObjectClass {
         'varname' => 'Flow Mode default',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'run_info' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => -1, // default to "CBP Phase 5.3" mode 
+        'propname' => 'run_info',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Most recent run information, start, end and run_id.',
+        'varname' => 'Last Run ID',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cache_date' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => -1, // default to "CBP Phase 5.3" mode 
+        'propname' => 'cache_date',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Cache Date setting of most recent run.',
+        'varname' => 'Last Cache Date',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
