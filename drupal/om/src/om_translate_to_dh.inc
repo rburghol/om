@@ -380,7 +380,7 @@ function om_setprop($elementid, $propname, $propval) {
 }
 
 function om_dh_stashlink($entity, $linkname='om_element_connection') {
-  $om_link = om_load_dh_model('object', $entity, $linkname);
+  $om_link = om_load_dh_property($entity, $linkname);
   $cc = FALSE;
   if (!($om_link->pid === NULL)) {
     $cc = $om_link->propcode;
@@ -391,7 +391,7 @@ function om_dh_stashlink($entity, $linkname='om_element_connection') {
 }
 
 function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
-  $om_link = om_load_dh_model('object', $entity, $linkname);
+  $om_link = om_load_dh_property($entity, $linkname);
   if (!($om_link->pid === NULL)) {
     $om_link->propcode = $cc;
     $om_link->save();
