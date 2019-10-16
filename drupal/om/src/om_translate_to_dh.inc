@@ -443,7 +443,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     foreach ($default_subprops as $thisprop) {
       error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
       $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
-      $copy->{$propname} = $sub;
+      $copy->{$thisprop['propname']} = $sub;
     }
   }
   $copy->save();
