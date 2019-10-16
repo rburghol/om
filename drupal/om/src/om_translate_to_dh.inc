@@ -430,8 +430,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       }
     }
   }
-  //$copy->save();
-  entity_save('dh_properties', $copy);
+  $copy->save();
+  //entity_save('dh_properties', $copy);
   // Copy default properties defined in getDefaults()?
   if ($defprops) {
     $default_subprops = array();
@@ -451,8 +451,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   }
   error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
   // die on match
-  //if ($copy->propname == 'keycol1') {
-  //  die;  
-  //}
+  if ($copy->propname == 'keycol1') {
+    die;  
+  }
   return $copy;
 }
