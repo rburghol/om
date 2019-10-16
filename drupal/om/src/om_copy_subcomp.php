@@ -8,7 +8,7 @@ while ($arg = drush_shift()) {
 }
 
 // Is single command line arg?
-if (count($args) >= 3) {
+if (count($args) >= 2) {
   $query_type = $args[0];
   $src_entity_type = $args[1];
   $src_id = $args[2];
@@ -40,7 +40,7 @@ function om_get_copyable($src_prop) {
 }
 
 if ($query_type == 'file') {
-  $filepath = $src_id;
+  $filepath = $src_entity_type;
   error_log("File requested: $filepath");
   $data = array();
   $file = fopen($filepath, 'r');
