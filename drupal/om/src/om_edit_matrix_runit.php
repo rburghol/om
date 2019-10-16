@@ -68,7 +68,7 @@ foreach ($data as $element) {
   $plugin = dh_variables_getPlugins($dh_prop);
   $om_matrix = $plugin->tablefieldToOMMatrix($dh_prop->field_dh_matrix);
   $plugin->load($dh_prop);
-  error_log("Updating: $pid : $dh_prop->propname rowkey: " . get_class($dh_prop->rowkey));
+  error_log("Updating: $pid : $dh_prop->propname keycol1: " . get_class($dh_prop->keycol1));
   $plugin->setCSVTableField($dh_prop, $new_matrix);
   // we save the matrix
   $dh_prop->save();

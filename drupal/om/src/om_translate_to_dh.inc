@@ -113,8 +113,8 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   
   switch ($om_comp->object_class) {
     case 'dataMatrix':
-      $dh_prop->rowkey = $om_comp->keycol1;
-      $dh_prop->colkey = $om_comp->keycol2;
+      $dh_prop->keycol1 = $om_comp->keycol1;
+      $dh_prop->keycol2 = $om_comp->keycol2;
       //$dh_prop->field_mytablefield['und'][0]['value'] = serialize($yourtable);
       $in = $om_comp->matrix_rowcol;
       array_walk(
