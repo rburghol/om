@@ -89,10 +89,11 @@ foreach ($data as $element) {
   $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
   $result = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
   // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
-  //$copy->save();
   error_log("Property $result->propname created with pid = $result->pid");
   // restore original object synch if it exists
   $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
+  // do a final save if the link calls for it
+  $result->save();
 }
 
 
