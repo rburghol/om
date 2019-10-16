@@ -85,7 +85,7 @@ function om_load_dh_property($entity, $model_name) {
 
 function om_get_property($values, $singularity = 'name') {
   $pids = dh_get_properties($values, $singularity);
-  error_log("Pids:" . print_r((array)$pids, 1)); 
+  //error_log("Pids:" . print_r((array)$pids, 1)); 
   $om_model = FALSE;
   if (count($pids) > 0) {
     $pid = array_shift($pids['dh_properties']);

@@ -1473,10 +1473,10 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     $defaults += array(
-      'rowkey' => array(
+      'keycol1' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propname' => 'rowkey',
+        'propname' => 'keycol1',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Variable to use for row lookup if 1-d or 2-d lookup type.',
@@ -1484,10 +1484,10 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
-      'colkey' => array(
+      'keycol2' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propname' => 'colkey',
+        'propname' => 'keycol2',
         'vardesc' => 'Variable to use for column lookup if 2-d lookup type.',
         'varname' => 'Column Key',
         'singularity' => 'name_singular',
@@ -1555,15 +1555,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       array_unshift($spath, 'valuetype');
       $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $this->setRemoteProp($entity, $elid, $spath, $valuetype, $this->object_class, '');
-      // set rowkey - i.e. keycol1 
-      $spath = $path;
-      array_unshift($spath, 'keycol1');
-      $rowkey = $entity->rowkey; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
-      // set table matrix data
-      $spath = $path;
-      array_unshift($spath, 'keycol2');
-      $this->setRemoteProp($entity, $elid, $spath, $entity->colkey, $this->object_class, '');
+       
       // set table matrix data
       $spath = $path;
       array_unshift($spath, 'matrix');
@@ -1571,15 +1563,6 @@ class dHOMDataMatrix extends dHOMSubComp {
       $scsv = addslashes(json_encode($formatted));
       $this->setRemoteProp($entity, $elid, $spath, $scsv, $this->object_class, 'json-1d');
       $debug_json = json_decode(stripslashes($scsv), TRUE);
-      //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
-      
-      // set lutypes 
-      /*
-      $spath = $path;
-      array_unshift($spath, 'lutype1');
-      $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
-      */
     }
   }
   
