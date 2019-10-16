@@ -445,6 +445,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       $copy->{$propname} = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
     }
   }
+  $copy->save();
   // @todo: handle allprops if requested
   if ($allprops) {
     // nothing yet
