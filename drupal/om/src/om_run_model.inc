@@ -18,7 +18,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
         //dsm("loadProperties called");
         $flow_mode = $model->flow_mode->propvalue;
         $run_mode = $model->run_mode->propvalue;
-        $def_cache_date = $flow_mode->modified;
+        $def_cache_date = date('Y-m-d',$flow_mode->modified);
         $cache_date = (is_object($model->cache_date) and !empty($model->cache_date->startdate)) ? date('Y-m-d', $model->cache_date->startdate) : $def_cache_date;
         dpm($model->run_info,'run info');
         $startdate = (is_object($model->run_info) and !empty($model->run_info->startdate)) ? date('Y-m-d', $model->run_info->startdate) : '2000-01-01';
