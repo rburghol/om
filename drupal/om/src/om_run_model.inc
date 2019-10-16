@@ -117,7 +117,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
   $form['Advanced']['cache_date'] = array(
     '#title' => t('Cache Date'),
     '#description' => t('Date to determine if cacheable components are re-run or not.'),
-    '#default_value' => $cache_date),
+    '#default_value' => $cache_date,
     '#date_format' => $date_format,
     '#type' => 'date_select',
     '#date_year_range' => '-20:+0',
