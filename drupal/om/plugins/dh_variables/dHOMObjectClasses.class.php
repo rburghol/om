@@ -1473,10 +1473,10 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     $defaults += array(
-      'rowkey' => array(
+      'keycol1' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propname' => 'rowkey',
+        'propname' => 'keycol1',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Variable to use for row lookup if 1-d or 2-d lookup type.',
@@ -1484,10 +1484,10 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
-      'colkey' => array(
+      'keycol2' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propname' => 'colkey',
+        'propname' => 'keycol2',
         'vardesc' => 'Variable to use for column lookup if 2-d lookup type.',
         'varname' => 'Column Key',
         'singularity' => 'name_singular',
@@ -1559,6 +1559,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       // we do this Row and Col keys here because of a difference in naming between 
       // dataMatrix and drupal matrix convention.
       // set rowkey - i.e. keycol1 
+      /*
       $spath = $path;
       array_unshift($spath, 'keycol1');
       $keycol1 = om_load_dh_property($entity, 'rowkey');
@@ -1569,7 +1570,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       array_unshift($spath, 'keycol2');
       $keycol2 = om_load_dh_property($entity, 'colkey');
       $this->setRemoteProp($entity, $elid, $spath, $keycol2->propcode, $this->object_class, '');
-      
+*/      
       // set table matrix data
       $spath = $path;
       array_unshift($spath, 'matrix');
