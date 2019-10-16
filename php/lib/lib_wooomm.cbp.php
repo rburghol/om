@@ -638,13 +638,19 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
     // if component flow_scenario is set, 
     // then override the scenario setting and the file name 
     if (isset($this->processors['flow_scenario'])) {
-      $flow_scenario = $this->processors['flow_scenario']->evaluateMatrix($flow_mode);
-      //error_log("flow_scenario prop found: $flow_scenario ");
-      //error_log("State array:" . print_r($this->state,1));
-      $this->scenario = $flow_scenario;
-      $this->filepath = implode("/", array($this->modelpath, 'out/land', $this->scenario, 'eos', $this->landseg .'_0111-0211-0411.csv' ));
-      error_log("Scenario: $this->scenario, Filepath: $this->filepath");
-      $this->setDBCacheName();
+      if (method_exists($this->processors['flow_scenario'], 'evaluateMatrix')) {
+        $flow_scenario = $this->processors['flow_scenario']->evaluateMatrix($flow_mode);
+      } else {
+        $flow_scenario = $this->getProp('flow_scenario');
+      }
+      if (strlen(trim($flow_scenario)) > 0) {
+        //error_log("flow_scenario prop found: $flow_scenario ");
+        //error_log("State array:" . print_r($this->state,1));
+        $this->scenario = $flow_scenario;
+        $this->filepath = implode("/", array($this->modelpath, 'out/land', $this->scenario, 'eos', $this->landseg .'_0111-0211-0411.csv' ));
+        error_log("Scenario: $this->scenario, Filepath: $this->filepath");
+        $this->setDBCacheName();
+      }
     }
     $retfile = $this->filepath;
     return $retfile;

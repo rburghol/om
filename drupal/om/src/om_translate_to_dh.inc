@@ -26,6 +26,12 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   }
   $dh_model = FALSE;
   switch($query_type) {
+    case 'object':
+      $search_mode = 'name';
+      $model_entity_type = $fid->entityType();
+      $fid = $fid->identifier();
+    break;
+    
     case 'pid':
     break;
     
@@ -54,14 +60,27 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
       'entity_type' => $model_entity_type,
       'featureid' => $fid,
       'propcode'=>$model_scenario,
-      'varkey' => $model_varkey,
       'propname' => $model_name,
+      'varkey' => $model_varkey,
     );
     // If the model prop does not exist yet, this will create AND save it.
     $dh_model = om_model_getSetProperty($values, $search_mode);
     error_log("Searched mode $search_mode, found Model = $dh_model->propname - $dh_model->propcode ");
   }
   return $dh_model;
+}
+
+function om_load_dh_property($entity, $model_name) {
+
+  $model_entity_type = $entity->entityType();
+  $fid = $entity->identifier();
+  $values = array(
+    'entity_type' => $model_entity_type,
+    'featureid' => $fid,
+    'propname' => $model_name,
+  );
+  $model = om_get_property($values);
+  return $model;
 }
 
 function om_get_property($values, $singularity = 'name') {
@@ -358,4 +377,77 @@ function om_setprop($elementid, $propname, $propval) {
   error_log("$cmd");
   $elid = shell_exec($cmd);
   return $elid;
+}
+
+function om_dh_stashlink($entity, $linkname='om_element_connection') {
+  $om_link = om_load_dh_model('object', $entity, $linkname);
+  $cc = FALSE;
+  if (!($om_link->pid === NULL)) {
+    $cc = $om_link->propcode;
+    $om_link->propcode = '0';
+    $om_link->save();
+  }
+  return $cc;
+}
+
+function om_dh_unstashlink($entity, $cc, $linkname='om_element_connection') {
+  $om_link = om_load_dh_model('object', $entity, $linkname);
+  if (!($om_link->pid === NULL)) {
+    $om_link->propcode = $cc;
+    $om_link->save();
+  }
+  return $om_link;
+}
+
+function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
+  $src_prop = om_load_dh_property($src_entity, $propname);
+  $values = array(
+    'entity_type' => $dest_entity->entityType(),
+    'propname' => $propname,
+    'featureid' => $dest_entity->identifier(),
+    'varid' => $src_prop->varid,
+    'bundle' => $src_prop->bundle,
+  );
+  $info = $src_prop->entityInfo();
+  $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
+  error_log("Copyable " . print_r($copyable,1));
+  foreach ($copyable as $pname) {
+    if (isset($src_prop->{$pname})) {
+      $values[$pname] = $src_prop->{$pname};
+    }
+  }
+  // add or replace new property with copy values 
+  error_log("values " . print_r($values,1));
+  $copy = om_model_getSetProperty($values, 'name', FALSE);
+  // Now copy fields
+  if ($fields) {
+    $propfields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
+    // @todo: handle entity reference fields, changing the destid 
+    //    handle om link fields map_model_linkage and om_element_connection
+    foreach (array_keys($propfields) as $fieldname) {
+      if (isset($src_prop->{$fieldname})) {
+        $copy->{$fieldname} = $src_prop->{$fieldname};
+      }
+    }
+  }
+  $copy->save();
+  // Copy default properties defined in getDefaults()?
+  if ($defprops) {
+    $plugin = dh_variables_getPlugins($src_prop);
+    if (is_object($plugin )) {
+      $default_subprops = $plugin->getDefaults($src_prop);
+    }
+    error_log("Found def props: " . print_r($default_subprops,1));
+    error_log("Found def props: " . print_r($default_subprops,1));
+    foreach ($default_subprops as $thisprop) {
+      error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
+      om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+    }
+  }
+  // @todo: handle allprops if requested
+  if ($allprops) {
+    
+  }
+  error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid);
+  return $copy;
 }

@@ -10,11 +10,33 @@ while ($arg = drush_shift()) {
 // Is single command line arg?
 if (count($args) >= 3) {
   $query_type = $args[0];
-  $src_id = $args[1];
-  $dest_id = $args[2];
+  $src_entity_type = $args[1];
+  $src_id = $args[2];
+  $dest_entity_type = $args[3];
+  $dest_id = $args[4];
+  $propname = $args[5];
 } else {
-  print("Usage: php copy_subcomps.php query_type src_id dest_id [all/sub1[|newname],sub2,...] [cascade=0/1] \n");
+  error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Note: 'all' is not yet enabled");
   die;
+}
+
+function om_get_copyable($src_prop) {
+  // standard fields
+/*
+  $copyable = array(
+    'propname' = array('required', 
+    'propvalue', 
+    'startdate', 
+    'enddate', 
+    'propcode', 
+    'varid'
+  );
+  */
+  // load field info
+  
+  
+  return $copyable;
 }
 
 if ($query_type == 'file') {
@@ -36,21 +58,41 @@ if ($query_type == 'file') {
 } else {
   $data = array();
   $data[] = array(
-    'feature_hydroid' => $feature_hydroid, 
-    'coverage_hydroid' => $coverage_hydroid,
-    'coverage_hydrocode' => $coverage_hydrocode,
-    'feature_name' => $feature_name,
-    'feature_hydrocode' => $feature_hydrocode,
-    'coverage_name' => $coverage_name,
+    'src_entity_type' => $src_entity_type, 
+    'dest_entity_type' => $dest_entity_type, 
+    'src_id' => $src_id, 
+    'dest_id' => $dest_id,
     'propname' => $propname,
-    'prop_varkey' => $prop_varkey,
-    'propvalue' => $propvalue,
   );
 }
 
 foreach ($data as $element) {
-  $src_prop = om_load_dh_model($query_type, $src_id, $model_name);
-  $dest_prop = om_load_dh_model($query_type, $dest_id, $model_name);
+  if (
+    empty($element['src_entity_type'])
+    or empty($element['dest_entity_type'])
+    or empty($element['propname'])
+    or empty($element['src_id'])
+    or empty($element['dest_id'])
+  ) {
+    error_log("Could not process " . print_r($element,1));
+    continue;
+  }
+  $src_entity_type = $element['src_entity_type'];
+  $src_id = $element['src_id'];
+  $dest_entity_type = $element['dest_entity_type'];
+  $dest_id = $element['dest_id'];
+  $propname = $element['propname'];
+  
+  $src_entity = entity_load_single($src_entity_type, $src_id);
+  $dest_entity = entity_load_single($dest_entity_type, $dest_id);
+  // cache and disable object synch if it exists
+  $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
+  $result = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
+  // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
+  //$copy->save();
+  error_log("Property $result->propname created with pid = $result->pid");
+  // restore original object synch if it exists
+  $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
 }
 
 

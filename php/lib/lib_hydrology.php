@@ -15029,7 +15029,7 @@ class hydroImpSmall extends hydroImpoundment {
       if ($this->debug) {
          $this->logDebug("Final variables on this object " . print_r($this->state,1) . "<br>");
       }
-      error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
+      //error_log("Final variables on this object " . print_r($this->state,1) . "<br>");
    }
    
    function step() {
