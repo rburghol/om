@@ -1041,6 +1041,16 @@ class dHOMModelElement extends dHOMBaseObjectClass {
         'varname' => 'Run Mode default',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'cacheable' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 0, // default to "CBP Phase 5.3" mode 
+        'propname' => 'cacheable',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Model element caching: 0=Do Not Cache,1=Cacheable,2=Pass-Through (children can cache),3=0th Level Caching (allows permanent child cache).',
+        'varname' => 'Cache Setting',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
       'flow_mode' => array(
         'entity_type' => $entity->entityType(),
         'propvalue_default' => 3, // default to "CBP Phase 5.3" mode 
@@ -1555,15 +1565,22 @@ class dHOMDataMatrix extends dHOMSubComp {
       array_unshift($spath, 'valuetype');
       $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $this->setRemoteProp($entity, $elid, $spath, $valuetype, $this->object_class, '');
+      
+      
+      // we do this Row and Col keys here because of a difference in naming between 
+      // dataMatrix and drupal matrix convention.
       // set rowkey - i.e. keycol1 
       $spath = $path;
       array_unshift($spath, 'keycol1');
-      $rowkey = $entity->rowkey; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      $keycol1 = om_load_dh_property($entity, 'rowkey');
+      $this->setRemoteProp($entity, $elid, $spath, $keycol1->propcode, $this->object_class, '');
       // set table matrix data
-      $spath = $path;
+      $spath = $path;      
       array_unshift($spath, 'keycol2');
-      $this->setRemoteProp($entity, $elid, $spath, $entity->colkey, $this->object_class, '');
+      $keycol2 = om_load_dh_property($entity, 'colkey');
+      $this->setRemoteProp($entity, $elid, $spath, $keycol2->propcode, $this->object_class, '');
+      
+      // Finally, we set the matrix itself
       // set table matrix data
       $spath = $path;
       array_unshift($spath, 'matrix');
