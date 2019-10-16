@@ -1556,21 +1556,6 @@ class dHOMDataMatrix extends dHOMSubComp {
       $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $this->setRemoteProp($entity, $elid, $spath, $valuetype, $this->object_class, '');
        
-      // we do this Row and Col keys here because of a difference in naming between 
-      // dataMatrix and drupal matrix convention.
-      // set rowkey - i.e. keycol1 
-      /*
-      $spath = $path;
-      array_unshift($spath, 'keycol1');
-      $keycol1 = om_load_dh_property($entity, 'rowkey');
-      error_log("Keycol1: $keycol1->pid, $keycol1->propcode, $keycol1->propvalue");
-      $this->setRemoteProp($entity, $elid, $spath, $keycol1->propcode, $this->object_class, '');
-      // set table matrix data
-      $spath = $path;      
-      array_unshift($spath, 'keycol2');
-      $keycol2 = om_load_dh_property($entity, 'colkey');
-      $this->setRemoteProp($entity, $elid, $spath, $keycol2->propcode, $this->object_class, '');
-*/      
       // set table matrix data
       $spath = $path;
       array_unshift($spath, 'matrix');
@@ -1578,15 +1563,6 @@ class dHOMDataMatrix extends dHOMSubComp {
       $scsv = addslashes(json_encode($formatted));
       $this->setRemoteProp($entity, $elid, $spath, $scsv, $this->object_class, 'json-1d');
       $debug_json = json_decode(stripslashes($scsv), TRUE);
-      //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
-      
-      // set lutypes 
-      /*
-      $spath = $path;
-      array_unshift($spath, 'lutype1');
-      $rowkey = $entity->lutype1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
-      */
     }
   }
   
