@@ -1562,6 +1562,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       $spath = $path;
       array_unshift($spath, 'keycol1');
       $keycol1 = om_load_dh_property($entity, 'rowkey');
+      error_log("Keycol1: $keycol1->pid, $keycol1->propcode, $keycol1->propvalue");
       $this->setRemoteProp($entity, $elid, $spath, $keycol1->propcode, $this->object_class, '');
       // set table matrix data
       $spath = $path;      
