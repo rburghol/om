@@ -441,7 +441,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     error_log("Found def props: " . print_r($default_subprops,1));
     foreach ($default_subprops as $thisprop) {
       error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
-      om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
     }
   }
   // @todo: handle allprops if requested
