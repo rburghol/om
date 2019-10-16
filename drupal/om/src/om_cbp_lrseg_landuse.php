@@ -66,8 +66,8 @@ foreach ($data as $element) {
   $vahydro_lu = om_load_dh_model('prop_feature', $vahydro_pid, 'landuse', 'om_class_DataMatrix');
   error_log("Found land use element: " . $vahydro_lu->pid);
   error_log("VARID land use element: " . $vahydro_lu->varid);
-  $vahydro_lu->rowkey = '';
-  $vahydro_lu->colkey = 'luyear';
+  $vahydro_lu->keycol1 = '';
+  $vahydro_lu->keycol2 = 'luyear';
   // set model container properties
   $vahydro_model->scenario = $scenario;
   $vahydro_model->version = $version;
