@@ -94,7 +94,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       'shake_tree' => 'Tree (Sequential Tree, with caching)',
     ),
     '#size' => 1,
-    '#default_value' => empty($model->runtype) ? 'cached' : $model->runtype
+    '#default_value' => empty($model->runtype) ? 'shake_tree' : $model->runtype
   );
   $run_mode_options = om_run_mode_options(); // will determine what a user can run
   $form['Advanced']['run_mode'] = array(
