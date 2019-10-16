@@ -1555,15 +1555,20 @@ class dHOMDataMatrix extends dHOMSubComp {
       array_unshift($spath, 'valuetype');
       $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $this->setRemoteProp($entity, $elid, $spath, $valuetype, $this->object_class, '');
+       
+      // we do this Row and Col keys here because of a difference in naming between 
+      // dataMatrix and drupal matrix convention.
       // set rowkey - i.e. keycol1 
       $spath = $path;
       array_unshift($spath, 'keycol1');
-      $rowkey = $entity->rowkey; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
-      $this->setRemoteProp($entity, $elid, $spath, $rowkey, $this->object_class, '');
+      $keycol1 = om_load_dh_property($entity, 'rowkey');
+      $this->setRemoteProp($entity, $elid, $spath, $keycol1->propcode, $this->object_class, '');
       // set table matrix data
-      $spath = $path;
+      $spath = $path;      
       array_unshift($spath, 'keycol2');
-      $this->setRemoteProp($entity, $elid, $spath, $entity->colkey, $this->object_class, '');
+      $keycol2 = om_load_dh_property($entity, 'colkey');
+      $this->setRemoteProp($entity, $elid, $spath, $keycol2->propcode, $this->object_class, '');
+      
       // set table matrix data
       $spath = $path;
       array_unshift($spath, 'matrix');
