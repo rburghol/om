@@ -431,23 +431,30 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     }
   }
   $copy->save();
+  //entity_save('dh_properties', $copy);
   // Copy default properties defined in getDefaults()?
   if ($defprops) {
+    $default_subprops = array();
     $plugin = dh_variables_getPlugins($src_prop);
     if (is_object($plugin )) {
       $default_subprops = $plugin->getDefaults($src_prop);
     }
     error_log("Found def props: " . print_r($default_subprops,1));
-    error_log("Found def props: " . print_r($default_subprops,1));
     foreach ($default_subprops as $thisprop) {
       error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
-      om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      $copy->{$thisprop['propname']} = $sub;
     }
   }
+  $copy->save();
   // @todo: handle allprops if requested
   if ($allprops) {
-    
+    // nothing yet
   }
   error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
+  // die on match
+  //if ($copy->propname == 'keycol1') {
+  //  die;  
+  //}
   return $copy;
 }

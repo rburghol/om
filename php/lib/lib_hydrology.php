@@ -862,7 +862,7 @@ class modelObject {
         // this is the first simulation entity, so set the global values
         $run_mode = $this->run_mode;
         $flow_mode = $this->flow_mode;
-        error_log("Model Controller Setting run_mode = $run_mode, flow_mode = $flow_mode");
+        //error_log("Model Controller Setting run_mode = $run_mode, flow_mode = $flow_mode");
       }
     }
     
