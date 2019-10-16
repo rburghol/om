@@ -22,7 +22,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
         dpm($model->run_info,'run info');
         $startdate = (is_object($model->run_info) and !empty($model->run_info->startdate)) ? date('Y-m-d', $model->run_info->startdate) : '2000-01-01';
         $enddate = (is_object($model->run_info) and !empty($model->run_info->enddate)) ? date('Y-m-d', $model->run_info->enddate) : '2000-12-31';
-        $run_id = (is_object($model->run_info) and !empty($model->run_info->propvalue)) ? $model->run_info->propvalue : 100;
+        $run_id = (is_object($model->run_info) and ($model->run_info->propvalue >= 0)) ? $model->run_info->propvalue : 100;
       }
     }
   } else {
