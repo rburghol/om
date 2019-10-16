@@ -449,5 +449,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     
   }
   error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
+  if ($copy->propname == 'lukey1') {
+    die;
+  }
   return $copy;
 }
