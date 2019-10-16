@@ -418,7 +418,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   }
   // add or replace new property with copy values 
   error_log("values " . print_r($values,1));
-  $copy = om_model_getSetProperty($values, 'name', TRUE);
+  $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
   if ($fields) {
     $propfields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
@@ -430,7 +430,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       }
     }
   }
-  $copy->save();
+  //$copy->save();
+  entity_save('dh_properties', $copy);
   // Copy default properties defined in getDefaults()?
   if ($defprops) {
     $default_subprops = array();
@@ -441,7 +442,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     error_log("Found def props: " . print_r($default_subprops,1));
     foreach ($default_subprops as $thisprop) {
       error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
-      $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
     }
   }
   // @todo: handle allprops if requested
