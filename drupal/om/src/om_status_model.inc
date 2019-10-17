@@ -134,6 +134,6 @@ function om_status_model_form_run(&$form, &$form_state) {
 
 function om_find_dh_by_elementid($elementid) {
   $q = "select pid from {dh_properties} where propvalue = :elid and varid in (select hydroid from dh_variabledefinition where varkey = 'om_element_connection'";
-  $pid = db_query($q,array('elid'=>$elementid))->->fetchField();
+  $pid = db_query($q,array('elid'=>$elementid))->fetchField();
   return $pid;
 }
