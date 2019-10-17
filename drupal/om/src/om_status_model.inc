@@ -18,7 +18,7 @@ function om_status_model_form($form, &$form_state) {
       '960' => t('24 Hours'),
     ),
     '#default_value' => 60,
-    '#description' => t('Model timestep. NOT YET ENABLED - To change timestep, edit model property named "dt"'),
+    '#description' => t(''),
     '#required' => TRUE,
     '#multiple' => FALSE,
     '#weight' => 1,
