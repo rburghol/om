@@ -35,7 +35,7 @@ function om_status_model_form_controls(&$form, &$form_state) {
   $controls = array(
     '#type' => 'container',
     '#weight' => 40,
-    '#prefix' => '<div id="om_model_status">',
+    '#prefix' => '<div id="om_model_status_controls">',
     '#suffix' => '</div>',
   );
   // this element should have a call to check the status of model at render
