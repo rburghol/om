@@ -66,7 +66,7 @@ function om_status_model_form_controls(&$form, &$form_state) {
     '#weight' => 10,
     '#ajax' => array(
       'callback' => 'om_status_model_form_run',
-      'wrapper' => 'om_model_status',
+      'wrapper' => 'om_model_status_message',
       'method' => 'replace',
       'progress' => array(
         'type' => 'throbber',
@@ -74,7 +74,7 @@ function om_status_model_form_controls(&$form, &$form_state) {
       ),
     ),
   );
-  $controls['status_message'] = array(
+  $controls['om_model_status_message'] = array(
     '#prefix' => "<div>",
     '#suffix' => "</div>",
     '#value' => 0,
