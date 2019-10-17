@@ -111,6 +111,10 @@ function om_status_model_form_run(&$form, &$form_state) {
   $status = om_get_model_status(-1, $mins);
   //dpm($status,'status');
   $status = (array)$status;
+  foreach ($status as $key => $row) {
+    $elpid = om_find_dh_by_elementid($row['elementid']);
+    $status[$key]['elemname'] = l($row['elemname'], "om-model-info/$elpid")
+  }
   $content = array();
   
   $content['table'] = array(
@@ -126,4 +130,10 @@ function om_status_model_form_run(&$form, &$form_state) {
   $element['om_model_status_message']['#markup'] = "</div>";
   $element['om_model_status_message']['#markup'] = render($content);
   return $element;
+}
+
+function om_find_dh_by_elementid($elementid) {
+  $q = "select pid from {dh_properties} where propvalue = :elid and varid in (select hydroid from dh_variabledefinition where varkey = 'om_element_connection'";
+  $pid = db_query($q,array('elid'=>$elementid))->->fetchField();
+  return $pid;
 }
