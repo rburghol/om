@@ -108,7 +108,7 @@ function om_status_model_form_run(&$form, &$form_state) {
   $status = om_get_model_status($elementid);
   */
   $mins = $form_state['values']['mins'];
-  $status = om_get_model_status(-1, 120);
+  $status = om_get_model_status(-1, $mins);
   $status = (array)$status;
   $content = array();
   
