@@ -24,61 +24,6 @@ function om_status_model_form($form, &$form_state) {
     '#weight' => 1,
   );
 
-	$form['Advanced'] = array();
-	$form['Advanced']['#type'] = 'fieldset';
-	$form['Advanced']['#title'] = t('Advanced Run Options');
-	$form['Advanced']['#collapsible'] = TRUE;
-	$form['Advanced']['#collapsed'] = TRUE;
-	$form['Advanced']['#weight'] = 2;
-  $form['Advanced']['runtype'] = array(
-    '#title' => t('Run Caching'),
-    '#type' => 'select',
-    '#options' => array(
-      'cached' => 'Standard (Container Tree cached)',
-      'shake_tree' => 'Tree (Sequential Tree, with caching)',
-    ),
-    '#size' => 1,
-    '#default_value' => empty($model->runtype) ? 'shake_tree' : $model->runtype
-  );
-  $run_mode_options = om_run_mode_options(); // will determine what a user can run
-  $form['Advanced']['run_mode'] = array(
-    '#title' => t('Run Mode (wd/ps/lakes)'),
-    '#type' => 'select',
-    '#options' => $run_mode_options,
-    '#size' => 1,
-    '#default_value' => empty($run_mode) ? 2 : $run_mode,
-  );
-  $flow_mode_options = om_flow_mode_options(); // will determine what a user can run
-  $form['Advanced']['flow_mode'] = array(
-    '#title' => t('Flow Mode (runoff dataset)'),
-    '#type' => 'select',
-    '#options' => $flow_mode_options,
-    '#size' => 1,
-    '#default_value' => empty($flow_mode) ? 3 : $flow_mode,
-  );
-  //dpm($model,'model');
-  //dsm("empty(model->flow_mode) ? = " . empty($model->flow_mode));
-  // advanced options for shakeTree
-  $form['Advanced']['cache_date'] = array(
-    '#title' => t('Cache Date'),
-    '#description' => t('Date to determine if cacheable components are re-run or not.'),
-    '#default_value' => $cache_date,
-    '#date_format' => $date_format,
-    '#type' => 'date_select',
-    '#date_year_range' => '-20:+0',
-    '#required' => FALSE,
-  );
-  $form['Advanced']['force_overwrite'] = array(
-    '#title' => 'Force Re-run (no caching)',
-    '#type' => 'select',
-    '#options' => array(
-      '0' => 'FALSE',
-      '1' => 'TRUE',
-    ),
-    '#size' => 1,
-    '#default' => $model->force_overwrite
-  );
-  
   // add controls
   $form['controls'] = om_status_model_form_controls($form, $form_state);
   
@@ -120,7 +65,7 @@ function om_status_model_form_controls(&$form, &$form_state) {
     '#value' => t('Check Model Status'),
     '#weight' => 10,
     '#ajax' => array(
-      'callback' => 'om_run_model_form_run',
+      'callback' => 'om_status_model_form_run',
       'wrapper' => 'om_model_status',
       'method' => 'replace',
       'progress' => array(
