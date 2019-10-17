@@ -26,7 +26,7 @@ if ($elementid === FALSE) {
   $json = json_encode(array('error' => "get_model.php called without elementid"));
 } else {
   if (($elementid == -1)) {
-    $status_update = getModelActivity($mins, $elementid);
+    $status_update = getModelActivity($mins, $elementid, FALSE);
   } else {
     $status_update = getModelRunStatus($listobject, $elementid);
   }
