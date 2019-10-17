@@ -113,7 +113,7 @@ function om_status_model_form_run(&$form, &$form_state) {
   $status = (array)$status;
   foreach ($status as $key => $row) {
     $elpid = om_find_dh_by_elementid($row['elementid']);
-    $status[$key]['elemname'] = l($row['elemname'], "om-model-info/$elpid")
+    $status[$key]['elemname'] = l($row['elemname'], "om-model-info/$elpid");
   }
   $content = array();
   
