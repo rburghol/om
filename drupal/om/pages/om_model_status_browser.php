@@ -1,6 +1,5 @@
 <?php
 module_load_include('inc', 'om', 'src/om_status_model');
-echo "Testing testing testing";
 $arg = arg();
 $form_state = array();
 $form_state['wrapper_callback'] = 'entity_ui_main_form_defaults';

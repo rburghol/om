@@ -403,14 +403,16 @@ function om_run_model_form_run(&$form, &$form_state) {
     );
   }
   
+  /*
   $content['table'] = array(
     '#theme' => 'table',
-    '#header' => array_keys($status),
+    '#header' => array_keys($show),
     '#rows' => array(0=> array_values($status)),
     '#attributes' => array (
       'class' => array('views-table', 'cols-3', 'table', 'table-hover', 'table-striped'),
     ),
   );
+  */
   
   
   $status_formatted['rows'] = array(
