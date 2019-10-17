@@ -36,7 +36,7 @@ if ($elementid === FALSE) {
 }
 
 
-error_log("$info");
-error_log("************ get_model.php $elementid Finished **************");
+//error_log("$info");
+error_log("************ get_modelStatus.php $elementid Finished **************");
 echo $json;
 ?>

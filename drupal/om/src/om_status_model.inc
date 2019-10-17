@@ -3,7 +3,7 @@
 module_load_include('module', 'dh');
 module_load_include('module', 'om');
 
-function om_status_model_form($form, &$form_state, $model = null, $op = 'run') {
+function om_status_model_form($form, &$form_state) {
   $run_id_options = om_run_id_options(); // will determine what a user can run
  
   $form['mins'] = array(
