@@ -27,6 +27,7 @@ if ($elementid === FALSE) {
 } else {
   if (($elementid == -1)) {
     $status_update = getModelActivity($mins, $elementid, FALSE);
+    error_log("REcs:" . print_r($status_update,1));
   } else {
     $status_update = getModelRunStatus($listobject, $elementid);
   }
