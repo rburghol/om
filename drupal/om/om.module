@@ -330,7 +330,7 @@ function om_get_model_status($elementid, $mins = 120) {
   $cmd .= "php get_modelStatus.php $elementid $mins ";
   $json = shell_exec($cmd);
   $status = json_decode($json);
-  //dpm($status,'json decoded');
+  dpm($status,'json decoded');
   return $status;
 }
 
