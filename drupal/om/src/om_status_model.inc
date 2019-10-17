@@ -39,26 +39,6 @@ function om_status_model_form_controls(&$form, &$form_state) {
     '#suffix' => '</div>',
   );
   // this element should have a call to check the status of model at render
-  // and then 2 version of the button text "run model" and "update model status" 
-  // depending on if the specific elementid is currently running.  
-  // this can prevent double-running
-  $controls['run_model'] = array(
-    '#type' => 'button',
-    '#value' => t('Run Model'),
-    //'#markup' => t('Run Model'),
-    '#weight' => 5,
-    '#ajax' => array(
-      'callback' => 'om_run_model_form_run',
-      'wrapper' => 'om_model_status',
-      'method' => 'replace',
-      'progress' => array(
-        'type' => 'throbber',
-        'message' => t('Run requested - please wait'),
-      ),
-      #'event' => 'click', // not needed, default is mousedown
-    ),
-  );
-  // this element should have a call to check the status of model at render
   // and then disabled if model is idle.
   $controls['check_model'] = array(
     '#type' => 'button',
