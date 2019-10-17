@@ -124,6 +124,6 @@ function om_status_model_form_run(&$form, &$form_state) {
   
   //dpm($status, 'status returned');
   //$element['status_message']['#markup'] = $message;
-  $element['status_message']['#markup'] = render($content);
+  $element['om_model_status_message']['#markup'] = render($content);
   return $element;
 }
