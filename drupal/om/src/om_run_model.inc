@@ -412,7 +412,7 @@ function om_run_model_form_run(&$form, &$form_state) {
       '#value' => $status[$key],
     );
   }
-  /*
+  
   $content['table'] = array(
     '#theme' => 'table',
     '#header' => array_keys($status),
@@ -421,7 +421,7 @@ function om_run_model_form_run(&$form, &$form_state) {
       'class' => array('views-table', 'cols-3', 'table', 'table-hover', 'table-striped'),
     ),
   );
-  */
+  
   
   $status_formatted['rows'] = array(
     0 => array('data' => array_values($status))
