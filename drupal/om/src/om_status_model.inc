@@ -115,8 +115,8 @@ function om_status_model_form_run(&$form, &$form_state) {
   
   $content['table'] = array(
     '#theme' => 'table',
-    '#header' => array_keys($status),
-    '#rows' => array(0=> array_values($status)),
+    '#header' => array_keys($status[0]),
+    '#rows' => $status,
     '#attributes' => array (
       'class' => array('views-table', 'cols-3', 'table', 'table-hover', 'table-striped'),
     ),
