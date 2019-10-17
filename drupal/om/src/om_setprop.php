@@ -8,18 +8,39 @@ while ($arg = drush_shift()) {
 }
 
 // Is single command line arg?
-if (count($args) >= 2) {
+$vars = array();
+if (count($args) >= 6) {
   $query_type = $args[0];
-  $entity_type = $args[1];
-  $featureid = $args[2];
-  $dest_entity_type = $args[3];
-  $dest_id = $args[4];
-  $propname = $args[5];
+  $vars['entity_type'] = $args[1];
+  $vars['featureid'] = $args[2];
+  $vars['pid']= $args[3];
+  $vars['propname'] = $args[4];
+  $vars['propvalue'] = $args[5];
+  $vars['propcode'] = $args[6];
 } else {
-  error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Usage: php om_setprop.php query_type entity_type featureid pid propname propvalue propcode ");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
+
+if ($query_type <> 'cmd') {
+  error_log("Only cmd mode enabled");
+  die;
+}
+
+$q = "select pid from {dh_properties}  ";
+$q .= " where propname = :propname "
+$q .= " and entity_type = :entity_type "
+if ($vars['pid'] <> 'all') {
+  $q .= " and entity_type = :pid ";
+  $vars['pid'] = $pid;
+} 
+
+
+
+
+
+
 
 
 ?>
