@@ -585,7 +585,7 @@ function getModelActivity($mins, $elementid, $render=TRUE) {
    if ($elementid > 0) {
      $listobject->querystring .= " and a.elementid = $elementid ";
    }
-   $listobject->querystring .= " order by last_updated ";
+   $listobject->querystring .= " order by last_updated DESC ";
    //error_log("$listobject->querystring ");
    $nq = $listobject->querystring;
    $listobject->performQuery();
