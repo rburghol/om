@@ -109,7 +109,7 @@ function om_status_model_form_run(&$form, &$form_state) {
   */
   $mins = $form_state['values']['mins'];
   $status = om_get_model_status(-1, $mins);
-  dpm($status,'status');
+  //dpm($status,'status');
   $status = (array)$status;
   $content = array();
   
