@@ -75,7 +75,7 @@ function om_status_model_form_controls(&$form, &$form_state) {
     ),
   );
   $controls['om_model_status_message'] = array(
-    '#prefix' => "<div>",
+    '#prefix' => "<div id ='om_model_status_message'>",
     '#suffix' => "</div>",
     '#value' => 0,
     '#markup' => t('Model Run Status Unknown'),
