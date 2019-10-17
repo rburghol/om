@@ -324,6 +324,15 @@ function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children
   
 }
 
+function om_get_model_status($elementid, $mins = 120) {
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php get_modelStatus.php $elementid $mins ";
+  $json = shell_exec($cmd);
+  $status = json_decode($json);
+  //dpm($status,'json decoded');
+  return $status;
+}
 
 /**
  * Implements hook_field_widget_form().

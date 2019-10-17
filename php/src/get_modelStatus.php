@@ -16,16 +16,20 @@ if (isset($argv[1])) {
    $elementid = $argv[1];
 }
 if (isset($argv[2])) {
-   $runid = $argv[2];
+   $mins = $argv[2];
 } else {
-  $runid = -1;
+  $mins = 120;
 }
 
 if ($elementid === FALSE) {
   $info = "ERROR: get_modelStatus.php called without elementid.";
   $json = json_encode(array('error' => "get_model.php called without elementid"));
 } else {
-  $status_update = getModelRunStatus($listobject, $elementid);
+  if (($elementid == -1)) {
+    $status_update = getModelActivity($mins, $elementid);
+  } else {
+    $status_update = getModelRunStatus($listobject, $elementid);
+  }
   error_log("************ get_modelStatus.php $elementid called **************");
   $info = "json_encode handled object properly.";
   $json = json_encode($status_update);

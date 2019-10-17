@@ -574,6 +574,68 @@ function checkRunDate($listobject, $elementid, $runid, $rundate, $startdate = ''
    }
 }
 
+function getModelActivity($mins, $elementid) {
+   global $listobject;
+   $innerHTML = '';
+   
+   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host ";
+   $listobject->querystring .= " from scen_model_element as a, system_status as b ";
+   $listobject->querystring .= " where a.elementid = b.element_key ";
+   $listobject->querystring .= " and b.last_updated >= now() - interval '$mins minutes' ";
+   if ($elementid > 0) {
+     $listobject->querystring .= " and a.elementid = $elementid ";
+   }
+   $listobject->querystring .= " order by last_updated ";
+   //error_log("$listobject->querystring ");
+   $nq = $listobject->querystring;
+   $listobject->performQuery();
+   $n = count($listobject->queryrecords);
+   //$listobject->show = 0;
+   //$listobject->showList();
+
+   $qrecs = $listobject->queryrecords;
+   $qlinks = array();
+   
+   $innerHTML .= "<form id=modelsearch name=modelsearch>";
+   
+   $formname = 'elementtree';
+   
+   foreach($qrecs as $thiskey=>$thisrec) {
+      $rec = array();
+      $elid =  $thisrec['elementid'];
+      $rec['elementid'] = $elid;
+      $info = getElementInfo($listobject, $elid);
+      $listobject->querystring = "select dest_id from map_model_linkages where linktype = 1 and src_id = $elid ";
+      $listobject->performQuery();
+      if (count($listobject->queryrecords) > 0) {
+         $container = $listobject->getRecordvalue(1,'dest_id');
+      } else {
+         $container = $elid;
+      }
+      $scenarioid = $info['scenarioid'];
+
+      $clickscript = "last_tab['model_element']='model_element_data0'; last_button['model_element']='model_element_0'; last_tab['modelout']='modelout_data0'; last_button['modelout']='modelout_0'; show_next('map_window_data0', 'map_window_0', 'map_window'); document.forms['$formname'].elements.elementid.value=$elid;  document.forms['$formname'].elements.actiontype.value='edit'; document.forms['$formname'].elements.activecontainerid.value=$container; document.forms['$formname'].elements.scenarioid.value=$scenarioid; xajax_showModelDesktopView(xajax.getFormValues('$formname')); ";
+      
+      $qrecs[$thiskey]['elemname'] = "<a onclick=\"$clickscript ;\" >" . $thisrec['elemname'] . "</a><br>";
+      $rec['elemname'] = "<a onclick=\"$clickscript ;\" >" . $thisrec['elemname'] . "</a><br>";
+      $qlinks[] = $rec;
+   }
+   //$listobject->queryrecords = $qlinks;
+   $listobject->queryrecords = $qrecs;
+   $listobject->show = 0;
+   $listobject->showList();
+   $innerHTML .= $listobject->outstring;
+   
+   $innerHTML .= showHiddenField('projectid',$projectid, 1);
+   $innerHTML .= "</form>";
+   if ($n == 0) {
+      $innerHTML .= "<br>Query: " . $nq . "<br>";
+   }
+   return "Modifed view: $n records returned <br>" . $innerHTML;
+   
+   //return "$n records returned <br>" . $listobject->outstring;
+}
+
 function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $timeout = 1800) {
   // inquires about status of most recent model run.
    // run status_flags -1 - run failed/zombied, 0 - not running/run completed successfully, 1 - running, 2 - finishing

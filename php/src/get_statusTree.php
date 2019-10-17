@@ -35,14 +35,18 @@ if (isset($_GET['host'])) {
 $container_tree = getStatusTree($listobject, $elid, $runid, $host);
 switch ($format) {
    case 'array':
-      echo "Number of elements in tree = " . count($container_tree) . "\n";
-      echo "Container Tree " . print_r($container_tree, 1) . "\n";
+      $formatted = "Number of elements in tree = " . count($container_tree) . "\n";
+      $formatted .= "Container Tree " . print_r($container_tree, 1) . "\n";
    break;
    
    case 'table':
       $formatted = formatPrintContainer($container_tree);
-      print($formatted);
+   break;
+   
+   case 'json':
+      $formatted = json_encode($status_update);
    break;
 }
 
+echo $formatted;
 ?>

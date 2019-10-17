@@ -318,16 +318,6 @@ function om_message_model($config) {
   return array('command' => $cmd, 'output' => $forkout);
 }
 
-function om_get_model_status($elementid) {
-  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
-  $cmd = "cd $path \n";
-  $cmd .= "php get_modelStatus.php $elementid ";
-  $json = shell_exec($cmd);
-  $status = json_decode($json);
-  //dpm($status,'json decoded');
-  return $status;
-}
-
 function om_run_model_form_run(&$form, &$form_state) {
   //dpm($form_state,'Model Run Requested');
   // load the property for the model elements
