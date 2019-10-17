@@ -35,11 +35,11 @@ if ($vars['featureid'] <> 'all') {
   unset($vars['featureid']);
 }
 error_log($q);
-die;
 
 $rez = db_query($q, $vars);
 while ($pid = $rez->fetchCol()) {
   $prop = entity_load_single('dh_properties', $pid);
+  error_log("saving $prop->propname ($prop->pid)");
   $prop->save();
 }
 
