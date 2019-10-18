@@ -1650,7 +1650,7 @@ function runCiaWatershed ($prop_elid, $runid, $cache_runid, $startdate='', $endd
 }
 
 function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cache_list, $cache_level, $dynamics, $input_props = array(), $test_only = 0) {
-   global $modeldb, $listobject, $outdir;
+   global $modeldb, $listobject, $outdir, $serverip;
    $run_date = date('r');
    if (!is_array($cache_list)) {
       $cache_list = explode(',', $cache_list);
@@ -1672,6 +1672,8 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
        $input_props['model_startdate'] = $startdate;
        $input_props['model_enddate'] = $enddate;
     }
+    
+    setStatus($listobject, $firstel, "Initiating Model Run for Elementid $firstel with runCached() function", $serverip, 1, $runid, -1, 1);
     
     // load up all of the things that are in the base model, with caching specified
     error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
