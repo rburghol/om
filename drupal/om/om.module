@@ -334,6 +334,14 @@ function om_get_model_status($elementid, $mins = 120) {
   return $status;
 }
 
+function om_message_model($elementid, $host, $msg, $run_id) {
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php fn_message_model.php $elementid $host $msg $run_id ";
+  $result = shell_exec($cmd);
+  return $result;
+}
+
 /**
  * Implements hook_field_widget_form().
  *

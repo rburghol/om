@@ -279,7 +279,7 @@ function om_run_model($config) {
 }
 
 // @todo: move this to the base module?
-function om_message_model($config) {
+function om_run_message_model($config) {
   //$test_only = TRUE;
   //dpm($config,'submitted to run model');
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
@@ -291,31 +291,8 @@ function om_message_model($config) {
   $run_id = $config['run_id'];
   $elementid = $config['elementid'];
   $host = $config['host'];
-  $message = $config['message'];
-  switch ($config['runtype']) {
-    case 'cached':
-    default:
-    // Usage: php fn_message_model.php elementid host message [run_id = NULL] 
-    $setstr = "/usr/bin/php -f /var/www/html/om/fn_message_model.php $elementid $host $message $run_id  ";
-    break;
-  }
-  $cmd_output = array();
-  if ($test_only) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
-      //dpm( $cmd, "Testing Only ");
-  } else {
-    if ($setstr) {
-      $cmd = "cd $path \n";
-      $cmd .= $setstr;
-      //dpm( $cmd, "Executing ");
-      // this runs in the same process
-      //shell_exec($cmd);
-      // this runs in a separate process.
-      $forkout = exec( "$cmd > /dev/null &", $cmd_output );
-    }
-  }
-  return array('command' => $cmd, 'output' => $forkout);
+  $msg = $config['message'];
+  om_message_model($elementid, $host, $msg, $run_id);
 }
 
 function om_run_model_form_run(&$form, &$form_state) {

@@ -26,6 +26,8 @@ rm /var/www/html/om/get_statusTree.php
 ln -s /opt/model/om-dev/php/src/get_statusTree.php /var/www/html/om/get_statusTree.php
 rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om-dev/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
+rm /var/www/html/om/fn_message_model.php
+ln -s /opt/model/om-dev/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php
 
 # live
 rm /var/www/html/om/fn_copy_element.php
@@ -54,3 +56,5 @@ rm /var/www/html/om/get_statusTree.php
 ln -s /opt/model/om/php/src/get_statusTree.php /var/www/html/om/get_statusTree.php
 rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
+rm /var/www/html/om/fn_message_model.php
+ln -s /opt/model/om/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php

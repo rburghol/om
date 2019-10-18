@@ -690,6 +690,7 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $return_vals['status_mesg'] = $status_mesg;
    $return_vals['interval'] = $interval;
    $return_vals['runid'] = $runid;
+   $return_vals['host'] = $host;
    
    return $return_vals;
 }
