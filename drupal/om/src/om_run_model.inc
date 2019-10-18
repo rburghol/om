@@ -369,7 +369,7 @@ function om_run_model_form_run(&$form, &$form_state) {
   $show = array(
     'elemname' => "Name", 
     'status_mesg' => "Message", 
-    'run_id' => "Run ID",
+    'runid' => "Run ID",
     'host' => "Host",
     'query' => "SQL",
   );
