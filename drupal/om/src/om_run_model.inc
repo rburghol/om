@@ -128,8 +128,9 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#title' => 'Force Re-run (no caching)',
     '#type' => 'select',
     '#options' => array(
-      '0' => 'FALSE',
-      '1' => 'TRUE',
+      '0' => 'None',
+      '1' => 'All Segments',
+      '2' => 'Outlet Only',
     ),
     '#size' => 1,
     '#default' => $model->force_overwrite
