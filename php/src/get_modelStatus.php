@@ -50,6 +50,6 @@ if ($elementid === FALSE) {
 
 
 //error_log("$info");
-error_log("************ get_modelStatus.php $elementid Finished **************");
+error_log("************ get_modelStatus.php $elementid $mins $format Finished **************");
 echo $json;
 ?>
