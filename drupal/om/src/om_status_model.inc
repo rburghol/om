@@ -100,7 +100,7 @@ function om_status_model_form_run(&$form, &$form_state) {
   $elementid = intval($form_state['values']['elementid']);
   $elementid = (!empty($elementid)) ? $elementid : -1;
   $status = om_get_model_status($elementid, $mins);
-  //dpm($status,'status');
+  dpm($status,'status');
   $status = (array)$status;
   foreach ($status as $key => $row) {
     $elpid = om_find_dh_by_elementid($row['elementid']);
