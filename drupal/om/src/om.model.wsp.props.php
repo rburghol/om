@@ -78,7 +78,7 @@ if (!($model_pid and $system_adminid)) {
     'system_adminid' => $system_adminid,
     'propname' => $propname,
     'prop_varkey' => $prop_varkey,
-	'src_name' => $src_name
+    'src_name' => $src_name
   );
 }
 
@@ -93,6 +93,7 @@ foreach ($data as $element) {
   $system_adminid = $element['system_adminid'];
   $propname = isset($element['propname']) ? $element['propname'] : FALSE; //if not set, default to FALSE
   $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
+  $src_name = isset($element['src_name']) ? $element['src_name'] : FALSE;
 
 	//load model property
   $model = entity_load_single('dh_properties', $model_pid);
