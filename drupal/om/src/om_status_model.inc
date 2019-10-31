@@ -17,6 +17,7 @@ function om_status_model_form($form, &$form_state) {
       '960' => t('24 Hours'),
       '2880' => t('3 Days'),
       '6720' => t('7 Days'),
+      '-1' => t('Any Time (last 100 runs)'),
     ),
     '#default_value' => 60,
     '#description' => t(''),
