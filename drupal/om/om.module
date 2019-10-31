@@ -324,10 +324,11 @@ function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children
   
 }
 
-function om_get_model_status($elementid, $mins = 120) {
+function om_get_model_status($elementid, $mins = 120, $format = '') {
+  // use format = 'list' to see the raw liostobject (default for no elementid)
   $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
   $cmd = "cd $path \n";
-  $cmd .= "php get_modelStatus.php $elementid $mins ";
+  $cmd .= "php get_modelStatus.php $elementid $mins $format";
   $json = shell_exec($cmd);
   $status = json_decode($json, TRUE);
   //dpm($status,'json decoded');
