@@ -102,7 +102,7 @@ foreach ($data as $element) {
   if (!$dh_wsp_prop_pid) {
     // add a new wsp property if one does not exist - propname match 
     // add an om_map_model_linkage to wsp property 
-    // If requested, add another equation prop 
+    // If requested, add another equation prop
     $values = array(
       'varkey' => 'om_class_Equation', 
       'propname' => $propname,
