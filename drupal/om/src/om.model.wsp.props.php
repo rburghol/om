@@ -103,26 +103,29 @@ foreach ($data as $element) {
       'propname' => $propname,
       'featureid' => $model->pid,
       'propvalue' => NULL, //best practice to set them as NULL explicitly
-      'propcode' => NULL, 
+      'propcode' => '0', 
       'entity_type' => 'dh_properties',
     );
   $equation = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
   
-  	//create or load om_map_model_linkage
-	$values = array(
-      'varkey' => 'om_map_model_linkage', 
-      'propname' => 'linked_property',
-      'featureid' => $equation->pid,
-      'propvalue' => $system_adminid, 
-      'propcode' => 'dh_adminreg_feature', 
-      'entity_type' => 'dh_properties',
-    );
-  $link = om_model_getSetProperty($values,'name',FALSE);
+  if (!empty($system_adminid)){
   
-  $link->src_prop = $src_name;
-  $link->dest_prop = 'propcode';
-  $link->link_type = 2;
-  $link->update_setting = 'update';
-  $link->save();
+  	//create or load om_map_model_linkage
+	  $values = array(
+        'varkey' => 'om_map_model_linkage', 
+        'propname' => 'linked_property',
+        'featureid' => $equation->pid,
+        'propvalue' => $system_adminid, 
+        'propcode' => 'dh_adminreg_feature', 
+        'entity_type' => 'dh_properties',
+      );
+	  $link = om_model_getSetProperty($values,'name',FALSE);
+  
+	  $link->src_prop = $src_name;
+	  $link->dest_prop = 'propcode';
+	  $link->link_type = 2;
+	  $link->update_setting = 'update';
+	  $link->save();
+  }
 }
 ?>
