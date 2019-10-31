@@ -574,19 +574,22 @@ function checkRunDate($listobject, $elementid, $runid, $rundate, $startdate = ''
    }
 }
 
-function getModelActivity($mins, $elementid, $render=TRUE) {
+function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    global $listobject;
    $innerHTML = '';
    
    $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
    $listobject->querystring .= " where a.elementid = b.element_key ";
-   $listobject->querystring .= " and b.last_updated >= now() - interval '$mins minutes' ";
+   if ($mins > 0) {
+     $listobject->querystring .= " and b.last_updated >= now() - interval '$mins minutes' ";
+   }
    if ($elementid > 0) {
      $listobject->querystring .= " and a.elementid = $elementid ";
    }
    $listobject->querystring .= " order by last_updated DESC ";
-   //error_log("$listobject->querystring ");
+   $listobject->querystring .= " LIMIT $limit ";
+   error_log("$listobject->querystring ");
    $nq = $listobject->querystring;
    $listobject->performQuery();
    $n = count($listobject->queryrecords);

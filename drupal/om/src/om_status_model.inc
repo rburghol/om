@@ -9,19 +9,29 @@ function om_status_model_form($form, &$form_state) {
   $form['mins'] = array(
     '#title' => t('Show activity in last'),
     '#type' => 'select',
-    '#default_value' => -1,
     '#options' => array(
       '60' => t('1 Hour'),
       '120' => t('2 Hours'),
       '240' => t('4 Hours'),
       '480' => t('8 Hours'),
       '960' => t('24 Hours'),
+      '2880' => t('3 Days'),
+      '6720' => t('7 Days'),
+      '-1' => t('Any Time (last 100 runs)'),
     ),
     '#default_value' => 60,
     '#description' => t(''),
     '#required' => TRUE,
     '#multiple' => FALSE,
     '#weight' => 1,
+  );
+  $form['elementid'] = array(
+    '#title' => t('Search for Specific Elementid'),
+    '#type' => 'textfield',
+    '#default_value' => '',
+    '#description' => t(''),
+    '#required' => FALSE,
+    '#weight' => 2,
   );
 
   // add controls
@@ -88,7 +98,9 @@ function om_status_model_form_run(&$form, &$form_state) {
   $status = om_get_model_status($elementid);
   */
   $mins = $form_state['values']['mins'];
-  $status = om_get_model_status(-1, $mins);
+  $elementid = intval($form_state['values']['elementid']);
+  $elementid = (!empty($elementid)) ? $elementid : -1;
+  $status = om_get_model_status($elementid, $mins, 'list');
   //dpm($status,'status');
   $status = (array)$status;
   foreach ($status as $key => $row) {
