@@ -99,7 +99,7 @@ function om_status_model_form_run(&$form, &$form_state) {
   $mins = $form_state['values']['mins'];
   $elementid = intval($form_state['values']['elementid']);
   $elementid = (!empty($elementid)) ? $elementid : -1;
-  $status = om_get_model_status($elementid, $mins);
+  $status = om_get_model_status($elementid, $mins, 'list');
   error_log("Called om_get_model_status($elementid, $mins) ");
   dpm($status,'status');
   $status = (array)$status;
