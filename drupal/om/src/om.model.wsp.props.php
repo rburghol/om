@@ -78,6 +78,7 @@ if (!($model_pid and $system_adminid)) {
     'system_adminid' => $system_adminid,
     'propname' => $propname,
     'prop_varkey' => $prop_varkey,
+	'src_name' => $src_name
   );
 }
 
