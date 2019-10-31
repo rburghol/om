@@ -333,6 +333,7 @@ function om_get_model_status($elementid, $mins = 120, $format = '') {
   $json = shell_exec($cmd);
   $status = json_decode($json, TRUE);
   //dpm($status,'json decoded');
+  error_log(print_r($status,1));
   return $status;
 }
 
