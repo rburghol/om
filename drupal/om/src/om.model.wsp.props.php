@@ -18,6 +18,7 @@ $system_adminid = FALSE;
 $prop_entity_type = 'dh_properties';
 $prop_varkey = FALSE;
 $propname = FALSE;
+$src_name = FALSE;
 
 // Is single command line arg?
 if ( (count($args) >= 4) or ($args[0] == 'file')) {
@@ -31,6 +32,7 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
   $system_adminid = $args[2];
   $prop_varkey = $args[3];
   $propname = $args[4];
+  $src_name = $args[5];
 } else {
   // warn and quit
   error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] model_pid system_adminid prop_varkey propname");
@@ -56,8 +58,8 @@ $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 
 // classes = array() empty mean all
 
+$data = array();
 if (!($model_pid and $system_adminid)) {
-  $data = array();
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
   if (count($header) == 0) {
@@ -71,80 +73,60 @@ if (!($model_pid and $system_adminid)) {
   error_log("Header: " . print_r($header,1));
   error_log("Record 1: " . print_r($data[0],1));
 } else {
-  $data = array();
   $data[] = array(
     'model_pid' => $model_pid, 
     'system_adminid' => $system_adminid,
     'propname' => $propname,
     'prop_varkey' => $prop_varkey,
+    'src_name' => $src_name
   );
 }
 
 foreach ($data as $element) {
+	// 1) load model property
+	// 2) create or load om_class_Equation attached to model (i.e. wsp2020_2020_mgy)
+	//   2.1) save the equation if its a create
+	// 3) create or load om_map_model_linkage property attached to om_class_Equation
+	// 4) update linkage attributtes 
+	//   4.1) save the linkage
   $model_pid = $element['model_pid'];
-  $linkage = str_replace('vahydrosw_wshed_', '', $element['coverage_hydrocode']);
-  $coverage_name = $element['coverage_name'];
-  $feature_name = $element['feature_name'];
+  $system_adminid = $element['system_adminid'];
+  $propname = isset($element['propname']) ? $element['propname'] : FALSE; //if not set, default to FALSE
   $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
-  $propvalue = isset($element['propvalue']) ? $element['propvalue'] : FALSE;
-  $propname = isset($element['propname']) ? $element['propname'] : FALSE;
-  // add a default var class for files that come in without one.
+  $src_name = isset($element['src_name']) ? $element['src_name'] : FALSE;
+
+	//load model property
+  $model = entity_load_single('dh_properties', $model_pid);
   
-  // Now, search for this linkage prop
-  $dh_wsp_prop_pid = FALSE;
-  $linkage_pid = om_get_search_model_subprops('dh_properties', $model_pid, 'link_wsp_wd_current_mgy');
-  if ($linkage_pid) {
-    //error_log("Found $linkage_pid");
-    $linkage_prop = entity_load_single('dh_properties', $linkage_pid);
-    $dh_wsp_prop_pid = $linkage_prop->featureid;
-    //error_log("Found Matching model: $dh_wsp_prop_pid");
-  }
-  if (!$dh_wsp_prop_pid) {
-    // add a new wsp property if one does not exist - propname match 
-    // add an om_map_model_linkage to wsp property 
-    // If requested, add another equation prop 
-    $values = array(
+	//create or load om_class_Equation
+	$values = array(
       'varkey' => 'om_class_Equation', 
       'propname' => $propname,
-      'featureid' => $model_pid,
-      'propvalue' => NULL,
-      'propcode' => NULL, 
+      'featureid' => $model->pid,
+      'propvalue' => NULL, //best practice to set them as NULL explicitly
+      'propcode' => '0', 
       'entity_type' => 'dh_properties',
     );
-    error_log("Adding: " . $propname . " to " . $model_pid);
-    if ($debug) error_log("Values: " . print_r($values,1));
-    $dh_wsp_prop = om_model_getSetProperty($values, 'name', FALSE);
-    $dh_wsp_prop->save();
-    $dh_wsp_prop->linkage = $linkage;
-    // now add the linkage prop
-  } else {
-    error_log("Updating: $dh_wsp_prop_pid " . $propname . " to " . $model_pid);
-    $dh_wsp_prop = entity_load_single('dh_properties', $dh_wsp_prop_pid);
-    $dh_wsp_prop->propname = $propname;
-  }
-  $dh_wsp_prop->save();
-
-  if (!$prop_varkey and $propname) {
-    $prop_varkey = 'om_map_model_linkage';
-  }
-  if ($prop_varkey) {
-    $values = array(
-      'varkey' => $prop_varkey, 
-      'propname' => $propname,
-      'featureid' => $dh_wsp_prop->pid,
-      'entity_type' => 'dh_properties',
-    );
-    if ($debug) error_log("Adding $propname $prop_varkey - $propvalue " . print_r($values,1));
-    $model_prop = om_model_getSetProperty($values, 'name', FALSE);
-    $plugin = array_shift($model_prop->dh_variables_plugins);
-    if (method_exists($plugin, 'applyEntityAttribute')) {
-      $plugin->applyEntityAttribute($model_prop, $propvalue);
-    } else {
-      $model_prop->propvalue = $propvalue;
-    }
-    $model_prop->save();
-    error_log("Set: " . $propname . ' = ' . $propvalue);
+  $equation = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
+  
+  if (!empty($system_adminid)){
+  
+  	//create or load om_map_model_linkage
+	  $values = array(
+        'varkey' => 'om_map_model_linkage', 
+        'propname' => 'linked_property',
+        'featureid' => $equation->pid,
+        'propvalue' => $system_adminid, 
+        'propcode' => 'dh_adminreg_feature', 
+        'entity_type' => 'dh_properties',
+      );
+	  $link = om_model_getSetProperty($values,'name',FALSE);
+  
+	  $link->src_prop = $src_name;
+	  $link->dest_prop = 'propcode';
+	  $link->link_type = 2;
+	  $link->update_setting = 'update';
+	  $link->save();
   }
 }
-
 ?>
