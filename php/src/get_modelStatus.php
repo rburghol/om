@@ -20,6 +20,11 @@ if (isset($argv[2])) {
 } else {
   $mins = 120;
 }
+if (isset($argv[3])) {
+   $format = $argv[3];
+} else {
+  $format = '';
+}
 
 if ($elementid === FALSE) {
   $info = "ERROR: get_modelStatus.php called without elementid.";
@@ -29,7 +34,14 @@ if ($elementid === FALSE) {
     $status_update = getModelActivity($mins, $elementid, FALSE);
     //error_log("REcs:" . print_r($status_update,1));
   } else {
-    $status_update = getModelRunStatus($listobject, $elementid);
+    switch ($format) {
+      case 'list':
+      $status_update = getModelActivity($mins, $elementid, FALSE);
+      break;
+      default:
+      $status_update = getModelRunStatus($listobject, $elementid);
+      break;
+    }
   }
   error_log("************ get_modelStatus.php $elementid called **************");
   $info = "json_encode handled object properly.";
