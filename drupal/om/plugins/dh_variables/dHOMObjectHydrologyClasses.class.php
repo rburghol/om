@@ -342,6 +342,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
+    error_log("Default Qin var: " . print_r($defaults['Qin'],1));
     return $defaults;
   }
 
