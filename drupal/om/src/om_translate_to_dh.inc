@@ -168,6 +168,12 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       //error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
       $dh_prop->{$thisprop['propname']} = $om_comp->{$thisprop['propname']};
     }
+    // what if the default_subprop is a subcomponent, like a dataMatrix?
+    // algorithm: recursion is needed (or could work)
+    if ($thisprop['propname'] == 'storage_stage_area') {
+      $stransok = om_translate_to_dh($om_comp->{$thisprop['propname']}, $dh_prop->storage_stage_area);
+      error_log("Tried to translate storage_stage_area result = $stransok");
+    }
   }
   if ($translated) {
     error_log("Translated $om_comp->object_class to $dh_prop->propname");
