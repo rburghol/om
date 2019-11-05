@@ -269,7 +269,81 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
 }
 
 class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
-  var $object_class = 'hydroImpSmall';
+  var $object_class = 'hydroImpSmall'; 
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    // must account for these which are handled specially from local variables on the subcomp version
+    // $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
+    $defaults = array(
+      'Qin' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Qin',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Inflow (cfs)',
+        'vardesc' => 'Reservoir inflow variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'et_in' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'et_in',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'ET (inches)',
+        'vardesc' => 'Reservoir evaporation variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'precip_in' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'precip_in',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Precip (inches)',
+        'vardesc' => 'Reservoir precip variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'release' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'release',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Release (cfs)',
+        'vardesc' => 'Reservoir release variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'demand' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'demand',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Demand (MGD)',
+        'vardesc' => 'Reservoir demand variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'refill' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'refill',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Refill (mgd)',
+        'vardesc' => 'Reservoir refill variable name (if pump-store).',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    ) + $defaults;
+    return $defaults;
+  }
 
 }
 
