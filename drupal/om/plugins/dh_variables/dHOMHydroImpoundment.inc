@@ -1,9 +1,9 @@
 <?php
 
 $plugin = array(
-  'label' => t('OM Object Class - dHOMHydroImpSmall'),
+  'label' => t('OM Object Class - dHOMHydroImpoundmentSmall'),
   'handler' =>  array(
-    'class' => 'dHOMHydroImpSmall',
+    'class' => 'dHOMHydroImpoundmentSmall',
     'file' => 'dHOMObjectHydrologyClasses.class.php',
   ),
   'variable' =>  array(
@@ -19,7 +19,7 @@ $plugin = array(
     'timeunits' => 'n/a',
     'nodataval' => 0,
     'data_entry' => '',
-    'plugin' => 'dHOMHydroImpSmall',
+    'plugin' => 'dHOMHydroImpoundmentSmall',
     'options' => '',
     'varabbrev' => 'Imp',
   ),
