@@ -159,6 +159,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     break;
     case 'hydroImpSmall':
       $translated = TRUE;
+      error_log("Class of storage_stage_area = " . get_class($dh_prop->processors['storage_stage_area']));
     break;
   
   }
