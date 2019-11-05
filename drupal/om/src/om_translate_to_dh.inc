@@ -157,6 +157,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       //error_log("USGSChannelGeomObject set Translated province = $dh_prop->province and drainage_area = $dh_prop->drainage_area");
       $translated = TRUE;
     break;
+    case 'hydroImpSmall':
+      $translated = TRUE;
+    break;
   
   }
   foreach ($default_subprops as $thisprop) {
