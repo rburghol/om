@@ -19,6 +19,7 @@ class modelObject {
   var $objectname = '';
   var $defaultval = 0;
   var $logging = 1;
+  var $object_class = 'modelObject'; // will be set externally but could be overridden
   var $intmethod = 0; // interpolation method - 0 = linear, 1 - stair step
   var $units = 2; // Units 1 - SI, 2 - EE
   var $component_type = 1;
