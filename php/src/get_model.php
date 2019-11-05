@@ -31,6 +31,7 @@ if ($elementid === FALSE) {
   $thisobject = $thisobresult['object'];
   foreach ($thisobject->processors as $procname => $thisproc) {
     $thisobject->processors[$procname]->object_class = get_class($thisproc);
+    error_log("object_class $procname = " .   $thisobject->processors[$procname]->object_class);
   }
   # retrieve child component linkages
   $linkrecs = getChildComponentType($listobject, $elementid);
