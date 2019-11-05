@@ -16,7 +16,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   var $attach_method = 'contained';
   
   public function hiddenFields() {
-    $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
+    $hidden = array_merge(array('propvalue'), parent::hiddenFields());
     return $hidden;
   }
   
