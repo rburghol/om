@@ -241,7 +241,6 @@ function om_get_search_model_subprops($entity_type, $featureid, $subprop_name, $
 function om_get_dh_varkey($om_comp) {
   $duplicates = array(
     'USGSGageSubComp' => 'USGSGageObject',
-    'hydroImpSmall' => 'hydroImpoundment',
   );
   $object_class = 
     isset($duplicates[$om_comp->object_class]) 
