@@ -4085,6 +4085,7 @@ class dataMatrix extends modelSubObject {
    
    // additionally, the return values may be variable references
    
+   var $object_class = 'dataMatrix'; // will be set externally but could be overridden
    var $valuetype = 0; // 0 - returns entire array (normal), 1 - single column lookup (col), 2 - 2 column lookup (col & row)
    var $keycol1 = ''; // key for 1st lookup variable
    var $lutype1 = 0; // lookup type for first lookup variable: 0 - exact match; 1 - interpolate values; 2 - stair step
