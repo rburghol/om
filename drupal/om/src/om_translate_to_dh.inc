@@ -248,7 +248,7 @@ function om_get_dh_varkey($om_comp) {
     ? $duplicates[$om_comp->object_class]
     : $om_comp->object_class
   ;
-  //error_log(" This object_class = $object_class");
+  error_log(" Searching varcode for object_class = $object_class");
   
   $q = "  select varkey from {dh_variabledefinition} ";
   $q .= " where varcode = :om_class and vocabulary = 'om_object_classes'";
