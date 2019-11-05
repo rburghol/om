@@ -8086,6 +8086,7 @@ function unSerializeSingleModelObject($elementid, $input_props = array(), $debug
       # a scope that is local to the containing object, set them to be a decimal on the parent elementid
       $opobject->componentid = "$elementid" . "." . $j;
       $opobject->object_class = get_class($opobject);
+      error_log("$opobject->name class = $opobject->object_class");
       if ($debug) {
         $returnArray['debug'] .= print_r($opobject,1);
         $returnArray['debug'] .= "<br><b>Unserializing operators</b><br>";
