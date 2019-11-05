@@ -345,7 +345,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
       $prop->set_remote = FALSE;
       error_log("Translated $om_object_class = $translated ");
       if ($translated) {
-        error_log("Saving $procname .");
+        error_log("Saving $procname $prop->pid $prop->propname .");
         $prop->save();
       } else {
         error_log("Translation failed.");
