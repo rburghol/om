@@ -172,6 +172,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     // algorithm: recursion is needed (or could work)
     if (property_exists($om_comp->processors, $thisprop['propname'])) {
       if ($thisprop['propname'] == 'storage_stage_area') {
+        $plugin->loadProperties($dh_prop, FALSE, $thisprop['propname']);
         $stransok = om_translate_to_dh($om_comp->processors->{$thisprop['propname']}, $dh_prop->storage_stage_area);
         error_log("Tried to translate storage_stage_area result = $stransok");
       }
