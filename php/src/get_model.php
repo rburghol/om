@@ -29,7 +29,7 @@ if ($elementid === FALSE) {
   // this is a single component retrieval only
   $thisobresult = unSerializeSingleModelObject($elementid);
   $thisobject = $thisobresult['object'];
-  foreach ($thisobject->processors as $propcname => $thisproc) {
+  foreach ($thisobject->processors as $procname => $thisproc) {
     $thisobject->processors[$procname]->object_class = get_class($thisproc);
   }
   # retrieve child component linkages
