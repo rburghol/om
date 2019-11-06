@@ -569,6 +569,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // taken directly from om library -- will revisit after full porting
     return array();
     // gets all viewable variables
+    // should include broadcast listeners, and map_model_linkages
     if (is_array($this->inputnames)) {
        return $this->inputnames;
     } else {

@@ -30,6 +30,8 @@ rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om-dev/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
 rm /var/www/html/om/fn_message_model.php
 ln -s /opt/model/om-dev/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php
+rm /var/www/html/om/fn_addObjectLink.php
+ln -s /opt/model/om-dev/php/src/fn_addObjectLink.php /var/www/html/om/fn_addObjectLink.php
 
 # live
 rm /var/www/html/om/fn_copy_element.php
@@ -62,3 +64,5 @@ rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
 rm /var/www/html/om/fn_message_model.php
 ln -s /opt/model/om/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php
+rm /var/www/html/om/fn_addObjectLink.php
+ln -s /opt/model/om/php/src/fn_addObjectLink.php /var/www/html/om/fn_addObjectLink.php
