@@ -19,6 +19,7 @@ class modelObject {
   var $objectname = '';
   var $defaultval = 0;
   var $logging = 1;
+  var $object_class = 'modelObject'; // will be set externally but could be overridden
   var $intmethod = 0; // interpolation method - 0 = linear, 1 - stair step
   var $units = 2; // Units 1 - SI, 2 - EE
   var $component_type = 1;
@@ -4084,6 +4085,7 @@ class dataMatrix extends modelSubObject {
    
    // additionally, the return values may be variable references
    
+   var $object_class = 'dataMatrix'; // will be set externally but could be overridden
    var $valuetype = 0; // 0 - returns entire array (normal), 1 - single column lookup (col), 2 - 2 column lookup (col & row)
    var $keycol1 = ''; // key for 1st lookup variable
    var $lutype1 = 0; // lookup type for first lookup variable: 0 - exact match; 1 - interpolate values; 2 - stair step

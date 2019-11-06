@@ -24,6 +24,29 @@ class dHOMHydroObject extends dHOMModelElement {
     parent::getDefaults($entity, $defaults);
     
     $defaults += array(
+      'riverseg' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'riverseg',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'riverseg',
+        'vardesc' => 'riverseg.',
+        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+      ), 
+    );
+    return $defaults;
+  }
+}
+
+class dHOMHydroObjectOtherProps extends dHOMHydroObject {
+  
+  // these were definied in OM on the base class but unused in many, and should not be created nor exposed?
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+  
+    $defaults += array(
       'Qin' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -57,61 +80,6 @@ class dHOMHydroObject extends dHOMModelElement {
         'vardesc' => 'Inflow during last timestep(transient).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
-      'depth' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.0,
-        'propname' => 'depth',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => "depth",
-        'vardesc' => 'depth.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
-      'tol' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.0001,
-        'propname' => 'tol',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => "Tolerance in iterative solutions",
-        'vardesc' => 'Tolerance in iterative solutions.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
-      'Storage' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.0,
-        'propname' => 'Storage',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => "Storage",
-        'vardesc' => 'Storage.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
-      'n' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.025,
-        'propname' => 'n',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => "Manning's n",
-        'vardesc' => 'Roughness coefficient for use in model runoff and channel flow simualtions.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
-      'slope' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.01,
-        'propname' => 'slope',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => 'slope',
-        'vardesc' => 'slope.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
       'slength' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -121,17 +89,6 @@ class dHOMHydroObject extends dHOMModelElement {
         'featureid' => $entity->identifier(),
         'varname' => 'slength',
         'vardesc' => 'slength.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ), 
-      'area' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propvalue_default' => 0.0,
-        'propname' => 'area',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varname' => 'area',
-        'vardesc' => 'area.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'totalflow' => array(
@@ -156,16 +113,16 @@ class dHOMHydroObject extends dHOMModelElement {
         'vardesc' => 'totalinflow.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
-      'riverseg' => array(
+      'Storage' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
         'propvalue_default' => 0.0,
-        'propname' => 'riverseg',
+        'propname' => 'Storage',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'riverseg',
-        'vardesc' => 'riverseg.',
-        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+        'varname' => "Storage",
+        'vardesc' => 'Storage.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
     );
     return $defaults;
@@ -245,6 +202,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
       'storage_stage_area' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
+        'embed' => FALSE,
         'propvalue_default' => 10.0,
         'bundle' => 'om_data_matrix',
         'propname' => 'storage_stage_area',
@@ -269,7 +227,148 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
 }
 
 class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
-  var $object_class = 'hydroImpSmall';
+  var $object_class = 'hydroImpSmall'; 
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    // must account for these which are handled specially from local variables on the subcomp version
+    // $this->rvars = array('et_in','precip_in','release','demand', 'Qin', 'refill');
+    $defaults = array(
+      'Qin' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'Qin',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Inflow (cfs)',
+        'vardesc' => 'Reservoir inflow variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'et_in' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'et_in',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'ET (inches)',
+        'vardesc' => 'Reservoir evaporation variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'precip_in' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'precip_in',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Precip (inches)',
+        'vardesc' => 'Reservoir precip variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'release' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'release',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Release (cfs)',
+        'vardesc' => 'Reservoir release variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'demand' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'demand',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Demand (MGD)',
+        'vardesc' => 'Reservoir demand variable name.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'refill' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'refill',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Refill (mgd)',
+        'vardesc' => 'Reservoir refill variable name (if pump-store).',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'riser_length' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'riser_length',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Riser Length (feet)',
+        'vardesc' => 'Riser length dimension (if using riser mode).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'riser_diameter' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'riser_diameter',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Riser Diameter (feet)',
+        'vardesc' => 'Riser diameter dimension (if using riser mode).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'riser_pipe_flow_head' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'riser_pipe_flow_head',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Riser Pipe Flow Head (feet)',
+        'vardesc' => 'Depth of water over riser structure at which pipe-flow conditions ensue.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'riser_opening_storage' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'riser_opening_storage',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Riser Pipe Active Storage',
+        'vardesc' => 'Volume of impounded water at which riser orifice becomes active (reference stage-storage table).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'riser_opening_elev' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 1.0,
+        'propname' => 'riser_opening_elev',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Riser Pipe Active Elevation',
+        'vardesc' => 'Depth of water at which riser orifice becomes active (reference stage-storage table).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'riser_enabled' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'boolean',
+        'propname' => 'riser_enabled',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Use Riser Pipe?',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+    ) + $defaults;
+    return $defaults;
+  }
 
 }
 
@@ -286,6 +385,50 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
     $defaults = parent::getDefaults($entity, $defaults);
     // length, drainage_area, Z, base, province
     $defaults = array(
+      'depth' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'depth',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => "depth",
+        'vardesc' => 'depth.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'tol' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0001,
+        'propname' => 'tol',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => "Tolerance in iterative solutions",
+        'vardesc' => 'Tolerance in iterative solutions.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'n' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.025,
+        'propname' => 'n',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => "Manning's n",
+        'vardesc' => 'Roughness coefficient for use in model runoff and channel flow simualtions.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'slope' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.01,
+        'propname' => 'slope',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'slope',
+        'vardesc' => 'slope.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
       'length' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,

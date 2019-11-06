@@ -106,9 +106,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
-    error_log("Calling getDefaults on " . get_class($plugin ));
+    //error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
-    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
+    //error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
   }
   
   switch ($om_comp->object_class) {
@@ -157,18 +157,34 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       //error_log("USGSChannelGeomObject set Translated province = $dh_prop->province and drainage_area = $dh_prop->drainage_area");
       $translated = TRUE;
     break;
+    case 'hydroImpSmall':
+      $translated = TRUE;
+      error_log("Processors of hydroImpSmall = " . get_class($om_comp->processors->storage_stage_area));
+    break;
   
   }
   foreach ($default_subprops as $thisprop) {
     if (property_exists($om_comp, $thisprop['propname'])) {
-      //error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
+      if ($om_comp->object_class == 'hydroImpSmall') {
+        error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
+      }
       $dh_prop->{$thisprop['propname']} = $om_comp->{$thisprop['propname']};
+    }
+    // what if the default_subprop is a subcomponent, like a dataMatrix?
+    // algorithm: recursion is needed (or could work)
+    if (property_exists($om_comp->processors, $thisprop['propname'])) {
+      if ($thisprop['propname'] == 'storage_stage_area') {
+        $plugin->loadProperties($dh_prop, FALSE, $thisprop['propname']);
+        $stransok = om_translate_to_dh($om_comp->processors->{$thisprop['propname']}, $dh_prop->storage_stage_area);
+        error_log("Tried to translate storage_stage_area result = $stransok");
+        //error_log("proc props = " . print_r(get_object_vars($om_comp->processors->{$thisprop['propname']}),1));
+      }
     }
   }
   if ($translated) {
     error_log("Translated $om_comp->object_class to $dh_prop->propname");
   } else {
-    error_log("Could not translate");
+    error_log("Could not translate -- check to see that OM sets base (given object_class: $om_comp->object_class)");
   }
   return $translated;
 }
@@ -237,14 +253,14 @@ function om_get_search_model_subprops($entity_type, $featureid, $subprop_name, $
 
 function om_get_dh_varkey($om_comp) {
   $duplicates = array(
-    'USGSGageSubComp' => 'USGSGageObject'
+    'USGSGageSubComp' => 'USGSGageObject',
   );
   $object_class = 
     isset($duplicates[$om_comp->object_class]) 
     ? $duplicates[$om_comp->object_class]
     : $om_comp->object_class
   ;
-  //error_log(" This object_class = $object_class");
+  error_log(" Searching varcode for object_class = $object_class");
   
   $q = "  select varkey from {dh_variabledefinition} ";
   $q .= " where varcode = :om_class and vocabulary = 'om_object_classes'";
@@ -333,7 +349,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
       $prop->set_remote = FALSE;
       error_log("Translated $om_object_class = $translated ");
       if ($translated) {
-        error_log("Saving $procname .");
+        error_log("Saving $procname $prop->pid $prop->propname .");
         $prop->save();
       } else {
         error_log("Translation failed.");
