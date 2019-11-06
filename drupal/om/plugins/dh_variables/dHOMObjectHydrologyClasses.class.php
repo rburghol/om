@@ -202,6 +202,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
       'storage_stage_area' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
+        'embed' => FALSE,
         'propvalue_default' => 10.0,
         'bundle' => 'om_data_matrix',
         'propname' => 'storage_stage_area',
