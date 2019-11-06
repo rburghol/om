@@ -106,9 +106,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
-    error_log("Calling getDefaults on " . get_class($plugin ));
+    //error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
-    error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
+    //error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
   }
   
   switch ($om_comp->object_class) {
@@ -124,7 +124,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
-        error_log("Translating matrix to tablefield" . print_r($in,1));
+        //error_log("Translating matrix to tablefield" . print_r($in,1));
         $plugin->setCSVTableField($dh_prop, $in);
       }
       $translated = TRUE;
@@ -165,7 +165,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   }
   foreach ($default_subprops as $thisprop) {
     if (property_exists($om_comp, $thisprop['propname'])) {
-      //error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
+      if ($om_comp->object_class == 'hydroImpSmall') {
+        error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
+      }
       $dh_prop->{$thisprop['propname']} = $om_comp->{$thisprop['propname']};
     }
     // what if the default_subprop is a subcomponent, like a dataMatrix?
