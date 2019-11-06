@@ -356,7 +356,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
       'riser_enabled' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propvalue_default' => 1.0,
+        'propvalue_default' => 0,
         'datatype' => 'boolean',
         'propname' => 'riser_enabled',
         'singularity' => 'name_singular',
