@@ -63,6 +63,7 @@ class CBPLandDataConnectionBase extends XMLDataConnection {
       
    }
    
+   
    function wake() {
       $this->feed_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=4';
       $this->data_inventory_address = 'http://deq2.bse.vt.edu/om/remote/rss_cbp_land_data.php?actiontype=1'; 
@@ -1031,8 +1032,13 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
    var $recreate_list = 'reload_nlcd';
    
    function setState() {
-      parent::setState();
-      $this->initOnParent();
+    $this->object_state = 'setState';
+    parent::setState();
+    $this->initOnParent();
+   }
+   
+   function init() {
+    $this->object_state = 'init';
    }
    
    function initOnParent() {
@@ -1051,10 +1057,17 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
 
    function wake() {
       //error_log("$this->name calling parent wake()");
+      $this->object_state = 'wake';
       parent::wake();
       //error_log("$this->name calling setupLanduseMatrix()");
       $this->setupLanduseMatrix();
       //$this->debugmode = 1;
+   }
+   
+   function getTablesColumns() {
+     if ($this->object_state != 'wake') {
+      parent::getTablesColumns();
+     }
    }
        
    function sleep() {
@@ -1160,6 +1173,8 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
    }
    
    function create() {
+     // @todo: move these object_state calls in the base modelObject class 
+      $this->object_state = 'create';
       parent::create();
       //error_log("Create routine called on $this->name with $this->text2table");
       $this->setupLanduseMatrix();
