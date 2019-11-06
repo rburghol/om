@@ -21,7 +21,9 @@ $model_scenario = 'vahydro-1.0';
 $model_varkey = 'varcode';
 $model_entity_type = 'dh_feature';
 // command line class override
-$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp', 'textField');
+$classes = array();
+// we no longer need this since the om_translate_to_dh() function can determine if a class is supported or not 
+//$classes = array('dataMatrix', 'Equation', 'USGSGageSubComp', 'textField');
 //$classes = array('Equation');
 
 // Is single command line arg?
