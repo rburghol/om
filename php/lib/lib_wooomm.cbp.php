@@ -1065,10 +1065,15 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
    }
    
    function getTablesColumns() {
+    parent::getTablesColumns();
+    
+    //Experimental code to optimize, not helping
+    /*
      //if (!in_array($this->object_state, array('wake', 'setState'))) {
      if (in_array($this->object_state, array('init', 'create'))) {
       parent::getTablesColumns();
      }
+     */
    }
        
    function sleep() {
