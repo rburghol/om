@@ -1065,7 +1065,7 @@ class CBPLandDataConnection_sub extends CBPLandDataConnection {
    }
    
    function getTablesColumns() {
-     if ($this->object_state != 'wake') {
+     if (!in_array($this->object_state, array('wake', 'setState'))) {
       parent::getTablesColumns();
      }
    }
