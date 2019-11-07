@@ -340,7 +340,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
         'varkey' => om_get_dh_varkey($proc),
       );
       // load or establish the property (do not save until sure if we've handled it)
-      error_log("Looking for: " . print_r($proc_data,1));
+      //error_log("Looking for: " . print_r($proc_data,1));
       $prop = om_model_getSetProperty($proc_data, 'name');
       if (is_object($prop)) {
         error_log("Prop loaded for $prop->propname ");
