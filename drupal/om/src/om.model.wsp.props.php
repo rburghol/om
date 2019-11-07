@@ -132,6 +132,7 @@ foreach ($data as $element) {
 	  $link->dest_prop = 'propcode';
 	  $link->link_type = 2;
 	  $link->update_setting = 'update';
+    error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($equation->pid):$link->dest_prop");
 	  $link->save();
   }
 }
