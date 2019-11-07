@@ -12,7 +12,8 @@ while ($arg = drush_shift()) {
 // example: 4726070, 178413, om_class_Equation, wsp2020_2020_mgy
 // drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 178413 om_class_Equation wsp2020_2020_mgy wsp_current_use_mgy
 // example: Set current_mgy link on model for Lake Monticello WTP (72634) 4729865, 72634, om_class_Equation, wsp2020_2020_mgy
-// drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 178413 om_class_Equation current_mgy wd_current_mgy
+// drush scr modules/om/src/om.model.wsp.props.php cmd 4727365 72634 om_class_Equation current_mgy wd_current_mgy
+// drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 72634 om_class_Equation current_mgy wd_current_mgy
 
 
 // all batch element settings
@@ -36,9 +37,10 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
   $prop_varkey = $args[3];
   $dest_prop = $args[4];
   $src_prop = $args[5];
+  $src_entity_type = $args[6];
 } else {
   // warn and quit
-  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] dest_id src_id prop_varkey dest_prop src_prop");
+  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] dest_id src_id prop_varkey dest_prop src_prop src_entity_type");
   die;
 }
 
@@ -97,6 +99,7 @@ foreach ($data as $element) {
   $dest_prop = isset($element['dest_prop']) ? $element['dest_prop'] : FALSE; //if not set, default to FALSE
   $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
   $src_prop = isset($element['src_prop']) ? $element['src_prop'] : FALSE;
+  $src_entity_type = isset($element['src_entity_type']) ? $element['src_entity_type'] : 'dh_adminreg_feature';
 
 	//load model property
   $model = entity_load_single('dh_properties', $dest_id);
@@ -120,7 +123,7 @@ foreach ($data as $element) {
         'propname' => 'linked_property',
         'featureid' => $equation->pid,
         'propvalue' => $src_id, 
-        'propcode' => 'dh_adminreg_feature', 
+        'propcode' => $src_entity_type, 
         'entity_type' => 'dh_properties',
       );
 	  $link = om_model_getSetProperty($values,'name',FALSE);
