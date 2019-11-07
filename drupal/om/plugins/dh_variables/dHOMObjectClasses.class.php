@@ -1823,8 +1823,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    //dpm($entity,'getLocalhostLinkedValue entity');
-    //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
+    dpm($entity,'getLocalhostLinkedValue entity');
+    dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
       $this->getLinkedEntity($entity);
     }
