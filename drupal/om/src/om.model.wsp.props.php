@@ -8,49 +8,52 @@ while ($arg = drush_shift()) {
   $args[] = $arg;
 }
 // input file cmd:
-// model_pid, system_adminid, prop_varkey, propname
+// dest_id, src_id, prop_varkey, dest_prop
 // example: 4726070, 178413, om_class_Equation, wsp2020_2020_mgy
-// drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 178413 om_class_Equation wsp2020_2020_mgy
+// drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 178413 om_class_Equation wsp2020_2020_mgy wsp_current_use_mgy
+// example: Set current_mgy link on model for Lake Monticello WTP (72634) 4729865, 72634, om_class_Equation, wsp2020_2020_mgy
+// drush scr modules/om/src/om.model.wsp.props.php cmd 4726070 178413 om_class_Equation current_mgy wd_current_mgy
+
 
 // all batch element settings
-$model_pid = FALSE;
-$system_adminid = FALSE;
+$dest_id = FALSE; // the equation or other entity to receive the linked data 
+$src_id = FALSE; // the entity that contains the property to be linked 
+$prop_varkey = FALSE; // the type of 
+$dest_prop = FALSE; // the name of the linked value on the dest_id object 
+$src_prop = FALSE; // the property whose value is to be linked 
 $prop_entity_type = 'dh_properties';
-$prop_varkey = FALSE;
-$propname = FALSE;
-$src_name = FALSE;
 
 // Is single command line arg?
 if ( (count($args) >= 4) or ($args[0] == 'file')) {
   // Do command line, single element settings
   // set these if doing a single -- will fail if both not set
-  // $model_pid = 4726070; // set these if doing a single (model: VIRGINIA BEACH SERVICE AREA:North Landing River)
-  // $system_adminid = 178413; // (system: Virginia Beach, City of)
+  // $dest_id = 4726070; // set these if doing a single (model: VIRGINIA BEACH SERVICE AREA:North Landing River)
+  // $src_id = 178413; // (system: Virginia Beach, City of)
 
   $query_type = $args[0];
-  $model_pid = $args[1];
-  $system_adminid = $args[2];
+  $dest_id = $args[1];
+  $src_id = $args[2];
   $prop_varkey = $args[3];
-  $propname = $args[4];
-  $src_name = $args[5];
+  $dest_prop = $args[4];
+  $src_prop = $args[5];
 } else {
   // warn and quit
-  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] model_pid system_adminid prop_varkey propname");
+  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] dest_id src_id prop_varkey dest_prop src_prop");
   die;
 }
 
-error_log("query_type = $query_type, featureid = $model_pid, propname = $propname, varkey = $prop_varkey");
+error_log("query_type = $query_type, featureid = $dest_id, dest_prop = $dest_prop, varkey = $prop_varkey");
 
 
-// read csv of model_pid / system_adminid pairs
+// read csv of dest_id / src_id pairs
 // find model -- report error if it does not exist
-// name = propname
+// name = dest_prop
 // iterate through properties
 
 if ($query_type == 'file') {
-  $filepath = $model_pid;
-  $model_pid = FALSE;
-  $system_adminid = FALSE;
+  $filepath = $dest_id;
+  $dest_id = FALSE;
+  $src_id = FALSE;
   error_log("File requested: $filepath");
 }
 
@@ -59,7 +62,7 @@ $om = 'http://deq2.bse.vt.edu/om/get_model.php';
 // classes = array() empty mean all
 
 $data = array();
-if (!($model_pid and $system_adminid)) {
+if (!($dest_id and $src_id)) {
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
   if (count($header) == 0) {
@@ -74,11 +77,11 @@ if (!($model_pid and $system_adminid)) {
   error_log("Record 1: " . print_r($data[0],1));
 } else {
   $data[] = array(
-    'model_pid' => $model_pid, 
-    'system_adminid' => $system_adminid,
-    'propname' => $propname,
+    'dest_id' => $dest_id, 
+    'src_id' => $src_id,
+    'dest_prop' => $dest_prop,
     'prop_varkey' => $prop_varkey,
-    'src_name' => $src_name
+    'src_prop' => $src_prop
   );
 }
 
@@ -89,19 +92,19 @@ foreach ($data as $element) {
 	// 3) create or load om_map_model_linkage property attached to om_class_Equation
 	// 4) update linkage attributtes 
 	//   4.1) save the linkage
-  $model_pid = $element['model_pid'];
-  $system_adminid = $element['system_adminid'];
-  $propname = isset($element['propname']) ? $element['propname'] : FALSE; //if not set, default to FALSE
+  $dest_id = $element['dest_id'];
+  $src_id = $element['src_id'];
+  $dest_prop = isset($element['dest_prop']) ? $element['dest_prop'] : FALSE; //if not set, default to FALSE
   $prop_varkey = isset($element['prop_varkey']) ? $element['prop_varkey'] : FALSE;
-  $src_name = isset($element['src_name']) ? $element['src_name'] : FALSE;
+  $src_prop = isset($element['src_prop']) ? $element['src_prop'] : FALSE;
 
 	//load model property
-  $model = entity_load_single('dh_properties', $model_pid);
+  $model = entity_load_single('dh_properties', $dest_id);
   
 	//create or load om_class_Equation
 	$values = array(
       'varkey' => 'om_class_Equation', 
-      'propname' => $propname,
+      'propname' => $dest_prop,
       'featureid' => $model->pid,
       'propvalue' => NULL, //best practice to set them as NULL explicitly
       'propcode' => '0', 
@@ -109,20 +112,20 @@ foreach ($data as $element) {
     );
   $equation = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
   
-  if (!empty($system_adminid)){
+  if (!empty($src_id)){
   
   	//create or load om_map_model_linkage
 	  $values = array(
         'varkey' => 'om_map_model_linkage', 
         'propname' => 'linked_property',
         'featureid' => $equation->pid,
-        'propvalue' => $system_adminid, 
+        'propvalue' => $src_id, 
         'propcode' => 'dh_adminreg_feature', 
         'entity_type' => 'dh_properties',
       );
 	  $link = om_model_getSetProperty($values,'name',FALSE);
   
-	  $link->src_prop = $src_name;
+	  $link->src_prop = $src_prop;
 	  $link->dest_prop = 'propcode';
 	  $link->link_type = 2;
 	  $link->update_setting = 'update';
