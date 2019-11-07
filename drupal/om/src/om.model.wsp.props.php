@@ -83,7 +83,8 @@ if (!($dest_id and $src_id)) {
     'src_id' => $src_id,
     'dest_prop' => $dest_prop,
     'prop_varkey' => $prop_varkey,
-    'src_prop' => $src_prop
+    'src_prop' => $src_prop,
+    'src_entity_type' => $src_entity_type,
   );
 }
 
