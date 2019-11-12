@@ -143,26 +143,28 @@ foreach ($data as $element) {
   }
   $dh_model->save();
 
-  if (!$prop_varkey and $propname) {
-    $prop_varkey = 'om_class_Equation';
-  }
-  if ($prop_varkey) {
-    $values = array(
-      'varkey' => $prop_varkey, 
-      'propname' => $propname,
-      'featureid' => $dh_model->pid,
-      'entity_type' => 'dh_properties',
-    );
-    if ($debug) error_log("Adding $propname $prop_varkey - $propvalue " . print_r($values,1));
-    $model_prop = om_model_getSetProperty($values, 'name', FALSE);
-    $plugin = array_shift($model_prop->dh_variables_plugins);
-    if (method_exists($plugin, 'applyEntityAttribute')) {
-      $plugin->applyEntityAttribute($model_prop, $propvalue);
-    } else {
-      $model_prop->propvalue = $propvalue;
+  if (!($propvalue === FALSE)) {
+    if (!$prop_varkey and $propname) {
+      $prop_varkey = 'om_class_Equation';
     }
-    $model_prop->save();
-    error_log("Set: " . $propname . ' = ' . $propvalue);
+    if ($prop_varkey) {
+      $values = array(
+        'varkey' => $prop_varkey, 
+        'propname' => $propname,
+        'featureid' => $dh_model->pid,
+        'entity_type' => 'dh_properties',
+      );
+      if ($debug) error_log("Adding $propname $prop_varkey - $propvalue " . print_r($values,1));
+      $model_prop = om_model_getSetProperty($values, 'name', FALSE);
+      $plugin = array_shift($model_prop->dh_variables_plugins);
+      if (method_exists($plugin, 'applyEntityAttribute')) {
+        $plugin->applyEntityAttribute($model_prop, $propvalue);
+      } else {
+        $model_prop->propvalue = $propvalue;
+      }
+      $model_prop->save();
+      error_log("Set: " . $propname . ' = ' . $propvalue);
+    }
   }
 }
 
