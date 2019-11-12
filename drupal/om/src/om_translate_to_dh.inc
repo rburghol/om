@@ -106,9 +106,11 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
-    //error_log("Calling getDefaults on " . get_class($plugin ));
+    error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
     //error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
+  } else {
+    error_log("Could not load plugin for $dh_prop->propname, class= " . get_class($dh_prop ));
   }
   
   switch ($om_comp->object_class) {
