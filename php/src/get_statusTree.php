@@ -1,7 +1,8 @@
 <?php
 
-include('./xajax_modeling.element.php');
-include("./lib_verify.php");
+include_once('./xajax_modeling.element.php');
+include_once("./lib_verify.php");
+error_log("Called get_statusTree.php" . print_r($argv,1));
 
 $connstring = "host=$dbip dbname=cbp user=$dbuser password=$dbpass";
 $dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
