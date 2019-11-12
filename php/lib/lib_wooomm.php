@@ -578,7 +578,7 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    global $listobject;
    $innerHTML = '';
    
-   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
    $listobject->querystring .= " where a.elementid = b.element_key ";
    if ($mins > 0) {
