@@ -106,9 +106,11 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
   // load object plugin if exists
   $plugin = dh_variables_getPlugins($dh_prop);
   if (is_object($plugin )) {
-    //error_log("Calling getDefaults on " . get_class($plugin ));
+    error_log("Calling getDefaults on " . get_class($plugin ));
     $default_subprops = $plugin->getDefaults($dh_prop);
     //error_log("Obtained defaults: " . print_r(array_keys($default_subprops),1));
+  } else {
+    error_log("Could not load plugin for $dh_prop->propname, class= " . get_class($dh_prop ));
   }
   
   switch ($om_comp->object_class) {
@@ -124,7 +126,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
-        //error_log("Translating matrix to tablefield" . print_r($in,1));
+        error_log("Translating matrix to tablefield" . print_r($in,1));
         $plugin->setCSVTableField($dh_prop, $in);
       }
       $translated = TRUE;
@@ -174,8 +176,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     // algorithm: recursion is needed (or could work)
     if (property_exists($om_comp->processors, $thisprop['propname'])) {
       if ($thisprop['propname'] == 'storage_stage_area') {
-        $plugin->loadProperties($dh_prop, FALSE, $thisprop['propname']);
+        $plugin->loadProperties($dh_prop, FALSE, $thisprop['propname'], TRUE);
         $stransok = om_translate_to_dh($om_comp->processors->{$thisprop['propname']}, $dh_prop->storage_stage_area);
+        $dh_prop->storage_stage_area->save();
         error_log("Tried to translate storage_stage_area result = $stransok");
         //error_log("proc props = " . print_r(get_object_vars($om_comp->processors->{$thisprop['propname']}),1));
       }

@@ -98,7 +98,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     parent::save($entity);
   }
   
-  public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE) {
+  public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
     $props = $this->getDefaults($entity);
     if (!($propname === FALSE)) {
       // a single prop has been requested
@@ -120,7 +120,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       //     modeling framework will enable many user-defined props, and we WILL want to be able to edit them in a multi-form
       //     type scenario. 
       $pn = $this->handleFormPropname($propname);
-      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
+      if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE) or $force_embed) {
         if ($overwrite 
 		    or !property_exists($entity, $propname) 
         or (property_exists($entity, $propname) 
