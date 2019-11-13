@@ -1071,11 +1071,12 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     global $base_url;
     $parent = $this->getParentEntity($entity);
     $cmd = "cd $this->path \n";
-    $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid -1 $parent->propname ";
+    $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid -1 \"$parent->propname\" ";
     dpm( $cmd, "Executing ");
     //dpm( $entity, "Entity ");
     $returned = shell_exec($cmd);
-    dpm($returned,'retval');
+    $entity->propvalue = intval($returned);
+    dpm(intval($returned),'Remote elementid');
   }
 }
 
