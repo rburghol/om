@@ -979,8 +979,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     );
     $form['dest_parentid'] = array(
       '#title' => t('Remote parent of remote object (for cloning)'),
-      '#type' => 'select',
-      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
+      '#type' => 'textfield',
       '#description' => '',
       '#states' => array(
         'visible' => array(
@@ -988,6 +987,20 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
         ),
       ),
       '#default_value' => property_exists($entity, 'dest_parentid') ? $entity->dest_parentid : "",
+    );
+    $parent = $this->getParentEntity($entity);
+    $pplug = dh_variables_getPlugins($parent);
+    $om_template_id = $pplug->om_template_id; 
+    $form['om_template_id'] = array(
+      '#title' => t('Remote template ID'),
+      '#type' => 'textfield',
+      '#description' => '',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="propcode"]' => array('value' => "clone"),
+        ),
+      ),
+      '#default_value' => property_exists($entity, 'om_template_id') ? $entity->om_template_id : "",
     );
   }
   public function save(&$entity) {
@@ -1016,13 +1029,11 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function cloneRemoteElement($entity) {
     global $base_url;
-    $parent = $this->getParentEntity($entity);
-    $pplug = dh_variables_getPlugins($parent);
-    $om_template_id = $pplug->om_template_id; 
     $cmd = "cd $this->path \n";
     $cmd .= "php fn_copy_element.php 37 $om_template_id $entity-> ";
     dpm( $cmd, "Executing ");
-    shell_exec($cmd);
+    dpm( $entity, "Entity ");
+    //shell_exec($cmd);
   }
 }
 
