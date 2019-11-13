@@ -988,7 +988,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       ),
       '#default_value' => property_exists($entity, 'dest_parentid') ? $entity->dest_parentid : "",
     );
-    $parent = $this->getParentEntity($entity
+    $parent = $this->getParentEntity($entity);
     dpm( $parent, "parent ");
     $pplug = dh_variables_getPlugins($parent);
     $om_template_id = $pplug->om_template_id; 
