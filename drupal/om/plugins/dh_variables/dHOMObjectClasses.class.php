@@ -1001,7 +1001,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
           ':input[name="propcode"]' => array('value' => "clone"),
         ),
       ),
-      '#default_value' => property_exists($entity, 'om_template_id') ? $entity->om_template_id : "",
+      '#default_value' => property_exists($pplug, 'om_template_id') ? $pplug->om_template_id : "",
     );
   }
   public function save(&$entity) {
