@@ -12,8 +12,9 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   // takes over some duties from wsp_vpdesvwuds, and wsp_waterUser
   //   since most of their function was bacjend database connections 
   // See getDefaults() for default subcomps and properties
-  var $object_class = 'blankShell';
+  var $object_class = 'waterSupplyElement';
   var $attach_method = 'contained';
+  var $om_template_id = 340402; // remote server template ID, set FALSE if not used.
   
   public function hiddenFields() {
     $hidden = array_merge(array('propvalue'), parent::hiddenFields());

@@ -14,7 +14,7 @@ include('./xajax_modeling.element.php');
 error_reporting(E_ERROR);
 
 if (count($argv) < 2) {
-   error_log("Usage: php copy_element.php dest_scenarioid elementid [dest_parent (-1)] [copychildren=1,0 (no children),-1 (no links at all)] [name=''] \n");
+   error_log("Usage: php copy_element.php dest_scenarioid elementid [dest_parent (-1)] [copychildren=-1 (1=copy,0=no children,-1=no links at all] [name=''] \n");
    die;
 }
 $debug = 0;
@@ -28,7 +28,7 @@ if (isset($argv[3])) {
 if (isset($argv[4])) {
    $copychildren = $argv[4];
 } else {
-   $copychildren = 1;
+   $copychildren = -1;
 }
 $params = array();
 $name = '';

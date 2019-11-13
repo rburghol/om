@@ -477,6 +477,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   var $state = array();
   var $setvarnames = array();
   var $attach_method = 'contained';
+  var $om_template_id = 347359; // blankShell object 
   
   public function hiddenFields() {
     $hidden = array(
@@ -970,13 +971,24 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       return FALSE;
     }
     $form['propcode'] = array(
-      '#title' => t('Automatically Push Changes to Remote?'),
+      '#title' => t('Remote Synch Option'),
       '#type' => 'select',
-      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
+      '#options' => array('0'=>'Never push changes', '1'=>'Always push change', 'pull_once' => 'One-Time Pull Remote Properties on Save()', 'clone' => 'One-Time Clone Remote Element and Link'),
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
-    
+    $form['dest_parentid'] = array(
+      '#title' => t('Remote parent of remote object (for cloning)'),
+      '#type' => 'select',
+      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
+      '#description' => '',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="propcode"]' => array('value' => "clone"),
+        ),
+      ),
+      '#default_value' => property_exists($entity, 'dest_parentid') ? $entity->dest_parentid : "",
+    );
   }
   public function save(&$entity) {
     parent::save($entity);
@@ -986,12 +998,29 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
       $entity->propcode = '1';
     }
+    if ($entity->propcode == 'clone') {
+      // pull from remote, then set this back to previous entity value 
+      $this->cloneRemoteElement($entity);
+      // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
+      $entity->propcode = '1';
+    }
   }
   
   public function pullFromRemote($entity) {
     global $base_url;
     $cmd = "cd " . DRUPAL_ROOT . '/' . drupal_get_path('module', 'om') . "/src/ \n";
     $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
+    dpm( $cmd, "Executing ");
+    shell_exec($cmd);
+  }
+  
+  public function cloneRemoteElement($entity) {
+    global $base_url;
+    $parent = $this->getParentEntity($entity);
+    $pplug = dh_variables_getPlugins($parent);
+    $om_template_id = $pplug->om_template_id; 
+    $cmd = "cd $this->path \n";
+    $cmd .= "php fn_copy_element.php 37 $om_template_id $entity-> ";
     dpm( $cmd, "Executing ");
     shell_exec($cmd);
   }
