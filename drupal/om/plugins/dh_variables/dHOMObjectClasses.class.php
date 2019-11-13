@@ -1024,7 +1024,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       '#default_value' => property_exists($entity, 'remote_parentid') ? $entity->remote_parentid : "",
     );
     $parent = $this->getParentEntity($entity);
-    dpm( $parent, "parent ");
+    //dpm( $parent, "parent ");
     $pplug = dh_variables_getPlugins($parent);
     $om_template_id = $pplug->om_template_id; 
     $form['om_template_id'] = array(
@@ -1068,8 +1068,8 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $cmd = "cd $this->path \n";
     $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid ";
     dpm( $cmd, "Executing ");
-    dpm( $entity, "Entity ");
-    //shell_exec($cmd);
+    //dpm( $entity, "Entity ");
+    shell_exec($cmd);
   }
 }
 
