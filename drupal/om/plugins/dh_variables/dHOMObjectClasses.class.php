@@ -1013,7 +1013,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
-    $remote_parentid = $entity->remote_parentid->propvalue);
+    $remote_parentid = $entity->remote_parentid->propvalue;
     $form['remote_parentid'] = array(
       '#title' => t('Remote parent of remote object (for cloning)'),
       '#type' => 'textfield',
