@@ -1074,7 +1074,8 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid -1 $parent->propname ";
     dpm( $cmd, "Executing ");
     //dpm( $entity, "Entity ");
-    shell_exec($cmd);
+    $returned = shell_exec($cmd);
+    dpm($returned,'retval');
   }
 }
 
