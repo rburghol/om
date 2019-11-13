@@ -1006,8 +1006,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     if (!$varinfo) {
       return FALSE;
     }
-    dpm($varinfo,'varin');
-    $form["propname"] = empty($form["propname"]) ? $varinfo['varkey'] : $form["propname"];
+    $form["propname"]['#default_value'] = empty($form["propname"]['#default_value']) ? $varinfo['varkey'] : $form['#default_value']["propname"];
     $form['propcode'] = array(
       '#title' => t('Remote Synch Option'),
       '#type' => 'select',
