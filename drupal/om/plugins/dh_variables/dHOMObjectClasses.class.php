@@ -477,6 +477,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   var $state = array();
   var $setvarnames = array();
   var $attach_method = 'contained';
+  var $om_template_id = 347359; // blankShell object 
   
   public function hiddenFields() {
     $hidden = array(
@@ -961,28 +962,99 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     return $elid;
   }
   
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    $defaults = array(
+      'om_template_id' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => NULL,
+        'propname' => 'om_template_id',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'om_template_id',
+        'vardesc' => 'om_template_id.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+      'remote_parentid' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => NULL,
+        'propname' => 'remote_parentid',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Remote Parentid',
+        'vardesc' => 'Remote Parent (used only for creating new remote objects).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ), 
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    return $defaults;
+  }
+  
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE) {
     // this element connection does not currently use this, but its children props might
   }
   public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
     }
+    $form["propname"]['#default_value'] = empty($form["propname"]['#default_value']) ? $varinfo->varkey : $form["propname"]['#default_value'];
     $form['propcode'] = array(
-      '#title' => t('Automatically Push Changes to Remote?'),
+      '#title' => t('Remote Synch Option'),
       '#type' => 'select',
-      '#options' => array('0'=>'False', '1'=>'True', 'pull_once' => 'One-Time Pull Remote Properties on Save()'),
+      '#options' => array('0'=>'Never push changes', '1'=>'Always push change', 'pull_once' => 'One-Time Pull Remote Properties on Save()', 'clone' => 'One-Time Clone Remote Element and Link'),
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
+    $remote_parentid = $entity->remote_parentid->propvalue;
+    $form['remote_parentid'] = array(
+      '#title' => t('Remote parent of remote object (for cloning)'),
+      '#type' => 'textfield',
+      '#description' => '',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="propcode"]' => array('value' => "clone"),
+        ),
+      ),
+      '#default_value' => !empty($remote_parentid) ? $remote_parentid : "-1",
+    );
     
+    $parent = $this->getParentEntity($entity);
+    //dpm( $parent, "parent ");
+    $pplug = dh_variables_getPlugins($parent);
+    $default_template_id = $pplug->om_template_id; 
+    $last_template_id = $entity->om_template_id->propvalue;
+    $form['om_template_id'] = array(
+      '#title' => t('Remote template ID'),
+      '#type' => 'textfield',
+      '#description' => '',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="propcode"]' => array('value' => "clone"),
+        ),
+      ),
+      '#default_value' => !empty($last_template_id) ? $last_template_id : $default_template_id,
+    );
   }
   public function save(&$entity) {
     parent::save($entity);
     if ($entity->propcode == 'pull_once') {
       // pull from remote, then set this back to previous entity value 
       $this->pullFromRemote($entity);
+      // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
+      $entity->propcode = '1';
+    }
+    if ($entity->propcode == 'clone') {
+      // pull from remote, then set this back to previous entity value 
+      $this->cloneRemoteElement($entity);
       // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
       $entity->propcode = '1';
     }
@@ -994,6 +1066,18 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
     dpm( $cmd, "Executing ");
     shell_exec($cmd);
+  }
+  
+  public function cloneRemoteElement($entity) {
+    global $base_url;
+    $parent = $this->getParentEntity($entity);
+    $cmd = "cd $this->path \n";
+    $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid -1 \"$parent->propname\" ";
+    dpm( $cmd, "Executing ");
+    //dpm( $entity, "Entity ");
+    $returned = shell_exec($cmd);
+    $entity->propvalue = intval($returned);
+    dpm(intval($returned),'Remote elementid');
   }
 }
 

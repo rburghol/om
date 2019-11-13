@@ -32,7 +32,7 @@ if (!isset($cvalues['templateid'])) {
   // insertBlankComponent doesn't actually create anything!
   $feedback = insertBlankComponent($cvalues);
   // createObjectType seems to be OK ?
-  $result = createObjectType($object_type, $props2set);
+  $result = createObjectType($cvalues['newcomponenttype'], $cvalues);
   //error_log("Creation routine output:" . print_r($result,1) );
   $thisobject = $result['object'];
   $listobject->querystring = "SELECT currval('scen_model_element_elementid_seq') ";
