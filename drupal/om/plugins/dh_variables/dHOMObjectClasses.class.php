@@ -979,7 +979,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
         'featureid' => $entity->identifier(),
         'varname' => 'om_template_id',
         'vardesc' => 'om_template_id.',
-        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
       'remote_parentid' => array(
         'entity_type' => $entity->entityType(),
@@ -990,7 +990,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
         'featureid' => $entity->identifier(),
         'varname' => 'Remote Parentid',
         'vardesc' => 'Remote Parent (used only for creating new remote objects).',
-        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ), 
     ) + $defaults;
     //dpm($defaults,'defs');
@@ -1013,6 +1013,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
+    $remote_parentid = $entity->remote_parentid->propvalue);
     $form['remote_parentid'] = array(
       '#title' => t('Remote parent of remote object (for cloning)'),
       '#type' => 'textfield',
@@ -1022,12 +1023,14 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
           ':input[name="propcode"]' => array('value' => "clone"),
         ),
       ),
-      '#default_value' => property_exists($entity, 'remote_parentid') ? $entity->remote_parentid : "",
+      '#default_value' => !empty($remote_parentid) ? $remote_parentid : "-1",
     );
+    
     $parent = $this->getParentEntity($entity);
     //dpm( $parent, "parent ");
     $pplug = dh_variables_getPlugins($parent);
-    $om_template_id = $pplug->om_template_id; 
+    $default_template_id = $pplug->om_template_id; 
+    $last_template_id = $entity->om_template_id->propvalue;
     $form['om_template_id'] = array(
       '#title' => t('Remote template ID'),
       '#type' => 'textfield',
@@ -1037,7 +1040,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
           ':input[name="propcode"]' => array('value' => "clone"),
         ),
       ),
-      '#default_value' => property_exists($pplug, 'om_template_id') ? $pplug->om_template_id : "",
+      '#default_value' => !empty($last_template_id) ? $last_template_id : $default_template_id,
     );
   }
   public function save(&$entity) {
