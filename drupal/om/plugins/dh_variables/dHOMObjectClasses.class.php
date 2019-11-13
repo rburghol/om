@@ -1001,6 +1001,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     // this element connection does not currently use this, but its children props might
   }
   public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
