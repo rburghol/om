@@ -962,6 +962,41 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     return $elid;
   }
   
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    $defaults = array(
+      'om_template_id' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => NULL,
+        'propname' => 'om_template_id',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'om_template_id',
+        'vardesc' => 'om_template_id.',
+        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+      ), 
+      'remote_parentid' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => NULL,
+        'propname' => 'remote_parentid',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Remote Parentid',
+        'vardesc' => 'Remote Parent (used only for creating new remote objects).',
+        'varid' => dh_varkey2varid('om_class_textField', TRUE),
+      ), 
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    return $defaults;
+  }
+  
   public function setRemoteProp($entity, $elid, $path, $propvalue, $object_class = FALSE) {
     // this element connection does not currently use this, but its children props might
   }
@@ -977,7 +1012,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
-    $form['dest_parentid'] = array(
+    $form['remote_parentid'] = array(
       '#title' => t('Remote parent of remote object (for cloning)'),
       '#type' => 'textfield',
       '#description' => '',
@@ -986,7 +1021,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
           ':input[name="propcode"]' => array('value' => "clone"),
         ),
       ),
-      '#default_value' => property_exists($entity, 'dest_parentid') ? $entity->dest_parentid : "",
+      '#default_value' => property_exists($entity, 'remote_parentid') ? $entity->remote_parentid : "",
     );
     $parent = $this->getParentEntity($entity);
     dpm( $parent, "parent ");
@@ -1031,7 +1066,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   public function cloneRemoteElement($entity) {
     global $base_url;
     $cmd = "cd $this->path \n";
-    $cmd .= "php fn_copy_element.php 37 $om_template_id $entity-> ";
+    $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid ";
     dpm( $cmd, "Executing ");
     dpm( $entity, "Entity ");
     //shell_exec($cmd);
