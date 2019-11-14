@@ -160,6 +160,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     //dpm($entity, "Calling updateProperties");
     //dpm($props, "Iterating over attached properties");
     foreach ($props as $thisvar) {
+      $this->insureProperty($entity, $thisvar);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         //error_log("Saving " . $thisvar['propname']);
         // load the property 
@@ -698,7 +699,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // $path will be modified by the methods
     // the property set_remote allows us to disable this functionality, for example
     // if we are doing an insert from an import, we wouldn't want to do this.
-    if ($elid > 0) {
+    if (($elid > 0) and (intval($this->set_remote) > 0)) {
       $this->setAllRemoteProperties($entity, $elid, $path);
       if (count($path) == 0) {
         // if path is zero length it means that this is an exact match, so set the vahydro_hydroid prop 
