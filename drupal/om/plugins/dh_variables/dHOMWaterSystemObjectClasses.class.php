@@ -42,7 +42,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
       ), 
       'fac_current_mgy' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
+        'propcode_default' => '0.0',
         'propvalue_default' => 0.0,
         'propname' => 'fac_current_mgy',
         'singularity' => 'name_singular',
@@ -53,7 +53,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
       ), 
       'current_mgy' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
+        'propcode_default' => '0.0',
         'propvalue_default' => 0.0,
         'propname' => 'current_mgy',
         'singularity' => 'name_singular',
