@@ -62,6 +62,17 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'Intake specific urrent average annual demand.',
         'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ), 
+      'riverseg_frac' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => 'currernt_mgy / fac_current_mgy',
+        'propvalue_default' => 0.0,
+        'propname' => 'riverseg_frac',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Intake Current MGY',
+        'vardesc' => 'Intake specific urrent average annual demand.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults;
