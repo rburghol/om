@@ -40,6 +40,28 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'riverseg.',
         'varid' => dh_varkey2varid('om_class_textField', TRUE),
       ), 
+      'fac_current_mgy' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'fac_current_mgy',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Facility Current MGY',
+        'vardesc' => 'Total current average annual demand for the facility associated with this mode.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
+      'current_mgy' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'current_mgy',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Intake Current MGY',
+        'vardesc' => 'Intake specific urrent average annual demand.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults;
