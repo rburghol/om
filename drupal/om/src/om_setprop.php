@@ -12,7 +12,7 @@ $vars = array();
 
 
 if (count($args) < 1) {
-  error_log("Usage: php om_setprop.php query_type entity_type featureid pid propname propvalue propcode ");
+  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
