@@ -51,7 +51,7 @@ foreach ($data as $element) {
   error_log(print_r($element,1));
   $prop = om_model_getSetProperty($element);
   if (is_object($prop)) {
-    error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode);
+    error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode");
   } else {
     error_log("Failed to create property from " . print_r($values,1));
   }
