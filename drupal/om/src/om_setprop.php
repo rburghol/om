@@ -34,9 +34,7 @@ if ($query_type == 'cmd') {
     die;
   }
 } else {
-  $filepath = $dest_id;
-  $dest_id = FALSE;
-  $src_id = FALSE;
+  $filepath = $args[1];
   error_log("File requested: $filepath");
   $file = fopen($filepath, 'r');
   $header = fgetcsv($file, 0, "\t");
