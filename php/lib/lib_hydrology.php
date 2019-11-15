@@ -455,6 +455,7 @@ class modelObject {
              'thisdate'=>'date',
              'time'=>'timestamp',
              'timestamp'=>'bigint',
+             'modays'=>'bigint',
              'run_mode'=>'float8',
              'flow_mode'=>'float8',
              'season'=>'varchar(8)'
