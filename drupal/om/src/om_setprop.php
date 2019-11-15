@@ -55,7 +55,7 @@ if ($query_type == 'cmd') {
 
 foreach ($data as $element) {
 
-
+  error_log(print_r($element,1));
 
 }
 
