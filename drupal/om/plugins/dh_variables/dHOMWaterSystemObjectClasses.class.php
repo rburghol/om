@@ -128,6 +128,17 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'WSP estimated future average annual demand in 2040.',
         'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ), 
+      'vwp_exempt_mgd' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => 'fac_demand_mgy * riverseg_frac * historic_monthly_pct / modays',
+        'propvalue_default' => 0.0,
+        'propname' => 'vwp_exempt_mgd',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Estimated Exempt Value (MGD)',
+        'vardesc' => 'Estimated Exempt Value.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults;
