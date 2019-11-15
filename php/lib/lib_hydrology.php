@@ -460,7 +460,7 @@ class modelObject {
              'flow_mode'=>'float8',
              'season'=>'varchar(8)'
     );
-    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'run_mode', 'flow_mode');
+    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'modays', 'run_mode', 'flow_mode');
     foreach ($dcs as $thisdc) {
        $this->data_cols[] = $thisdc;
     }
@@ -490,6 +490,7 @@ class modelObject {
              'thisdate'=>'%s',
              'time'=>'%s',
              'timestamp'=>'%s',
+             'modays'=>'%u',
              'run_mode'=>'%u',
              'flow_mode'=>'%u',
              'season'=>'%u'

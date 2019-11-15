@@ -7,39 +7,56 @@ while ($arg = drush_shift()) {
   $args[] = $arg;
 }
 
-// Is single command line arg?
-$vars = array();
-if (count($args) >= 6) {
-  $query_type = $args[0];
-  $vars['entity_type'] = $args[1];
-  $vars['featureid'] = $args[2];
-  $vars['pid']= $args[3];
-  $vars['propname'] = $args[4];
-  $vars['propvalue'] = $args[5];
-  $vars['propcode'] = $args[6];
+if (count($args) < 1) {
+  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
+  die;
+}
+error_log("Args:" . print_r($args,1));
+$query_type = $args[0];
+$data = array();
+if ($query_type == 'cmd') {
+  if (count($args) >= 6) {
+    $vars = array();
+    $vars['entity_type'] = $args[1];
+    $vars['featureid'] = $args[2];
+    $vars['varkey']= $args[3];
+    $vars['propname'] = $args[4];
+    $vars['propvalue'] = $args[5];
+    $vars['propcode'] = $args[6];
+    $data[] = $vars;
+  } else {
+    error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
+    die;
+  }
 } else {
-  error_log("Usage: php om_setprop.php query_type entity_type featureid pid propname propvalue propcode ");
-  error_log("Note: 'all' is not yet enabled");
-  die;
+  $filepath = $args[1];
+  error_log("File requested: $filepath");
+  $file = fopen($filepath, 'r');
+  $header = fgetcsv($file, 0, "\t");
+  if (count($header) == 0) {
+    $header = fgetcsv($file, 0, "\t");
+  }
+  while ($line = fgetcsv($file, 0, "\t")) {
+    $data[] = array_combine($header,$line);
+  }
+  error_log("File opened with records: " . count($data));
+  error_log("Header: " . print_r($header,1));
+  error_log("Record 1: " . print_r($data[0],1));
 }
 
-if ($query_type <> 'cmd') {
-  error_log("Only cmd mode enabled");
-  die;
+
+
+foreach ($data as $element) {
+
+  error_log(print_r($element,1));
+  $prop = om_model_getSetProperty($element);
+  if (is_object($prop)) {
+    error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode");
+    $prop->save();
+  } else {
+    error_log("Failed to create property from " . print_r($values,1));
+  }
 }
-
-$q = "select pid from {dh_properties}  ";
-$q .= " where propname = :propname "
-$q .= " and entity_type = :entity_type "
-if ($vars['pid'] <> 'all') {
-  $q .= " and entity_type = :pid ";
-  $vars['pid'] = $pid;
-} 
-
-
-
-
-
 
 
 
