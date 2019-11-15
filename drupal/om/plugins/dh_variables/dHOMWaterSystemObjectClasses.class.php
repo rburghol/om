@@ -130,7 +130,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
       ), 
       'vwp_exempt_mgd' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => 'fac_demand_mgy * riverseg_frac * historic_monthly_pct / modays',
+        'propcode_default' => '0.0',
         'propvalue_default' => 0.0,
         'propname' => 'vwp_exempt_mgd',
         'singularity' => 'name_singular',
