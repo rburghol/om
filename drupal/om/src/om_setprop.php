@@ -7,15 +7,11 @@ while ($arg = drush_shift()) {
   $args[] = $arg;
 }
 
-// Is single command line arg?
-$vars = array();
-
-
 if (count($args) < 1) {
   error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
-  error_log("Note: 'all' is not yet enabled");
   die;
 }
+error_log("Args:" . print_r($args,1));
 $query_type = $args[0];
 $data = array();
 if ($query_type == 'cmd') {
@@ -30,7 +26,6 @@ if ($query_type == 'cmd') {
     $data[] = $vars;
   } else {
     error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
-    error_log("Note: 'all' is not yet enabled");
     die;
   }
 } else {
