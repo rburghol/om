@@ -23,13 +23,13 @@ if ($query_type == 'cmd') {
     $vars = array();
     $vars['entity_type'] = $args[1];
     $vars['featureid'] = $args[2];
-    $vars['pid']= $args[3];
+    $vars['varkey']= $args[3];
     $vars['propname'] = $args[4];
     $vars['propvalue'] = $args[5];
     $vars['propcode'] = $args[6];
     $data[] = $vars;
   } else {
-    error_log("Usage: php om_setprop.php query_type entity_type featureid pid propname propvalue propcode ");
+    error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
     error_log("Note: 'all' is not yet enabled");
     die;
   }
@@ -54,7 +54,12 @@ if ($query_type == 'cmd') {
 foreach ($data as $element) {
 
   error_log(print_r($element,1));
-
+  $prop = om_model_getSetProperty($element);
+  if (is_object($prop)) {
+    error_log("Prop $prop->propname created with pid = $prop->pid");
+  } else {
+    error_log("Failed to create property from " . print_r($values,1));
+  }
 }
 
 
