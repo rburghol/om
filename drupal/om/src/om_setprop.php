@@ -49,9 +49,17 @@ if ($query_type == 'cmd') {
 foreach ($data as $element) {
 
   error_log(print_r($element,1));
-  $prop = om_model_getSetProperty($element);
+  $prop = om_model_getSetProperty($element, 'name', FALSE);
   if (is_object($prop)) {
     error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode");
+    if ($element['varkey'] == 'om_element_connection') { 
+      // save without sync first, then resave 
+      if ($prop->propcode == 'pull_once') {
+        $prop->propcode = '0';
+        $prop->save();
+        $prop->propcode = 'pull_once';
+      }
+    }
     $prop->save();
   } else {
     error_log("Failed to create property from " . print_r($values,1));
