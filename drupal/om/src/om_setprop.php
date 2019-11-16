@@ -55,6 +55,7 @@ foreach ($data as $element) {
     if ($element['varkey'] == 'om_element_connection') { 
       // save without sync first, then resave 
       if ($prop->propcode == 'pull_once') {
+        error_log("Saving first, then pull_once ");
         $prop->propcode = '0';
         $prop->save();
         $prop->propcode = 'pull_once';
