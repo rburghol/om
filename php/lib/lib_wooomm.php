@@ -9336,7 +9336,8 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       // insert copy of this as "last run" (runid = -1)
       error_log("Handling log files for elementid $thiscomp");
       if (isset($unserobjects[$thiscomp])) {
-        error_log("Getting base log file from object found in cache $unserobjects[$thiscomp]->name");
+        error_log("Getting base log file from object found in cache");
+//        $unserobjects[$thiscomp]->name");
         $cfilename = $unserobjects[$thiscomp]->logfile;
       } else {
         $cfilename = $outdir . "/objectlog." . $elementid . "." . $thiscomp . ".log";
