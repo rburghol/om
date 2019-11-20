@@ -5560,11 +5560,6 @@ class timeSeriesInput extends modelObject {
       }
       parent::cleanUp();
    }
-
-  function setSimTimer($thistimer) {
-    parent::setSimTimer($thistimer);
-    $this->lasttimesec = $this->timer->starttime->format("U") - $this->timer->dt;
-  }
    
    function getCurrentDataSlice() {
       # need to get a certain, sensible number of values that match two criteria:

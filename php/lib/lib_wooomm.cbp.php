@@ -1008,6 +1008,15 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
      //$tsdata1 = array_shift($tsdat);
      //error_log("tsdata 1: " . print_r($tsdata1,1));
    }
+
+  function setSimTimer($thistimer) {
+    parent::setSimTimer($thistimer);
+    /*
+    // @todo: test this out. Think it kills the simulation?
+    //        But it could reduce in memory values by a great deal for short time period sims
+    $this->lasttimesec = $this->timer->starttime->format("U") - $this->timer->dt;
+    */
+  }
 }
 
 class CBPLandDataConnection extends CBPLandDataConnectionBase {
