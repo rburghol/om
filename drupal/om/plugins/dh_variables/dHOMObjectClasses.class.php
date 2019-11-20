@@ -505,7 +505,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
 
   function getPublicVars($entity, &$publix = array()) {
-    //dpm($this,"called getPublicVars()");
+    dpm($this,"called getPublicVars()");
     // gets all viewable variables
     /*
     $publix += array_keys($this->state); 
@@ -525,6 +525,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       )
     );
     sort($publix);
+    dpm($publix, 'getPublicVars base class');
     return $publix;
   }
 
@@ -1242,7 +1243,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
   
   public function getPublicProcs($entity) {
     $procnames = parent::getPublicProcs($entity);
-    dpm($procnames, 'local procs');
+    //dpm($procnames, 'local procs');
     $parent = $this->getParentEntity($entity);
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
@@ -1250,10 +1251,10 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       if (method_exists($plugin, 'getPublicProcs')) {
         $pprocs = $plugin->getPublicProcs($parent);
       }
-      dpm($pprocs, 'parent procs');
+      //dpm($pprocs, 'parent procs');
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'final procs');
+    dpm($procnames, 'dHOMSubComp procs');
     return $procnames;
   }
   
@@ -1388,7 +1389,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
       }
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'final procs');
+    dpm($procnames, 'alphanumeric constant procs');
     return $procnames;
   }
   
