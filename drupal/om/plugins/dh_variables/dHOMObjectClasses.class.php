@@ -1538,7 +1538,7 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
       return FALSE;
     }
     $public_vars = $this->getPublicVars($entity);
-    //dpm($public_vars,'public vars');
+    dpm($public_vars,'public vars');
     $form['propcode'] = array(
       '#title' => t($entity->varname),
       '#type' => 'select',
@@ -1551,9 +1551,10 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
   
   public function getPublicVars($entity, &$publix = array()) {
     $parent = $this->getParentEntity($entity);
+    dpm($parent,'parent of public var');
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
-    //dpm($plugin,'plugin');
+      dpm($plugin,'plugin');
       if (method_exists($plugin, 'getPublicVars')) {
         $plugin->getPublicVars($parent, $publix);
       }
