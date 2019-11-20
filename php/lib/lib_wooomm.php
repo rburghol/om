@@ -581,7 +581,7 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated, ";
    $listobject->querystring .= "    CASE ";
    $listobject->querystring .= "      WHEN report is NULL THEN  ";
-   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||b.elementid, 'report'||b.elementid||'-'||b.runid) ";
+   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||c.elementid, 'report'||c.elementid||'-'||b.runid) ";
    $listobject->querystring .= "      ELSE report ";
    $listobject->querystring .= "    END as report ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
