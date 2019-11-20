@@ -1251,7 +1251,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
         $pprocs = $plugin->getPublicProcs($parent);
       }
       dpm($pprocs, 'parent procs');
-      $procnames += $pprocs;
+      $procnames = array_merge($pprocs, $procnames);
     }
     dpm($procnames, 'final procs');
     return $procnames;
