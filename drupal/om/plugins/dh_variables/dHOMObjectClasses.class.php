@@ -1227,6 +1227,16 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       shell_exec($cmd);
     }
   }
+  
+  public function getPublicProcs($entity) {
+    $procnames = parent::getPublicProcs($entity);
+    $parent = $this->getParentEntity($entity);
+    $pprocnames = $this->getPublicProcs($parent);
+    if (is_array($pprocnames)) {
+      $procnames = $pprocnames + $procnames;
+    }
+    return $procnames;
+  }
 }
 
 class dHOMEquation extends dHOMSubComp {
@@ -1333,6 +1343,16 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     //array_shift($path);
     $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
   }
+  
+  public function getPublicProcs($entity) {
+    $procnames = parent::getPublicProcs($entity);
+    $parent = $this->getParentEntity($entity);
+    $pprocnames = $this->getPublicProcs($parent);
+    if (is_array($pprocnames)) {
+      $procnames = $pprocnames + $procnames;
+    }
+    return $procnames;
+  }
 }
 
 
@@ -1428,6 +1448,16 @@ class dHOMConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propvalue'];
+  }
+  
+  public function getPublicProcs($entity) {
+    $procnames = parent::getPublicProcs($entity);
+    $parent = $this->getParentEntity($entity);
+    $pprocnames = $this->getPublicProcs($parent);
+    if (is_array($pprocnames)) {
+      $procnames = $pprocnames + $procnames;
+    }
+    return $procnames;
   }
 }
 
