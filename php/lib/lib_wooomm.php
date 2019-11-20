@@ -579,7 +579,10 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    $innerHTML = '';
    
    $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated ";
+   $listobject->querystring .= "    replace(c.remote_url, 'runlog', 'report') as report ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
+   $listobject->querystring .= " left outer join scen_model_run_elements as c ";
+   $listobject->querystring .= "    on( b.element_key = c.elementid and c.runid = b.runid ) ";
    $listobject->querystring .= " where a.elementid = b.element_key ";
    if ($mins > 0) {
      $listobject->querystring .= " and b.last_updated >= now() - interval '$mins minutes' ";
@@ -650,7 +653,7 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $interval = '';
    $elemname = '';
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
-   $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') ";
+   $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') as report ";
    $listobject->querystring .= " from system_status as a, scen_model_element as b ";
    $listobject->querystring .= " left outer join scen_model_element as b ";
    $listobject->querystring .= "    on( a.element_key = b.elementid ) ";
