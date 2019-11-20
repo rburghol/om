@@ -515,8 +515,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $publix += $this->getPublicInputs($entity); 
     $publix = array_unique($publix);
     */
-    array_unique(
+    $publix = array_unique(
       array_merge(
+        $publix,
         array_keys($this->state), 
         $this->setvarnames, 
         $this->getPublicProps($entity), 
