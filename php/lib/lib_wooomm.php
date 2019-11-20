@@ -649,7 +649,6 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $status_mesg = '';
    $interval = '';
    $elemname = '';
-   /*
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
    $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') ";
    $listobject->querystring .= " from system_status as a, scen_model_element as b ";
@@ -667,8 +666,8 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
      $listobject->querystring .= "    and a.runid = '$qrunid' ";
    }
    $listobject->querystring .= " order by a.last_updated DESC ";
-   */
    
+   /*
    
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
    $listobject->querystring .= "    now() as thistime, host, runid ";
@@ -683,7 +682,8 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
      $listobject->querystring .= "    and a.runid = '$qrunid' ";
    }
    $listobject->querystring .= " order by a.last_updated DESC ";
-   //error_log("$listobject->querystring <br>");
+   */
+   error_log("$listobject->querystring <br>");
    $return_vals['query'] = "VerifyRunStatus SQL:" . $listobject->querystring;
    $listobject->performQuery();
    $return_vals['error'] = "DB Error:" . $listobject->error;
