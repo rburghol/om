@@ -9335,12 +9335,15 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
    foreach ($components as $thiscomp) {
       // insert copy of this as "last run" (runid = -1)
       error_log("Handling log files for elementid $thiscomp");
+      $cfilename = '';
       if (isset($unserobjects[$thiscomp])) {
-        error_log("Getting base log file from object found in cache");
+        error_log("Getting base log file from object found in unserobjects");
 //        $unserobjects[$thiscomp]->name");
-        $cfilename = $unserobjects[$thiscomp]->logfile;
-      } else {
+        $cfilename = trim($unserobjects[$thiscomp]->logfile);
+      }
+      if (strlen($cfilename) == 0) {
         $cfilename = $outdir . "/objectlog." . $elementid . "." . $thiscomp . ".log";
+        error_log("No valid log file name found, Guessing log file");
       }
       error_log("Base log file $cfilename");
       //
