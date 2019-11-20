@@ -1523,6 +1523,16 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
 
 class dHOM_ModelScenario extends dHVariablePluginDefault {
   var $object_class = FALSE;
+  public function hiddenFields() {
+    return array('pid', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
+}
+
+class dHOM_ModelVersion extends dHVariablePluginDefault {
+  var $object_class = FALSE;
+  public function hiddenFields() {
+    return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
 }
 
 class dHOMDataMatrix extends dHOMSubComp {
