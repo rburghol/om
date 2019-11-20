@@ -541,7 +541,12 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   function getPublicProcs($entity) {
     // taken directly from om library -- will revisit after full porting
     // @todo: retrieve parent props, and local props.
-    return array();
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    if (!is_array($procnames)) {
+      $procnames = array();
+    }
+    // @todo: add in vars that should be set on parent, i.e., for a local_channel proc, it would set local_channel_Qin, local_channel_Qout, local_channel_depth, ...
+    return $procnames;
     // gets all viewable processors
     $retarr = array();
     if (is_array($this->procnames)) {
