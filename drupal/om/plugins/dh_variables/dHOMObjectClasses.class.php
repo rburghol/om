@@ -1256,6 +1256,20 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     dpm($procnames, 'final procs');
     return $procnames;
   }
+  
+  public function getPublicVars($entity, &$publix = array()) {
+    // @todo: if this works, move to the dHOMSubComp class
+    parent::getPublicVars($entity, $publix);
+    $parent = $this->getParentEntity($entity);
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicVars')) {
+        $plugin->getPublicVars($parent, $publix);
+      }
+    }
+    return $publix;
+  }
 }
 
 class dHOMEquation extends dHOMSubComp {
@@ -1365,18 +1379,31 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
   
   public function getPublicProcs($entity) {
     $procnames = parent::getPublicProcs($entity);
-    dpm($procnames, 'local procs');
+    $parent = $this->getParentEntity($entity);
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicProcs')) {
+        $pprocs = $plugin->getPublicProcs($parent);
+      }
+      $procnames = array_merge($pprocs, $procnames);
+    }
+    dpm($procnames, 'final procs');
+    return $procnames;
+  }
+  
+  public function getPublicVars($entity, &$publix = array()) {
+    // @todo: if this works, move to the dHOMBaseObjectClass class
+    parent::getPublicVars($entity, $publix);
     $parent = $this->getParentEntity($entity);
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
     //dpm($plugin,'plugin');
       if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($parent, $procnames);
+        $plugin->getPublicVars($parent, $publix);
       }
-      dpm($procnames, 'parent procs');
     }
-    dpm($procnames, 'final procs');
-    return $procnames;
+    return $publix;
   }
 }
 
@@ -1478,9 +1505,13 @@ class dHOMConstant extends dHOMBaseObjectClass {
   public function getPublicProcs($entity) {
     $procnames = parent::getPublicProcs($entity);
     $parent = $this->getParentEntity($entity);
-    $pprocnames = $this->getPublicProcs($parent);
-    if (is_array($pprocnames)) {
-      $procnames = $pprocnames + $procnames;
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicProcs')) {
+        $pprocs = $plugin->getPublicProcs($parent);
+      }
+      $procnames = array_merge($pprocs, $procnames);
     }
     return $procnames;
   }
@@ -1567,19 +1598,6 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
   }
-  
-  public function getPublicVars($entity, &$publix = array()) {
-    $parent = $this->getParentEntity($entity);
-    dpm($parent,'parent of public var');
-    $plugin = dh_variables_getPlugins($parent);
-    if ($plugin) {
-      dpm($plugin,'plugin');
-      if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($parent, $publix);
-      }
-    }
-    return $publix;
-  }
 }
 
 class dHOM_ModelScenario extends dHVariablePluginDefault {
@@ -1603,20 +1621,6 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
-  }
-  
-  public function getPublicVars($entity, &$publix = array()) {
-    // @todo: if this works, move to the dHOMSubComp class
-    parent::getPublicVars($entity, $publix);
-    $parent = $this->getParentEntity($entity);
-    $plugin = dh_variables_getPlugins($parent);
-    if ($plugin) {
-    //dpm($plugin,'plugin');
-      if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($parent, $publix);
-      }
-    }
-    return $publix;
   }
   
   public function entityDefaults(&$entity) {
