@@ -1235,10 +1235,11 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     $plugin = dh_variables_getPlugins($parent);
     if ($plugin) {
     //dpm($plugin,'plugin');
-      if (method_exists($plugin, 'getPublicVars')) {
-        $plugin->getPublicVars($parent, $procnames);
+      if (method_exists($plugin, 'getPublicProcs')) {
+        $pprocs = $plugin->getPublicProcs($parent);
       }
-      dpm($procnames, 'parent procs');
+      dpm($pprocs, 'parent procs');
+      $procnames += $pprocs;
     }
     dpm($procnames, 'final procs');
     return $procnames;
