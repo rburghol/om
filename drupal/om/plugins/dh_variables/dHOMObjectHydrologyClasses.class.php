@@ -228,7 +228,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
    function getPublicProps($entity) {
       # gets only properties that are visible (must be manually defined)
       $publix = parent::getPublicProps($entity);
-
+      // @todo: Many of these are subcomps, so not needed. Storage is though. Sort out extras just to be tidy.
       array_push($publix, 'Storage');
       array_push($publix, 'depth');
       array_push($publix, 'maxcapacity');
