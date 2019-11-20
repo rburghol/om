@@ -505,7 +505,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
 
   function getPublicVars($entity, &$publix = array()) {
-    dpm($this,"called getPublicVars()");
+    //dpm($this,"called getPublicVars()");
     // gets all viewable variables
     /*
     $publix += array_keys($this->state); 
@@ -526,7 +526,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       )
     );
     sort($publix);
-    dpm($publix, 'getPublicVars ' . get_class($this));
+    //dpm($publix, 'getPublicVars ' . get_class($this));
     return $publix;
   }
 
@@ -559,7 +559,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $procnames = array();
     }
     // @todo: add in vars that should be set on parent, i.e., for a local_channel proc, it would set local_channel_Qin, local_channel_Qout, local_channel_depth, ...
-    dpm($procnames,'getPublicProcs ' . get_class($this));
+    //dpm($procnames,'getPublicProcs ' . get_class($this));
     return $procnames;
     // gets all viewable processors
     $retarr = array();
@@ -1255,7 +1255,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       //dpm($pprocs, 'parent procs');
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'procs' . get_class($this));
+    //dpm($procnames, 'procs' . get_class($this));
     return $procnames;
   }
   
@@ -1390,7 +1390,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
       }
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'procs' . get_class($this));
+    //dpm($procnames, 'procs' . get_class($this));
     return $procnames;
   }
   
@@ -1590,7 +1590,7 @@ class dHOMPublicVars extends dHOMAlphanumericConstant {
       return FALSE;
     }
     $public_vars = $this->getPublicVars($entity);
-    dpm($public_vars,'public vars');
+    //dpm($public_vars,'public vars');
     $form['propcode'] = array(
       '#title' => t($entity->varname),
       '#type' => 'select',
