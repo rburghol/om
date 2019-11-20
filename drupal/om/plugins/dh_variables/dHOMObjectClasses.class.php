@@ -1230,11 +1230,14 @@ class dHOMSubComp extends dHOMBaseObjectClass {
   
   public function getPublicProcs($entity) {
     $procnames = parent::getPublicProcs($entity);
+    dpm($procnames, 'local procs');
     $parent = $this->getParentEntity($entity);
     $pprocnames = $this->getPublicProcs($parent);
+    dpm($pprocnames, 'parent procs');
     if (is_array($pprocnames)) {
       $procnames = $pprocnames + $procnames;
     }
+    dpm($procnames, 'final procs');
     return $procnames;
   }
 }
