@@ -1312,12 +1312,8 @@ class dHOMEquation extends dHOMSubComp {
 }
 
 class dHOMStatistic extends dHOMSubComp {
-
-
-class dHOMDataMatrix extends dHOMSubComp {
-  var $object_class = 'DataMatrix';
-  var $default_bundle = 'om_data_matrix';
-  var $matrix_field = 'field_dh_matrix';
+  var $object_class = 'Statistic';
+  var $default_bundle = 'dh_properties';
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
