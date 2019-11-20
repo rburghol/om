@@ -1311,6 +1311,79 @@ class dHOMEquation extends dHOMSubComp {
   }
 }
 
+class dHOMStatistic extends dHOMSubComp {
+
+
+class dHOMDataMatrix extends dHOMSubComp {
+  var $object_class = 'DataMatrix';
+  var $default_bundle = 'om_data_matrix';
+  var $matrix_field = 'field_dh_matrix';
+  
+  public function hiddenFields() {
+    return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
+  
+  public function entityDefaults(&$entity) {
+    //dpm($entity,'entity');
+    // special render handlers when displaying in a grouped property block
+    $entity->bundle = $this->default_bundle;
+    $datatable = $this->tableDefault($entity);
+    $this->setCSVTableField($entity, $datatable);
+    //dpm($entity, 'entityDefaults');
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'operands' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'operands',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Operands to evaluate with this statistic.',
+        'varname' => 'Operands',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'statname' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => 'mean',
+        'propname' => 'statname',
+        'vardesc' => 'Statistic to calculate.',
+        'varname' => 'Stat',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    );
+    return $defaults;
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    //dpm($form,'form');
+    // now, format the lookup type fields 
+    $form['propvalue']['#title'] = 'Default Value';
+    $statnames = array(
+      'min' => "Min",
+      'max' => "Max",
+      'mean' => "Mean",
+      'median' => "Median",
+      'stddev' => "Std. Dev.",
+      'pow' => "Power(x ^ y)",
+      'log' => "ln",
+      'log10' => "log base 10",
+      'stack' => "Stack"
+    );
+    $form['statname']['#type'] = 'select';
+    $form['statname']['#options'] = $statnames;
+    $form['statname']['#size'] = 1;
+    $form['statname']["#empty_value"] = "";
+    // column lookup 
+  }
+ 
+}
+
 //class dHOMAlphanumericConstant extends dHVariablePluginDefault {
 class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
   var $object_class = FALSE;
