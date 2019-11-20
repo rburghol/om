@@ -272,14 +272,6 @@ function om_get_dh_varkey($om_comp) {
   return $varkey;
 }
 
-function dh_get_dh_propnames($entity_type, $entity_id) {
-  $q = "  select propname from {dh_properties} ";
-  $q .= " where featureid = :entity_id and entity_type = :entity_type";
-  $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type));
-  $props = $result->fetchCol();
-  return $props;
-}
-
 function om_link2dh($elid, &$dh_model) {
   $link_props = array(
     'entity_type' => $dh_model->entityType(),
@@ -322,6 +314,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   $link_set_remote = $om_link->propcode;
   $om_link->propcode = '0';
   $om_link->save();
+  // comment.
   $props = dh_get_dh_propnames('dh_properties', $dh_model->pid);
   error_log("Prop names for this entity: " . print_r($props,1));
   // now add these components.
