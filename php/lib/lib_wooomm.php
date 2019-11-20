@@ -578,7 +578,7 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    global $listobject;
    $innerHTML = '';
    
-   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated, ";
    $listobject->querystring .= "    replace(c.remote_url, 'runlog', 'report') as report ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
    $listobject->querystring .= " left outer join scen_model_run_elements as c ";
