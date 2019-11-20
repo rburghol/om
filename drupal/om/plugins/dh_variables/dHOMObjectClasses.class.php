@@ -546,6 +546,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $procnames = array();
     }
     // @todo: add in vars that should be set on parent, i.e., for a local_channel proc, it would set local_channel_Qin, local_channel_Qout, local_channel_depth, ...
+    dpm($procnames,'base class getPublicProcs output');
     return $procnames;
     // gets all viewable processors
     $retarr = array();
