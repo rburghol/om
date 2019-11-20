@@ -224,6 +224,29 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
   // 2. load its plugins
   // 3. create a 
   // 4. pass the form to prop->plugin->formRowEdit
+
+   function getPublicProps($entity) {
+      # gets only properties that are visible (must be manually defined)
+      $publix = parent::getPublicProps($entity);
+
+      array_push($publix, 'Storage');
+      array_push($publix, 'depth');
+      array_push($publix, 'maxcapacity');
+      array_push($publix, 'max_usable');
+      array_push($publix, 'initstorage');
+      array_push($publix, 'Qout');
+      array_push($publix, 'Qin');
+      array_push($publix, 'unusable_storage');
+      array_push($publix, 'evap_acfts');
+      array_push($publix, 'refill_full_mgd');
+      array_push($publix, 'refill');
+      array_push($publix, 'lake_elev');
+      array_push($publix, 'pct_use_remain');
+      array_push($publix, 'evap_mgd');
+      array_push($publix, 'days_remaining');
+
+      return $publix;
+   }
 }
 
 class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
