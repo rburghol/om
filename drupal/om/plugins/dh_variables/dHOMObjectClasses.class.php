@@ -518,7 +518,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     array_unique(
       array_merge(
         array_keys($this->state), 
-        this->setvarnames, 
+        $this->setvarnames, 
         $this->getPublicProps($entity), 
         $this->getPublicProcs($entity), 
         $this->getPublicInputs($entity)
