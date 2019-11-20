@@ -7194,6 +7194,8 @@ class hydroImpoundment extends hydroObject {
          } else {
             $stage = 0;
             $area = 0;
+            $this->reportstring .= "Element $this->elemname does not have a storage_stage_area table.\n";
+            error_log("Element $this->elemname does not have a storage_stage_area table.");
          }
       }
       $dt = $this->timer->dt; // timestep in seconds

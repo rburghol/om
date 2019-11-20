@@ -578,8 +578,15 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    global $listobject;
    $innerHTML = '';
    
-   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated, ";
+   $listobject->querystring .= "    CASE ";
+   $listobject->querystring .= "      WHEN report is NULL THEN  ";
+   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||c.elementid, 'report'||c.elementid||'-'||b.runid) ";
+   $listobject->querystring .= "      ELSE report ";
+   $listobject->querystring .= "    END as report ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
+   $listobject->querystring .= " left outer join scen_model_run_elements as c ";
+   $listobject->querystring .= "    on( b.element_key = c.elementid and c.runid = b.runid ) ";
    $listobject->querystring .= " where a.elementid = b.element_key ";
    if ($mins > 0) {
      $listobject->querystring .= " and b.last_updated >= now() - interval '$mins minutes' ";
@@ -649,6 +656,30 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $status_mesg = '';
    $interval = '';
    $elemname = '';
+   $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
+   $listobject->querystring .= "    now() as thistime, a.host, b.runid, ";
+   $listobject->querystring .= "    CASE ";
+   $listobject->querystring .= "      WHEN report is NULL THEN  ";
+   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||b.elementid, 'report'||b.elementid||'-'||b.runid) ";
+   $listobject->querystring .= "      ELSE report ";
+   $listobject->querystring .= "    END as report ";
+   $listobject->querystring .= " from system_status as a, scen_model_element as b ";
+   $listobject->querystring .= " left outer join scen_model_element as b ";
+   $listobject->querystring .= "    on( a.element_key = b.elementid ) ";
+   $listobject->querystring .= " left outer join scen_model_run_elements as c ";
+   $listobject->querystring .= "    on( a.element_key = c.elementid and c.runid = a.runid ) ";
+   $listobject->querystring .= " where a.element_name = 'model_run' ";
+   $listobject->querystring .= "    and a.element_key = $elementid  ";
+   $listobject->querystring .= "    and a.element_key = b.elementid  ";
+   if ( ($qhost <> '') ) {
+      $listobject->querystring .= "    and a.host = '$qhost' ";
+   }
+   if ($qrunid <> '') {
+     $listobject->querystring .= "    and a.runid = '$qrunid' ";
+   }
+   $listobject->querystring .= " order by a.last_updated DESC ";
+   
+   /*
    
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
    $listobject->querystring .= "    now() as thistime, host, runid ";
@@ -663,7 +694,8 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
      $listobject->querystring .= "    and a.runid = '$qrunid' ";
    }
    $listobject->querystring .= " order by a.last_updated DESC ";
-   //print("$listobject->querystring <br>");
+   */
+   error_log("getModelRunStatus: $listobject->querystring <br>");
    $return_vals['query'] = "VerifyRunStatus SQL:" . $listobject->querystring;
    $listobject->performQuery();
    $return_vals['error'] = "DB Error:" . $listobject->error;
@@ -1198,14 +1230,14 @@ function copyRunCacheFile($elementid, $src_runid, $dest_runid, $overwrite = 0, $
    }
    $listobject->querystring = "  insert into scen_model_run_elements (runid, elementid, starttime, endtime, ";
    $listobject->querystring .= " elem_xml, output_file, run_date, host, fullpath, run_summary, run_verified, ";
-   $listobject->querystring .= " remote_path, exec_time_mean, verified_date, remote_url, elemoperators) ";
+   $listobject->querystring .= " remote_path, exec_time_mean, verified_date, remote_url, elemoperators, report) ";
    $listobject->querystring .= " select $dest_runid,   elementid, starttime, endtime, elem_xml, output_file, ";
    if ($run_date === NULL) {
       $listobject->querystring .= " now(), host, fullpath, run_summary, run_verified, remote_path, ";
    } else {
       $listobject->querystring .= " '$run_date', host, fullpath, run_summary, run_verified, remote_path, ";
    }
-   $listobject->querystring .= " exec_time_mean, verified_date, remote_url, elemoperators ";
+   $listobject->querystring .= " exec_time_mean, verified_date, remote_url, elemoperators, report ";
    $listobject->querystring .= " from scen_model_run_elements ";
    $listobject->querystring .= " where elementid = $elementid ";
    if (!$overwrite) {
@@ -9245,6 +9277,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
    }
    $cfilename = $outdir . "/objectlog." . $elementid . "." . $elementid .  ".log";
    $cfileurl = "http://$serverip" . $outurl . "/objectlog." . $elementid . "." . $elementid .  ".log";
+   $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
    $listobject->querystring = "  delete from scen_model_run_elements ";
    $listobject->querystring .= " where elementid = $elementid ";
    $listobject->querystring .= " and runid = -1 ";
@@ -9252,8 +9285,8 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       error_log($listobject->querystring);
    };
    $listobject->performQuery();
-   $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, remote_url, run_date, host, exec_time_mean, elemoperators)";
-   $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', $meanexectime, a.elemoperators ";
+   $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, remote_url, run_date, host, report, exec_time_mean, elemoperators)";
+   $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', $pfileurl, $meanexectime, a.elemoperators ";
    $listobject->querystring .= " from scen_model_element as a ";
    $listobject->querystring .= " where elementid = $elementid ";
    if ($debug) { 
@@ -9284,11 +9317,11 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $elementid . ".log";
       $listobject->querystring = "  insert into scen_model_run_elements ";
       $listobject->querystring .= " (runid,starttime, endtime, elem_xml,";
-      $listobject->querystring .= "  elementid, output_file, remote_url, debugfile,";
+      $listobject->querystring .= "  elementid, output_file, remote_url, debugfile, report, ";
       $listobject->querystring .= "  run_date, host, exec_time_mean, elemoperators)";
       $listobject->querystring .= " select $runid, '$startdate', ";
       $listobject->querystring .= " '$enddate', a.elem_xml, ";
-      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', ";
+      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', '$pfileurl',";
       $listobject->querystring .= " '$run_date', '$serverip', $meanexectime, a.elemoperators ";
       $listobject->querystring .= " from scen_model_element as a ";
       $listobject->querystring .= " where elementid = $elementid ";
