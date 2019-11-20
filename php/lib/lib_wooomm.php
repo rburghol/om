@@ -581,7 +581,7 @@ function getModelActivity($mins, $elementid, $render=TRUE, $limit = 100) {
    $listobject->querystring = "  select a.elementid, a.elemname, b.status_mesg, b.runid, b.host, b.last_updated, ";
    $listobject->querystring .= "    CASE ";
    $listobject->querystring .= "      WHEN report is NULL THEN  ";
-   $listobject->querystring .= "        replace(remote_url,'runlog'||runid||'.'||elementid, 'report'||elementid||'-'||runid) ";
+   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||b.elementid, 'report'||b.elementid||'-'||b.runid) ";
    $listobject->querystring .= "      ELSE report ";
    $listobject->querystring .= "    END as report ";
    $listobject->querystring .= " from scen_model_element as a, system_status as b ";
@@ -657,7 +657,12 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $interval = '';
    $elemname = '';
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
-   $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') as report ";
+   $listobject->querystring .= "    now() as thistime, a.host, b.runid, ";
+   $listobject->querystring .= "    CASE ";
+   $listobject->querystring .= "      WHEN report is NULL THEN  ";
+   $listobject->querystring .= "        replace(remote_url,'runlog'||b.runid||'.'||b.elementid, 'report'||b.elementid||'-'||b.runid) ";
+   $listobject->querystring .= "      ELSE report ";
+   $listobject->querystring .= "    END as report ";
    $listobject->querystring .= " from system_status as a, scen_model_element as b ";
    $listobject->querystring .= " left outer join scen_model_element as b ";
    $listobject->querystring .= "    on( a.element_key = b.elementid ) ";
