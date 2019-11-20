@@ -108,7 +108,7 @@ function om_status_model_form_run(&$form, &$form_state) {
     if ($elpid > 0) {
       $status[$key]['elemname'] = l($row['elemname'], "om-model-info/$elpid");
     }
-    $status[$key]['report'] = l($"Run Report", $report, array('attributes' => array('target' => '_blank')));
+    $status[$key]['report'] = l("Run Report", $report, array('attributes' => array('target' => '_blank')));
   }
   $content = array();
   
