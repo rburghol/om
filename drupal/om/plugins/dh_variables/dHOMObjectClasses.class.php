@@ -1232,10 +1232,13 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     $procnames = parent::getPublicProcs($entity);
     dpm($procnames, 'local procs');
     $parent = $this->getParentEntity($entity);
-    $pprocnames = $this->getPublicProcs($parent);
-    dpm($pprocnames, 'parent procs');
-    if (is_array($pprocnames)) {
-      $procnames = $pprocnames + $procnames;
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicVars')) {
+        $plugin->getPublicVars($parent, $procnames);
+      }
+      dpm($procnames, 'parent procs');
     }
     dpm($procnames, 'final procs');
     return $procnames;
@@ -1351,10 +1354,13 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     $procnames = parent::getPublicProcs($entity);
     dpm($procnames, 'local procs');
     $parent = $this->getParentEntity($entity);
-    $pprocnames = $this->getPublicProcs($parent);
-    dpm($pprocnames, 'parent procs');
-    if (is_array($pprocnames)) {
-      $procnames = $pprocnames + $procnames;
+    $plugin = dh_variables_getPlugins($parent);
+    if ($plugin) {
+    //dpm($plugin,'plugin');
+      if (method_exists($plugin, 'getPublicVars')) {
+        $plugin->getPublicVars($parent, $procnames);
+      }
+      dpm($procnames, 'parent procs');
     }
     dpm($procnames, 'final procs');
     return $procnames;
