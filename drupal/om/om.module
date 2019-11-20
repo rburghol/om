@@ -430,3 +430,19 @@ function om_ctools_plugin_type() {
     ),
   );
 }
+
+/************************************************
+ *
+ * Functions To Be Ported to dH Module
+ *
+ ************************************************
+*/
+
+
+function dh_get_dh_propnames($entity_type, $entity_id) {
+  $q = "  select propname from {dh_properties} ";
+  $q .= " where featureid = :entity_id and entity_type = :entity_type";
+  $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type));
+  $props = $result->fetchCol();
+  return $props;
+}
