@@ -525,7 +525,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       )
     );
     sort($publix);
-    dpm($publix, 'getPublicVars base class');
+    dpm($publix, 'getPublicVars ' . get_class($this));
     return $publix;
   }
 
@@ -558,7 +558,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $procnames = array();
     }
     // @todo: add in vars that should be set on parent, i.e., for a local_channel proc, it would set local_channel_Qin, local_channel_Qout, local_channel_depth, ...
-    dpm($procnames,'base class getPublicProcs output');
+    dpm($procnames,'getPublicProcs ' . get_class($this));
     return $procnames;
     // gets all viewable processors
     $retarr = array();
@@ -1254,7 +1254,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       //dpm($pprocs, 'parent procs');
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'dHOMSubComp procs');
+    dpm($procnames, 'procs' . get_class($this));
     return $procnames;
   }
   
@@ -1389,7 +1389,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
       }
       $procnames = array_merge($pprocs, $procnames);
     }
-    dpm($procnames, 'alphanumeric constant procs');
+    dpm($procnames, 'procs' . get_class($this));
     return $procnames;
   }
   
