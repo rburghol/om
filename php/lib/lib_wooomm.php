@@ -649,7 +649,7 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $status_mesg = '';
    $interval = '';
    $elemname = '';
-   
+   /*
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
    $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') ";
    $listobject->querystring .= " from system_status as a, scen_model_element as b ";
@@ -660,6 +660,22 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $listobject->querystring .= " where a.element_name = 'model_run' ";
    $listobject->querystring .= "    and a.element_key = $elementid  ";
    $listobject->querystring .= "    and a.element_key = b.elementid  ";
+   if ( ($qhost <> '') ) {
+      $listobject->querystring .= "    and a.host = '$qhost' ";
+   }
+   if ($qrunid <> '') {
+     $listobject->querystring .= "    and a.runid = '$qrunid' ";
+   }
+   $listobject->querystring .= " order by a.last_updated DESC ";
+   */
+   
+   
+   $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
+   $listobject->querystring .= "    now() as thistime, host, runid ";
+   $listobject->querystring .= " from system_status as a, scen_model_element as b ";
+   $listobject->querystring .= " where a.element_name = 'model_run' ";
+   $listobject->querystring .= "    and a.element_key = $elementid  ";
+   $listobject->querystring .= "    and a.element_key = b.elementid ";
    if ( ($qhost <> '') ) {
       $listobject->querystring .= "    and a.host = '$qhost' ";
    }
