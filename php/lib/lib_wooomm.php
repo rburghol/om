@@ -651,11 +651,15 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    $elemname = '';
    
    $listobject->querystring = "  select a.status_flag, a.status_mesg, a.last_updated, b.elemname, ";
-   $listobject->querystring .= "    now() as thistime, host, runid ";
+   $listobject->querystring .= "    now() as thistime, a.host, b.runid, replace(c.remote_url, 'runlog', 'report') ";
    $listobject->querystring .= " from system_status as a, scen_model_element as b ";
+   $listobject->querystring .= " left outer join scen_model_element as b ";
+   $listobject->querystring .= "    on( a.element_key = b.elementid ) ";
+   $listobject->querystring .= " left outer join scen_model_run_elements as c ";
+   $listobject->querystring .= "    on( a.element_key = c.elementid and c.runid = a.runid ) ";
    $listobject->querystring .= " where a.element_name = 'model_run' ";
    $listobject->querystring .= "    and a.element_key = $elementid  ";
-   $listobject->querystring .= "    and a.element_key = b.elementid ";
+   $listobject->querystring .= "    and a.element_key = b.elementid  ";
    if ( ($qhost <> '') ) {
       $listobject->querystring .= "    and a.host = '$qhost' ";
    }
