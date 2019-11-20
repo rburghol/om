@@ -683,7 +683,7 @@ function getModelRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $
    }
    $listobject->querystring .= " order by a.last_updated DESC ";
    */
-   error_log("$listobject->querystring <br>");
+   error_log("getModelRunStatus: $listobject->querystring <br>");
    $return_vals['query'] = "VerifyRunStatus SQL:" . $listobject->querystring;
    $listobject->performQuery();
    $return_vals['error'] = "DB Error:" . $listobject->error;
