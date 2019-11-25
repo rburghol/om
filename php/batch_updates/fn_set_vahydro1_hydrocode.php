@@ -33,7 +33,8 @@ foreach ($rsegs as $seg) {
   $elid = $seg['elementid'];
   $riverseg = $seg['custom2'];
   $wds = getCOVAWithdrawals($listobject, $elid, array(), 1);
-  
+  $alwds = getAtLargeWithdrawals($listobject, $elid, array(), 1);
+  $wds = array_merge($wds, $alwds);
   foreach ($wds as $thiswd) {
     $wd_elid = $thiswd['elementid'];
     $loadres = unSerializeSingleModelObject($wd_elid);
