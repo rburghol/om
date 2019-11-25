@@ -5590,6 +5590,8 @@ class timeSeriesInput extends modelObject {
          if ($this->debug) {
             $this->logDebug("$numts values remaining in cache\n");
          }
+         // @todo: check this out.  I think it should set limit to be max_memory_values if numts > max_memory_mb
+         //                         Otherwise, what is this accomplishing other than loading all ts all the time?
          if ($numts > $this->max_memory_values) {
             $limit = $numts;
          } else {
