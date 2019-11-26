@@ -957,7 +957,7 @@ class modelObject {
   function setProp($propname, $propvalue, $view = '') {
     // sets a specific state variable to a specific value
     if ($this->debug) {
-       $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
+       $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
     }
     //error_log("Trying to set $propname to $propvalue on " . $this->name);
     $this->setClassProp($propname, $propvalue, $view);
@@ -974,7 +974,7 @@ class modelObject {
     if (property_exists($this, $propname)) {
        $this->$propname = $propvalue;
        if ($this->debug) {
-          $this->logDebug("Setting $propname to $propvalue on " . $this->name);
+          $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
        }
     } else {
        if ($this->debug) {
