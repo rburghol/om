@@ -324,28 +324,6 @@ function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children
   
 }
 
-function om_get_model_status($elementid, $mins = 120, $format = '') {
-  // use format = 'list' to see the raw liostobject (default for no elementid)
-  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
-  $cmd = "cd $path \n";
-  $cmd .= "php get_modelStatus.php $elementid $mins $format";
-  //$cmd .= "php get_modelStatus.php $elementid $mins ";
-  $json = shell_exec($cmd);
-  //error_log("JSON $json");
-  $status = json_decode($json, TRUE);
-  //error_log("json_decode" . print_r($status,1));
-  //dpm($status,'json decoded');
-  return $status;
-}
-
-function om_message_model($elementid, $host, $msg, $run_id) {
-  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
-  $cmd = "cd $path \n";
-  $cmd .= "php fn_message_model.php $elementid $host $msg $run_id ";
-  $result = shell_exec($cmd);
-  return $result;
-}
-
 /**
  * Implements hook_field_widget_form().
  *
@@ -445,4 +423,47 @@ function dh_get_dh_propnames($entity_type, $entity_id) {
   $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type));
   $props = $result->fetchCol();
   return $props;
+}
+
+/************************************************
+ *
+ * Functions To Interact with Native OM App
+ *
+ ************************************************
+*/
+global $om, $php_path;
+$om = 'http://deq2.bse.vt.edu/om/get_model.php';
+$php_path = "/var/www/html/om/";
+
+function om_setprop($elementid, $propname, $propval) {
+  global $php_path;
+  $cmd = "cd $php_path \n";
+  $cmd .= "php setprop.php $elementid $propname=\"$propval\"";
+  //dpm( $php_path, "Exec Path ");
+  //dpm( $cmd, "Executing ");
+  error_log("$cmd");
+  $elid = shell_exec($cmd);
+  return $elid;
+}
+
+function om_get_model_status($elementid, $mins = 120, $format = '') {
+  // use format = 'list' to see the raw liostobject (default for no elementid)
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php get_modelStatus.php $elementid $mins $format";
+  //$cmd .= "php get_modelStatus.php $elementid $mins ";
+  $json = shell_exec($cmd);
+  //error_log("JSON $json");
+  $status = json_decode($json, TRUE);
+  //error_log("json_decode" . print_r($status,1));
+  //dpm($status,'json decoded');
+  return $status;
+}
+
+function om_message_model($elementid, $host, $msg, $run_id) {
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php fn_message_model.php $elementid $host $msg $run_id ";
+  $result = shell_exec($cmd);
+  return $result;
 }
