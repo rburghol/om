@@ -16454,15 +16454,6 @@ class textField extends modelSubObject {
     parent::wake();
     $this->result = $this->value;
   }
-   
-  function setPropDISABLED($propname, $propvalue, $view = '') {
-    error_log("Class textField handing setProp($propname, $propvalue, $view)");
-    switch ($propname) {
-      case $this->name:
-        $this->value = $propvalue;
-      break;
-    }
-  }
 
    function getPublicProps() {
       # gets only properties that are visible (must be manually defined)

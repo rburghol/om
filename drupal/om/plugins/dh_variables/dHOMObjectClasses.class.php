@@ -778,10 +778,10 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         list($propname) = $path;
         // this is a property of the element itself
         // @todo: set a regular attribute using batch_setprop.php
-        $setstr = "php setprop.php $elid \"$propname=$propvalue\" ";
+        //$setstr = "php setprop.php $elid \"$propname=$propvalue\" ";
         // modified to use base OM plumbing
-        //$setstr = FALSE;
-        //om_setprop($elid, $propname, $propvalue);
+        $setstr = FALSE;
+        om_setprop($elid, $propname, $propvalue);
       break;
       case 2:
         list($propname, $parentname) = $path;
@@ -811,8 +811,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     if ($setstr and !$test_only) {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
-      dpm( $path, "Exec Path ");
-      dpm( $cmd, "Executing ");
+      //dpm( $path, "Exec Path ");
+      //dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
