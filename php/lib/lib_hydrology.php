@@ -16444,6 +16444,7 @@ class textField extends modelSubObject {
   }
    
   function setProp($propname, $propvalue, $view = '') {
+    error_log("Class textField handing setProp($propname, $propvalue, $view)");
     switch ($propname) {
       case $this->name:
         $this->value = $propvalue;
