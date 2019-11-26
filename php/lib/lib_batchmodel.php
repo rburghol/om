@@ -377,6 +377,8 @@ function getCOVAWithdrawals($listobject, $elementid, $criteria = array(), $debug
 function getAtLargeWithdrawals($listobject, $elementid, $criteria, $debug) {
   $children = array();
   $tops = getChildComponentCustom1($listobject, $elementid, 'cova_pswd', $limit = -1, $debug);
+  $imps = getChildComponentCustom1($listobject, $elementid, 'cova_impoundment', $limit = -1, $debug);
+  $tops = array_merge($tops, $imps);
   foreach ($tops as $thistop) {
     $gid = $thistop['elementid'];
     $child_types = array('wsp_waterUser','wsp_vpdesvwuds','blankShell','waterSupplyElement');
