@@ -959,7 +959,7 @@ class modelObject {
     if ($this->debug) {
        $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
     }
-    error_log("Trying to set $propname to $propvalue on " . $this->name);
+    //error_log("Trying to set $propname to $propvalue on " . $this->name);
     $this->setClassProp($propname, $propvalue, $view);
     return;
     // @todo: processors (subcomps) over-ride locals
