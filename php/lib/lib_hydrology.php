@@ -16455,7 +16455,7 @@ class textField extends modelSubObject {
     $this->result = $this->value;
   }
    
-  function setProp($propname, $propvalue, $view = '') {
+  function setPropDISABLED($propname, $propvalue, $view = '') {
     error_log("Class textField handing setProp($propname, $propvalue, $view)");
     switch ($propname) {
       case $this->name:
