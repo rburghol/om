@@ -6241,8 +6241,10 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
             $innerHTML .= "Geometry did not load properly\n";
          }
       }
-      error_log("Serializing for storage in db");
-      $compres = compactSerializeObject($thisobject, 1);
+      if ($debug) {
+        error_log("Serializing for storage in db");
+      }
+      $compres = compactSerializeObject($thisobject, $debug);
       if (!$compres['error']) {
          if ($debug) {
             $debugHTML .= "Storing inputs and properties on $elementid <br>\n";
