@@ -971,7 +971,7 @@ class modelObject {
   }
   
   function setClassProp($propname, $propvalue, $view = '') { 
-    if (property_exists(get_class($this), $propname)) {
+    if (property_exists($this, $propname)) {
        $this->$propname = $propvalue;
        if ($this->debug) {
           $this->logDebug("Setting $propname to $propvalue on " . $this->name);

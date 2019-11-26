@@ -72,7 +72,7 @@ if (is_object($thisobject)) {
     $thisobject->processors[$comp_name]->objectclass = $comp_class;
   }
   $result_html = saveObjectSubComponents($listobject, $thisobject, $elid );
-  //error_log("Save result: $result_html");
+  error_log("Save result: $result_html");
 }
    
 error_log("Finished.\n");
