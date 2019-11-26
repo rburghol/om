@@ -959,6 +959,18 @@ class modelObject {
     if ($this->debug) {
        $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
     }
+    error_log("Trying to set $propname to $propvalue on " . $this->name);
+    $this->setClassProp($propname, $propvalue, $view);
+    return;
+    // @todo: processors (subcomps) over-ride locals
+    if (isset($this->processors[$propname])) {
+      $this->processors[$propname]->setProp($propname, $propvalue, $view);
+    } else {
+      $this->setClassProp($propname, $propvalue, $view);
+    }
+  }
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
     if (property_exists(get_class($this), $propname)) {
        $this->$propname = $propvalue;
        if ($this->debug) {
@@ -16444,6 +16456,7 @@ class textField extends modelSubObject {
   }
    
   function setProp($propname, $propvalue, $view = '') {
+    error_log("Class textField handing setProp($propname, $propvalue, $view)");
     switch ($propname) {
       case $this->name:
         $this->value = $propvalue;
