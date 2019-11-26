@@ -957,9 +957,9 @@ class modelObject {
   function setProp($propname, $propvalue, $view = '') {
     // sets a specific state variable to a specific value
     if ($this->debug) {
-       $this->logDebug("Trying to set $propname to $propvalue on " . $this->name);
+       $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
     }
-    error_log("Trying to set $propname to $propvalue on " . $this->name);
+    //error_log("Trying to set $propname to $propvalue on " . $this->name);
     $this->setClassProp($propname, $propvalue, $view);
     return;
     // @todo: processors (subcomps) over-ride locals
@@ -971,10 +971,10 @@ class modelObject {
   }
   
   function setClassProp($propname, $propvalue, $view = '') { 
-    if (property_exists(get_class($this), $propname)) {
+    if (property_exists($this, $propname)) {
        $this->$propname = $propvalue;
        if ($this->debug) {
-          $this->logDebug("Setting $propname to $propvalue on " . $this->name);
+          $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
        }
     } else {
        if ($this->debug) {
@@ -16453,15 +16453,6 @@ class textField extends modelSubObject {
     $this->value_dbcolumntype = "varchar($this->charlength)";
     parent::wake();
     $this->result = $this->value;
-  }
-   
-  function setProp($propname, $propvalue, $view = '') {
-    error_log("Class textField handing setProp($propname, $propvalue, $view)");
-    switch ($propname) {
-      case $this->name:
-        $this->value = $propvalue;
-      break;
-    }
   }
 
    function getPublicProps() {
