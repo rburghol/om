@@ -101,6 +101,8 @@ function om_copy_props_form_submit(&$form, &$form_state) {
     $outstr .= " Calling om_copy_properties($featureid, $pid, $propname, TRUE, FALSE, FALSE); \n";
     if (is_object($rez) and property_exists($rez,'pid')) {
       $outstr .= "<br> pid = ($rez->pid) \n";
+    } else {
+      $outstr .= "<br> Could not copy $propname \n";
     }
     $del = '<br>';
   }

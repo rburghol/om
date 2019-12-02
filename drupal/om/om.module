@@ -203,6 +203,10 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     'varid' => $src_prop->varid,
     'bundle' => $src_prop->bundle,
   );
+  if (!is_object($info)) {
+    watchdog('om', "Property $propname  does not exist on source entity of type " . get_class($src_entity));
+    return FALSE;
+  }
   $info = $src_prop->entityInfo();
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
   error_log("Copyable " . print_r($copyable,1));
