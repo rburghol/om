@@ -99,7 +99,7 @@ function om_copy_props_form_submit(&$form, &$form_state) {
   }
   $element['om_model_status_message']['#prefix'] = "<div id ='om_model_status_message'>";
   $element['om_model_status_message']['#markup'] = "</div>";
-  $element['om_model_status_message']['#markup'] = "Model Copy Results" . print_r(array_keys($form_state['values']),1);
+  $element['om_model_status_message']['#markup'] = "Model Copy Results" . print_r(array_values($form_state['values']),1);
   return $element;
 }
 
