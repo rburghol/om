@@ -104,6 +104,10 @@ foreach ($data as $element) {
     );
   $datamatrix = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
   
+  $datamatrix->keycol1='month';
+  $datamatrix->lutype1=0;
+  $datamatrix->save();
+  
   if (!empty($src_id)){
   
   	//create or load om_map_model_linkage
@@ -125,32 +129,8 @@ foreach ($data as $element) {
 	  $link->save();
   }
   
-  if (!empty($src_id)){
-  	//create or load keycol1
-	  $keycol1_values = array(
-        'varkey' => 'om_class_PublicVars', 
-        'propname' => 'keycol1',
-        'featureid' => $datamatrix->pid,
-        'propcode' => 'month', 
-        'entity_type' => 'dh_properties',
-      );
-	  $keycol1 = om_model_getSetProperty($keycol1_values,'name',FALSE);
-    //error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
-	  $keycol1->save();
-  }  
-  
-    if (!empty($src_id)){
-  	//create or load lutype1
-	  $lutype1_values = array(
-        'varkey' => 'om_class_Constant', 
-        'propname' => 'lutype1',
-        'featureid' => $datamatrix->pid,
-        'propvalue' => 0, 
-        'entity_type' => 'dh_properties',
-      );
-	  $lutype1 = om_model_getSetProperty($lutype1_values,'name',FALSE);
-	  $lutype1->save();
-  } 
+
+ 
   
 }
 ?>
