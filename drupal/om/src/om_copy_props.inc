@@ -99,9 +99,9 @@ function om_copy_props_form_submit(&$form, &$form_state) {
     $outstr .= "$pid om_copy_properties(src_entity, dest_entity, $propname, TRUE, FALSE, FALSE); \n";
     //om_copy_properties($src_entity, $dest_entity, $propname, TRUE, FALSE, FALSE);
   }
-  $element['om_model_status_message']['#prefix'] = "<div id ='om_model_status_message'>";
-  $element['om_model_status_message']['#markup'] = "</div>";
-  $element['om_model_status_message']['#markup'] = "Model Copy Results" . $outstr;
+  $element['om_copy_props_message']['#prefix'] = "<div id ='om_copy_props_message'>";
+  $element['om_copy_props_message']['#markup'] = "</div>";
+  $element['om_copy_props_message']['#markup'] = "Model Copy Results" . $outstr;
   return $element;
 }
 
