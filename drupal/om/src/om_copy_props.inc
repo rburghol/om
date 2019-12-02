@@ -85,7 +85,7 @@ function om_copy_props_form_controls(&$form, &$form_state) {
 
 function om_copy_props_form_submit(&$form, &$form_state) {
   $featureid = intval($form_state['values']['featureid']);
-  $entity_type = trim($form_state['values']['entity_type']));
+  $entity_type = trim($form_state['values']['entity_type']);
   $propnames = explode(',',$form_state['values']['propnames']);
   $pid = intval($form_state['values']['pid']);
   dpm($form_state['values'], 'values');
