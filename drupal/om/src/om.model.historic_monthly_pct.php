@@ -16,13 +16,9 @@ $dest_prop = FALSE; // the name of the linked value on the dest_id object
 $src_prop = FALSE; // the property whose value is to be linked 
 $prop_entity_type = 'dh_properties';
 
-// Is single command line arg?
-if ( (count($args) >= 4) or ($args[0] == 'file')) {
-  // Do command line, single element settings
-  // set these if doing a single -- will fail if both not set
-  // $dest_id = 4726070; // set these if doing a single (model: VIRGINIA BEACH SERVICE AREA:North Landing River)
-  // $src_id = 178413; // (system: Virginia Beach, City of)
 
+if ( (count($args) >= 4) or ($args[0] == 'file')) {
+  
   $query_type = $args[0];
   $dest_id = $args[1];
   $src_id = $args[2];
@@ -97,9 +93,9 @@ foreach ($data as $element) {
 	//load model property
   $model = entity_load_single('dh_properties', $dest_id);
   
-	//create or load om_class_Equation
+	//create or load om_class_DataMatrix -- WAS om_class_Equation
 	$values = array(
-      'varkey' => 'om_class_Equation', 
+      'varkey' => 'om_class_DataMatrix', 
       'propname' => $dest_prop,
       'featureid' => $model->pid,
       'propvalue' => NULL, //best practice to set them as NULL explicitly
