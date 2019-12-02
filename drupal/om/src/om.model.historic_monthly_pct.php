@@ -118,7 +118,7 @@ foreach ($data as $element) {
 	  $link = om_model_getSetProperty($values,'name',FALSE);
   
 	  $link->src_prop = $src_prop;
-	  $link->dest_prop = 'propcode';
+	  $link->dest_prop = 'field_dh_matrix'; //was propcode
 	  $link->link_type = 2;
 	  $link->update_setting = 'update';
     error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
