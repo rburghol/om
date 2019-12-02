@@ -88,16 +88,21 @@ function om_copy_props_form_submit(&$form, &$form_state) {
   $entity_type = trim($form_state['values']['entity_type']);
   $propnames = explode(',',$form_state['values']['propnames']);
   $pid = intval($form_state['values']['pid']);
-  dpm($form_state['values'], 'values');
+  //dpm($form_state['values'], 'values');
   dsm("$pid om_copy_props_form_submit(); ");
   $src_entity = entity_load_single($entity_type, $featureid);
   $dest_entity = entity_load_single('dh_properties', $pid);
   $outstr = '';
+  $del = '';
   foreach ($propnames as $propname) {
     $propname = trim($propname);
     // args are (src_entity, entity_type, propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE);
-    $outstr .= "$pid om_copy_properties(src_entity, dest_entity, $propname, TRUE, FALSE, FALSE); \n";
-    //om_copy_properties($src_entity, $dest_entity, $propname, TRUE, FALSE, FALSE);
+    $rez = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, FALSE, FALSE);
+    $outstr .= " Calling om_copy_properties($featureid, $pid, $propname, TRUE, FALSE, FALSE); \n";
+    if (is_object($rez) and property_exists($rez,'pid')) {
+      $outstr .= "<br> pid = ($rez->pid) \n";
+    }
+    $del = '<br>';
   }
   $element['om_copy_props_message']['#prefix'] = "<div id ='om_copy_props_message'>";
   $element['om_copy_props_message']['#markup'] = "</div>";
