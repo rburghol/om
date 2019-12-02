@@ -85,21 +85,21 @@ function om_copy_props_form_controls(&$form, &$form_state) {
 
 function om_copy_props_form_submit(&$form, &$form_state) {
   $featureid = intval($form_state['values']['featureid']);
-  $entity_type = intval($form_state['values']['entity_type']);
+  $entity_type = trim($form_state['values']['entity_type']));
   $propnames = explode(',',$form_state['values']['propnames']);
   $pid = intval($form_state['values']['pid']);
   dpm($form_state['values'], 'values');
   dsm("$pid om_copy_props_form_submit(); ");
-  //$src_entity = entity_load_single($entity_type, $featureid);
+  $src_entity = entity_load_single($entity_type, $featureid);
   $dest_entity = entity_load_single('dh_properties', $pid);
   foreach ($propnames as $propname) {
     // args are (src_entity, entity_type, propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE);
-    dsm("$pid om_copy_properties(src_entity, dest_entity, $propname, TRUE, FALSE, FALSE); ");
+    $outstr .= "$pid om_copy_properties(src_entity, dest_entity, $propname, TRUE, FALSE, FALSE); \n";
     //om_copy_properties($src_entity, $dest_entity, $propname, TRUE, FALSE, FALSE);
   }
   $element['om_model_status_message']['#prefix'] = "<div id ='om_model_status_message'>";
   $element['om_model_status_message']['#markup'] = "</div>";
-  $element['om_model_status_message']['#markup'] = "Model Copy Results" . print_r(array_values($form_state['values']),1);
+  $element['om_model_status_message']['#markup'] = "Model Copy Results" . $outstr;
   return $element;
 }
 
