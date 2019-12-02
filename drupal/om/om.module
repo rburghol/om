@@ -170,6 +170,66 @@ function om_model_getSetProperty($values, $singularity = 'name', $save = TRUE) {
   return $om_model;
 }
 
+function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
+  $src_prop = om_load_dh_property($src_entity, $propname);
+  $values = array(
+    'entity_type' => $dest_entity->entityType(),
+    'propname' => $propname,
+    'featureid' => $dest_entity->identifier(),
+    'varid' => $src_prop->varid,
+    'bundle' => $src_prop->bundle,
+  );
+  $info = $src_prop->entityInfo();
+  $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
+  error_log("Copyable " . print_r($copyable,1));
+  foreach ($copyable as $pname) {
+    if (isset($src_prop->{$pname})) {
+      $values[$pname] = $src_prop->{$pname};
+    }
+  }
+  // add or replace new property with copy values 
+  error_log("values " . print_r($values,1));
+  $copy = om_model_getSetProperty($values, 'name', FALSE);
+  // Now copy fields
+  if ($fields) {
+    $propfields = field_info_instances($src_prop->entityType(), $src_prop->bundle);
+    // @todo: handle entity reference fields, changing the destid 
+    //    handle om link fields map_model_linkage and om_element_connection
+    foreach (array_keys($propfields) as $fieldname) {
+      if (isset($src_prop->{$fieldname})) {
+        $copy->{$fieldname} = $src_prop->{$fieldname};
+      }
+    }
+  }
+  $copy->save();
+  //entity_save('dh_properties', $copy);
+  // Copy default properties defined in getDefaults()?
+  if ($defprops) {
+    $default_subprops = array();
+    $plugin = dh_variables_getPlugins($src_prop);
+    if (is_object($plugin )) {
+      $default_subprops = $plugin->getDefaults($src_prop);
+    }
+    error_log("Found def props: " . print_r($default_subprops,1));
+    foreach ($default_subprops as $thisprop) {
+      error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
+      $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
+      $copy->{$thisprop['propname']} = $sub;
+    }
+  }
+  $copy->save();
+  // @todo: handle allprops if requested
+  if ($allprops) {
+    // nothing yet
+  }
+  error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
+  // die on match
+  //if ($copy->propname == 'keycol1') {
+  //  die;  
+  //}
+  return $copy;
+}
+
 /**
  * Implements hook_field_info().
  *
