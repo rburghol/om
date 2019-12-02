@@ -203,7 +203,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     'varid' => $src_prop->varid,
     'bundle' => $src_prop->bundle,
   );
-  if (!is_object($info)) {
+  if (!is_object($src_prop)) {
     watchdog('om', "Property $propname  does not exist on source entity of type " . get_class($src_entity));
     return FALSE;
   }
