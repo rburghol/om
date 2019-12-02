@@ -92,7 +92,9 @@ function om_copy_props_form_submit(&$form, &$form_state) {
   dsm("$pid om_copy_props_form_submit(); ");
   $src_entity = entity_load_single($entity_type, $featureid);
   $dest_entity = entity_load_single('dh_properties', $pid);
+  $outstr = '';
   foreach ($propnames as $propname) {
+    $propname = trim($propname);
     // args are (src_entity, entity_type, propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE);
     $outstr .= "$pid om_copy_properties(src_entity, dest_entity, $propname, TRUE, FALSE, FALSE); \n";
     //om_copy_properties($src_entity, $dest_entity, $propname, TRUE, FALSE, FALSE);
