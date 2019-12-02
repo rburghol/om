@@ -125,7 +125,7 @@ foreach ($data as $element) {
 	  $link->save();
   }
   
-  //if (!empty($src_id)){
+  if (!empty($src_id)){
   
   	//create or load keycol1
 	  $keycol1_values = array(
@@ -141,9 +141,9 @@ foreach ($data as $element) {
 	  //$link->dest_prop = 'propcode';
 	  //$link->link_type = 2;
 	  //$link->update_setting = 'update';
-    //error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
-	  //$link->save();
-  //}  
+    error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
+	  $link->save();
+  }  
   
 }
 ?>
