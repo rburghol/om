@@ -102,7 +102,7 @@ foreach ($data as $element) {
       'propcode' => '0', 
       'entity_type' => 'dh_properties',
     );
-  $equation = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
+  $datamatrix = om_model_getSetProperty($values); //this functions defualt is to save newly created, or returns object if it exists
   
   if (!empty($src_id)){
   
@@ -110,7 +110,7 @@ foreach ($data as $element) {
 	  $values = array(
         'varkey' => 'om_map_model_linkage', 
         'propname' => 'linked_property',
-        'featureid' => $equation->pid,
+        'featureid' => $datamatrix->pid,
         'propvalue' => $src_id, 
         'propcode' => $src_entity_type, 
         'entity_type' => 'dh_properties',
@@ -121,8 +121,29 @@ foreach ($data as $element) {
 	  $link->dest_prop = 'propcode';
 	  $link->link_type = 2;
 	  $link->update_setting = 'update';
-    error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($equation->pid):$link->dest_prop");
+    error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
 	  $link->save();
   }
+  
+  //if (!empty($src_id)){
+  
+  	//create or load keycol1
+	  $keycol1_values = array(
+        'varkey' => 'om_class_PublicVars', 
+        'propname' => 'keycol1',
+        'featureid' => $datamatrix->pid,
+        'propcode' => 'month', 
+        'entity_type' => 'dh_properties',
+      );
+	  $link = om_model_getSetProperty($keycol1_values,'name',FALSE);
+  
+	  //$link->src_prop = $src_prop;
+	  //$link->dest_prop = 'propcode';
+	  //$link->link_type = 2;
+	  //$link->update_setting = 'update';
+    //error_log("Linking from $src_entity_type:$src_id:$src_prop to $model->pid:$dest_prop($datamatrix->pid):$link->dest_prop");
+	  //$link->save();
+  //}  
+  
 }
 ?>
