@@ -170,6 +170,30 @@ function om_model_getSetProperty($values, $singularity = 'name', $save = TRUE) {
   return $om_model;
 }
 
+function om_load_dh_property($entity, $model_name) {
+
+  $model_entity_type = $entity->entityType();
+  $fid = $entity->identifier();
+  $values = array(
+    'entity_type' => $model_entity_type,
+    'featureid' => $fid,
+    'propname' => $model_name,
+  );
+  $model = om_get_property($values);
+  return $model;
+}
+
+function om_get_property($values, $singularity = 'name') {
+  $pids = dh_get_properties($values, $singularity);
+  //error_log("Pids:" . print_r((array)$pids, 1)); 
+  $om_model = FALSE;
+  if (count($pids) > 0) {
+    $pid = array_shift($pids['dh_properties']);
+    $om_model = entity_load_single('dh_properties', $pid->pid);
+  }
+  return $om_model;
+}
+
 function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
   $src_prop = om_load_dh_property($src_entity, $propname);
   $values = array(
@@ -179,6 +203,10 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     'varid' => $src_prop->varid,
     'bundle' => $src_prop->bundle,
   );
+  if (!is_object($src_prop)) {
+    watchdog('om', "Property $propname  does not exist on source entity of type " . get_class($src_entity));
+    return FALSE;
+  }
   $info = $src_prop->entityInfo();
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
   error_log("Copyable " . print_r($copyable,1));

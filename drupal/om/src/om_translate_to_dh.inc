@@ -70,30 +70,6 @@ function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_mo
   return $dh_model;
 }
 
-function om_load_dh_property($entity, $model_name) {
-
-  $model_entity_type = $entity->entityType();
-  $fid = $entity->identifier();
-  $values = array(
-    'entity_type' => $model_entity_type,
-    'featureid' => $fid,
-    'propname' => $model_name,
-  );
-  $model = om_get_property($values);
-  return $model;
-}
-
-function om_get_property($values, $singularity = 'name') {
-  $pids = dh_get_properties($values, $singularity);
-  //error_log("Pids:" . print_r((array)$pids, 1)); 
-  $om_model = FALSE;
-  if (count($pids) > 0) {
-    $pid = array_shift($pids['dh_properties']);
-    $om_model = entity_load_single('dh_properties', $pid->pid);
-  }
-  return $om_model;
-}
-
 function om_create_property($values, $singularity = 'name') {
   error_log("Object does not exist...creating " . print_r($values,1));
   $om_model = dh_properties_enforce_singularity($values, $singularity);
