@@ -17,7 +17,7 @@ function om_copy_props_form($form, &$form_state, $prop) {
   $form['entity_type'] = array(
     '#title' => t('Entity Type'),
     '#type' => 'textfield',
-    '#default_value' => '',
+    '#default_value' => 'dh_properties',
     '#description' => t(''),
     '#required' => FALSE,
     '#weight' => 1,
@@ -90,7 +90,7 @@ function om_copy_props_form_submit(&$form, &$form_state) {
   $pid = intval($form_state['values']['pid']);
   dpm($form_state['values'], 'values');
   dsm("$pid om_copy_props_form_submit(); ");
-  $src_entity = entity_load_single($entity_type, $featureid);
+  //$src_entity = entity_load_single($entity_type, $featureid);
   $dest_entity = entity_load_single('dh_properties', $pid);
   foreach ($propnames as $propname) {
     // args are (src_entity, entity_type, propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE);
