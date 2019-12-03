@@ -150,7 +150,6 @@ function om_formatCFB(&$form, $entity) {
   // combine into fieldset
   $form['cfb'] = array(
     '#type' => 'fieldset',
-    '#weight' => -5,
   );
   $form['cfb']['enable_cfb'] = $form['enable_cfb'];
   $form['cfb']['cfb_condition'] = $form['cfb_condition'];
@@ -186,7 +185,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'varname' => 'Base Flowby/Release',
         'vardesc' => 'Base equation for calculating flowby/release.',
-        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ), 
       'enable_cfb' => array(
         'entity_type' => $entity->entityType(),
@@ -238,10 +237,9 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     // orders
     $form['varid']['#weight'] = -10;
     $form['propname']['#weight'] = -9;
-    $form['enable_cfb']['#weight'] = -5;
-    $form['cfb_var']['#weight'] = -4;
-    $form['cfb_condition']['#weight'] = -3;
+    $form['flowby_eqn']['#weight'] = -4;
     om_formatCFB($form, $entity);
+    $form['cfb']['#weight'] = -3;
     dpm($form,'form');
   }
   
@@ -327,6 +325,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     $form['cfb_condition']['#weight'] = -3;
     
     om_formatCFB($form, $entity);
+    $form['cfb']['#weight'] = -5;
   }
   
   public function tableDefault($entity) {
