@@ -7,7 +7,7 @@ $plugin = array(
     'file' => 'dHOMWaterSystemObjectClasses.class.php',
   ),
   'variable' =>  array(
-    'varname' => 'OM Water System Flow-By/Release Object',
+    'varname' => 'OM Water System Tiered Flow-By/Release Object',
     'vardesc' => 'Contains a lookup table to calculate base flow-by/release, plus an if/else type condition to enable override, e.g. 10% of flow or MIF whichever is lower.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
