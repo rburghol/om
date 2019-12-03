@@ -305,16 +305,19 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
       ),
     ) + $defaults;
     //dpm($defaults,'defs');
-    $defaults['lutype2']['propvalue_default'] = 2;
+    $defaults['lutype1']['propvalue_default'] = 2;
+    // don't include these as editable for now...
+    $defaults['lutype2']['embed'] = FALSE;
+    $defaults['keycol2']['embed'] = FALSE;
     return $defaults;
   }
   
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
-    $form['keycol2']['#type'] = 'hidden';
-    $form['lutype2']['#type'] = 'hidden';
-    unset($form['lutype2']);
-    unset($form['keycol2']);
+    //$form['keycol2']['#type'] = 'hidden';
+    //$form['lutype2']['#type'] = 'hidden';
+    //unset($form['lutype2']);
+    //unset($form['keycol2']);
     
     $form['cfb_condition']['#type'] = 'select';
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
