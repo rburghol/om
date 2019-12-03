@@ -150,7 +150,7 @@ function om_formatCFB(&$form, $entity) {
   // combine into fieldset
   $form['cfb'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Material Label Range',
+    '#title' => 'Conditional Alternate MIF',
     '#collapsible' => TRUE,
     '#collapsed' => $entity->enable_cfb->propvalue > 0 ? TRUE : FALSE,
   );
