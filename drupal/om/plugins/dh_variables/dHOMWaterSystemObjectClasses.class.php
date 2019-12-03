@@ -219,6 +219,13 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     
     $form['cfb_condition']['#type'] = 'select';
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
+    
+    // orders
+    $form['varid']['#weight'] = -10;
+    $form['propname']['#weight'] = -9;
+    $form['enable_cfb']['#weight'] = -5;
+    $form['cfb_condition']['#weight'] = -4;
+    $form['cfb_var']['#weight'] = -3;
   }
   
 }
@@ -286,12 +293,21 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     parent::formRowEdit($form, $entity);
     $form['keycol2']['#type'] = 'hidden';
     $form['lutype2']['#type'] = 'hidden';
-    unset($form['lutype2']);
-    unset($form['keycol2']);
+    //unset($form['lutype2']);
+    //unset($form['keycol2']);
     
     $form['cfb_condition']['#type'] = 'select';
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
     
+    // orders
+    $form['varid']['#weight'] = -10;
+    $form['propname']['#weight'] = -9;
+    $form['keycol1']['#weight'] = -8;
+    $form['lutype1']['#weight'] = -7;
+    $form['field_dh_matrix']['#weight'] = -6;
+    $form['enable_cfb']['#weight'] = -5;
+    $form['cfb_condition']['#weight'] = -4;
+    $form['cfb_var']['#weight'] = -3;
   }
   
   public function tableDefault($entity) {
