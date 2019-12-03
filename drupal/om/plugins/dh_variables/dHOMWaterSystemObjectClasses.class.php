@@ -290,5 +290,18 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
     
   }
+  
+  public function tableDefault($entity) {
+    // Returns associative array keyed table (like is used in OM)
+    // This format is not used by Drupal however, so a translation 
+    //   with tablefield_parse_assoc() is usually in order (such as is done in load)
+    // set up defaults - we can sub-class this to handle each version of the model land use
+    // This version is based on the Chesapeake Bay Watershed Phase 5.3.2 model land uses
+    // this brings in an associative array keyed as $table[$luname] = array( $year => $area )
+    $table = array();
+    $table[] = array('xTrigger', 'xMIF');
+    $table[] = array(0,0);
+    return $table;
+  }
 }
 ?>
