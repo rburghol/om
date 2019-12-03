@@ -242,6 +242,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['cfb_var']['#weight'] = -4;
     $form['cfb_condition']['#weight'] = -3;
     om_formatCFB($form, $entity);
+    dpm($form,'form');
   }
   
 }
