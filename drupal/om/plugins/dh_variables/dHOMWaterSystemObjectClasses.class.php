@@ -145,4 +145,140 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   }
 }
 
+class dHOMWaterSystemTieredFlowBy extends dHOMSubComp {
+  var $object_class = 'wsp_flowby';
+  var $attach_method = 'contained';
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propvalue'), parent::hiddenFields());
+    return $hidden;
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    $defaults = array(
+      'flowby_eqn' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => '0.0',
+        'propvalue_default' => 0.0,
+        'propname' => 'flowby_eqn',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Base Flowby/Release',
+        'vardesc' => 'Base equation for calculating flowby/release.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
+      'enable_cfb' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'boolean',
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Enable Conditional Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_var' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'If/Else Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_condition' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_condition',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'If/Else Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    return $defaults;
+  }
+  
+}
+
+class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
+  var $object_class = 'wsp_1tierflowby';
+  var $attach_method = 'contained';
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propvalue'), parent::hiddenFields());
+    return $hidden;
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    $defaults = array(
+      'enable_cfb' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'boolean',
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Enable Conditional Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_var' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'If/Else Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_condition' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_condition',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'If',
+        'vardesc' => 'Compare to calculated flow-by.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    return $defaults;
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    $form['cfb_condition']['#type'] = 'select';
+    $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
+    
+  }
+}
 ?>
