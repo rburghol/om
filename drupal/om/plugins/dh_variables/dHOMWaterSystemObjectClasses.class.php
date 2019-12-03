@@ -145,7 +145,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   }
 }
 
-class dHOMWaterSystemTieredFlowBy extends dHOMSubComp {
+class dHOMWaterSystemFlowBy extends dHOMSubComp {
   var $object_class = 'wsp_flowby';
   var $attach_method = 'contained';
   
