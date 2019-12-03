@@ -208,7 +208,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'propname' => 'cfb_var',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'If/Else Variable',
+        'varname' => 'Set Flowby/Release to:',
         'vardesc' => 'Variable to compare to select alternate for flowby/release.',
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
@@ -221,7 +221,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'When',
-        'vardesc' => 'Condition for comparison.',
+        'vardesc' => 'As compared to calculated flowby in base flowby equation.',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
@@ -239,8 +239,8 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['varid']['#weight'] = -10;
     $form['propname']['#weight'] = -9;
     $form['enable_cfb']['#weight'] = -5;
-    $form['cfb_condition']['#weight'] = -4;
-    $form['cfb_var']['#weight'] = -3;
+    $form['cfb_var']['#weight'] = -4;
+    $form['cfb_condition']['#weight'] = -3;
     om_formatCFB($form, $entity);
   }
   
@@ -283,7 +283,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
         'propname' => 'cfb_var',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'If/Else Variable',
+        'varname' => 'Set Flowby/Release to:',
         'vardesc' => 'Variable to compare to select alternate for flowby/release.',
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
@@ -296,7 +296,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'When',
-        'vardesc' => 'Condition for comparison.',
+        'vardesc' => 'As compared to calculated flowby in base flowby equation.',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
@@ -322,8 +322,9 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     $form['lutype1']['#weight'] = -7;
     $form['field_dh_matrix']['#weight'] = -6;
     $form['enable_cfb']['#weight'] = -5;
-    $form['cfb_condition']['#weight'] = -4;
-    $form['cfb_var']['#weight'] = -3;
+    $form['cfb_var']['#weight'] = -4;
+    $form['cfb_condition']['#weight'] = -3;
+    
     om_formatCFB($form, $entity);
   }
   
