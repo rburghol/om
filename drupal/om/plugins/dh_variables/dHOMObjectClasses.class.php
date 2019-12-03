@@ -1312,6 +1312,18 @@ class dHOMEquation extends dHOMSubComp {
   public function applyEntityAttribute($property, $value) {
     $property->propcode = $value;
   }
+  public function attachNamedForm(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    // create a blank to house the original form info
+    $pform = array();
+    $this->formRowEdit($pform, $entity);
+    // harvest pieces I want to keep
+    $mname = $this->handleFormPropname($entity->propname);
+    $form[$mname] = $pform['propcode'];
+  }
 }
 
 class dHOMStatistic extends dHOMSubComp {
