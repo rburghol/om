@@ -221,9 +221,6 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     
     $form['cfb_condition']['#type'] = 'select';
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
-    
-  }
-    
   }
   
 }
