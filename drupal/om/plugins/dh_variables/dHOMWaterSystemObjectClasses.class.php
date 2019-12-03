@@ -165,7 +165,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
   var $attach_method = 'contained';
   
   public function hiddenFields() {
-    $hidden = array_merge(array('propvalue'), parent::hiddenFields());
+    $hidden = array_merge(array('propvalue', 'propcode'), parent::hiddenFields());
     return $hidden;
   }
   
@@ -251,7 +251,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
   var $attach_method = 'contained';
   
   public function hiddenFields() {
-    $hidden = array_merge(array('propvalue'), parent::hiddenFields());
+    $hidden = array_merge(array('propvalue', 'propcode'), parent::hiddenFields());
     return $hidden;
   }
   
