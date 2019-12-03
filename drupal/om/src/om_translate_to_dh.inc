@@ -153,17 +153,16 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       //error_log("USGSChannelGeomObject set Translated province = $dh_prop->province and drainage_area = $dh_prop->drainage_area");
       $translated = TRUE;
     break;
+    case 'wsp_flowby':
     case 'hydroImpSmall':
       $translated = TRUE;
-      error_log("Processors of hydroImpSmall = " . get_class($om_comp->processors->storage_stage_area));
+      error_log("Simple Translation supported for $om_comp->object_class");
     break;
   
   }
   foreach ($default_subprops as $thisprop) {
     if (property_exists($om_comp, $thisprop['propname'])) {
-      if ($om_comp->object_class == 'hydroImpSmall') {
-        error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
-      }
+      error_log("Setting $thisprop[propname] to " . $om_comp->{$thisprop['propname']});
       $dh_prop->{$thisprop['propname']} = $om_comp->{$thisprop['propname']};
     }
     // what if the default_subprop is a subcomponent, like a dataMatrix?
