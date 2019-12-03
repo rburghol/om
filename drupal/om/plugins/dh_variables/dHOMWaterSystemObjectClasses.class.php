@@ -152,7 +152,7 @@ function om_formatCFB(&$form, $entity) {
     '#type' => 'fieldset',
     '#title' => 'Conditional Alternate MIF',
     '#collapsible' => TRUE,
-    '#collapsed' => $entity->enable_cfb->propvalue > 0 ? TRUE : FALSE,
+    '#collapsed' => $entity->enable_cfb->propvalue > 0 ? FALSE : TRUE,
   );
   $form['cfb']['enable_cfb'] = $form['enable_cfb'];
   $form['cfb']['cfb_condition'] = $form['cfb_condition'];
