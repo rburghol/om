@@ -155,8 +155,11 @@ function om_formatCFB(&$form, $entity) {
     '#collapsed' => $entity->enable_cfb->propvalue > 0 ? FALSE : TRUE,
   );
   $form['cfb']['enable_cfb'] = $form['enable_cfb'];
-  $form['cfb']['cfb_condition'] = $form['cfb_condition'];
   $form['cfb']['cfb_var'] = $form['cfb_var'];
+  $form['cfb']['cfb_var']['#prefix'] = '<table><tr><td>Set MIF to ';
+  $form['cfb']['cfb_condition'] = $form['cfb_condition'];
+  $form['cfb']['cfb_condition']['#prefix'] = 'if ';
+  $form['cfb']['cfb_condition']['#suffix'] = ' calculated flow-by </td></tr></table>';
   unset($form['cfb_var']);
   unset($form['cfb_condition']);
   unset($form['enable_cfb']);
@@ -205,7 +208,6 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
       'cfb_var' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propvalue_default' => 0,
         'propname' => 'cfb_var',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
