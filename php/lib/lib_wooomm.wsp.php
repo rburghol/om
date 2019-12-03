@@ -1,10 +1,10 @@
 <?php
 
-//**************************************
-//*** lib_wooomm.wsp.php            ****
-//*** commonwealth of virginia      ****
-//*** water supply planning objects ****
-//**************************************
+// **************************************
+// *** lib_wooomm.wsp.php            ****
+// *** commonwealth of virginia      ****
+// *** water supply planning objects ****
+// **************************************
 
 
 if (!class_exists('modelObject')) {
