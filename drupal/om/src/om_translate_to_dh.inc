@@ -111,7 +111,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     break;
     case 'wsp_1tierflowby':
       $dh_prop->keycol1 = $om_comp->tier_var; // different naming convention since OM is not subclass of matrix
-      $in = $om_comp->rule_matrix->matrix;
+      $in = $om_comp->rule_matrix->matrix_rowcol;
       array_walk(
         $in, 
         function(&$item, $key) {
