@@ -146,7 +146,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
 }
 
 // ## Special function for use by tiered and simple flowby vars
-public function formatCFB(&$form, $entity) {
+public function om_formatCFB(&$form, $entity) {
   // combine into fieldset
   $form['cfb'] = array(
     '#type' => 'fieldset',
@@ -241,7 +241,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['enable_cfb']['#weight'] = -5;
     $form['cfb_condition']['#weight'] = -4;
     $form['cfb_var']['#weight'] = -3;
-    $this->formatCFB($form, $entity);
+    om_formatCFB($form, $entity);
   }
   
 }
@@ -324,7 +324,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     $form['enable_cfb']['#weight'] = -5;
     $form['cfb_condition']['#weight'] = -4;
     $form['cfb_var']['#weight'] = -3;
-    $this->formatCFB($form, $entity);
+    om_formatCFB($form, $entity);
   }
   
   public function tableDefault($entity) {
