@@ -157,7 +157,10 @@ function om_formatCFB(&$form, $entity) {
   $form['cfb']['enable_cfb'] = $form['enable_cfb'];
   $form['cfb']['cfb_var'] = $form['cfb_var'];
   $form['cfb']['cfb_var']['#prefix'] = '<table><tr><td>Set MIF to ';
+  $form['cfb']['cfb_var']['#suffix'] = '';
+  $form['cfb']['cfb_var']['#title'] = '';
   $form['cfb']['cfb_condition'] = $form['cfb_condition'];
+  $form['cfb']['cfb_condition']['#title'] = '';
   $form['cfb']['cfb_condition']['#prefix'] = 'if ';
   $form['cfb']['cfb_condition']['#suffix'] = ' calculated flow-by </td></tr></table>';
   unset($form['cfb_var']);
