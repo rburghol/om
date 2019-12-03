@@ -640,7 +640,8 @@ class wsp_1tierflowby extends wsp_flowby {
    var $enable_cfb = 0; // cfb = Conditional Flow By (like, the calculated flowby OR inflow whichever is less
    var $cfb_condition = 'lt';
    var $cfb_var = '';
-   var $tier_var = '';
+   var $tier_var = ''; // equivalent to lukey1 in matrix
+   var $lutype1 = 2;
    var $flowby_value = 0.0;
    var $flowby_eqn = 0.0;
    var $name = 'flowby';
@@ -706,8 +707,8 @@ class wsp_1tierflowby extends wsp_flowby {
       $this->rule_matrix->numcols = 2;
       $this->rule_matrix->fixed_cols = true;
       $this->rule_matrix->valuetype = 1; // 1 column lookup (col & row)
-      $this->rule_matrix->keycol1 = $this->cfb_var; // key for 1st lookup variable
-      $this->rule_matrix->lutype1 = 2; // lookup type - stair step
+      $this->rule_matrix->keycol1 = $this->tier_var; // key for 1st lookup variable
+      $this->rule_matrix->lutype1 = $this->lutype1; // lookup type, default is - stair step
       // add a row for the header line
       if ( !is_array($this->matrix) or (count($this->matrix) == 0)) {
          $this->matrix = array(0,0);
@@ -798,29 +799,41 @@ class wsp_1tierflowby extends wsp_flowby {
    
    function setProp($propname, $propvalue, $view = '') {
      
-     if ( ($propname == 'matrix') ) {
-       // handle calls to set the matrix on this object
-       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
-       //$this->matrix = array('storage','stage','surface_area',0,0,0);
-       // check for a valid json object, transform to array
-       switch ($view) {
-         case 'json-1d':
-         $raw_json = $propvalue;
-         $propvalue = json_decode($propvalue, TRUE);
-         if (is_array($propvalue)) {
-           error_log("setProp() flowby Array located, handling " . print_r($propvalue,1));
-           $this->matrix = $propvalue;
-         } else {
-           error_log("JSON decode failed wih $propvalue for $raw_json");
+     switch ($propname) {
+       case 'matrix':
+         // handle calls to set the matrix on this object
+         // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
+         //$this->matrix = array('storage','stage','surface_area',0,0,0);
+         // check for a valid json object, transform to array
+         switch ($view) {
+           case 'json-1d':
+           $raw_json = $propvalue;
+           $propvalue = json_decode($propvalue, TRUE);
+           if (is_array($propvalue)) {
+             //error_log("setProp() flowby Array located, handling " . print_r($propvalue,1));
+             $this->matrix = $propvalue;
+           } else {
+             error_log("JSON decode failed wih $propvalue for $raw_json");
+           }
+           break;
+           
+           default:
+           parent::setProp($propname, $propvalue, $view);
+           break;
          }
-         break;
-         
-         default:
+       break;
+       
+       case 'lutype1':
+         $this->lutype1 = $propvalue;
+       break;
+       
+       case 'keycol1':
+         $this->tier_var = $propvalue;
+       break;
+       
+       default:
          parent::setProp($propname, $propvalue, $view);
-         break;
-       }
-     } else {
-       parent::setProp($propname, $propvalue, $view);
+       break;
      }
    }
    
