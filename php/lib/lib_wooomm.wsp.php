@@ -715,6 +715,7 @@ class wsp_1tierflowby extends wsp_flowby {
       }
       $this->rule_matrix->numrows = count($this->matrix) / 2.0;
       $this->rule_matrix->matrix = $this->matrix;// map the text mo to a numerical description
+      $this->rule_matrix->formatMatrix();
       $this->addOperator('rule_matrix', $this->rule_matrix, 0);
    }
    
