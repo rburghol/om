@@ -836,7 +836,33 @@ class wsp_1tierflowby extends wsp_flowby {
        break;
      }
    }
-   
+
+   function getProp($propname, $view = '') {
+      //error_log("DataMatrix Property requested: $propname, $view ");
+      $localviews = array('matrix', 'matrix_formatted', 'csv');
+      if (!in_array($view, $localviews)) {
+         return parent::getProp($propname, $view);
+      } else {
+         switch ($view) {
+            case 'matrix':
+               $this->rule_matrix->formatMatrix();
+               //error_log("Returning: " . print_r($this->matrix_formatted,1));
+               return $this->rule_matrix->matrix_formatted;
+            break;
+            case 'matrix_formatted':
+               $this->rule_matrix->formatMatrix();
+               //error_log("Returning: " . print_r($this->matrix_formatted,1));
+               return $this->rule_matrix->matrix_formatted;
+            break;
+				case 'csv':
+               $this->rule_matrix->formatMatrix();
+               //error_log("calling showCWSInfoView () ");
+               //return array2Delimited($this->matrix_rowcol, ',', 1,'unix');
+               return array2Delimited($this->rule_matrix->matrix_formatted, ',', 1,'unix');
+				break;
+         }
+      }
+   }
 }
 
 
