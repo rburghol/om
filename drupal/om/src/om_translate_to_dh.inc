@@ -102,6 +102,24 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
+        error_log("Translating matrix to tablefield" . print_r((array)$om_comp,1));
+        error_log("Translating matrix to tablefield" . print_r($in,1));
+        error_log("Translating matrix to tablefield" . print_r($in,1));
+        $plugin->setCSVTableField($dh_prop, $in);
+      }
+      $translated = TRUE;
+    break;
+    case 'wsp_1tierflowby':
+      $dh_prop->keycol1 = $om_comp->tier_var; // different naming convention since OM is not subclass of matrix
+      $in = $om_comp->rule_matrix->matrix_rowcol;
+      array_walk(
+        $in, 
+        function(&$item, $key) {
+          $item = (array)$item;
+        }
+      );
+      if (method_exists($plugin, 'setCSVTableField')) {
+        error_log("Translating matrix to tablefield" . print_r((array)$om_comp,1));
         error_log("Translating matrix to tablefield" . print_r($in,1));
         $plugin->setCSVTableField($dh_prop, $in);
       }

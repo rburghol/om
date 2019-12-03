@@ -1312,6 +1312,20 @@ class dHOMEquation extends dHOMSubComp {
   public function applyEntityAttribute($property, $value) {
     $property->propcode = $value;
   }
+  /*
+  public function attachNamedForm(&$form, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
+    // create a blank to house the original form info
+    $pform = array();
+    $this->formRowEdit($pform, $entity);
+    // harvest pieces I want to keep
+    $mname = $this->handleFormPropname($entity->propname);
+    $form[$mname] = $pform['propcode'];
+  }
+  */
 }
 
 class dHOMStatistic extends dHOMSubComp {
@@ -1708,7 +1722,6 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'vardesc' => 'Variable to use for row lookup if 1-d or 2-d lookup type.',
         'varname' => 'Row Key',
-        //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
       'keycol2' => array(

@@ -16,6 +16,9 @@ ln -s /opt/model/om-dev/php/lib/lib_hydrology.php /var/www/html/lib/lib_hydrolog
 rm /var/www/html/lib/lib_wooomm.php
 ln -s /opt/model/om-dev/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
 rm /var/www/html/lib/lib_wooomm.cbp.php
+ln -s /opt/model/om-dev/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
+rm /var/www/html/lib/lib_wooomm.wsp.php
+ln -s /opt/model/om-dev/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
 rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
@@ -50,6 +53,8 @@ rm /var/www/html/lib/lib_wooomm.php
 ln -s /opt/model/om/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
 rm /var/www/html/lib/lib_wooomm.cbp.php
 ln -s /opt/model/om/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
+rm /var/www/html/lib/lib_wooomm.wsp.php
+ln -s /opt/model/om/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
 rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php

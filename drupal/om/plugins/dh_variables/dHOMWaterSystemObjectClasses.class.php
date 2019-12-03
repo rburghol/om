@@ -145,4 +145,207 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   }
 }
 
+// ## Special function for use by tiered and simple flowby vars
+function om_formatCFB(&$form, $entity) {
+  // combine into fieldset
+  $form['cfb'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Conditional Alternate MIF',
+    '#collapsible' => TRUE,
+    '#collapsed' => $entity->enable_cfb->propvalue > 0 ? FALSE : TRUE,
+  );
+  $form['cfb']['enable_cfb'] = $form['enable_cfb'];
+  $form['cfb']['cfb_var'] = $form['cfb_var'];
+  $form['cfb']['cfb_var']['#prefix'] = '<table><tr><td>Set MIF to ';
+  $form['cfb']['cfb_var']['#suffix'] = '';
+  $form['cfb']['cfb_var']['#title'] = '';
+  $form['cfb']['cfb_condition'] = $form['cfb_condition'];
+  $form['cfb']['cfb_condition']['#title'] = '';
+  $form['cfb']['cfb_condition']['#prefix'] = 'if ';
+  $form['cfb']['cfb_condition']['#suffix'] = ' Base Flowby/Release </td></tr></table>';
+  unset($form['cfb_var']);
+  unset($form['cfb_condition']);
+  unset($form['enable_cfb']);
+}
+
+class dHOMWaterSystemFlowBy extends dHOMSubComp {
+  var $object_class = 'wsp_flowby';
+  var $attach_method = 'contained';
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propvalue', 'propcode'), parent::hiddenFields());
+    return $hidden;
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    $defaults = array(
+      'flowby_eqn' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => '0.0',
+        'propvalue_default' => 0.0,
+        'propname' => 'flowby_eqn',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Base Flowby/Release',
+        'vardesc' => 'Base equation for calculating flowby/release.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ), 
+      'enable_cfb' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'boolean',
+        'propname' => 'enable_cfb',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Enable Conditional Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_var' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Set Flowby/Release to:',
+        'vardesc' => 'Variable to compare to select alternate for flowby/release.',
+        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+      ),
+      'cfb_condition' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_condition',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'When',
+        'vardesc' => 'As compared to calculated flowby in base flowby equation.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    return $defaults;
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    
+    $form['cfb_condition']['#type'] = 'select';
+    $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
+    
+    // orders
+    $form['varid']['#weight'] = -10;
+    $form['propname']['#weight'] = -9;
+    $form['flowby_eqn']['#weight'] = -4;
+    om_formatCFB($form, $entity);
+    $form['cfb']['#weight'] = -3;
+  }
+  
+}
+
+class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
+  var $object_class = 'wsp_1tierflowby';
+  var $attach_method = 'contained';
+  
+  public function hiddenFields() {
+    $hidden = array_merge(array('propvalue', 'propcode'), parent::hiddenFields());
+    return $hidden;
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    // @tbd: 
+    // - historic_monthly_pct
+    // - historic_annual 
+    // - consumption
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all assumed to be intakes not wells
+    $defaults = array(
+      'enable_cfb' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'boolean',
+        'propname' => 'enable_cfb',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Enable Conditional Variable',
+        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'cfb_var' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'propname' => 'cfb_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Set Flowby/Release to:',
+        'vardesc' => 'Variable to compare to select alternate for flowby/release.',
+        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+      ),
+      'cfb_condition' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'datatype' => 'numeric',
+        'propname' => 'cfb_condition',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'When',
+        'vardesc' => 'As compared to calculated flowby in base flowby equation.',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    ) + $defaults;
+    //dpm($defaults,'defs');
+    $defaults['lutype1']['propvalue_default'] = 2;
+    // don't include these as editable for now...
+    $defaults['lutype2']['embed'] = FALSE;
+    $defaults['keycol2']['embed'] = FALSE;
+    return $defaults;
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    // these are overridden in the parent, so we have to unset them here
+    unset($form['lutype2']);
+    unset($form['keycol2']);
+    
+    $form['cfb_condition']['#type'] = 'select';
+    $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
+    
+    // orders
+    $form['varid']['#weight'] = -10;
+    $form['propname']['#weight'] = -9;
+    $form['keycol1']['#weight'] = -8;
+    $form['lutype1']['#weight'] = -7;
+    $form['field_dh_matrix']['#weight'] = -6;
+    $form['enable_cfb']['#weight'] = -5;
+    $form['cfb_var']['#weight'] = -4;
+    $form['cfb_condition']['#weight'] = -3;
+    
+    om_formatCFB($form, $entity);
+    $form['cfb']['#weight'] = -5;
+  }
+  
+  public function tableDefault($entity) {
+    // Returns associative array keyed table (like is used in OM)
+    // This format is not used by Drupal however, so a translation 
+    //   with tablefield_parse_assoc() is usually in order (such as is done in load)
+    // set up defaults - we can sub-class this to handle each version of the model land use
+    // This version is based on the Chesapeake Bay Watershed Phase 5.3.2 model land uses
+    // this brings in an associative array keyed as $table[$luname] = array( $year => $area )
+    $table = array();
+    $table[] = array('xTrigger', 'xMIF');
+    $table[] = array(0,0);
+    return $table;
+  }
+}
 ?>
