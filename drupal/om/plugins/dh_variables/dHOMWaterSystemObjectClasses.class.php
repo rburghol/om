@@ -146,7 +146,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
 }
 
 // ## Special function for use by tiered and simple flowby vars
-public function om_formatCFB(&$form, $entity) {
+function om_formatCFB(&$form, $entity) {
   // combine into fieldset
   $form['cfb'] = array(
     '#type' => 'fieldset',
