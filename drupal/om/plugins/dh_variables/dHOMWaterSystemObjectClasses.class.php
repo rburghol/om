@@ -231,7 +231,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     // - historic_monthly_pct
     // - historic_annual 
     // - consumption
-    // - surface_mgd : an equation that always equals wd_mgd, since these are all ssumed to be intakes not wells
+    // - surface_mgd : an equation that always equals wd_mgd, since these are all assumed to be intakes not wells
     $defaults = array(
       'enable_cfb' => array(
         'entity_type' => $entity->entityType(),
