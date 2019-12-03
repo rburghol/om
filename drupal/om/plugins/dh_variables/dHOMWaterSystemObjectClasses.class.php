@@ -150,6 +150,9 @@ function om_formatCFB(&$form, $entity) {
   // combine into fieldset
   $form['cfb'] = array(
     '#type' => 'fieldset',
+    '#title' => 'Material Label Range',
+    '#collapsible' => TRUE,
+    '#collapsed' => $entity->enable_cfb > 0 ? TRUE : FALSE,
   );
   $form['cfb']['enable_cfb'] = $form['enable_cfb'];
   $form['cfb']['cfb_condition'] = $form['cfb_condition'];
@@ -240,7 +243,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['flowby_eqn']['#weight'] = -4;
     om_formatCFB($form, $entity);
     $form['cfb']['#weight'] = -3;
-    dpm($form,'form');
+    dpm($entity,'entity');
   }
   
 }
