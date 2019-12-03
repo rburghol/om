@@ -219,6 +219,11 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['keycol2']['#type'] = 'hidden';
     $form['lutype2']['#type'] = 'hidden';
     
+    $form['cfb_condition']['#type'] = 'select';
+    $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
+    
+  }
+    
   }
   
 }
