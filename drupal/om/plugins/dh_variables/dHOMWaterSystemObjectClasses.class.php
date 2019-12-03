@@ -226,6 +226,18 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     $form['enable_cfb']['#weight'] = -5;
     $form['cfb_condition']['#weight'] = -4;
     $form['cfb_var']['#weight'] = -3;
+    
+    // combine into fieldset
+    
+    $form['cfb'] = array(
+      '#type' => 'fieldset',
+    );
+    $form['cfb']['enable_cfb'] = $form['enable_cfb'];
+    $form['cfb']['cfb_condition'] = $form['cfb_condition'];
+    $form['cfb']['cfb_var'] = $form['cfb_var'];
+    unset($form['cfb_var']);
+    unset($form['cfb_condition']);
+    unset($form['enable_cfb']);
   }
   
 }
