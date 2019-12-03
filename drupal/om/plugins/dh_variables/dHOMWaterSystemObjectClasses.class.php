@@ -194,8 +194,8 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'If/Else Variable',
-        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+        'vardesc' => 'Variable to compare to select alternate for flowby/release.',
+        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
       'cfb_condition' => array(
         'entity_type' => $entity->entityType(),
@@ -205,13 +205,20 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'propname' => 'cfb_condition',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'If/Else Variable',
-        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'varname' => 'When',
+        'vardesc' => 'Condition for comparison.',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults;
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    $form['keycol2']['#type'] = 'hidden';
+    $form['lutype2']['#type'] = 'hidden';
+    
   }
   
 }
@@ -254,8 +261,8 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'If/Else Variable',
-        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+        'vardesc' => 'Variable to compare to select alternate for flowby/release.',
+        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
       'cfb_condition' => array(
         'entity_type' => $entity->entityType(),
@@ -265,8 +272,8 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
         'propname' => 'cfb_condition',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'If',
-        'vardesc' => 'Compare to calculated flow-by.',
+        'varname' => 'When',
+        'vardesc' => 'Condition for comparison.',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
