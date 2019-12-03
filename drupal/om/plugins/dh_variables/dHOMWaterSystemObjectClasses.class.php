@@ -162,7 +162,7 @@ function om_formatCFB(&$form, $entity) {
   $form['cfb']['cfb_condition'] = $form['cfb_condition'];
   $form['cfb']['cfb_condition']['#title'] = '';
   $form['cfb']['cfb_condition']['#prefix'] = 'if ';
-  $form['cfb']['cfb_condition']['#suffix'] = ' calculated flow-by </td></tr></table>';
+  $form['cfb']['cfb_condition']['#suffix'] = ' Base Flowby/Release </td></tr></table>';
   unset($form['cfb_var']);
   unset($form['cfb_condition']);
   unset($form['enable_cfb']);
