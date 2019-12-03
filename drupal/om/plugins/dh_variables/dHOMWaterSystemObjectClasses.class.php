@@ -313,8 +313,8 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     parent::formRowEdit($form, $entity);
     $form['keycol2']['#type'] = 'hidden';
     $form['lutype2']['#type'] = 'hidden';
-    //unset($form['lutype2']);
-    //unset($form['keycol2']);
+    unset($form['lutype2']);
+    unset($form['keycol2']);
     
     $form['cfb_condition']['#type'] = 'select';
     $form['cfb_condition']['#options'] = array('lt'=>'<', 'gt'=>'>');
