@@ -178,7 +178,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'propcode_default' => NULL,
         'propvalue_default' => 0,
         'datatype' => 'boolean',
-        'propname' => 'cfb_var',
+        'propname' => 'enable_cfb',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Enable Conditional Variable',
@@ -231,6 +231,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
     
     $form['cfb'] = array(
       '#type' => 'fieldset',
+      '#weight' => -5,
     );
     $form['cfb']['enable_cfb'] = $form['enable_cfb'];
     $form['cfb']['cfb_condition'] = $form['cfb_condition'];
@@ -264,7 +265,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
         'propcode_default' => NULL,
         'propvalue_default' => 0,
         'datatype' => 'boolean',
-        'propname' => 'cfb_var',
+        'propname' => 'enable_cfb',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Enable Conditional Variable',
