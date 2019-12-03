@@ -278,6 +278,7 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
       ),
     ) + $defaults;
     //dpm($defaults,'defs');
+    $defaults['lutype2']['propvalue_default'] = 2;
     return $defaults;
   }
   
