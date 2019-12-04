@@ -179,7 +179,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'lutype1_default' => 2,
         'keycol1_default' => 'run_mode',
         'vardesc' => 'Whether or not to broadcast calculated return flow to parent.',
-        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+        'varid' => dh_varkey2varid('om_class_DataMatrix', TRUE),
       ), 
     ) + $defaults;
     //dpm($defaults,'defs');
@@ -202,6 +202,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         if (isset($defaults['ps_enabled']['keycol1_default'])) {
           $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
         }
+        $entity->ps_enabled->save();
       }
     }
   }
