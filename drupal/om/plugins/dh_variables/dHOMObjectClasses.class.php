@@ -1708,7 +1708,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $entity->bundle = $this->default_bundle;
     $datatable = $this->tableDefault($entity);
     $this->setCSVTableField($entity, $datatable);
-    //dpm($entity, 'entityDefaults');
+    dpm($entity, 'entityDefaults');
   }
   
   public function getDefaults($entity, &$defaults = array()) {
