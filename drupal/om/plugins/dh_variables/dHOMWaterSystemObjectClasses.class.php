@@ -190,6 +190,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
     $prop = parent::insureProperty($entity, $thisvar);
     $defaults = $this->getDefaults($entity);
     if ($thisvar['propname'] == 'ps_enabled') {
+      //@todo: this code fails here because the is_new is FALSE, since it is already saved by the parent routine
       dpm($entity,'is_new setting defaults insureProperty called');
       if (is_object($prop) and $prop->is_new) {
         $plugin = dh_variables_getPlugins($prop);

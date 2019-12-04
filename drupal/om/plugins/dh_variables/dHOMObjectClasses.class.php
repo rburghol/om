@@ -1810,9 +1810,13 @@ class dHOMDataMatrix extends dHOMSubComp {
     // Returns associative array keyed table (like is used in OM)
     // This format is not used by Drupal however, so a translation 
     //   with tablefield_parse_assoc() is usually in order (such as is done in load)
-    $table = array();
-    $table[] = array('col1', 'col2', 'col3');
-    $table[] = array('','','');
+    if (isset($entity->field_dh_matrix_default)) {
+      $table = $entity->field_dh_matrix_default;
+    } else {
+      $table = array();
+      $table[] = array('col1', 'col2', 'col3');
+      $table[] = array('','','');
+    }
     return $table;
   }
   
