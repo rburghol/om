@@ -139,9 +139,68 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'Estimated Exempt Value.',
         'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ), 
+      'consumption' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => '0.25',
+        'propvalue_default' => 0.25,
+        'propname' => 'vwp_exempt_mgd',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Consumption (0.0-1.0)',
+        'vardesc' => 'Consumptive fraction of withdrawal for calculating return flow.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
+      'discharge_mgd' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => 'ps_enabled * (1.0 - consumption) * wd_mgd',
+        'propvalue_default' => 0.0,
+        'propname' => 'vwp_exempt_mgd',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Consumption (0.0-1.0)',
+        'vardesc' => 'Consumptive fraction of withdrawal for calculating return flow.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
+      'ps_enabled' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'ps_enabled',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'PS Enabled? (0/1)',
+        'field_dh_matrix_default' => array(
+          0 => array(0,0),
+          1 => array(1,0),
+          2 => array(2,0),
+          3 => array(3,1),
+          100 => array(100,1),
+        ),
+        'lutype1_default' => 2,
+        'keycol1_default' => 'run_mode',
+        'vardesc' => 'Whether or not to broadcast calculated return flow to parent.',
+        'varid' => dh_varkey2varid('om_class_Equation', TRUE),
+      ), 
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults;
+  }
+  
+  public function addAttachedProperties(&$form, &$entity) {
+    parent::addAttachedProperties($form, $entity);
+    $defaults = $this->getDefaults($entity);
+    if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
+      $plugin = dh_variables_getPlugins($entity->ps_enabled);
+      if (isset($defaults['ps_enabled']['field_dh_matrix_default'])) {
+        $plugin->setCSVTableField($entity->ps_enabled, $defaults['ps_enabled']['field_dh_matrix_default']);
+      }
+      if (isset($defaults['ps_enabled']['lutype1_default'])) {
+        $entity->ps_enabled->lutype1 = $defaults['ps_enabled']['lutype1_default'];
+      }
+      if (isset($defaults['ps_enabled']['keycol1_default'])) {
+        $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
+      }
+    }
   }
 }
 
