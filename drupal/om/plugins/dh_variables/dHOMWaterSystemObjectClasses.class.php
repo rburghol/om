@@ -189,8 +189,8 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   public function insureProperty($entity, $thisvar) {
     parent::insureProperty($entity, $thisvar);
     $defaults = $this->getDefaults($entity);
-    dpm($entity,'insureProperty called');
     if ($thisvar == 'ps_enabled') {
+      dpm($entity,'setting defaults insureProperty called');
       if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
         $plugin = dh_variables_getPlugins($entity->ps_enabled);
         if (isset($defaults['ps_enabled']['field_dh_matrix_default'])) {
@@ -202,6 +202,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         if (isset($defaults['ps_enabled']['keycol1_default'])) {
           $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
         }
+        dpm,($entity->ps_enabled,'ps_enable');
         $entity->ps_enabled->save();
       }
     }
