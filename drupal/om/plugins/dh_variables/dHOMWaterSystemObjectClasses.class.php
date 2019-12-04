@@ -202,7 +202,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         if (isset($defaults['ps_enabled']['keycol1_default'])) {
           $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
         }
-        dpm,($entity->ps_enabled,'ps_enable');
+        dpm($entity->ps_enabled,'ps_enable');
         $entity->ps_enabled->save();
       }
     }
