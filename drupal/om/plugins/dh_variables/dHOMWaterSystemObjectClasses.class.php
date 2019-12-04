@@ -186,20 +186,22 @@ class dHOMWaterSystemObject extends dHOMModelElement {
     return $defaults; 
   }
   
-  public function addAttachedProperties(&$form, &$entity) {
-    parent::addAttachedProperties($form, $entity);
+  public function insureProperty($entity, $thisvar) {
+    parent::insureProperty($entity, $thisvar);
     $defaults = $this->getDefaults($entity);
-    dpm($entity,'addAttachedProperties called');
-    if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
-      $plugin = dh_variables_getPlugins($entity->ps_enabled);
-      if (isset($defaults['ps_enabled']['field_dh_matrix_default'])) {
-        $plugin->setCSVTableField($entity->ps_enabled, $defaults['ps_enabled']['field_dh_matrix_default']);
-      }
-      if (isset($defaults['ps_enabled']['lutype1_default'])) {
-        $entity->ps_enabled->lutype1 = $defaults['ps_enabled']['lutype1_default'];
-      }
-      if (isset($defaults['ps_enabled']['keycol1_default'])) {
-        $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
+    dpm($entity,'insureProperty called');
+    if ($thisvar == 'ps_enabled') {
+      if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
+        $plugin = dh_variables_getPlugins($entity->ps_enabled);
+        if (isset($defaults['ps_enabled']['field_dh_matrix_default'])) {
+          $plugin->setCSVTableField($entity->ps_enabled, $defaults['ps_enabled']['field_dh_matrix_default']);
+        }
+        if (isset($defaults['ps_enabled']['lutype1_default'])) {
+          $entity->ps_enabled->lutype1 = $defaults['ps_enabled']['lutype1_default'];
+        }
+        if (isset($defaults['ps_enabled']['keycol1_default'])) {
+          $entity->ps_enabled->keycol1 = $defaults['ps_enabled']['keycol1_default'];
+        }
       }
     }
   }
