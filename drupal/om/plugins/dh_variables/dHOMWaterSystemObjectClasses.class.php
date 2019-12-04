@@ -186,7 +186,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
     return $defaults; 
   }
   
-  public function insureProperty($entity, $thisvar) {
+  public function insurePropertyTEST($entity, $thisvar) {
     $prop = parent::insureProperty($entity, $thisvar);
     $defaults = $this->getDefaults($entity);
     if ($thisvar['propname'] == 'ps_enabled') {
