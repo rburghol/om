@@ -1708,7 +1708,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $entity->bundle = $this->default_bundle;
     $datatable = $this->tableDefault($entity);
     $this->setCSVTableField($entity, $datatable);
-    dpm($entity, 'entityDefaults');
+    //dpm($entity, 'entityDefaults');
   }
   
   public function getDefaults($entity, &$defaults = array()) {
@@ -1810,7 +1810,8 @@ class dHOMDataMatrix extends dHOMSubComp {
     // Returns associative array keyed table (like is used in OM)
     // This format is not used by Drupal however, so a translation 
     //   with tablefield_parse_assoc() is usually in order (such as is done in load)
-    dpm($entity,'setting table default');
+    //dpm($entity,'setting table default');
+    // @todo: why doesn't this get called when we set this default in an attached getDefaults() property array?
     if (isset($entity->field_dh_matrix_default)) {
       $table = $entity->field_dh_matrix_default;
     } else {
