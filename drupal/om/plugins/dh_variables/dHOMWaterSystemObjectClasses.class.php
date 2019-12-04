@@ -183,10 +183,10 @@ class dHOMWaterSystemObject extends dHOMModelElement {
       ), 
     ) + $defaults;
     //dpm($defaults,'defs');
-    return $defaults;
+    return $defaults; 
   }
   
-  public function addAttachedProperties(&$form, &$entity) {
+  public function addAttachedPropertiesTEST(&$form, &$entity) {
     parent::addAttachedProperties($form, $entity);
     $defaults = $this->getDefaults($entity);
     if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
