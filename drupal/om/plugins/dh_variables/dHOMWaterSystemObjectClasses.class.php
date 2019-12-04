@@ -189,6 +189,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   public function addAttachedProperties(&$form, &$entity) {
     parent::addAttachedProperties($form, $entity);
     $defaults = $this->getDefaults($entity);
+    dpm($entity,'addAttachedProperties called');
     if (is_object($entity->ps_enabled) and $entity->ps_enabled->is_new) {
       $plugin = dh_variables_getPlugins($entity->ps_enabled);
       if (isset($defaults['ps_enabled']['field_dh_matrix_default'])) {
