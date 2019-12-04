@@ -161,6 +161,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'Consumptive fraction of withdrawal for calculating return flow.',
         'varid' => dh_varkey2varid('om_class_Equation', TRUE),
       ), 
+      /*
       'ps_enabled' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -181,6 +182,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'vardesc' => 'Whether or not to broadcast calculated return flow to parent.',
         'varid' => dh_varkey2varid('om_class_DataMatrix', TRUE),
       ), 
+      */
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults; 
