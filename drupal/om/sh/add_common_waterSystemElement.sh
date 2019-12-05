@@ -1,13 +1,18 @@
 #!/bin/sh
 
-#filename='/var/www/html/files/vahydro/facs-copy-template.txt'
-#filename='/var/www/html/files/vahydro/facs-copy-template-short.txt'
-#filename='/var/www/html/files/vahydro/facs-copy-template-remain.txt'
+pid=$1
+template=4988636
 
-filename=$1
-for i in `cat $filename`; do
-  drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties 4988636 dh_properties $i ps_enabled;
-  drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties 4988636 dh_properties $i fac_demand_mgy;   
-  drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties 4988636 dh_properties $i wd_mgd;   
-  drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties 4988636 dh_properties $i discharge_mgd; 
-done
+if [ $# -lt 1 ]; then
+  echo 1>&2 "Usage: add_common_waterSystemElement.sh pid [template$template]"
+  exit 2
+fi 
+
+if [ $# -gt 1 ]; then
+  template=$2
+fi 
+
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid ps_enabled;
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid fac_demand_mgy;   
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid wd_mgd;   
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_mgd; 
