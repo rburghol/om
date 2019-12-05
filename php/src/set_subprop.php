@@ -41,7 +41,7 @@ $thisobject = $loadres['object'];
 if (is_object($thisobject)) {
   // this is a subcomp, so add if need be
   error_log("Trying to set $comp_name -> $subprop_name = $subprop_value \n");
-  if ( $overwrite or (!isset($thisobject->processors[$comp_name])) ) {
+  if ( $overwrite or (!isset($thisobject->processors[$comp_name])) or (get_class($thisobject->processors[$comp_name]) <> $comp_class) ) {
     if (!class_exists($comp_class)) {
       error_log("Cannot find object_class = $comp_class -- skipping.");
       die;
