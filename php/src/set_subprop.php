@@ -64,7 +64,7 @@ if (is_object($thisobject)) {
     }
   }
 
-  if (isset($thisobject->processors[$comp_name])) {
+  if (isset($thisobject->processors[$comp_name]) and ($comp_name <> $prop_name) ) {
     error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name  = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
     // the setProp() method should be coded to handle all of these

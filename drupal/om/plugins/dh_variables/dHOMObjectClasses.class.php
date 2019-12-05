@@ -1212,6 +1212,10 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     parent::setAllRemoteProperties($entity, $elid, $path);
     //dpm($path, 'original path to setAllRemoteProperties()');
     //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+    // create the base property if needed.
+    $ppath = $path;
+    array_unshift($ppath, $entity->propname);
+    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     if (property_exists($entity, 'proptext')) {
       array_unshift($path, 'description');
       $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
