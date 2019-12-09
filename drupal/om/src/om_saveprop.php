@@ -9,11 +9,13 @@ while ($arg = drush_shift()) {
 
 // Is single command line arg?
 $vars = array();
+$query_type = $args[0];
 if (count($args) >= 4) {
-  $query_type = $args[0];
   $vars['entity_type'] = $args[1];
   $vars['featureid'] = $args[2];
   $vars['propname'] = $args[3];
+} elseif ($query_type == 'pid') {
+  $vars['pid'] = $args[1];
 } else {
   error_log("Usage: php om_saveprop.php query_type entity_type featureid propname");
   error_log("Note: 'file' is not yet enabled");
@@ -21,18 +23,26 @@ if (count($args) >= 4) {
   die;
 }
 
-if ($query_type <> 'cmd') {
-  error_log("Only cmd mode enabled");
+if (!in_array($query_type, array('cmd', 'pid') )) {
+  error_log("Only cmd & pid mode enabled");
   die;
 }
 
 $q = "select pid from {dh_properties} ";
-$q .= " where propname = :propname ";
-$q .= " and entity_type = :entity_type ";
-if ($vars['featureid'] <> 'all') {
-  $q .= " and featureid = :featureid ";
-} else {
-  unset($vars['featureid']);
+switch ($query_type) {
+  case 'cmd':
+  $q .= " where propname = :propname ";
+  $q .= " and entity_type = :entity_type ";
+  if ($vars['featureid'] <> 'all') {
+    $q .= " and featureid = :featureid ";
+  } else {
+    unset($vars['featureid']);
+  }
+  break;
+  
+  case 'pid':
+  $q .= " where pid = :pid ";
+  break;
 }
 error_log($q);
 
