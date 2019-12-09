@@ -352,12 +352,14 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   // wait: does this already get done when we save the remote link?
   //$dh_model->set_remote = 0;
   // handle object class settings if specified 
-  om_translate_to_dh($om_object, $dh_model);
-  //error_log("Post save: A: $dh_model->area, DA: $dh_model->drainage_area ");
-  $dh_model->save();
-  // finally, restore the link setting to enable saves from dH to OM if requested.
-  $om_link->propcode = $link_set_remote;
-  $om_link->save();
+  if ($one_proc == 'all') {
+    om_translate_to_dh($om_object, $dh_model);
+    //error_log("Post save: A: $dh_model->area, DA: $dh_model->drainage_area ");
+    $dh_model->save();
+    // finally, restore the link setting to enable saves from dH to OM if requested.
+    $om_link->propcode = $link_set_remote;
+    $om_link->save();
+  }
 }
 
 function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_name = '', $copy_children = 0) {
