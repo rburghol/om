@@ -88,7 +88,7 @@ if (isset($argv[12])) {
       $url_params[$key] = $val;
    }
 }
-print("URL Params submitted: " . print_r($url_params,1) . "\n");
+error_log("URL Params submitted: " . print_r($url_params,1) . "\n");
 if (isset($argv[13])) {
    $debug = $argv[13];
 } else {
@@ -120,13 +120,13 @@ $cbp_listobject->ogis_compliant = 1;
 $cbp_listobject->dbconn = $dbconn;
 $cbp_listobject->adminsetuparray = $adminsetuparray;
 
-print("Run Order Submitted: \n");
-print("   Element List - $elemname \n");
-print("   Run ID - $run_id \n");
-print("   Start date - $startdate \n");
-print("   End date - $enddate \n");
-print("   Sleep Factor - $sleep_factor \n");
-print("   Overwrite? - $force_overwrite \n");
+error_log("Run Order Submitted: \n");
+error_log("   Element List - $elemname \n");
+error_log("   Run ID - $run_id \n");
+error_log("   Start date - $startdate \n");
+error_log("   End date - $enddate \n");
+error_log("   Sleep Factor - $sleep_factor \n");
+error_log("   Overwrite? - $force_overwrite \n");
 
 $run_name = $run_names[$run_id];
 
@@ -156,7 +156,7 @@ switch ($operation) {
    $outlets = array();
    $orders = array_keys($ordered);
    rsort($orders);
-   print_r($ordered);
+   error_log("Ordered: " . print_r($ordered,1) );
    foreach ($orders as $thisorder) {
       foreach ($ordered[$thisorder]['elements'] as $thisel) {
          $outlets[] = array('elementid'=>$thisel, 'elemname' => getElementName($listobject, $thisel));
@@ -194,7 +194,7 @@ switch ($operation) {
    $outlets = $listobject->queryrecords;
    break;
 }
-print("$listobject->querystring \n");
+error_log("$listobject->querystring \n");
 
 // first, clear run dat if need be:
 foreach ($outlets as $thisrec) {
@@ -202,7 +202,7 @@ foreach ($outlets as $thisrec) {
    $now = date('r');
    $recid = $thisrec['elementid'];
    $recname = $thisrec['elemname'];
-   print("$now : Run $thisid / $recname, running $recid \n");
+   error_log("$now : Run $thisid / $recname, running $recid \n");
    
    if ($force_overwrite) {
       if ($force_overwrite == 2) {
