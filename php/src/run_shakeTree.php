@@ -122,6 +122,7 @@ $cbp_listobject->adminsetuparray = $adminsetuparray;
 
 error_log("Run Order Submitted: \n");
 error_log("   Element List - $elemname \n");
+error_log("   Operation Code - $operation \n");
 error_log("   Run ID - $run_id \n");
 error_log("   Start date - $startdate \n");
 error_log("   End date - $enddate \n");
