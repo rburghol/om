@@ -102,9 +102,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
-        error_log("Translating matrix to tablefield" . print_r((array)$om_comp,1));
-        error_log("Translating matrix to tablefield" . print_r($in,1));
-        error_log("Translating matrix to tablefield" . print_r($in,1));
+        //error_log("Translating matrix to tablefield" . print_r((array)$om_comp,1));
+        //error_log("Translating matrix to tablefield" . print_r($in,1));
+        error_log("Translating matrix to tablefield");
         $plugin->setCSVTableField($dh_prop, $in);
       }
       $translated = TRUE;
@@ -119,8 +119,9 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
       );
       if (method_exists($plugin, 'setCSVTableField')) {
-        error_log("Translating matrix to tablefield" . print_r((array)$om_comp,1));
-        error_log("Translating matrix to tablefield" . print_r($in,1));
+        //error_log("Translating 1tierflowby matrix to tablefield" . print_r((array)$om_comp,1));
+        //error_log("Translating matrix to tablefield" . print_r($in,1));
+        error_log("Translating 1tierflowby matrix to tablefield");
         $plugin->setCSVTableField($dh_prop, $in);
       }
       $translated = TRUE;
