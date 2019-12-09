@@ -83,6 +83,7 @@ class waterSupplyElement extends modelContainer {
      if ($this->debug) {
        error_log("Executing timestep on $this->name");
      }
+     error_log("Executing timestep on $this->name");
    }
 }
 
