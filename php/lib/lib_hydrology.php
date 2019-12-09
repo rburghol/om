@@ -2265,7 +2265,8 @@ class modelObject {
     $this->logDebug("Beginning independents \n");
     $this->logDebug($independents);
     $i = 0;
-    $this->debug = 1;
+    $dbc = $this->debug;
+    $this->debug = 0;
     while (count($queue) > 0) {
        $thisdepend = array_shift($queue);
        $pvars = $this->processors[$thisdepend]->vars;
@@ -2363,7 +2364,7 @@ class modelObject {
           }
        }
     }
-    $this->debug = 0;
+    $this->debug = $dbc;
     $hiersort = array_merge($preexec, $execlist, $postexec);
     
     
