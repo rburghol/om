@@ -7155,6 +7155,10 @@ class hydroImpoundment extends hydroObject {
       if ($this->debug) {
          $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
       }
+      # then process calculations
+      $this->execComponents();
+      // we have just executed our children and gotten the results from their broadcasts
+      // now we will execute our local sub-comps to process any data obtained from children via broadcast
       // execute sub-components
       $this->execProcessors();
       
