@@ -9,7 +9,7 @@ $enddate = '2005-12-31';
 $cache_date = '2010-10-18 12:00:00';
 // specify max models to run at a time
 $max_simultaneous = 7;
-$scid = 28;
+$scid = 28; // 37?
 $params = '';
 $delimiter = ',';
 $invars = array();
