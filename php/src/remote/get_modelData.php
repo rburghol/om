@@ -592,7 +592,7 @@ switch ($operation) {
     $run_rec['remote_url'] = $zipurl;
     $run_rec['compressed'] = 1;
   }
-  //print("CMD: $cmd :: Result: $rez <br>/r");
+  error_log("CMD: $cmd :: Result: $rez ");
   if (!empty($run_rec)) {
     $header = implode($delimiter, array_keys($run_rec));
     print("$header\r\n");
