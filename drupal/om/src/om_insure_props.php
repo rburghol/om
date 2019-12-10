@@ -24,7 +24,7 @@ if (!in_array($query_type, array('cmd') )) {
   error_log("Only cmd mode enabled");
   die;
 }
-
+error_log("Loading pid = $pid ");
 $prop = entity_load_single('dh_properties', $pid);
 $plugin = dh_variables_getPlugins($prop); 
 
