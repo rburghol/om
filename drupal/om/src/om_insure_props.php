@@ -11,8 +11,8 @@ error_log('args:' . print_r($args,1));
 $vars = array();
 $query_type = $args[0];
 if (count($args) >= 2) {
-  $vars['pid'] = $args[1];
-  $vars['propname'] = isset($args[2]) ? $args[2] : 'all';
+  $pid = $args[1];
+  $propname = isset($args[2]) ? $args[2] : 'all';
 } else {
   error_log("Usage: php om_insure_props.php query_type pid [propname=all]");
   error_log("Note: 'file' is not yet enabled");
