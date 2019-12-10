@@ -285,7 +285,7 @@ function getComponentCustom($listobject, $scenarioid, $custom1 = '', $custom2 = 
 }
 
 function getRunFile($listobject, $elementid, $runid, $debug = 0) {
-   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified, b.remote_url from scen_model_element as a, scen_model_run_elements as b ";
+   $listobject->querystring = "  select a.elementid, a.elemname, b.output_file, b.run_date, b.starttime, b.endtime, b.run_summary, b.run_verified, b.remote_url, b.host from scen_model_element as a, scen_model_run_elements as b ";
    $listobject->querystring .= " where b.elementid = $elementid and a.elementid = b.elementid and b.runid = $runid ";
    if ($debug) {
       error_log("$listobject->querystring\n");
