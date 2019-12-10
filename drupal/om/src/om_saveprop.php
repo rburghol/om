@@ -44,7 +44,7 @@ switch ($query_type) {
   $q .= " where pid = :pid ";
   break;
 }
-error_log($q);
+error_log($q . print_r($vars,1));
 
 $rez = db_query($q, $vars);
 while ($pid = $rez->fetchColumn()) {
