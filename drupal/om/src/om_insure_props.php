@@ -31,6 +31,7 @@ $plugin = dh_variables_getPlugins($prop);
 if ($propname == 'all') {
   $propname = FALSE;
 }
+error_log("Plugin: " . get_class($plugin));
 $plugin->loadProperties($prop, FALSE, $propname, TRUE);
 
 ?>
