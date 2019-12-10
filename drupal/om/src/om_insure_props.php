@@ -6,7 +6,7 @@ $args = array();
 while ($arg = drush_shift()) {
   $args[] = $arg;
 }
-
+error_log('args:' . print_r($args,1));
 // Is single command line arg?
 $vars = array();
 $query_type = $args[0];
