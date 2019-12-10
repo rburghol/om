@@ -130,7 +130,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
 		  ) {
           $thisvar['featureid'] = $entity->{$this->row_map['id']};
           $prop = $this->insureProperty($entity, $thisvar);
-          dpm($thisvar, "Insuring ");
+          //dpm($thisvar, "Insuring ");
           if (!$prop) {
             watchdog('om', 'Could not Add Properties in plugin loadProperties');
             return FALSE;
