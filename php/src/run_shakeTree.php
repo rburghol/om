@@ -206,6 +206,10 @@ foreach ($outlets as $thisrec) {
   error_log("$now : Run $thisid / $recname, running $recid \n");
 
   switch ($force_overwrite) {
+    case 0:
+    // none, check status and only run if expired.
+    break;
+    
     case 2:
       // just remove the trunk of this tree, leave all branches alone
       print("Removing trunk of tree $recid / run id $run_id \n");
