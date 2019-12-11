@@ -215,7 +215,7 @@ foreach ($outlets as $thisrec) {
     case 3:
       // Remove branches of watershed container types
       print("Removing trunk of tree $recid / run id $run_id \n");
-      removeTreeCacheCriteria($listobject, $recid, $run_id, array(), array('cova_ws_container', 'cova_ws_subnodal'), array(), array())
+      removeTreeCacheCriteria($listobject, $recid, $run_id, array(), array('cova_ws_container', 'cova_ws_subnodal'), array(), array());
     break;
     
     default:
