@@ -206,8 +206,9 @@ foreach ($outlets as $thisrec) {
   error_log("$now : Run $thisid / $recname, running $recid \n");
 
   switch ($force_overwrite) {
-    case 0:
-    // none, check status and only run if expired.
+    case 1:
+      print("Removing all in tree $recid / run id $run_id \n");
+      removeTreeCache($listobject, $recid, $run_id);
     break;
     
     case 2:
@@ -223,8 +224,7 @@ foreach ($outlets as $thisrec) {
     break;
     
     default:
-      print("Removing all in tree $recid / run id $run_id \n");
-      removeTreeCache($listobject, $recid, $run_id);
+    // none, check status and only run if expired.
     break;
   }
 }
