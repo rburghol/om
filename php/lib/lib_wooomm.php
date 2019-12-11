@@ -838,16 +838,17 @@ function clearStatus($listobject, $recid, $run_id, $debug=0) {
 }
 
 function removeTreeCacheCriteria($listobject, $recid, $run_id, $types = array(), $custom1 = array(), $custom2 = array(), $ignore = array(), $debug=0) {
-   $parts = getNestedContainersCriteria ($listobject, $recid, $types, $custom1, $custom2, $ignore, $debug);
-   if ($debug) {
-      error_log("parts: " . print_r($parts,1) . "\n");
-   }
-   foreach ($parts as $piece) {
-      removeRunCache($listobject, $piece['elementid'], $run_id, $debug);
-      if ($debug) {
-         error_log("Query: " . $piece['query'] . "\n");
-      }
-   }
+  $parts = getNestedContainersCriteria ($listobject, $recid, $types, $custom1, $custom2, $ignore, $debug);
+  if ($debug) {
+    error_log("parts: " . print_r($parts,1) . "\n");
+  }
+  foreach ($parts as $piece) {
+    removeRunCache($listobject, $piece['elementid'], $run_id, $debug);
+    if ($debug) {
+      error_log("Query: " . $piece['query'] . "\n");
+    }
+    error_log("Removing run data $run_id " . $piece['elementid']);
+  }
 }
 
 function removeTreeCache($listobject, $recid, $run_id, $debug=0) {
