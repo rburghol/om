@@ -129,8 +129,9 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
     '#type' => 'select',
     '#options' => array(
       '0' => 'None',
-      '1' => 'All Segments',
-      '2' => 'Outlet Only',
+      '1' => 'All Model Elements',
+      '2' => 'Model Outlet Only',
+      '3' => 'All watershed nodes',
     ),
     '#size' => 1,
     '#default' => $model->force_overwrite

@@ -837,6 +837,19 @@ function clearStatus($listobject, $recid, $run_id, $debug=0) {
    $listobject->performQuery();
 }
 
+function removeTreeCacheCriteria($listobject, $recid, $run_id, $types = array(), $custom1 = array(), $custom2 = array(), $ignore = array(), $debug=0) {
+   $parts = getNestedContainersCriteria ($listobject, $recid, $types, $custom1, $custom2, $ignore, $debug);
+   if ($debug) {
+      error_log("parts: " . print_r($parts,1) . "\n");
+   }
+   foreach ($parts as $piece) {
+      removeRunCache($listobject, $piece['elementid'], $run_id, $debug);
+      if ($debug) {
+         error_log("Query: " . $piece['query'] . "\n");
+      }
+   }
+}
+
 function removeTreeCache($listobject, $recid, $run_id, $debug=0) {
    $parts = getNestedContainers($listobject, $recid, $debug);
    if ($debug) {
