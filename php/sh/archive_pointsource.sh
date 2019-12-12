@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Rename, move, replace
+# Rename, move, replace Point Source Folders with a timeseries cache of old model runs
 
 # Inputs:
 #   - riverseg ID
