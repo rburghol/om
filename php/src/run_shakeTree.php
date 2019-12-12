@@ -197,6 +197,13 @@ switch ($operation) {
    */
    $batchlist = trim(file_get_contents($elemname));
    $outlets = explode("\n",$batchlist); // just assume they are OK.
+   foreach ($recs as $elementid) {
+     $elementid = trim($elementid);
+     $elemname = getElementName($listobject, $elementid);
+     if (!($elemname === FALSE)) {
+       $outlets[] = array('elementid'=>$elementid, 'elemname'=>$elemname);
+     }
+   }
    break;
 }
 error_log("$listobject->querystring \n");
