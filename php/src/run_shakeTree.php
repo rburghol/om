@@ -188,11 +188,14 @@ switch ($operation) {
 
    case 6:
    // load a file of elementid's
+   /*
    $batchlist = trim(file_get_contents($elemname));
-   $ellist = join(",", split("\n",$batchlist) );
+   $ellist = join(",", explode("\n",$batchlist) );
    $listobject->querystring .= " where scenarioid = $scid and elementid in ($ellist) ";
    $listobject->performQuery();
    $outlets = $listobject->queryrecords;
+   */
+   $outlets = explode("\n",$batchlist); // just assume they are OK.
    break;
 }
 error_log("$listobject->querystring \n");
