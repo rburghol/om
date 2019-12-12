@@ -195,6 +195,7 @@ switch ($operation) {
    $listobject->performQuery();
    $outlets = $listobject->queryrecords;
    */
+   $batchlist = trim(file_get_contents($elemname));
    $outlets = explode("\n",$batchlist); // just assume they are OK.
    break;
 }
