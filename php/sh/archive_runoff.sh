@@ -37,3 +37,4 @@ newfilename="$basedir/p6/vahydro/runoff/${riverseg}.vahydro.cbp532.log"
 sudo cp $srcfile $newfilename 
 php setprop.php $newid name="VAHydro 1.0/CBP5.3.2:$riverseg"
 php setprop.php $newid remote_url=$newfilename
+php setprop.php $newid custom2=$riverseg
