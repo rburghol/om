@@ -10,7 +10,7 @@ nm="$((n - 2))"
 head -n $nm /tmp/archives.txt > /tmp/ahead.txt 
 n=`< /tmp/ahead.txt wc -l`
 nm="$((n - 2))"
-tail -n $nm /tmp/head.txt > /tmp/archives.txt 
+tail -n $nm /tmp/ahead.txt > /tmp/archives.txt 
 
 
 while IFS= read -r line; do
