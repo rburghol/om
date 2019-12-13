@@ -1,8 +1,14 @@
 #!/bin/sh
 
+if [ $# -lt 4 ]; then
+  echo 1>&2 "Usage: run_runoffs.sh runid run_mode flow_mode force(0=none,1=all,2=trunk,3=watersheds) [template$template]"
+  exit 2
+fi 
+
 runid=$1
 run_mode=$2
 flow_mode=$3
+force=$4
 startdate="1984-01-01"
 enddate="2014-12-31"
 cachedate="2019-12-01"
@@ -20,4 +26,4 @@ nm="$((n - 2))"
 tail -n $nm /tmp/head.txt > /tmp/runoffs.txt 
 
 cd /var/www/html/om/
-/usr/bin/php run_shakeTree.php 6 '/tmp/runoffs.txt' $runid $startdate $enddate $cachedate 2 37 -1 $run_mode normal flow_mode=$flow_mode 
+/usr/bin/php run_shakeTree.php 6 '/tmp/runoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode 
