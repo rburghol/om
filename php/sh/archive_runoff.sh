@@ -25,15 +25,15 @@ srcfile=$4
 # create a clone of the new element desired
 cd /var/www/html/om 
 
-php setprop.php $oldelement name="PS Elements:$riverseg"
+php setprop.php $oldelement name="VAHydro 1.0/CBP5.3.2 Model:$riverseg"
 php fn_addObjectLink.php $oldelement $archive
 
 # Finally, create a replacement and set the appropriate file name 
 newid=`php fn_copy_element.php 37 $templateid $parentid`
 # set the "remote_url" property, even though this is not remote, 
 # it allows us to set a path and avoid filenice browser which should be deprecated anyhow.
-newfilename="$basedir/p6/vahydro/runoff/ps.${riverseg}.2010.2.log"
+newfilename="$basedir/p6/vahydro/runoff/${riverseg}.vahydro.cbp532.log"
 
 sudo cp $srcfile $newfilename 
-php setprop.php $newid name="PS TimeSeries:$riverseg"
+php setprop.php $newid name="VAHydro 1.0/CBP5.3.2:$riverseg"
 php setprop.php $newid remote_url=$newfilename
