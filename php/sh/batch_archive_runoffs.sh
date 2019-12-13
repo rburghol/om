@@ -15,6 +15,6 @@ tail -n $nm /tmp/ahead.txt > /tmp/archives.txt
 
 while IFS= read -r line; do
     echo "Text read from file: $line"
-    IFS='$IFS|' read riverseg parentid oldelement src_file <<< "$line"
+    IFS="$IFS|" read riverseg parentid oldelement src_file <<< "$line"
     echo "./archive_runoff.sh $riverseg $parentid $oldelement $src_file"
 done < /tmp/archives.txt 
