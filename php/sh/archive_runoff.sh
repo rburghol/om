@@ -1,5 +1,14 @@
 #!/bin/sh
 
+templateid=347405
+archive=347403
+newscen=30
+basedir="/media/NAS/omdata"
+
+if [ $# -lt 4 ]; then
+  echo 1>&2 "Usage: archive_runoff.sh riverseg parentid oldelement srcfile [template$template]"
+  exit 2
+fi 
 # Rename, move, replace Point Source Folders with a timeseries cache of old model runs
 
 # Inputs:
@@ -12,10 +21,6 @@ riverseg=$1
 parentid=$2
 oldelement=$3
 srcfile=$4
-templateid=347405
-archive=347403
-newscen=30
-basedir="/media/NAS/omdata"
 
 # create a clone of the new element desired
 cd /var/www/html/om 
