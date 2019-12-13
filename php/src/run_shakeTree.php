@@ -244,11 +244,11 @@ foreach ($outlets as $thisrec) {
 while (count($outlets) > 0) {
 
    $now = date('r');
+   $thisrec = array_shift($outlets);
    $recid = $thisrec['elementid'];
    $recname = $thisrec['elemname'];
    print("$now : Run $thisid / $recname, running $recid \n");
 
-   $thisrec = array_shift($outlets);
    // shaketree
    // if it is finished, do nothing,
    // otherwise, push it back on the array stack
