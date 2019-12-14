@@ -76,15 +76,14 @@ class waterSupplyModelNode extends modelContainer {
 
 
 class waterSupplyElement extends modelContainer {
-   var $flow_mode = 0; // 0 - best available, 1 - USGS baseline, 2 - USGS Synth, 3 - VA HSPF, 4+ are for custom use
-   // currently a blank class, but ultimately it might hold some sensible common properties
-   function step() {
-     parent::step();
-     if ($this->debug) {
-       error_log("Executing timestep on $this->name");
-     }
+  var $flow_mode = 0; // 0 - best available, 1 - USGS baseline, 2 - USGS Synth, 3 - VA HSPF, 4+ are for custom use
+  // currently a blank class, but ultimately it might hold some sensible common properties
+  function step() {
+   parent::step();
+   if ($this->debug) {
      error_log("Executing timestep on $this->name");
    }
+  }
 }
 
 class dynamicWaterUsers extends dynamicQuerySubComponents {
