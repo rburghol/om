@@ -71,8 +71,7 @@ function getSitesHUC($dataitem, $huc, $debug) {
 # lat/lon bounding box
 # nw_longitude_va=73.7508316040039&nw_latitude_va=37.2763977050781&se_longitude_va=79.9869003295898&se_latitude_va=39.6018333435059&coordinate_format=decimal_degrees
 
-function retrieveUSGSData($siteno, $period='', $debug=0, $start_date='', $end_date='', $datatype=1, $nwisurl='', $format='rdb', $params='00060', $state='', $siteid, $ddnu='1', $extraoptions = '') {
-
+function retrieveUSGSData($siteno, $period='', $debug=0, $start_date='', $end_date='', $datatype=1, $nwisurl='', $format='rdb', $params='00060', $state='', $siteid = '', $ddnu='1', $extraoptions = '') {
    # returns an array containing data parsed from the requested station file
    # if more than one station is needed, they may be requested simultaneously
    # by submitting the $siteno variable in csv format (ex: 02037500,02016500 )
