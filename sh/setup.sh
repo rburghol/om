@@ -1,5 +1,8 @@
 #!/bin/sh
 # Set up scripts
+# All
+sudo chown www-data:allmodelers www/om/cache
+
 # dev
 rm  /var/www/html/om/fn_copy_element.php
 ln -s /opt/model/om-dev/php/src/fn_copy_element.php /var/www/html/om/fn_copy_element.php

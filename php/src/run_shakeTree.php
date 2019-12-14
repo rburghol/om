@@ -280,6 +280,7 @@ while (count($outlets) > 0) {
       sleep($sleep_factor);
    } else {
       error_log("Model Element $recid completed run - removing from queue.\n");
+      error_log(count($outlets) . " elements remaining to run \n");
    }
 }
 
