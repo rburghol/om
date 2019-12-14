@@ -15,8 +15,8 @@ rm /var/www/html/lib/lib_hydrology.php
 ln -s /opt/model/om-dev/php/lib/lib_hydrology.php /var/www/html/lib/lib_hydrology.php
 rm /var/www/html/lib/lib_wooomm.php
 ln -s /opt/model/om-dev/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
-rm /var/www/html/lib/lib_wooomm.usgs.php
-ln -s /opt/model/om-dev/php/lib/lib_wooomm.usgs.php /var/www/html/lib/lib_wooomm.usgs.php
+rm /var/www/html/lib/lib_wooomm.USGS.php
+ln -s /opt/model/om-dev/php/lib/lib_wooomm.USGS.php /var/www/html/lib/lib_wooomm.USGS.php
 rm /var/www/html/lib/lib_usgs.php
 ln -s /opt/model/om-dev/php/lib/lib_usgs.php /var/www/html/lib/lib_usgs.php
 rm /var/www/html/lib/lib_wooomm.cbp.php
@@ -55,8 +55,8 @@ rm /var/www/html/lib/lib_hydrology.php
 ln -s /opt/model/om/php/lib/lib_hydrology.php /var/www/html/lib/lib_hydrology.php
 rm /var/www/html/lib/lib_wooomm.php
 ln -s /opt/model/om/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
-rm /var/www/html/lib/lib_wooomm.usgs.php
-ln -s /opt/model/om/php/lib/lib_wooomm.usgs.php /var/www/html/lib/lib_wooomm.usgs.php
+rm /var/www/html/lib/lib_wooomm.USGS.php
+ln -s /opt/model/om/php/lib/lib_wooomm.USGS.php /var/www/html/lib/lib_wooomm.USGS.php
 rm /var/www/html/lib/lib_usgs.php
 ln -s /opt/model/om/php/lib/lib_usgs.php /var/www/html/lib/lib_usgs.php
 rm /var/www/html/lib/lib_wooomm.cbp.php
