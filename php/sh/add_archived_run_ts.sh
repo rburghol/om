@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Work in progress.  Should create a timeSeriesFile element and link back to some other
+# full model object of a given source run.  If the timeSeriesFile element already exists
+# based on custom2 entry, simply update the timeseries file since we are storing these 
+# in a cached location in the model tree.  
+# Alternative: link directly to the "live" model runfile on the remote element and avoid 
+#   having to re-do this.
+
 templateid=347405
 archive=347403
 newscen=30
@@ -25,10 +32,7 @@ srcfile=$4
 # create a clone of the new element desired
 cd /var/www/html/om 
 
-php setprop.php $oldelement name="VAHydro 1.0/CBP5.3.2 Model:$riverseg"
-php fn_addObjectLink.php $oldelement $archive
-
-# Finally, create a replacement and set the appropriate file name 
+# Finally, create a timeSeriesFile element and set the appropriate file name 
 newid=`php fn_copy_element.php 37 $templateid $parentid`
 # set the "remote_url" property, even though this is not remote, 
 # it allows us to set a path and avoid filenice browser which should be deprecated anyhow.
