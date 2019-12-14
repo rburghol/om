@@ -407,6 +407,9 @@ class modelObject {
   }
 
   function addDataColumnType($colname, $samplevalue = 0, $overwrite = 0, $forcetype = '') {
+    if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
+       $this->data_cols = array();
+    }
     if (!(trim($colname) == '')) {
        if (in_array($colname, $this->dbcolumntypes)) {
           $exists = 1;
