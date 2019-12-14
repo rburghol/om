@@ -254,22 +254,23 @@ while (count($outlets) > 0) {
    // otherwise, push it back on the array stack
 
    
-   print("Shaking the tree on $recid (IP: $serverip)\n");
+   error_log("Shaking the tree on $recid (IP: $serverip)\n");
    error_log("Calling: shakeTree(listobject, serverip = $serverip, max_simultaneous = $max_simultaneous, recid = $recid, run_id = $run_id, startdate = $startdate, enddate = $enddate, cache_date = $cache_date, debug = $debug, strict = $strict, run_mode = $run_mode, url_params = $argv[12]);");
    //die;
    $run_finished = shakeTree($listobject, $serverip, $max_simultaneous, $recid, $run_id, $startdate, $enddate, $cache_date, $debug, $strict, $run_mode, $url_params);
    if (!$run_finished) {
-      print("Model Element $recid not completed ... sleeping \n");
+      error_log("Model Element $recid not completed ... sleeping \n");
       // put it back in the array for further waiting
       array_push($outlets, $thisrec);
       // we only need to sleep if the last model that we checked actually was run during the check, otherwise, 
-      print("Sleeping for $sleep_factor \n");
+      error_log(count($outlets) . " elements remaining to run \n");
+      error_log("Sleeping for $sleep_factor \n");
       sleep($sleep_factor);
    } else {
-      print("Model Element $recid completed run - removing from queue.\n");
+      error_log("Model Element $recid completed run - removing from queue.\n");
    }
 }
 
-print("Done.\n");
+error_log("Done.\n");
    
 ?>
