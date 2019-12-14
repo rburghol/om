@@ -22,7 +22,7 @@ q="$q on (a.featureid = m.pid) "
 q="$q left outer join dh_feature as c "
 q="$q on (m.featureid = c.hydroid ) "
 q="$q where a.propname = '1. Local Runoff Inflows'"
-q="$q and substring(replace(c.hydrocode,'vahydrosw_wshed_', ''),1,2) in ('P','J','Y','R')"
+q="$q and substring(replace(c.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('P','J','Y','R')"
 echo $q | psql -h dbase2 drupal.dh03 > /tmp/runoffs.txt 
 
 n=`< /tmp/runoffs.txt wc -l`
