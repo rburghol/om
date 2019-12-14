@@ -438,6 +438,9 @@ class modelObject {
 
   function setBaseTypes() {
     // set up column formats for appropriate outputs to database
+    if ( (!isset($this->data_cols)) or (!is_array($this->data_cols)) ) {
+       $this->data_cols = array();
+    }
     if ( (!isset($this->dbcolumntypes)) or (!is_array($this->dbcolumntypes)) ) {
        $this->dbcolumntypes = array();
     }
