@@ -240,6 +240,18 @@ foreach ($outlets as $thisrec) {
   }
 }
 
+$torun = array();
+foreach ($outlets  as $thisrec) {
+  // check and discard those that are already done
+   $recid = $thisrec['elementid'];
+   $tree_check = checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $cache_date, $debug);
+   
+   if (!$tree_check) {
+      // this tree has been run since the cache_date - nothing to do!
+      array_push($torun, $thisrec);
+   }
+}
+$outlets = $torun;
 
 while (count($outlets) > 0) {
 
