@@ -35,6 +35,7 @@ if (isset($_GET['host'])) {
    $host = $serverip;
 }
 
+error_log("Calling getStatusTree(listobject, $elid, $runid, $host ");
 $container_tree = getStatusTree($listobject, $elid, $runid, $host);
 switch ($format) {
    case 'array':
