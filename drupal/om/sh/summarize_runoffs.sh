@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $# -lt 4 ]; then
   echo 1>&2 "Usage: run_runoffs.sh runid run_mode flow_mode force(0=none,1=all,2=trunk,3=watersheds) [template$template]"
