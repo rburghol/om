@@ -4,6 +4,7 @@ include_once('./xajax_modeling.element.php');
 include_once("./lib_verify.php");
 error_log("Called get_statusTree.php" . print_r($argv,1));
 
+/*
 $connstring = "host=$dbip dbname=cbp user=$dbuser password=$dbpass";
 $dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
 $cbp_listobject = new pgsql_QueryObject;
@@ -11,6 +12,7 @@ $cbp_listobject->connstring = $connstring;
 $cbp_listobject->ogis_compliant = 1;
 $cbp_listobject->dbconn = $dbconn;
 $cbp_listobject->adminsetuparray = $adminsetuparray;
+*/
 
 if (isset($_GET['elementid'])) {
    $elid = $_GET['elementid'];

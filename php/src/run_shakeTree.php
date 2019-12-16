@@ -208,6 +208,7 @@ switch ($operation) {
 }
 error_log("$listobject->querystring \n");
 
+$all_outlets = $outlets; // stash a copy
 // first, clear run dat if need be:
 foreach ($outlets as $thisrec) {
 
