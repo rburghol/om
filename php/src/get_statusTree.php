@@ -48,7 +48,7 @@ switch ($format) {
    break;
    
    case 'json':
-      $formatted = json_encode($status_update);
+      $formatted = json_encode($container_tree);
    break;
 }
 
