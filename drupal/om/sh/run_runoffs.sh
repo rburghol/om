@@ -43,3 +43,8 @@ tail -n $nm /tmp/head.txt > /tmp/runoffs.txt
 
 cd /var/www/html/om/
 /usr/bin/php run_shakeTree.php 6 '/tmp/runoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode 
+
+# @todo: Put in batch post-process and summarize into vahydro 
+# Also, replace the normal dH/VAHydro call to php 
+# with a call to a shell script that runs the model, then runs a R summary script 
+#
