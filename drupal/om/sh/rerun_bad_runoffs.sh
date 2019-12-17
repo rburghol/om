@@ -19,13 +19,17 @@ if [ $# -gt 5 ]; then
 fi 
 cachedate="2019-12-01"
 if [ $# -gt 6 ]; then
-  cachedate=$6
+  cachedate=$7
 fi 
 basinclause=""
-if [ $7 = 'nova' ]; then
+basin=""
+if [ $# -gt 7 ]; then
+  basin=$8
+fi
+if [ $basin = 'nova' ]; then
   basinclause="and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('P','J','Y','R')"
 fi 
-if [ $7 = 'nova' ]; then
+if [ $basin = 'sova' ]; then
   basinclause="and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('BS', 'OD', 'OR', 'MN', 'NR', 'TU')"
 fi 
 # run all runoff containers 
