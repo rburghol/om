@@ -22,10 +22,10 @@ if [ $# -gt 6 ]; then
   cachedate=$7
 fi 
 basinclause=""
-if [ $8 -eq 'nova' ]; then
+if [ $8 = 'nova' ]; then
   basinclause="and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('P','J','Y','R')"
 fi 
-if [ $8 -eq 'nova' ]; then
+if [ $8 = 'nova' ]; then
   basinclause="and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('BS', 'OD', 'OR', 'MN', 'NR', 'TU')"
 fi 
 # run all runoff containers 
