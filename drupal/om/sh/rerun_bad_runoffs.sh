@@ -68,13 +68,14 @@ n=`< /tmp/head.txt wc -l`
 nm="$((n - 2))"
 tail -n $nm /tmp/head.txt > /tmp/rerunoffs.txt 
 
-#cd /var/www/html/om/
-echo "/usr/bin/php run_shakeTree.php 6 '/tmp/rerunoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode "
+cd /var/www/html/om/
+/usr/bin/php run_shakeTree.php 6 '/tmp/rerunoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode 
 
-#cd /var/www/R
+cd /var/www/R
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
-#while IFS= read -r line; do
-    #echo "Text read from file: $line"
-#    IFS="$IFS|" read pid elid <<< "$line"
-#    Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid
-#done < /tmp/rerunoffs.txt 
+while IFS= read -r line; do
+  IFS="$IFS|" read elid <<< "$line"
+  findpid="select pid from dh_properties where propvalue = $elid and propname = 'om_element_connection' and entity_type = 'dh_properties'"
+  pid=`echo $findpid | psql -h dbase2 drupal.dh03 | head -n 3 | tail -n 1`
+  Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid
+done < /tmp/rerunoffs.txt 
