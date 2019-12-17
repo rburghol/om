@@ -69,7 +69,7 @@ nm="$((n - 2))"
 tail -n $nm /tmp/head.txt > /tmp/rerunoffs.txt 
 
 #cd /var/www/html/om/
-#/usr/bin/php run_shakeTree.php 6 '/tmp/rerunoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode #normal flow_mode=$flow_mode 
+echo "/usr/bin/php run_shakeTree.php 6 '/tmp/rerunoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode "
 
 #cd /var/www/R
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
