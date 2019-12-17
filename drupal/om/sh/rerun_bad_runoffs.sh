@@ -54,6 +54,7 @@ q=" select d.propvalue as elementid
   where c.propname = 'R2k7sd'
    and c.propvalue < 0.1 
   $basinclause"
+echo $q
 echo $q | psql -h dbase2 drupal.dh03 > /tmp/rerunoffs.txt 
 
 n=`< /tmp/rerunoffs.txt wc -l`
