@@ -9,11 +9,10 @@ while ($arg = drush_shift()) {
 
 // Is single command line arg?
 $vars = array();
-$query_type = $args[0];
 if (count($args) >= 3) {
-  $vars['entity_type'] = $args[1];
-  $vars['featureid'] = $args[2];
-  $vars['propname'] = $args[3];
+  $vars['entity_type'] = $args[0];
+  $vars['featureid'] = $args[1];
+  $vars['propname'] = $args[2];
 } else {
   error_log("Usage: php om_getpid.php entity_type featureid propname");
   die;
