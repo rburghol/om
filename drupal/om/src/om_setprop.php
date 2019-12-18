@@ -54,7 +54,7 @@ foreach ($data as $element) {
     parse_str($element['extras'], $extras);
     unset($element['extras']);
     foreach ($extras as $key => $value) {
-      $element->{$key} = $value;
+      $element[$key] = $value;
     }
   }
   $prop = om_model_getSetProperty($element, 'name', FALSE);
