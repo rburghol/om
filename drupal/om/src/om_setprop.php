@@ -8,7 +8,7 @@ while ($arg = drush_shift()) {
 }
 
 if (count($args) < 1) {
-  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode extras");
+  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode [extras as urlenc key1=val1&key2=val2...] ");
   die;
 }
 error_log("Args:" . print_r($args,1));
