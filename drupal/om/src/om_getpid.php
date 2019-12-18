@@ -26,6 +26,6 @@ error_log($q . "vars " . print_r($vars,1));
 
 $rez = db_query($q, $vars);
 $pid = $rez->fetchColumn();
-echo $pid;
+return $pid;
 
 ?>
