@@ -69,6 +69,8 @@ foreach ($data as $element) {
         $prop->propcode = 'pull_once';
       }
     }
+    error_log("om_template_id=" . $prop->om_template_id);
+    error_log("remote_parent=" . $prop->remote_parent);
     $prop->save();
   } else {
     error_log("Failed to create property from " . print_r($values,1));
