@@ -83,7 +83,6 @@ foreach ($data as $element) {
   $dest_entity_type = $element['dest_entity_type'];
   $dest_id = $element['dest_id'];
   $propname = $element['propname'];
-  list($propname,$newname) = explode("|",$propname);
   
   $src_entity = entity_load_single($src_entity_type, $src_id);
   $dest_entity = entity_load_single($dest_entity_type, $dest_id);
@@ -96,9 +95,6 @@ foreach ($data as $element) {
   //$dcc = 1; // force
   $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
   // do a final save if the link calls for it
-  if (!($newname === FALSE)) {
-    $result->propname = $newname;
-  }
   $result->save();
 }
 
