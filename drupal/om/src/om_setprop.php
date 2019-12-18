@@ -8,7 +8,7 @@ while ($arg = drush_shift()) {
 }
 
 if (count($args) < 1) {
-  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
+  error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode extras");
   die;
 }
 error_log("Args:" . print_r($args,1));
@@ -23,9 +23,10 @@ if ($query_type == 'cmd') {
     $vars['propname'] = $args[4];
     $vars['propvalue'] = $args[5];
     $vars['propcode'] = $args[6];
+    $vars['extras'] = $args[7];
     $data[] = $vars;
   } else {
-    error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode ");
+    error_log("Usage: php om_setprop.php query_type entity_type featureid varkey propname propvalue propcode [extras as urlenc key1=val1&key2=val2...] ");
     die;
   }
 } else {
@@ -49,11 +50,18 @@ if ($query_type == 'cmd') {
 foreach ($data as $element) {
 
   error_log(print_r($element,1));
+  if (!empty($element['extras'])) {
+    parse_str($element['extras'], $extras);
+    unset($element['extras']);
+    foreach ($extras as $key => $value) {
+      $element->{$key} = $value;
+    }
+  }
   $prop = om_model_getSetProperty($element, 'name', FALSE);
   if (is_object($prop)) {
     error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode");
     if ($element['varkey'] == 'om_element_connection') { 
-      // save without sync first, then resave 
+      // If this is a pull request save without sync first, then resave 
       if ($prop->propcode == 'pull_once') {
         error_log("Saving first, then pull_once ");
         $prop->propcode = '0';
