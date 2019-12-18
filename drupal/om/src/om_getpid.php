@@ -20,7 +20,6 @@ if (count($args) >= 3) {
 }
 
 $q = "select pid from {dh_properties} ";
-case 'cmd':
 $q .= " where propname = :propname ";
 $q .= " and entity_type = :entity_type ";
 $q .= " and featureid = :featureid ";
