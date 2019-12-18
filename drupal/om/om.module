@@ -219,7 +219,9 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   error_log("Copyable " . print_r($copyable,1));
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
-      $values[$pname] = $src_prop->{$pname};
+      if ($pname <> 'propname') {
+        $values[$pname] = $src_prop->{$pname};
+      }
     }
   }
   // add or replace new property with copy values 
