@@ -17,6 +17,7 @@ if (count($args) >= 2) {
   $propname = $args[5];
 } else {
   error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Note: If you supply propname|newname they must be quoted to suppress piping ");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
@@ -82,6 +83,7 @@ foreach ($data as $element) {
   $dest_entity_type = $element['dest_entity_type'];
   $dest_id = $element['dest_id'];
   $propname = $element['propname'];
+  list($propname,$newname) = explode("|",$propname);
   
   $src_entity = entity_load_single($src_entity_type, $src_id);
   $dest_entity = entity_load_single($dest_entity_type, $dest_id);
@@ -94,6 +96,9 @@ foreach ($data as $element) {
   //$dcc = 1; // force
   $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
   // do a final save if the link calls for it
+  if (!($newname === FALSE)) {
+    $result->propname = $newname;
+  }
   $result->save();
 }
 
