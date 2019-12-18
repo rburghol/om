@@ -10365,7 +10365,7 @@ function cloneModelElement($scenarioid, $elementid, $activecontainerid = -1, $co
    $groupid = $listobject->getRecordValue(1,'groupid');
    if (!($perms && 4)) {
       # check for read access
-      $innerHTML .= "<b>Error: </b> You do not have read access to this element (perms = $perms).<br>";
+      $innerHTML .= "<b>Error: </b> You do not have read access to this element $elementid (perms = $perms).<br>";
       $outarr['elementid'] = -1;
    } else {
       $listobject->querystring = "  insert into scen_model_element(scenarioid, modelid, elemname, custom1, custom2, ";
