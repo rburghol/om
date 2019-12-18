@@ -98,6 +98,4 @@ foreach ($data as $element) {
   $result->save();
 }
 
-
-
 ?>
