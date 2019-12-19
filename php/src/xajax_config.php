@@ -90,7 +90,7 @@ include_once("$libpath/file_functions.php");
 include_once("$libpath/sanitize.inc.php");
 
 if ($debug) {
-   //error_log("Loading PEAR Tools");
+   error_log("Loading PEAR Tools");
 }
 if (!class_exists('PEAR')) {
  //  include_once("$libpath/PEAR/PEAR5.php");
