@@ -8341,7 +8341,7 @@ function getCachedObjectXML($listobject, $elementid, $runid) {
    $listobject->querystring .= "    and b.elementid = $elementid ";
    $listobject->querystring .= "    and b.runid = $runid ";
    $retarr['query'] = $listobject->querystring;
-   error_log( $listobject->querystring);
+   //error_log( $listobject->querystring);
    $listobject->performQuery();
    if (count($listobject->queryrecords) > 0) {
       $retarr['record'] = $listobject->queryrecords[0];
