@@ -90,7 +90,7 @@ include_once("$libpath/file_functions.php");
 include_once("$libpath/sanitize.inc.php");
 
 if ($debug) {
-   error_log("Loading PEAR Tools");
+   //error_log("Loading PEAR Tools");
 }
 if (!class_exists('PEAR')) {
  //  include_once("$libpath/PEAR/PEAR5.php");
@@ -120,7 +120,7 @@ include_once("$libpath/lib_nhdplus.php");
 if ($debug) {
    error_log("Loading plot & mapping libraries");
 }
-include_once("$libpath/lib_plot.php");
+//include_once("$libpath/lib_plot.php");
 define('DEFAULT_GFORMAT',$default_imagetype);
 //include_once("$libpath/module_activemap.php");
 if ($debug) {
@@ -217,7 +217,7 @@ if ( ($dbip <> $runtime_dbip) or ($dbname <> $runtime_dbname) ) {
 }
 
 // linkage to cbp database with ICPRB info
-$connstring = "host=$vwuds_dbip dbname=cbp user=$dbuser password=$dbpass";
+$connstring = "host=$cbp_dbip dbname=cbp user=$dbuser password=$dbpass port=$cbp_port";
 $dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
 $cbp_listobject = new pgsql_QueryObject;
 $cbp_listobject->connstring = $connstring;
