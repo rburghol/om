@@ -13,8 +13,8 @@ if ( count($argv) < 3 ) {
 $elid = $argv[1];
 list($prop,$value) = explode('=', $argv[2]);
 $prop_array = array($prop => $value );
-error_log("Cmd = $cmd - setting " . print_r($prop_array,1) . "\n");
+//error_log("Cmd = $prop = $value ");
 updateObjectProps($projectid, $elid, $prop_array, 0);
-print("Finished.  Saved $i items.<br>");
+//error_log("Finished.  Saved $i items.<br>");
 
 ?>

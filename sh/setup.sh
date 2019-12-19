@@ -30,6 +30,8 @@ rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
 ln -s /opt/model/om-dev/php/src/set_subprop.php /var/www/html/om/set_subprop.php
+rm /var/www/html/om/setprop.php
+ln -s /opt/model/om-dev/php/src/setprop.php /var/www/html/om/setprop.php
 rm /var/www/html/om/get_modelStatus.php
 ln -s /opt/model/om-dev/php/src/get_modelStatus.php /var/www/html/om/get_modelStatus.php
 rm /var/www/html/om/get_model.php
@@ -70,6 +72,8 @@ rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
 ln -s /opt/model/om/php/src/set_subprop.php /var/www/html/om/set_subprop.php
+rm /var/www/html/om/setprop.php
+ln -s /opt/model/om/php/src/setprop.php /var/www/html/om/setprop.php
 rm /var/www/html/om/get_modelStatus.php
 ln -s /opt/model/om/php/src/get_modelStatus.php /var/www/html/om/get_modelStatus.php
 rm /var/www/html/om/get_model.php
