@@ -38,6 +38,7 @@ pid=`drush scr modules/om/src/om_getpid.php $entity_type $entity_id "$system_nam
 if [ $om_parent -gt 0 ]; then
 # create a remote om element below the indicated parent 
 # and then push the changes from the vahydro entity to the remote OM record
+  echo "drush scr modules/om/src/om_setprop.php cmd dh_properties $pid om_element_connection om_element_connection NULL clone \"om_template_id=$om_template_id&remote_parentid=$om_parent\" "
   drush scr modules/om/src/om_setprop.php cmd dh_properties $pid om_element_connection om_element_connection NULL clone "om_template_id=$om_template_id&remote_parentid=$om_parent"
   drush scr modules/om/src/om_saveprop.php cmd $entity_type $entity_id "$system_name"
   
