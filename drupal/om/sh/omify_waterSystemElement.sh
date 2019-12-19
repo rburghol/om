@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 entity_type=$1
 entity_id=$2
