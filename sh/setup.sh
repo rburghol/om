@@ -30,6 +30,8 @@ rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
 ln -s /opt/model/om-dev/php/src/set_subprop.php /var/www/html/om/set_subprop.php
+rm /var/www/html/om/setprop.php
+ln -s /opt/model/om-dev/php/src/setprop.php /var/www/html/om/setprop.php
 rm /var/www/html/om/get_modelStatus.php
 ln -s /opt/model/om-dev/php/src/get_modelStatus.php /var/www/html/om/get_modelStatus.php
 rm /var/www/html/om/get_model.php
@@ -38,6 +40,8 @@ rm /var/www/html/om/get_statusTree.php
 ln -s /opt/model/om-dev/php/src/get_statusTree.php /var/www/html/om/get_statusTree.php
 rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om-dev/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
+rm /var/www/html/om/xajax_config.php
+ln -s /opt/model/om-dev/php/src/xajax_config.php /var/www/html/om/xajax_config.php
 rm /var/www/html/om/fn_message_model.php
 ln -s /opt/model/om-dev/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php
 rm /var/www/html/om/fn_addObjectLink.php
@@ -70,6 +74,8 @@ rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om-dev/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
 ln -s /opt/model/om/php/src/set_subprop.php /var/www/html/om/set_subprop.php
+rm /var/www/html/om/setprop.php
+ln -s /opt/model/om/php/src/setprop.php /var/www/html/om/setprop.php
 rm /var/www/html/om/get_modelStatus.php
 ln -s /opt/model/om/php/src/get_modelStatus.php /var/www/html/om/get_modelStatus.php
 rm /var/www/html/om/get_model.php
@@ -78,6 +84,8 @@ rm /var/www/html/om/get_statusTree.php
 ln -s /opt/model/om/php/src/get_statusTree.php /var/www/html/om/get_statusTree.php
 rm /var/www/html/om/xajax_modeling.element.php
 ln -s /opt/model/om/php/src/xajax_modeling.element.php /var/www/html/om/xajax_modeling.element.php
+rm /var/www/html/om/xajax_config.php
+ln -s /opt/model/om/php/src/xajax_config.php /var/www/html/om/xajax_config.php
 rm /var/www/html/om/fn_message_model.php
 ln -s /opt/model/om/php/src/fn_message_model.php /var/www/html/om/fn_message_model.php
 rm /var/www/html/om/fn_addObjectLink.php

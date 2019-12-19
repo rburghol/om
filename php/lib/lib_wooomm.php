@@ -6175,7 +6175,7 @@ function applyPropsToObject($projectid, $thisobject, $prop_array, $allowRecreate
          }
       }
    }
-	error_log("Recreate() setting for elementid: $recreate ");
+	//error_log("Recreate() setting for elementid: $recreate ");
 	if (is_object($thisobject)) {
       if ($recreate and $allowRecreate) {
          $thisobject->reCreate();
@@ -6190,7 +6190,7 @@ function applyPropsToObject($projectid, $thisobject, $prop_array, $allowRecreate
 
 function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
    global $listobject;
-   error_log("saveModelObject() called \n");
+   //error_log("saveModelObject() called \n");
    $innerHTML = '';
    $debugHTML = '';
    $retarr = array();
@@ -6199,19 +6199,19 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
       if ( isset($prop_array['name']) ) {
 		   $thisobject->name = $prop_array['name'];
 		}
-      error_log("Checking for object geometry \n");
+      //error_log("Checking for object geometry \n");
       $geomstring = '';
       if ( isset($prop_array['the_geom']) or (strlen(trim($thisobject->the_geom)) > 0) ) {
          if ( isset($prop_array['the_geom']) ) { 
             $wkt_geom = $prop_array['the_geom'];
-            error_log("GETTING GEOMETRY FROM FORM SUBMITTION \n");
+            //error_log("GETTING GEOMETRY FROM FORM SUBMITTION \n");
          } else {
             $wkt_geom = $thisobject->the_geom;
-            error_log("GETTING GEOMETRY FROM object properties \n");
+            //error_log("GETTING GEOMETRY FROM object properties \n");
          }
          preg_match('(POLYGON|POINT|LINE)', $wkt_geom, $gtype);
          $innerHTML .= "Property the_geom ($wkt_geom) submitted: \n" . print_r($gtype,1) . "\n";
-         error_log("Parsing object geometry, found " . $gtype[0] . "\n");
+         //error_log("Parsing object geometry, found " . $gtype[0] . "\n");
          // check for empty geom
          $innards = trim( str_replace(array('POLYGON','POINT','LINE',"(",")"), '', $wkt_geom));
          switch ($gtype[0]) {
@@ -6307,7 +6307,7 @@ function saveModelObject($elementid, $thisobject, $prop_array, $debug = 0) {
       } else {
          $debugHTML .= $compres['errorHTML'];
       }
-      error_log("Finished storing");
+      //error_log("Finished storing");
    } else {
       $innerHTML .= "\n\nThere was a problem loading object $elementid - " . $loadres['error'];
    }
@@ -6322,7 +6322,7 @@ function updateObjectProps($projectid, $elementid, $prop_array, $debug = 0) {
    global $listobject;
    // optional to submit an object, in which case the unserialize step will be skipped
    $innerHTML = 'Called updateObjectProps()';
-   error_log("Called updateObjectProps()\n");
+   //error_log("Called updateObjectProps()\n");
    $debugHTML = '';
    
    $retarr = array();
@@ -8341,7 +8341,7 @@ function getCachedObjectXML($listobject, $elementid, $runid) {
    $listobject->querystring .= "    and b.elementid = $elementid ";
    $listobject->querystring .= "    and b.runid = $runid ";
    $retarr['query'] = $listobject->querystring;
-   error_log( $listobject->querystring);
+   //error_log( $listobject->querystring);
    $listobject->performQuery();
    if (count($listobject->queryrecords) > 0) {
       $retarr['record'] = $listobject->queryrecords[0];
@@ -10365,7 +10365,7 @@ function cloneModelElement($scenarioid, $elementid, $activecontainerid = -1, $co
    $groupid = $listobject->getRecordValue(1,'groupid');
    if (!($perms && 4)) {
       # check for read access
-      $innerHTML .= "<b>Error: </b> You do not have read access to this element (perms = $perms).<br>";
+      $innerHTML .= "<b>Error: </b> You do not have read access to this element $elementid (perms = $perms).<br>";
       $outarr['elementid'] = -1;
    } else {
       $listobject->querystring = "  insert into scen_model_element(scenarioid, modelid, elemname, custom1, custom2, ";

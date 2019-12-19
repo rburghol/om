@@ -17,6 +17,7 @@ if (count($args) >= 2) {
   $propname = $args[5];
 } else {
   error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
+  error_log("Note: If you supply propname|newname they must be quoted to suppress piping ");
   error_log("Note: 'all' is not yet enabled");
   die;
 }
@@ -96,7 +97,5 @@ foreach ($data as $element) {
   // do a final save if the link calls for it
   $result->save();
 }
-
-
 
 ?>

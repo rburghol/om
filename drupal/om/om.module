@@ -200,10 +200,12 @@ function om_get_property($values, $singularity = 'name') {
 }
 
 function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE, $defprops = FALSE, $allprops = FALSE) {
+  list($propname,$newname) = explode("|",$propname);
+  $newname = empty($newname) ? $propname : $newname;
   $src_prop = om_load_dh_property($src_entity, $propname);
   $values = array(
     'entity_type' => $dest_entity->entityType(),
-    'propname' => $propname,
+    'propname' => $newname,
     'featureid' => $dest_entity->identifier(),
     'varid' => $src_prop->varid,
     'bundle' => $src_prop->bundle,
@@ -214,14 +216,16 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   }
   $info = $src_prop->entityInfo();
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
-  error_log("Copyable " . print_r($copyable,1));
+  //error_log("Copyable " . print_r($copyable,1));
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
-      $values[$pname] = $src_prop->{$pname};
+      if ($pname <> 'propname') {
+        $values[$pname] = $src_prop->{$pname};
+      }
     }
   }
   // add or replace new property with copy values 
-  error_log("values " . print_r($values,1));
+  //error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
   if ($fields) {
@@ -243,9 +247,9 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     if (is_object($plugin )) {
       $default_subprops = $plugin->getDefaults($src_prop);
     }
-    error_log("Found def props: " . print_r($default_subprops,1));
+    //error_log("Found def props: " . print_r($default_subprops,1));
     foreach ($default_subprops as $thisprop) {
-      error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
+      //error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
       $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
       $copy->{$thisprop['propname']} = $sub;
     }
@@ -255,7 +259,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   if ($allprops) {
     // nothing yet
   }
-  error_log("Made copy of $propname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
+  error_log("Made copy of $propname as $newname with pid = " . $copy->pid . " and featureid = " . $copy->featureid . " propcode = $copy->propcode, propvalue=$copy->propvalue");
   // die on match
   //if ($copy->propname == 'keycol1') {
   //  die;  
