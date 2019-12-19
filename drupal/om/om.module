@@ -216,7 +216,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   }
   $info = $src_prop->entityInfo();
   $copyable = array_unique(array_merge(array('varid', 'bundle'), array_values($info['property info'])));
-  error_log("Copyable " . print_r($copyable,1));
+  //error_log("Copyable " . print_r($copyable,1));
   foreach ($copyable as $pname) {
     if (isset($src_prop->{$pname})) {
       if ($pname <> 'propname') {
@@ -225,7 +225,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     }
   }
   // add or replace new property with copy values 
-  error_log("values " . print_r($values,1));
+  //error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
   if ($fields) {
@@ -247,9 +247,9 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     if (is_object($plugin )) {
       $default_subprops = $plugin->getDefaults($src_prop);
     }
-    error_log("Found def props: " . print_r($default_subprops,1));
+    //error_log("Found def props: " . print_r($default_subprops,1));
     foreach ($default_subprops as $thisprop) {
-      error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
+      //error_log("Copying $thisprop[propname] from $src_prop->pid to $copy->pid");
       $sub = om_copy_properties($src_prop, $copy, $thisprop['propname'], $fields, $defprops, $allprops);
       $copy->{$thisprop['propname']} = $sub;
     }

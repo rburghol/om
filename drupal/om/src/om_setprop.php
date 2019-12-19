@@ -70,7 +70,7 @@ foreach ($data as $element) {
       }
     }
     error_log("om_template_id=" . $prop->om_template_id);
-    error_log("remote_parent=" . $prop->remote_parent);
+    error_log("remote_parentid=" . $prop->remote_parentid);
     $prop->save();
   } else {
     error_log("Failed to create property from " . print_r($values,1));
