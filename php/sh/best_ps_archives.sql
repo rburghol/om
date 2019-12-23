@@ -17,10 +17,9 @@ on (
   c.elementid = l2.dest_id 
   and l2.linktype = 1
 ) 
-left outer join tmp_runoff_archives as rf
+left outer join tmp_ps_archives as rf
 on (rf.elementid = d.elementid)
 where c.custom1 = 'cova_ps_group' 
   and a.scenarioid = 37 
-  and d.elementid is not null 
   and src_file is not null
 ;
