@@ -17,5 +17,5 @@ tail -n $nm /tmp/ahead.txt > /tmp/ps_archives.txt
 while IFS= read -r line; do
     #echo "Text read from file: $line"
     IFS="$IFS|" read riverseg parentid oldelement src_file <<< "$line"
-    ./archive_runoff.sh $riverseg $parentid $oldelement $src_file
+    ./archive_pointsource.sh $riverseg $parentid $oldelement $src_file
 done < /tmp/ps_archives.txt 
