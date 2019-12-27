@@ -442,7 +442,7 @@ function om_run_stash_modes($model, $model_config) {
     'startdate' => $cache_date,
   );
   $cache_date = om_model_getSetProperty($values, 'name');
-  dpm($cache_date, 'cache date');
+  //dpm($cache_date, 'cache date');
   $cache_date->save();
   
   // set the model flow_mode property here
