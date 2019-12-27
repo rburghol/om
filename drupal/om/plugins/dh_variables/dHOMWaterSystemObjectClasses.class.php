@@ -440,6 +440,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       11=>array(11,0.1),
       12=>array(12,0.1),
     );
+    $modays = array(1 => 31, 2 => 28.25, 3 => 31, 4 => 30, 5 => 31, 6 => 30, 7 => 31, 8 => 31, 9 => 30, 10 => 31, 11 => 30, 12 => 31);
     $consumption = FALSE;
     dpm($this,'plugin');
     $parent = $this->getParentEntity($entity);
@@ -454,13 +455,22 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       $mplugin = dh_variables_getPlugins($wd_matrix_entity);
       // get the table of data from the matrix entity
       if (method_exists($mplugin, 'getMatrixFieldTable')) {
-        $consumption = $mplugin->getCSVTableField($wd_matrix_entity);
-        dpm($consumption,'matrix entity getMatrixFieldTable()');
+        $pct_wd = $mplugin->getCSVTableField($wd_matrix_entity);
+        dpm($pct_wd,'matrix entity getMatrixFieldTable()');
+        $feb = $pct_wd[array_search(2,$pct_wd)];
+        $Ff = $feb[1];
+        $consumption[0] = array('xMonth', 'xFrac');
+        foreach ($pct_wd as $mofrac) {
+          $x = $mofrac[0];
+          $Fx = $mofrac[1];
+          $consumption[$x] = array($x, (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Ff) )));
+        }
       }
     }
     if ($consumption === FALSE) {
       $consumption = $defaults;
     }
+    dpm($consumption,'con');
     return $consumption;
   }
 }
