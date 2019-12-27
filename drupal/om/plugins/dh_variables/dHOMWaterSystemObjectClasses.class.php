@@ -461,11 +461,10 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
         $Ff = $feb[1];
         $consumption[0] = array('xMonth', 'xFrac');
         for ($i = 1; $i <= 12; $i++) {
-          $mofrac = $pct_wd[$i]
+          $mofrac = $pct_wd[$i];
           $x = $mofrac[0];
           $Fx = $mofrac[1];
-          //$consumption[$x] = array($x, (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Ff) )));
-          $consumption[$x] = array($x, 0.1);
+          $consumption[$x] = array($x, (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Ff) )));
         }
       }
     }
