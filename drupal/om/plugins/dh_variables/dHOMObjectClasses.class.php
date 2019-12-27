@@ -163,7 +163,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     foreach ($props as $thisvar) {
       $this->insureProperty($entity, $thisvar);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
-        //error_log("Saving " . $thisvar['propname']);
+        error_log("Saving " . $thisvar['propname']);
         // load the property 
         // if a property with propname is set on $entity, send its value to the plugin 
         //   * plugin should be stored on the property object already
