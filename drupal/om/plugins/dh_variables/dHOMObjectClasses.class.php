@@ -1900,7 +1900,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   }
   
   function getCSVTableField(&$entity) {
-    $tabledata = getMatrixFieldTable($entity);
+    $tabledata = $this->getMatrixFieldTable($entity);
     $csv = array();
     foreach ($tabledata as $rowix => $rowvals) {
       $csv[] = array_values($rowvals);
