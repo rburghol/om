@@ -440,7 +440,6 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       11=>array(11,0.1),
       12=>array(12,0.1),
     );
-    $modays = array(1 => 31, 2 => 28.25, 3 => 31, 4 => 30, 5 => 31, 6 => 30, 7 => 31, 8 => 31, 9 => 30, 10 => 31, 11 => 30, 12 => 31);
     $consumption = FALSE;
     $parent = $this->getParentEntity($entity);
     // load matrix property on parent
@@ -461,7 +460,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
           $mofrac = $pct_wd[$i];
           $x = $mofrac[0];
           $Fx = $mofrac[1];
-          $cfrac = (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Fx) ));
+          $cfrac = (1.0 - ( ($this->modays[$x] * $Ff) / ($this->modays[2] * $Fx) ));
           $cfrac = ($cfrac < 0) ? 0.0 : $cfrac;
           $checksum += $cfrac;
           $consumption[$x] = array($x, $cfrac);

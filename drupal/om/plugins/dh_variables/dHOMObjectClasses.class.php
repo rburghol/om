@@ -480,6 +480,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   var $setvarnames = array();
   var $attach_method = 'contained';
   var $om_template_id = 347359; // blankShell object 
+  var $modays = array(1 => 31, 2 => 28.25, 3 => 31, 4 => 30, 5 => 31, 6 => 30, 7 => 31, 8 => 31, 9 => 30, 10 => 31, 11 => 30, 12 => 31);
   
   public function hiddenFields() {
     $hidden = array(
