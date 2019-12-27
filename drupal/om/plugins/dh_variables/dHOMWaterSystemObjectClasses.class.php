@@ -442,13 +442,9 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     );
     $modays = array(1 => 31, 2 => 28.25, 3 => 31, 4 => 30, 5 => 31, 6 => 30, 7 => 31, 8 => 31, 9 => 30, 10 => 31, 11 => 30, 12 => 31);
     $consumption = FALSE;
-    dpm($this,'plugin');
     $parent = $this->getParentEntity($entity);
-    $pplugin = dh_variables_getPlugins($parent);
     // load matrix property on parent
-    dpm($pplugin,'parent plugin');
-    $wd_matrix_entity =om_load_dh_property($parent, $this->wd_matrix_name);
-    dpm($wd_matrix_entity,'matrix entity');
+    $wd_matrix_entity = om_load_dh_property($parent, $this->wd_matrix_name);
     // get matrix property entity from parent 
     if (is_object($wd_matrix_entity)) {
       // load plugin for Matrix entity 
