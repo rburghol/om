@@ -460,11 +460,19 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
         $feb = $pct_wd[2];
         $Ff = $feb[1];
         $consumption[0] = array('xMonth', 'xFrac');
+        $checksum = 0;
         for ($i = 1; $i <= 12; $i++) {
           $mofrac = $pct_wd[$i];
           $x = $mofrac[0];
           $Fx = $mofrac[1];
-          $consumption[$x] = array($x, (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Fx) )));
+          $cfrac = (1.0 - ( ($modays[$x] * $Ff) / ($modays[2] * $Fx) ));
+          $cfrac = ($cfrac < 0) ? 0.0 : $cfrac;
+          $checksum += $cfrac;
+          $consumption[$x] = array($x, $cfrac);
+        }
+        // consider consumption above annual total of 50% to be erroneous.
+        if ($checksum > 6.0) {
+          $consumption = FALSE;
         }
       }
     }
