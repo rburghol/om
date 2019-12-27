@@ -448,11 +448,13 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     // get matrix property entity from parent 
     if (is_object($parent->{$this->wd_matrix_name})) {
       $wd_matrix_entity = $parent->{$this->wd_matrix_name};
+      dpm($wd_matrix_entity,'matrix entity');
       // load plugin for Matrix entity 
       $mplugin = dh_variables_getPlugins($wd_matrix_entity);
       // get the table of data from the matrix entity
       if (method_exists($mplugin, 'getMatrixFieldTable')) {
         $consumption = $mplugin->getMatrixFieldTable($wd_matrix_entity);
+      dpm($consumption,'matrix entity getMatrixFieldTable()');
       }
     }
     if ($consumption === FALSE) {
