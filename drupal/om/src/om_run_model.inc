@@ -325,9 +325,6 @@ function om_run_model_form_run(&$form, &$form_state) {
   $model_config['startdate'] = $sd['year'] . '-' . $sd['month'] . '-' . $sd['day'];
   $model_config['enddate'] = $ed['year'] . '-' . $ed['month'] . '-' . $ed['day'];
   $model_config['cache_date'] = $cd['year'] . '-' . $cd['month'] . '-' . $cd['day'];
-  // stash flow and run modes on the object, to be used as defaults next time
-  // and to be used by remote object during requested run.
-  om_run_stash_modes($model, $model_config);
   // cannot create entirely new element, because it loses info that 
   //   the form passes in.  must modify from $form array instead
   //$element = om_run_model_form_controls($form, $form_state);
@@ -339,6 +336,9 @@ function om_run_model_form_run(&$form, &$form_state) {
   $element['model_status']['#value'] = $status_flag;
   switch($button) {
     case 'run_model':
+      // stash flow and run modes on the object, to be used as defaults next time
+      // and to be used by remote object during requested run.
+      om_run_stash_modes($model, $model_config);
       if ($status_flag == 0) {
         $output = om_run_model($model_config);
         $element['run_model']['#value'] = 'Update Model Status';
