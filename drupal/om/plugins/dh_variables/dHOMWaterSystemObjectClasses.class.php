@@ -498,6 +498,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       'manual' => "Manual",
       'default' => "Default",
     );
+    $form['propvalue']['#title'] = 'Average Monthly Consumption Fraction';
     $form['propcode']['#title'] = 'Estimation Mode';
     $form['propcode']['#type'] = 'select';
     $form['propcode']['#options'] = $modes;
