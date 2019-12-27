@@ -460,7 +460,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
             $mofrac = $pct_wd[$i];
             $x = $mofrac[0];
             $Fx = $mofrac[1];
-            $cfrac = (1.0 - ( ($this->modays[$x] * $Ff) / ($this->modays[2] * $Fx) ));
+            $cfrac = ($Fx > 0) ? (1.0 - ( ($this->modays[$x] * $Ff) / ($this->modays[2] * $Fx) )) : 0.0;
             $cfrac = ($cfrac < 0) ? 0.0 : $cfrac;
             $checksum += $cfrac;
             $consumption[$x] = array($x, $cfrac);
