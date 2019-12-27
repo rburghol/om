@@ -498,10 +498,11 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       'manual' => "Manual",
       'default' => "Default",
     );
+    $form['propcode']['#title'] = 'Estimation Mode';
     $form['propcode']['#type'] = 'select';
     $form['propcode']['#options'] = $modes;
     $form['propcode']['#size'] = 1;
-    $form['propcode']["#empty_value"] = "auto";
+    $form['propcode']["#default_value"] = "auto";
     $form['propcode']["#description"] = "Select mode for estimation/setting of consumptive use fractions.  Auto will attempt to calculate from monthly withdrawal distribution.";
   }
 
@@ -512,13 +513,15 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     if ($entity->propcode=='auto') {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
-      array_shift($datatable);
-      $entity->propvalue = 0;
-      foreach ($datatable as $row){
-        $entity->propvalue += $row[1] / 12.0;  
-      }  
     }
-   
+    // Always calculate the Mean annual.
+    $datatable = $this->getCSVTableField($entity);
+    // remove the header
+    array_shift($datatable);
+    $entity->propvalue = 0;
+    foreach ($datatable as $row){
+      $entity->propvalue += $row[1] / 12.0;  
+    }
   }
 }
 ?>
