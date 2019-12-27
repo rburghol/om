@@ -84,7 +84,7 @@ foreach ($data as $element) {
   $dest_id = $element['dest_id'];
   $propname = $element['propname'];
   // skip a self-copy
-  if ( ($src_id == $dest_id) and ($src_entity_type == $dest_entity_type) ) {
+  if ( ($src_id == $dest_id) and ($src_entity_type == $dest_entity_type) and (count(explode("|", $propname)) == 1) ) {
     error_log("Self-copy not allowed (src_entity and dest_entity are the same)");
     continue;
   } else {
