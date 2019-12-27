@@ -480,5 +480,6 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     $defaults['keycol1']['propvalue_default'] = 'month';
     $defaults['lutype1']['propvalue_default'] = 0;
     return $defaults;
+  }
 }
 ?>
