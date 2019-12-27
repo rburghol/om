@@ -441,10 +441,12 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       12=>array(12,0.1),
     );
     $consumption = FALSE;
+    dpm($this,'plugin');
     $parent = $this->getParentEntity($entity);
+    dpm($parent,'parent');
     $pplugin = dh_variables_getPlugins($parent);
     // load matrix property on parent
-    dpm($this,'plugin');
+    dpm($pplugin,'parent plugin');
     $pplugin->loadProperties($parent, FALSE, $this->wd_matrix_name, TRUE);
     // get matrix property entity from parent 
     if (is_object($parent->{$this->wd_matrix_name})) {
