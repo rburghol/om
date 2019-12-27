@@ -477,11 +477,48 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     }
     return $consumption;
   }
+  
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     $defaults['keycol1']['propcode_default'] = 'month';
     $defaults['lutype1']['propvalue_default'] = 0;
     return $defaults;
+  }
+  
+  public function hiddenFields() {
+    return array('pid', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
+  
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    //dpm($form,'form');
+    // now, format the lookup type fields 
+    $modes = array(
+      'auto' => "Auto",
+      'manual' => "Manual",
+      'default' => "Default",
+    );
+    $form['propcode']['#type'] = 'select';
+    $form['propcode']['#options'] = $modes;
+    $form['propcode']['#size'] = 1;
+    $form['propcode']["#empty_value"] = "auto";
+    $form['propcode']["#description"] = "Select mode for estimation/setting of consumptive use fractions.  Auto will attempt to calculate from monthly withdrawal distribution.";
+  }
+
+  public function save(&$entity) {
+    if (empty ($entity->propcode)) {
+      $entity->propcode='auto';
+    }
+    if ($entity->propcode=='auto') {
+      $datatable = $this->tableDefault($entity);
+      $this->setCSVTableField($entity, $datatable);
+      array_shift($datatable);
+      $entity->propvalue = 0;
+      foreach ($datatable as $row){
+        $entity->propvalue += $row[1] / 12.0;  
+      }  
+    }
+   
   }
 }
 ?>
