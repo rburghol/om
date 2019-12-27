@@ -523,6 +523,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     foreach ($datatable as $row){
       $entity->propvalue += $row[1] / 12.0;  
     }
+    parent::save();
   }
 }
 ?>
