@@ -477,7 +477,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
   }
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
-    $defaults['keycol1']['propvalue_default'] = 'month';
+    $defaults['keycol1']['propcode_default'] = 'month';
     $defaults['lutype1']['propvalue_default'] = 0;
     return $defaults;
   }
