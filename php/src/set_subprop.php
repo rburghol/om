@@ -25,7 +25,7 @@ list($script, $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $se
 $setprop_mode = ($setprop_mode === NULL) ? '' : $setprop_mode;
 $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 // this is the object class of the parent component.
-//error_log("argv mods: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite");
+error_log("argv mods: elid=$elid, comp_name=$comp_name, comp_class=$comp_class, subprop_name=$subprop_name, subprop_value=$subprop_value, setprop_mode=$setprop_mode, overwrite=$overwrite");
 
 
 if (isset($argv[6])) {
