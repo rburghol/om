@@ -1689,6 +1689,41 @@ class dHOM_ModelScenario extends dHVariablePluginDefault {
   public function hiddenFields() {
     return array('pid', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
   }
+  // @todo: Scenario should accomodate sub-comps that detail analyses to be performed on parent object 
+  //  Things from the scen_model_run_elements table 
+  //    - runid
+  //    - runfile
+  //    - host
+  //    - output_file
+  //    - fullpath
+  //    - remote_path
+  //    - remote_url
+  //    - rundate
+  //    - starttime
+  //    - endtime
+  //    - elementid
+  //  Watershed model specific items
+  //    - flow_mode
+  //    - run_mode 
+  // @todo: Automatically run analyses comps defined on element 
+  //    - dHOM_ModelScenario elements look to parent to find comps of type dHOM_Analysis to run when updating scen record
+  
+  public function getRunData() {
+    // returns run CSV
+  }
+}
+
+class dHOM_Analysis extends dHVariablePluginDefault {
+  var $object_class = FALSE;
+  public function hiddenFields() {
+    return array('pid', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
+  }
+  // @todo: Model elements can have multiple dHOM_Analysis components to detail default analyses to perform after run 
+  //    - dHOM_ModelScenario elements look to parent to find comps of type dHOM_Analysis to run when updating scen record
+  //    - target_element (defaults to first object in containment tree with method getRunData )
+  //    - script_path: if not FALSE, this points to a script file 
+  //    - script_type: FALSE or R, python, php, bash 
+  //    - 
 }
 
 class dHOM_ModelVersion extends dHVariablePluginDefault {
@@ -1825,6 +1860,17 @@ class dHOMDataMatrix extends dHOMSubComp {
       $table[] = array('','','');
     }
     return $table;
+  }
+  
+  public function getMatrixField($entity) {
+    $tablefield = om_tablefield_tablefield($entity->{$this->matrix_field});
+    return $tablefield;
+  }
+  
+  public function getMatrixFieldTable($entity) {
+    $tablefield = $this->getMatrixField($entity);
+    $tabledata = $tablefield['tabledata'];
+    return $tabledata;
   }
   
   public function tablefieldToOMMatrix($field) {
