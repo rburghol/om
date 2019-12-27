@@ -442,23 +442,46 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     );
     $consumption = FALSE;
     $parent = $this->getParentEntity($entity);
-    $pplugin = dh_variables_getPlugins($parent);
     // load matrix property on parent
-    $pplugin->loadProperties($parent, FALSE, $this->wd_matrix_name, TRUE);
+    $wd_matrix_entity = om_load_dh_property($parent, $this->wd_matrix_name);
     // get matrix property entity from parent 
-    if (is_object($parent->{$this->wd_matrix_name})) {
-      $wd_matrix_entity = $parent->{$this->wd_matrix_name};
+    if (is_object($wd_matrix_entity)) {
       // load plugin for Matrix entity 
       $mplugin = dh_variables_getPlugins($wd_matrix_entity);
       // get the table of data from the matrix entity
       if (method_exists($mplugin, 'getMatrixFieldTable')) {
-        $consumption = $mplugin->getMatrixFieldTable($wd_matrix_entity);
+        $pct_wd = $mplugin->getCSVTableField($wd_matrix_entity);
+        if(count($pct_wd) >= 13) {
+          $feb = $pct_wd[2];
+          $Ff = $feb[1];
+          $consumption[0] = array('xMonth', 'xFrac');
+          $checksum = 0;
+          for ($i = 1; $i <= 12; $i++) {
+            $mofrac = $pct_wd[$i];
+            $x = $mofrac[0];
+            $Fx = $mofrac[1];
+            $cfrac = (1.0 - ( ($this->modays[$x] * $Ff) / ($this->modays[2] * $Fx) ));
+            $cfrac = ($cfrac < 0) ? 0.0 : $cfrac;
+            $checksum += $cfrac;
+            $consumption[$x] = array($x, $cfrac);
+          }
+          // consider consumption above annual total of 50% to be erroneous.
+          if ($checksum > 6.0) {
+            $consumption = FALSE;
+          }
+        }
       }
     }
     if ($consumption === FALSE) {
       $consumption = $defaults;
     }
     return $consumption;
+  }
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults['keycol1']['propcode_default'] = 'month';
+    $defaults['lutype1']['propvalue_default'] = 0;
+    return $defaults;
   }
 }
 ?>

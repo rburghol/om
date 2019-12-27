@@ -7,7 +7,7 @@ $plugin = array(
     'file' => 'dHOMWaterSystemObjectClasses.class.php',
   ),
   'variable' =>  array(
-    'varname' => 'OM Water System Flow-By/Release Object',
+    'varname' => 'OM Water System CWS Consumptive Use Estimator Object',
     'vardesc' => 'Uses the wintertime return flow method.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
