@@ -454,7 +454,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       $mplugin = dh_variables_getPlugins($wd_matrix_entity);
       // get the table of data from the matrix entity
       if (method_exists($mplugin, 'getMatrixFieldTable')) {
-        $consumption = $mplugin->getMatrixFieldTable($wd_matrix_entity);
+        $consumption = $mplugin->getCSVTableField($wd_matrix_entity);
         dpm($consumption,'matrix entity getMatrixFieldTable()');
       }
     }

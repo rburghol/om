@@ -1899,6 +1899,15 @@ class dHOMDataMatrix extends dHOMSubComp {
     return $ttrans;
   }
   
+  function getCSVTableField(&$entity) {
+    $tabledata = getMatrixFieldTable($entity);
+    $csv = array();
+    foreach ($tabledata as $rowix => $rowvals) {
+      $csv[] = array_values($rowvals);
+    }
+    return $csv;
+  }
+  
   function setCSVTableField(&$entity, $csvtable) {
     // requires a table to be set in non-associative format (essentially a csv)
     $instance = field_info_instance($entity->entityType(), $this->matrix_field, $entity->bundle);
