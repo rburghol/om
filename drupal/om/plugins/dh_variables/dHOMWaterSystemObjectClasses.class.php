@@ -451,7 +451,6 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
       // get the table of data from the matrix entity
       if (method_exists($mplugin, 'getMatrixFieldTable')) {
         $pct_wd = $mplugin->getCSVTableField($wd_matrix_entity);
-        dpm($pct_wd,'matrix entity getMatrixFieldTable()');
         $feb = $pct_wd[2];
         $Ff = $feb[1];
         $consumption[0] = array('xMonth', 'xFrac');
@@ -474,7 +473,6 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     if ($consumption === FALSE) {
       $consumption = $defaults;
     }
-    dpm($consumption,'con');
     return $consumption;
   }
 }
