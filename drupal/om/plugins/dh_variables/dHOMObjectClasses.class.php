@@ -160,6 +160,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     $props = $this->getDefaults($entity);
     //dpm($entity, "Calling updateProperties");
     //dpm($props, "Iterating over attached properties");
+    error_log("Props for $entity->propname " . print_r($props,1));
     foreach ($props as $thisvar) {
       $this->insureProperty($entity, $thisvar);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
