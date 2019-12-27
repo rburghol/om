@@ -417,4 +417,48 @@ class dHOMWaterSystemTieredFlowBy extends dHOMDataMatrix {
     return $table;
   }
 }
+
+class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
+  var $wd_matrix_name = 'historic_monthly_pct';
+  // get the wd_matrix 
+  // C(m) = 1.0 - (dx * Ff)/(df * Fx); Ff = Fraction of MGY in February, dx = Days in month(x), df = days in Feb, Fx = Fration of MGY in Month "x"
+  
+  public function tableDefault($entity) {
+    // get Parent
+    $defaults = array(
+      0=>array('xMonth','xFactor'),
+      1=>array(1,0.0),
+      2=>array(2,0.0),
+      3=>array(3,0.0),
+      4=>array(4,0.1),
+      5=>array(5,0.15),
+      6=>array(6,0.15),
+      7=>array(7,0.2),
+      8=>array(8,0.15),
+      9=>array(9,0.15),
+      10=>array(10,0.1),
+      11=>array(11,0.1),
+      12=>array(12,0.1),
+    );
+    $consumption = FALSE;
+    $parent = $this->getParentEntity($entity);
+    $pplugin = dh_variables_getPlugins($parent);
+    // load matrix property on parent
+    $pplugin->loadProperties($parent, FALSE, $this->wd_matrix_name, TRUE);
+    // get matrix property entity from parent 
+    if (is_object($parent->{$this->wd_matrix_name})) {
+      $wd_matrix_entity = $parent->{$this->wd_matrix_name};
+      // load plugin for Matrix entity 
+      $mplugin = dh_variables_getPlugins($wd_matrix_entity);
+      // get the table of data from the matrix entity
+      if (method_exists($mplugin, 'getMatrixFieldTable')) {
+        $consumption = $mplugin->getMatrixFieldTable($wd_matrix_entity);
+      }
+    }
+    if ($consumption === FALSE) {
+      $consumption = $defaults;
+    }
+    return $consumption;
+  }
+}
 ?>
