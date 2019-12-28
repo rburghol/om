@@ -605,13 +605,14 @@ class CBPLandDataConnectionFile extends timeSeriesFile {
   var $landuse_var = 'landuse'; // this allows the user to switch between land use matrices
   var $mincache = 1024; // file size for automatic cache refresh, if file is not at least 1k, we might have a problem
   var $mode_global = TRUE; // retrieves 
-   
-	// Needs to Support:
-  // - Using Text File instead of XML connection
+  // @todo: test this
+  var $intmethod = 3;
   // - local munging of timestep?
   //   Could pass entire hourly simulation to model, and use:
   //     var $intmethod = 3;
   //   Which will do a period mean inflow for us (but may be time-consuming)
+   
+	// Needs to Support:
   // - Use a shared runtime database table 
   // - Make runtime database table persistant 
   // @todo: explore passing arrays to broadcast object, 
