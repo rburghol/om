@@ -387,7 +387,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           )
         );
       }
-      $export[$thisname] = $sub_export[$sub_entity->propname];
+      $export[$entity->propname][$thisname] = $sub_export[$sub_entity->propname];
     }
     return $export;
   }
