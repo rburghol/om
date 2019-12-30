@@ -374,6 +374,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     foreach ($procnames as $thisname) {
       $sub_entity = om_load_dh_property($entity, $thisname);
       $plugin = dh_variables_getPlugins($proc_object);
+      dpm($plugin,'plugin');
       if (is_object($plugin) and method_exists($plugin, 'exportOpenMI')) {
         $sub_export = $plugin->exportOpenMI($sub_entity);
       } else {
