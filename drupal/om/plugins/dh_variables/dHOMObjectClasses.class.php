@@ -426,6 +426,26 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
   public function getPropertyAttribute($property) {
     return $property->propcode;
   }
+  
+  public function exportOpenMI($entity) {
+    // creates an array that can later be serialized as json, xml, or whatever
+    $export = array(
+      'host' => $entity->propname, 
+      'id' => $entity->pid, 
+      'name' => $entity->propname, 
+      'value' => $entity->propvalue, 
+      'code' => $entity->propcode, 
+    );
+    // load subComponents 
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    foreach ($procnames as $thisname) {
+      $sub_entity = om_load_dh_property($entity, $thisname);
+      $plugin = dh_variables_getPlugins($proc_object);
+      $sub_export = $plugin->exportOpenMI($sub_entity);
+      $export[$thisname] = $sub_export;
+    }
+    return $export;
+  }
 }
 
 class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
@@ -522,6 +542,26 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   public function dh_getValue($entity, $ts = FALSE, $propname = FALSE, $config = array()) {
     // @todo: implement om routines getPropertyAttribute() in base class 
     return $this->getPropertyAttribute($entity);
+  }
+  
+  public function exportOpenMI($entity) {
+    // creates an array that can later be serialized as json, xml, or whatever
+    $export = array(
+      'host' => $entity->propname, 
+      'id' => $entity->pid, 
+      'name' => $entity->propname, 
+      'value' => $entity->propvalue, 
+      'code' => $entity->propcode, 
+    );
+    // load subComponents 
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    foreach ($procnames as $thisname) {
+      $sub_entity = om_load_dh_property($entity, $thisname);
+      $plugin = dh_variables_getPlugins($proc_object);
+      $sub_export = $plugin->exportOpenMI($sub_entity);
+      $export[$thisname] = $sub_export;
+    }
+    return $export;
   }
 }
 
