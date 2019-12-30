@@ -122,27 +122,58 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       //     type scenario. 
       $pn = $this->handleFormPropname($propname);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE) or $force_embed) {
-        if ($overwrite 
-		    or !property_exists($entity, $propname) 
-        or (property_exists($entity, $propname) 
-          and !is_object($entity->{$propname})
-        ) 
-		  ) {
-          $thisvar['featureid'] = $entity->{$this->row_map['id']};
-          $prop = $this->insureProperty($entity, $thisvar);
-          //dpm($thisvar, "Insuring ");
-          if (!$prop) {
-            watchdog('om', 'Could not Add Properties in plugin loadProperties');
-            return FALSE;
-          }
-          //dpm($prop,'prop');
-          // apply over-rides if given
-          $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-          $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-          $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
-          $entity->{$prop->propname} = $prop;
-        }
+        // @todo: debug the use of propname here.  Propname is ONLY set if this function is called for a single prop, 
+        //        which is an unusual case 
+        $this->loadSingleProperty($entity, $propname, $thisvar, $overwrite);
       }
+    }
+  }
+  
+  public function loadSingleProperty(&$entity, $propname, $thisvar, $overwrite = FALSE) {
+    // @todo: Replace this function with loadSingleProperty2() 
+    if ($overwrite 
+      or !property_exists($entity, $propname) 
+      or (property_exists($entity, $propname) 
+        and !is_object($entity->{$propname})
+      ) 
+    ) {
+      $thisvar['featureid'] = $entity->{$this->row_map['id']};
+      $prop = $this->insureProperty($entity, $thisvar);
+      //dpm($thisvar, "Insuring ");
+      if (!$prop) {
+        watchdog('om', 'Could not Add Properties in plugin loadProperties');
+        return FALSE;
+      }
+      //dpm($prop,'prop');
+      // apply over-rides if given
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $entity->{$prop->propname} = $prop;
+    }
+  }
+  
+  public function loadSingleProperty2(&$entity, $thisvar, $overwrite = FALSE) {
+    // @todo: Replace loadSingleProperty() with this function 
+    if ($overwrite 
+      or !property_exists($entity, $thisvar['propname']) 
+      or (property_exists($entity, $thisvar['propname']) 
+        and !is_object($entity->{$thisvar['propname']})
+      ) 
+    ) {
+      $thisvar['featureid'] = $entity->{$this->row_map['id']};
+      $prop = $this->insureProperty($entity, $thisvar);
+      //dpm($thisvar, "Insuring ");
+      if (!$prop) {
+        watchdog('om', 'Could not Add Properties in plugin loadProperties');
+        return FALSE;
+      }
+      //dpm($prop,'prop');
+      // apply over-rides if given
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $entity->{$prop->propname} = $prop;
     }
   }
   
@@ -324,6 +355,26 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         }
       break;
     }
+  }
+  
+  public function exportOpenMI($entity) {
+    // creates an array that can later be serialized as json, xml, or whatever
+    $export = array(
+      'host' => $entity->propname, 
+      'id' => $entity->pid, 
+      'name' => $entity->propname, 
+      'value' => $entity->propvalue, 
+      'code' => $entity->propcode, 
+    );
+    // load subComponents 
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    foreach ($procnames as $thisname) {
+      $sub_entity = om_load_dh_property($entity, $thisname);
+      $plugin = dh_variables_getPlugins($proc_object);
+      $sub_export = $plugin->exportOpenMI($sub_entity, 
+      $export[$thisname] = $sub_export;
+    }
+    return $export;
   }
 }
 
