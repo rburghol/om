@@ -361,11 +361,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function exportOpenMI($entity) {
     // creates an array that can later be serialized as json, xml, or whatever
     $export = array(
-      'host' => $_SERVER['HTTP_HOST'], 
-      'id' => $entity->pid, 
-      'name' => $entity->propname, 
-      'value' => $entity->propvalue, 
-      'code' => $entity->propcode, 
+      $entity->propname => array(
+        'host' => $_SERVER['HTTP_HOST'], 
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue, 
+        'code' => $entity->propcode, 
+      )
     );
     // load subComponents 
     $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
@@ -376,14 +378,16 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $sub_export = $plugin->exportOpenMI($sub_entity);
       } else {
         $sub_export = array(
-          'host' => $_SERVER['HTTP_HOST'], 
-          'id' => $sub_entity->pid, 
-          'name' => $sub_entity->propname, 
-          'value' => $sub_entity->propvalue, 
-          'code' => $sub_entity->propcode, 
+          $sub_entity->propname => array(
+            'host' => $_SERVER['HTTP_HOST'], 
+            'id' => $sub_entity->pid, 
+            'name' => $sub_entity->propname, 
+            'value' => $sub_entity->propvalue, 
+            'code' => $sub_entity->propcode, 
+          )
         );
       }
-      $export[$thisname] = $sub_export;
+      $export[$thisname] = $sub_export[$sub_entity->propname);
     }
     return $export;
   }
