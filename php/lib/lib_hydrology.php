@@ -862,8 +862,8 @@ class modelObject {
     //error_log("$this->name Checking Modes: $run_mode, $flow_mode");
     if (!($run_mode === NULL) and $this->mode_global) {
       // if this is not the simulation root, and global requested, grab them 
-      $this->flow_mode = $this->flow_mode;
-      $this->run_mode = $this->run_mode;
+      $this->flow_mode = $flow_mode;
+      $this->run_mode = $run_mode;
       $this->state['run_mode'] = $this->run_mode;
       $this->state['flow_mode'] = $this->flow_mode;
     } else {
