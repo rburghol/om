@@ -155,6 +155,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function loadSingleProperty2(&$entity, $thisvar, $overwrite = FALSE) {
     // @todo: Replace loadSingleProperty() with this function 
+    // this uses the $thisvar to grab the propname when checking for overwrites
     if ($overwrite 
       or !property_exists($entity, $thisvar['propname']) 
       or (property_exists($entity, $thisvar['propname']) 
@@ -371,7 +372,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     foreach ($procnames as $thisname) {
       $sub_entity = om_load_dh_property($entity, $thisname);
       $plugin = dh_variables_getPlugins($proc_object);
-      $sub_export = $plugin->exportOpenMI($sub_entity, 
+      $sub_export = $plugin->exportOpenMI($sub_entity);
       $export[$thisname] = $sub_export;
     }
     return $export;
