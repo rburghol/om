@@ -440,6 +440,10 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
   public function getPropertyAttribute($property) {
     return $property->propcode;
   }
+  
+  public function exportOpenMI($entity) {
+    return array('object_class' => $entity->propcode);
+  }
 }
 
 class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
