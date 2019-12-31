@@ -122,27 +122,59 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       //     type scenario. 
       $pn = $this->handleFormPropname($propname);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE) or $force_embed) {
-        if ($overwrite 
-		    or !property_exists($entity, $propname) 
-        or (property_exists($entity, $propname) 
-          and !is_object($entity->{$propname})
-        ) 
-		  ) {
-          $thisvar['featureid'] = $entity->{$this->row_map['id']};
-          $prop = $this->insureProperty($entity, $thisvar);
-          //dpm($thisvar, "Insuring ");
-          if (!$prop) {
-            watchdog('om', 'Could not Add Properties in plugin loadProperties');
-            return FALSE;
-          }
-          //dpm($prop,'prop');
-          // apply over-rides if given
-          $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-          $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-          $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
-          $entity->{$prop->propname} = $prop;
-        }
+        // @todo: debug the use of propname here.  Propname is ONLY set if this function is called for a single prop, 
+        //        which is an unusual case 
+        $this->loadSingleProperty($entity, $propname, $thisvar, $overwrite);
       }
+    }
+  }
+  
+  public function loadSingleProperty(&$entity, $propname, $thisvar, $overwrite = FALSE) {
+    // @todo: Replace this function with loadSingleProperty2() 
+    if ($overwrite 
+      or !property_exists($entity, $propname) 
+      or (property_exists($entity, $propname) 
+        and !is_object($entity->{$propname})
+      ) 
+    ) {
+      $thisvar['featureid'] = $entity->{$this->row_map['id']};
+      $prop = $this->insureProperty($entity, $thisvar);
+      //dpm($thisvar, "Insuring ");
+      if (!$prop) {
+        watchdog('om', 'Could not Add Properties in plugin loadProperties');
+        return FALSE;
+      }
+      //dpm($prop,'prop');
+      // apply over-rides if given
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $entity->{$prop->propname} = $prop;
+    }
+  }
+  
+  public function loadSingleProperty2(&$entity, $thisvar, $overwrite = FALSE) {
+    // @todo: Replace loadSingleProperty() with this function 
+    // this uses the $thisvar to grab the propname when checking for overwrites
+    if ($overwrite 
+      or !property_exists($entity, $thisvar['propname']) 
+      or (property_exists($entity, $thisvar['propname']) 
+        and !is_object($entity->{$thisvar['propname']})
+      ) 
+    ) {
+      $thisvar['featureid'] = $entity->{$this->row_map['id']};
+      $prop = $this->insureProperty($entity, $thisvar);
+      //dpm($thisvar, "Insuring ");
+      if (!$prop) {
+        watchdog('om', 'Could not Add Properties in plugin loadProperties');
+        return FALSE;
+      }
+      //dpm($prop,'prop');
+      // apply over-rides if given
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $entity->{$prop->propname} = $prop;
     }
   }
   
@@ -325,6 +357,47 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       break;
     }
   }
+  
+  public function exportOpenMI($entity) {
+    // creates an array that can later be serialized as json, xml, or whatever
+    $export = $this->exportOpenMIBase($entity);
+    // load subComponents 
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    foreach ($procnames as $thisname) {
+      $sub_entity = om_load_dh_property($entity, $thisname);
+      $plugin = dh_variables_getPlugins($sub_entity);
+      //dpm($plugin,'plugin');
+      if (is_object($plugin) and method_exists($plugin, 'exportOpenMI')) {
+        $sub_export = $plugin->exportOpenMI($sub_entity);
+      } else {
+        $sub_export = array(
+          $sub_entity->propname => array(
+            'host' => $_SERVER['HTTP_HOST'], 
+            'id' => $sub_entity->pid, 
+            'name' => $sub_entity->propname, 
+            'value' => $sub_entity->propvalue, 
+            'code' => $sub_entity->propcode, 
+          )
+        );
+      }
+      $export[$entity->propname][$thisname] = $sub_export[$sub_entity->propname];
+    }
+    return $export;
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'host' => $_SERVER['HTTP_HOST'], 
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue, 
+        'code' => $entity->propcode, 
+      )
+    );
+    return $export;
+  }
 }
 
 // @todo: evaluate dHVariablePluginCodeAttribute and dHVariablePluginNumericAttribute
@@ -373,6 +446,10 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
   
   public function getPropertyAttribute($property) {
     return $property->propcode;
+  }
+  
+  public function exportOpenMI($entity) {
+    return array('object_class' => $entity->propcode);
   }
 }
 
@@ -1333,6 +1410,20 @@ class dHOMEquation extends dHOMSubComp {
     $form[$mname] = $pform['propcode'];
   }
   */
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'host' => $_SERVER['HTTP_HOST'], 
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'default' => $entity->propvalue, 
+        'equation' => $entity->propcode, 
+      )
+    );
+    return $export;
+  }
 }
 
 class dHOMStatistic extends dHOMSubComp {
@@ -1955,6 +2046,13 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['lutype2']["#empty_value"] = "";
     $form['lutype2']["#empty_option"] = "Not Set";
     $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = parent::exportOpenMIBase($entity);
+    $export[$entity->propname]['matrix'] = $this->getCSVTableField($entity);
+    return $export;
   }
  
 }

@@ -83,6 +83,14 @@ class Equation extends modelSubObject {
       }
    }
    
+   function setProp($propname, $propvalue, $view = '') {
+     if ( ($propname == 'default') ) {
+       parent::setProp('defaultval', $propvalue, $view);
+     } else {
+       parent::setProp($propname, $propvalue, $view);
+     }
+   }
+   
    function finish() {
       if ($this->numnull > 0) {
          $this->logError("Equation resolved to NULL $this->numnull times.");
