@@ -4,6 +4,10 @@ if [ $# -lt 1 ]; then
   echo 1>&2 "Usage: summarize_runoffs.sh runid "
   exit 2
 fi 
+tyear=2007
+if [ $# -gt 1 ]; then
+  tyear=$2
+fi 
 
 runid=$1
 
@@ -36,5 +40,5 @@ cd /var/www/R
 while IFS= read -r line; do
     #echo "Text read from file: $line"
     IFS="$IFS|" read pid elid <<< "$line"
-    Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid
+    Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid $tyear 
 done < /tmp/runoff-models.txt 
