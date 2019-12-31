@@ -1410,7 +1410,6 @@ class dHOMEquation extends dHOMSubComp {
     $form[$mname] = $pform['propcode'];
   }
   */
-  }
   
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
