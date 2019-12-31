@@ -2033,6 +2033,14 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['lutype2']["#empty_option"] = "Not Set";
     $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = parent::exportOpenMIBase($entity);
+    $export['matrix'] = $this->getCSVTableField($entity);
+    dpm($export,'added matrix');
+    return $export;
+  }
  
 }
 
