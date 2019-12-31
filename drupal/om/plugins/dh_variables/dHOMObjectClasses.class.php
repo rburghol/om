@@ -2037,7 +2037,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = parent::exportOpenMIBase($entity);
-    $export[$entity->name]['matrix'] = $this->getCSVTableField($entity);
+    $export[$entity->propname]['matrix'] = $this->getCSVTableField($entity);
     return $export;
   }
  
