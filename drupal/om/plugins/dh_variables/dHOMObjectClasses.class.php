@@ -1404,10 +1404,10 @@ class dHOMEquation extends dHOMSubComp {
     return $defaults;
   }
   
-  public function formRowEdit(&$rowform, $entity) {
-    parent::formRowEdit($rowform, $entity);
-    $rowform['propcode']['#title'] = '';
-    $rowform['propcode']['#prefix'] = ' = ';
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    $form['propcode']['#title'] = '';
+    $form['propcode']['#prefix'] = ' = ';
     $engines = array(
       'mathExpression2' => "Default",
       'mathExpression3' => "mathExpression3",
