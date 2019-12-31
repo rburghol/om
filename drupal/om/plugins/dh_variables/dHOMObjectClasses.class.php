@@ -1392,7 +1392,7 @@ class dHOMEquation extends dHOMSubComp {
       ),
       'engine' => array(
         'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
+        'propcode_default' => 'mathExpression2',
         'propname' => 'engine',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
@@ -1415,7 +1415,6 @@ class dHOMEquation extends dHOMSubComp {
     $form['engine']['#type'] = 'select';
     $form['engine']['#options'] = $engines;
     $form['engine']['#size'] = 1;
-    $form['engine']["#empty_value"] = "mathExpression2";
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
