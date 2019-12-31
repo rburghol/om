@@ -360,15 +360,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function exportOpenMI($entity) {
     // creates an array that can later be serialized as json, xml, or whatever
-    $export = array(
-      $entity->propname => array(
-        'host' => $_SERVER['HTTP_HOST'], 
-        'id' => $entity->pid, 
-        'name' => $entity->propname, 
-        'value' => $entity->propvalue, 
-        'code' => $entity->propcode, 
-      )
-    );
+    $export = $this->exportOpenMIBase($entity);
     // load subComponents 
     $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
     foreach ($procnames as $thisname) {
@@ -390,6 +382,20 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       $export[$entity->propname][$thisname] = $sub_export[$sub_entity->propname];
     }
+    return $export;
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'host' => $_SERVER['HTTP_HOST'], 
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue, 
+        'code' => $entity->propcode, 
+      )
+    );
     return $export;
   }
 }
