@@ -1,26 +1,12 @@
 #!/bin/bash
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
   echo 1>&2 "Usage: summarize_runoffs.sh runid "
   exit 2
 fi 
 
 runid=$1
-run_mode=$2
-flow_mode=$3
-force=$4
-startdate="1984-01-01"
-if [ $# -gt 4 ]; then
-  startdate=$5
-fi 
-enddate="2014-12-31"
-if [ $# -gt 5 ]; then
-  enddate=$6
-fi 
-cachedate="2019-12-01"
-if [ $# -gt 6 ]; then
-  cachedate=$7
-fi 
+
 # @todo: Put in batch post-process and summarize into vahydro 
 # Also, replace the normal dH/VAHydro call to php 
 # with a call to a shell script that runs the model, then runs a R summary script 
