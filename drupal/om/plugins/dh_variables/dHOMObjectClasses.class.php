@@ -1390,6 +1390,16 @@ class dHOMEquation extends dHOMSubComp {
         'varname' => 'Initial Value',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
+      'engine' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'engine',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Parser.',
+        'varname' => 'Which Equation Parser to Use?',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
     );
     return $defaults;
   }
@@ -1398,6 +1408,14 @@ class dHOMEquation extends dHOMSubComp {
     parent::formRowEdit($rowform, $entity);
     $rowform['propcode']['#title'] = '';
     $rowform['propcode']['#prefix'] = ' = ';
+    $engines = array(
+      'mathExpression2' => "Default",
+      'mathExpression3' => "mathExpression3",
+    );
+    $form['engine']['#type'] = 'select';
+    $form['engine']['#options'] = $engines;
+    $form['engine']['#size'] = 1;
+    $form['engine']["#empty_value"] = "mathExpression2";
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
