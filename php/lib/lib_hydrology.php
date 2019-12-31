@@ -458,6 +458,7 @@ class modelObject {
              'month'=>'float8',
              'day'=>'float8',
              'year'=>'float8',
+             'jday'=>'float8',
              'thisdate'=>'date',
              'time'=>'timestamp',
              'timestamp'=>'bigint',
@@ -466,7 +467,7 @@ class modelObject {
              'flow_mode'=>'float8',
              'season'=>'varchar(8)'
     );
-    $dcs = array('thisdate', 'month', 'day', 'year', 'week', 'timestamp', 'modays', 'run_mode', 'flow_mode');
+    $dcs = array('thisdate', 'month', 'day', 'year', 'jday', 'week', 'timestamp', 'modays', 'run_mode', 'flow_mode');
     foreach ($dcs as $thisdc) {
        $this->data_cols[] = $thisdc;
     }
@@ -492,6 +493,7 @@ class modelObject {
              'dt'=>'%u',
              'month'=>'%u',
              'day'=>'%u',
+             'jday'=>'%u',
              'year'=>'%u',
              'thisdate'=>'%s',
              'time'=>'%s',
@@ -1310,7 +1312,7 @@ class modelObject {
   function getPublicProps() {
     // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
     //$publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode');
-    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'flow_mode', 'timestamp');
+    $publix = array('name','objectname','description','componentid', 'startdate', 'enddate', 'dt', 'month', 'jday', 'day', 'year', 'thisdate', 'the_geom', 'weekday', 'modays', 'week', 'hour', 'run_mode', 'flow_mode', 'timestamp');
 
     return $publix;
   }
@@ -1380,6 +1382,7 @@ class modelObject {
        $this->state['year'] = $this->timer->thistime->format('Y');
        $this->state['month'] = $this->timer->thistime->format('n');
        $this->state['day'] = $this->timer->thistime->format('j');
+       $this->state['jday'] = $this->timer->thistime->format('z');
        $this->state['weekday'] = $this->timer->thistime->format('N');
        $this->state['week'] = $this->timer->thistime->format('W');
        $this->state['hour'] = $this->timer->thistime->format('G');
@@ -1851,6 +1854,9 @@ class modelObject {
     }
     if (!isset($logsrc['day'])) {
        $logsrc['day'] = $this->timer->thistime->format('d');
+    }
+    if (!isset($logsrc['jday'])) {
+       $logsrc['jday'] = $this->timer->thistime->format('z');
     }
     if (!isset($logsrc['year'])) {
        $logsrc['year'] = $this->timer->thistime->format('Y');
@@ -4030,6 +4036,7 @@ class simTimer {
       $this->year = $this->thistime->format('Y');
       $this->month = $this->thistime->format('n');
       $this->day = $this->thistime->format('j');
+      $this->jday = $this->thistime->format('z');
       $this->hour = $this->thistime->format('G');
       $this->timeseconds = $this->thistime->format('U');
       $this->timestamp = $this->thistime->format('r');
@@ -4075,6 +4082,7 @@ class simTimer {
       $this->year = $this->thistime->format('Y');
       $this->month = $this->thistime->format('n');
       $this->day = $this->thistime->format('j');
+      $this->jday = $this->thistime->format('z');
       $this->hour = $this->thistime->format('G');
       $this->timeseconds = $this->thistime->format('U');
       $this->timestamp = $this->thistime->format('r');
