@@ -1410,6 +1410,21 @@ class dHOMEquation extends dHOMSubComp {
     $form[$mname] = $pform['propcode'];
   }
   */
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'host' => $_SERVER['HTTP_HOST'], 
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'default' => $entity->propvalue, 
+        'equation' => $entity->propcode, 
+      )
+    );
+    return $export;
+  }
 }
 
 class dHOMStatistic extends dHOMSubComp {

@@ -609,4 +609,82 @@ class dHOMUSGSChannelGeomObject_sub extends dHOMUSGSChannelGeomObject {
   var $object_class = 'USGSChannelGeomObject_sub';
   
 }
+class dHOMUSGSRecharge extends dHOMSubComp {
+  var $object_class = 'USGSRecharge';
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    parent::getDefaults($entity, $defaults);
+    $defaults = array(
+      'q_var' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'q_var',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Initial Storage (ac-ft)',
+        'vardesc' => 'Flow variable to summarize as input to MLLR.',
+        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+      ),
+      'r_start_day' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 300,
+        'propname' => 'r_start_day',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Recharge JDay Begin',
+        'vardesc' => 'Julian day of period start.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'r_end_day' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 100,
+        'propname' => 'r_end_day',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Recharge JDay End',
+        'vardesc' => 'Julian day of period start.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'r_default' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 100,
+        'propname' => 'r_default',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Recharge Default (cfs)',
+        'vardesc' => 'Default value in the event of missing data, or at simulation begin.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'b0' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 100,
+        'propname' => 'b0',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'β<sub>0</sub>',
+        'vardesc' => 'First regression term.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'b1' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 100,
+        'propname' => 'b1',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'β<sub>1</sub>',
+        'vardesc' => 'Second regression term.',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+    );
+    return $defaults;
+  }
+}
+
+
 ?>
