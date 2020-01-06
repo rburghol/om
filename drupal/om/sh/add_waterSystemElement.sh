@@ -43,3 +43,9 @@ if [ $om_parent -gt 0 ]; then
   drush scr modules/om/src/om_saveprop.php cmd $entity_type $entity_id "$system_name"
   
 fi 
+
+# copy the element fac_current_mgy from it's feature wd_current_mgy 
+drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation fac_current_mgy wd_current_mgy $src_entity_type 
+drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation wsp2020_2020_mgy wsp2020_2020_mgy $src_entity_type 
+drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation wsp2020_2040_mgy wsp2020_2040_mgy $src_entity_type 
+# Calculate the riverseg frac ... this could be tough = sum(fac:mp) in riverseg, divided by fac_current_mgy 

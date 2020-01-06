@@ -107,7 +107,7 @@ foreach ($data as $element) {
   
 	//create or load om_class_Equation
 	$values = array(
-      'varkey' => 'om_class_Equation', 
+      'varkey' => $prop_varkey, 
       'propname' => $dest_prop,
       'featureid' => $model->pid,
       'propvalue' => NULL, //best practice to set them as NULL explicitly
