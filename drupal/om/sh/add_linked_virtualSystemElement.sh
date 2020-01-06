@@ -1,8 +1,8 @@
 #!/bin/sh
 
 pid=$1
-entity_id=$2
-entity_type=$3
+entity_type=$2
+entity_id=$3
 # Virtual County Facility Model Template
 template=5234733
 
