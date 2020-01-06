@@ -4,7 +4,7 @@ pid=$1
 template=4988636
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: add_common_waterSystemElement.sh pid [template$template]"
+  echo 1>&2 "Usage: add_common_waterSystemElement.sh pid [template=$template]"
   exit 2
 fi 
 
