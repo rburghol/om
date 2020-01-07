@@ -67,7 +67,7 @@ error_log("Run type $runtype \n");
 
 switch ($runtype) {
    case 'normal':
-   error_log("Calling Normal run with " . print_r($runVars,1) . "\n");
+   error_log("Calling $runtype run with " . print_r($runVars,1) . "\n");
    runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], array(),  $runVars['cache_level'], array(), $optional_input);
    error_log("Returned from Normal run with " . print_r($runVars,1) . "\n");
    break;
@@ -75,7 +75,7 @@ switch ($runtype) {
    case 'cached_cova':
    error_log("Calling runCOVAProposedWithdrawal() with " . print_r($runVars,1) . "\n");
    runCOVAProposedWithdrawal ($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], $runVars['cache_level'], 0, $runVars['cache_list']);
-   error_log("Returned from runCOVAProposedWithdrawal() with " . print_r($runVars,1) . "\n");
+   error_log("Returned from $runtype  with " . print_r($runVars,1) . "\n");
    break;
    
    case 'cached_wsp':
@@ -89,7 +89,7 @@ switch ($runtype) {
       // set the message - testing completed
       setStatus($listobject, $runVars['elementid'], "<b>Testing Completed</b> Returned from runCOVAProposedWithdrawal() with " . print_r($runVars,1), $serverip, 0, $runVars['runid']);
    }
-   error_log("Returned from runCOVAProposedWithdrawal() with " . print_r($runVars,1) . "\n");
+   error_log("Returned from $runtype with " . print_r($runVars,1) . "\n");
    break;
    
    case 'test_wsp':
@@ -103,7 +103,7 @@ switch ($runtype) {
       // set the message - testing completed
       setStatus($listobject, $runVars['elementid'], "<b>Testing Completed</b> Returned from runCOVAProposedWithdrawal() with " . print_r($runVars,1), $serverip, 0, $runVars['runid']);
    }
-   error_log("Returned from runCOVAProposedWithdrawal() with " . print_r($runVars,1) . "\n");
+   error_log("Returned from $runtype with " . print_r($runVars,1) . "\n");
    break;
    
    case 'cached':
@@ -113,13 +113,13 @@ switch ($runtype) {
    // test only uncomment below
    //runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], $runVars['cache_list'], $runVars['cache_level'], array(), array(), true);
    runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], $runVars['cache_list'], $runVars['cache_level'], array());
-   error_log("Returned from runCached() with " . print_r($runVars,1) . "\n");
+   error_log("Returned from $runtype with " . print_r($runVars,1) . "\n");
    break;
    
    default:
-   error_log("Calling Normal run with " . print_r($runVars,1) . "\n");
+   error_log("Calling runCached run with " . print_r($runVars,1) . "\n");
    runCached($runVars['elementid'], $runVars['runid'], $runVars['cache_runid'], $runVars['startdate'], $runVars['enddate'], array(),  $runVars['cache_level'], array());
-   error_log("Returned from Normal run with " . print_r($runVars,1) . "\n");
+   error_log("Returned from $runtype run with " . print_r($runVars,1) . "\n");
    break;
    
 }
