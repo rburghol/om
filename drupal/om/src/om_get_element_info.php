@@ -26,7 +26,7 @@ $q = "select a.pid, b.propvalue, oc.propcode
 error_log($q . "vars " . print_r($vars,1));
 
 $rez = db_query($q, $vars);
-$props = $rez->etchAssoc();
+$props = $rez->fetchAssoc();
 error_log("Info:" . print_r($props,1));
 echo implode("\t",$props);
 
