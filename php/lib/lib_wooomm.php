@@ -9416,6 +9416,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
   }
   //error_log("$listobject->querystring");
   putArrayToFilePlatform("$manifest", $manifest_elements,1,'unix');
+  error_log("Manifest:" . print_r($manifest_elements,1));
   error_log("Done");
 
   //print($innerHTML);
