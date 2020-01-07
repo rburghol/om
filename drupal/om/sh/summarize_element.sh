@@ -12,7 +12,7 @@ runid=$2
 # with a call to a shell script that runs the model, then runs a R summary script 
 
 # summarize all runoff containers 
-info=`drush scr modules/om/src/om_get_model_info.php $elid`
+info=`drush scr modules/om/src/om_get_element_info.php $elid`
 cd /var/www/R
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
 IFS="$IFS|" read pid elid object_class <<< "$info"
