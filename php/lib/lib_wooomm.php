@@ -9415,7 +9415,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
     }
   }
   //error_log("$listobject->querystring");
-  putDelimitedFile($manifest,$manifest_elements,"\t");
+  putArrayToFilePlatform("$manifest", $manifest_elements,1,'unix');
   error_log("Done");
 
   //print($innerHTML);
