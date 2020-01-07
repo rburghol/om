@@ -9287,133 +9287,138 @@ function modelControlForm($projectid, $scenarioid, $elementid) {
 }
 
 function storeElementRunData($listobject, $elementid, $components, $runid, $run_date, $startdate, $enddate, $meanexectime=0, $debug = 0) {
-   global $outdir, $outurl, $serverip, $unserobjects;
-   if (trim($meanexectime) == '') {
-      $meanexectime = 0;
-   }
-   $cfilename = $outdir . "/objectlog." . $elementid . "." . $elementid .  ".log";
-   $cfileurl = "http://$serverip" . $outurl . "/objectlog." . $elementid . "." . $elementid .  ".log";
-   $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
-   $listobject->querystring = "  delete from scen_model_run_elements ";
-   $listobject->querystring .= " where elementid = $elementid ";
-   $listobject->querystring .= " and runid = -1 ";
-   if ($debug) { 
+  global $outdir, $outurl, $serverip, $unserobjects;
+  if (trim($meanexectime) == '') {
+    $meanexectime = 0;
+  }
+  $cfilename = $outdir . "/objectlog." . $elementid . "." . $elementid .  ".log";
+  $cfileurl = "http://$serverip" . $outurl . "/objectlog." . $elementid . "." . $elementid .  ".log";
+  $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
+  $listobject->querystring = "  delete from scen_model_run_elements ";
+  $listobject->querystring .= " where elementid = $elementid ";
+  $listobject->querystring .= " and runid = -1 ";
+  if ($debug) { 
+    error_log($listobject->querystring);
+  };
+  $listobject->performQuery();
+  $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, remote_url, run_date, host, report, exec_time_mean, elemoperators)";
+  $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', $pfileurl, $meanexectime, a.elemoperators ";
+  $listobject->querystring .= " from scen_model_element as a ";
+  $listobject->querystring .= " where elementid = $elementid ";
+  if ($debug) { 
+    error_log($listobject->querystring);
+  };
+  $listobject->performQuery();
+  if ($runid <> -1) {
+    if (isset($unserobjects[$elementid])) {
+      $rfilename = $unserobjects[$elementid]->logfile;
+      $dfilename = $outdir . "/" . $unserobjects[$elementid]->debugfile;
+    } else {
+      $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
+      $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
+    }
+    $manifest = $outdir . "/manifest$runid" . "." . $elementid . ".log";
+    $manifest_elements = array();
+    $manifest_elements[] = $elementid;
+    $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
+    $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
+    copy($cfilename, $rfilename);
+    copy($dfilename, $rdfilename);
+    error_log("Model Run Debug Data Copied from $dfilename, $rdfilename ");
+    // we want to store this output as a specific run, in addition to the default "last run" code 
+    $listobject->querystring = "  delete from scen_model_run_elements ";
+    $listobject->querystring .= " where elementid = $elementid ";
+    $listobject->querystring .= " and runid = $runid ";
+    if ($debug) { 
       error_log($listobject->querystring);
-   };
-   $listobject->performQuery();
-   $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, remote_url, run_date, host, report, exec_time_mean, elemoperators)";
-   $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', $pfileurl, $meanexectime, a.elemoperators ";
-   $listobject->querystring .= " from scen_model_element as a ";
-   $listobject->querystring .= " where elementid = $elementid ";
-   if ($debug) { 
+    };
+    $listobject->performQuery();
+    // custom to be run on this install - 
+    $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $elementid . ".log";
+    $listobject->querystring = "  insert into scen_model_run_elements ";
+    $listobject->querystring .= " (runid,starttime, endtime, elem_xml,";
+    $listobject->querystring .= "  elementid, output_file, remote_url, debugfile, report, ";
+    $listobject->querystring .= "  run_date, host, exec_time_mean, elemoperators)";
+    $listobject->querystring .= " select $runid, '$startdate', ";
+    $listobject->querystring .= " '$enddate', a.elem_xml, ";
+    $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', '$pfileurl',";
+    $listobject->querystring .= " '$run_date', '$serverip', $meanexectime, a.elemoperators ";
+    $listobject->querystring .= " from scen_model_element as a ";
+    $listobject->querystring .= " where elementid = $elementid ";
+    if ($debug) { 
       error_log($listobject->querystring);
-   };
-   $listobject->performQuery();
-   if ($runid <> -1) {
-      if (isset($unserobjects[$elementid])) {
-         $rfilename = $unserobjects[$elementid]->logfile;
-         $dfilename = $outdir . "/" . $unserobjects[$elementid]->debugfile;
-      } else {
-         $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
-         $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
-      }
-      $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
-      $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
-      copy($cfilename, $rfilename);
-      copy($dfilename, $rdfilename);
-      error_log("Model Run Debug Data Copied from $dfilename, $rdfilename ");
-      // we want to store this output as a specific run, in addition to the default "last run" code 
-      $listobject->querystring = "  delete from scen_model_run_elements ";
-      $listobject->querystring .= " where elementid = $elementid ";
-      $listobject->querystring .= " and runid = $runid ";
-      if ($debug) { 
-         error_log($listobject->querystring);
-      };
-      $listobject->performQuery();
-      // custom to be run on this install - 
-      $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $elementid . ".log";
-      $listobject->querystring = "  insert into scen_model_run_elements ";
-      $listobject->querystring .= " (runid,starttime, endtime, elem_xml,";
-      $listobject->querystring .= "  elementid, output_file, remote_url, debugfile, report, ";
-      $listobject->querystring .= "  run_date, host, exec_time_mean, elemoperators)";
-      $listobject->querystring .= " select $runid, '$startdate', ";
-      $listobject->querystring .= " '$enddate', a.elem_xml, ";
-      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', '$dfilename', '$pfileurl',";
-      $listobject->querystring .= " '$run_date', '$serverip', $meanexectime, a.elemoperators ";
-      $listobject->querystring .= " from scen_model_element as a ";
-      $listobject->querystring .= " where elementid = $elementid ";
-      if ($debug) { 
-         error_log($listobject->querystring);
-      };
-      $listobject->performQuery();
-   }
+    };
+    $listobject->performQuery();
+  }
 
-   foreach ($components as $thiscomp) {
-      // insert copy of this as "last run" (runid = -1)
-      error_log("Handling log files for elementid $thiscomp");
-      $cfilename = '';
-      if (isset($unserobjects[$thiscomp])) {
-        error_log("Getting base log file from object found in unserobjects");
-//        $unserobjects[$thiscomp]->name");
-        $cfilename = trim($unserobjects[$thiscomp]->logfile);
-      }
-      if (strlen($cfilename) == 0) {
-        $cfilename = $outdir . "/objectlog." . $elementid . "." . $thiscomp . ".log";
-        error_log("No valid log file name found, Guessing log file");
-      }
-      error_log("Base log file $cfilename");
-      //
-      $listobject->querystring = "  delete from scen_model_run_elements ";
-      $listobject->querystring .= " where elementid = $thiscomp ";
-      $listobject->querystring .= " and runid = -1 ";
-      if ($debug) { 
+  foreach ($components as $thiscomp) {
+    // insert copy of this as "last run" (runid = -1)
+    $manifest_elements[] = $thiscomp;
+    error_log("Handling log files for elementid $thiscomp");
+    $cfilename = '';
+    if (isset($unserobjects[$thiscomp])) {
+      error_log("Getting base log file from object found in unserobjects");
+  //        $unserobjects[$thiscomp]->name");
+      $cfilename = trim($unserobjects[$thiscomp]->logfile);
+    }
+    if (strlen($cfilename) == 0) {
+      $cfilename = $outdir . "/objectlog." . $elementid . "." . $thiscomp . ".log";
+      error_log("No valid log file name found, Guessing log file");
+    }
+    error_log("Base log file $cfilename");
+    //
+    $listobject->querystring = "  delete from scen_model_run_elements ";
+    $listobject->querystring .= " where elementid = $thiscomp ";
+    $listobject->querystring .= " and runid = -1 ";
+    if ($debug) { 
+      error_log($listobject->querystring);
+    };
+    $listobject->performQuery();
+    $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, run_date, host, elemoperators) ";
+    $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$run_date', '$serverip', a.elemoperators ";
+    $listobject->querystring .= " from scen_model_element as a ";
+    $listobject->querystring .= " where elementid = $thiscomp ";
+    if ($debug) { 
+      error_log($listobject->querystring);
+    };
+    $listobject->performQuery();
+    if ( ($runid <> -1) and !in_array($thiscomp, $cachedlist)) {
+        error_log("Element $thiscomp is not cached - saving runid specific file");
+        // we want to store this output as a specific run, in addition to the default "last run" code 
+        $rfilename = $outdir . "/runlog$runid" . "." . $thiscomp . ".log";
+        copy($cfilename, $rfilename);
+        $listobject->querystring = "  delete from scen_model_run_elements ";
+        $listobject->querystring .= " where elementid = $thiscomp ";
+        $listobject->querystring .= " and runid = $runid ";
+        if ($debug) { 
          error_log($listobject->querystring);
-      };
-      $listobject->performQuery();
-      $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, run_date, host, elemoperators) ";
-      $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$run_date', '$serverip', a.elemoperators ";
-      $listobject->querystring .= " from scen_model_element as a ";
-      $listobject->querystring .= " where elementid = $thiscomp ";
-      if ($debug) { 
-         error_log($listobject->querystring);
-      };
-      $listobject->performQuery();
-      if ( ($runid <> -1) and !in_array($thiscomp, $cachedlist)) {
-          error_log("Element $thiscomp is not cached - saving runid specific file");
-         // we want to store this output as a specific run, in addition to the default "last run" code 
-         $rfilename = $outdir . "/runlog$runid" . "." . $thiscomp . ".log";
-         copy($cfilename, $rfilename);
-         $listobject->querystring = "  delete from scen_model_run_elements ";
-         $listobject->querystring .= " where elementid = $thiscomp ";
-         $listobject->querystring .= " and runid = $runid ";
-         if ($debug) { 
-            error_log($listobject->querystring);
-         };
-         $listobject->performQuery();
-         // custom to be run on this install - 
-         $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $thiscomp . ".log";
-         $listobject->querystring = "  insert into scen_model_run_elements ";
-         $listobject->querystring .= "( runid,starttime, endtime, ";
-         $listobject->querystring .= " elem_xml, elementid, output_file, remote_url, ";
-         $listobject->querystring .= " run_date, host, elemoperators )";
-         $listobject->querystring .= " select $runid, '$startdate', ";
-         $listobject->querystring .= "'$enddate', a.elem_xml, ";
-         $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', ";
-         $listobject->querystring .= " '$run_date', '$serverip', a.elemoperators ";
-         $listobject->querystring .= " from scen_model_element as a ";
-         $listobject->querystring .= " where elementid = $thiscomp ";
-         if ($debug) { 
-            error_log($listobject->querystring);
-         };
-         $listobject->performQuery();
-      } else {
-        error_log("Element $thiscomp IS cached - no run file saved");
-      }
-   }
-   //error_log("$listobject->querystring");
-   error_log("Done");
+        };
+        $listobject->performQuery();
+        // custom to be run on this install - 
+        $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $thiscomp . ".log";
+        $listobject->querystring = "  insert into scen_model_run_elements ";
+        $listobject->querystring .= "( runid,starttime, endtime, ";
+        $listobject->querystring .= " elem_xml, elementid, output_file, remote_url, ";
+        $listobject->querystring .= " run_date, host, elemoperators )";
+        $listobject->querystring .= " select $runid, '$startdate', ";
+        $listobject->querystring .= "'$enddate', a.elem_xml, ";
+        $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', ";
+        $listobject->querystring .= " '$run_date', '$serverip', a.elemoperators ";
+        $listobject->querystring .= " from scen_model_element as a ";
+        $listobject->querystring .= " where elementid = $thiscomp ";
+        if ($debug) { 
+          error_log($listobject->querystring);
+        };
+        $listobject->performQuery();
+    } else {
+      error_log("Element $thiscomp IS cached - no run file saved");
+    }
+  }
+  //error_log("$listobject->querystring");
+  putDelimitedFile($manifest,$manifest_elements,"\t");
+  error_log("Done");
 
-   //print($innerHTML);
+  //print($innerHTML);
 }
 
 

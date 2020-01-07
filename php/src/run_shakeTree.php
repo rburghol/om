@@ -286,5 +286,5 @@ while (count($outlets) > 0) {
 }
 
 error_log("Done.\n");
-   
+//print($outlets);
 ?>
