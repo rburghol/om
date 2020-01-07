@@ -9317,7 +9317,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
       $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
     }
-    $manifest = $outdir . "/manifest$runid" . "." . $elementid . ".log";
+    $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
     $manifest_elements = array();
     $manifest_elements[] = $elementid;
     $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
