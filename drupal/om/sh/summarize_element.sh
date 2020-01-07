@@ -20,7 +20,7 @@ sum_script="/opt/model/vahydro/R/summarize.${object_class}.R"
 echo "Looking for $sum_script "
 if test -f "$sum_script"; then
   if [ $pid -gt 0 ]; then
-    echo "Rscript $sum_script $pid $elid $runid "
-    #Rscript $sum_script $pid $elid $runid 
+    echo "Running: Rscript $sum_script $pid $elid $runid " >&2
+    Rscript $sum_script $pid $elid $runid 
   fi
 fi
