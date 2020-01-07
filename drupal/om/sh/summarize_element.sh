@@ -18,7 +18,7 @@ cd /var/www/R
 IFS="$IFS|" read pid elid object_class <<< "$info"
 sum_script="/opt/model/vahydro/R/summarize.${object_class}.R"
 if test -f "$sum_script"; then
-  if [ $pid -gt 0 ];
+  if [ $pid -gt 0 ]; then
     echo "Rscript $sum_script $pid $elid $runid "
     #Rscript $sum_script $pid $elid $runid 
   fi
