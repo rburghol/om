@@ -72,3 +72,9 @@ if (is.na(RQAsd)) {
   RQAsd = 0.0
 }
 RQAprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'RQAsd', RQAsd, site, token)
+
+Rmean <- mean(as.numeric(dat$Runit) )
+if (is.na(Rmean)) {
+  Rmean = 0.0
+}
+Rmeanprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Rmean', Rmean, site, token)
