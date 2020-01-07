@@ -16,7 +16,7 @@ info=`drush scr modules/om/src/om_get_element_info.php $elid`
 cd /var/www/R
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
 IFS="$IFS|" read pid elid object_class <<< "$info"
-sum_script="/opt/model/vahydro/R/summarize.${object_class}.R"
+sum_script="/opt/model/om/R/summarize/${object_class}.R"
 echo "Looking for $sum_script "
 if test -f "$sum_script"; then
   if [ $pid -gt 0 ]; then
