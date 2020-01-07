@@ -6,6 +6,7 @@
 $noajax = 1;
 $projectid = 3;
 $runtype = 'normal';
+$sumdir = '/var/www/html/d.dh/'; // default for post-processing
 include_once('xajax_modeling.element.php');
 error_log("Remote Run Parameter: $remote_run ");
 
@@ -25,7 +26,7 @@ if (isset($_GET['runtype'])) {
       $formValues = $_POST;
    } else {
       if (!isset($argv[1])) {
-         print("Usage: php run_model.php elementid [runid=-1] [runtype(normal,cached,cached_cova)=normal] [startdate] [enddate] [cacheid=-1] [cachelist=elid1,elid2,...] [cache_level=-1] [test_only=0]\\n");
+         print("Usage: php run_model.php elementid [runid=-1] [runtype(normal,cached,cached_cova)=normal] [startdate] [enddate] [cacheid=-1] [cachelist=elid1,elid2,...] [cache_level=-1] [test_only=0] [scenarioid=$scenarioid] [sumdir=$sumdir]\\n");
          die;
       }
       if (isset($argv[3])) {
@@ -106,6 +107,7 @@ switch ($runtype) {
    break;
    
    case 'cached':
+   case 'cached2':
    error_log("Calling runCached() with " . print_r($runVars,1) . "\n");
 //error_reporting(E_ALL);
    // test only uncomment below
@@ -122,5 +124,17 @@ switch ($runtype) {
    
 }
 
-
+// handle post-processing
+if ($runtype == 'cached2') {
+  $runid = $runVars['runid'];
+  $elementid = $runVars['elementid'];
+  $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
+  $elements = file($manifest);
+  foreach ($elements as $elid) {
+    $cmd = "cd $sumdir";
+    $cmd .= "/opt/model/om/drupal/om/sh/summarize_element.sh $elid $runid  ";
+    error_log("Executing Summary : $cmd");
+    $forkout = exec( "$cmd > /dev/null &", $cmd_output );
+  }
+}
 ?>

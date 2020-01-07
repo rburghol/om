@@ -849,7 +849,7 @@ function retrieveRunSummary($listobject, $elid, $runid) {
    return $output;
 }
 
-function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $enddate, $cache_date, $debug = 0, $strict=1, $run_mode = NULL, $extra_params = array() ) {
+function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $enddate, $cache_date, $debug = 0, $strict=1, $run_mode = NULL, $extra_params = array(), $runtype = 'cached' ) {
    error_log("strictness setting: $strict \n");
    // Introduce - run_params ()
    // run_type
@@ -964,6 +964,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       $run_params['startdate'] = $startdate;
       $run_params['enddate'] = $enddate;
       $run_params['cache_level'] = $cache_date;
+      $run_params['runtype'] = $runtype;
       foreach ($extra_params as $key => $val) {
          $run_params[$key] = $val;
       }

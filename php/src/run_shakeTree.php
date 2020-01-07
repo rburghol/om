@@ -27,6 +27,7 @@ $startdate = '1984-01-01';
 //$enddate = '1984-12-31';
 $enddate = '2005-12-31';
 $cache_date = '2010-10-18 12:00:00';
+$runtype = 'cached2';
 // specify max models to run at a time
 $max_simultaneous = 8; // set to 4 while dumping WDMs cause it caues all kinds of slowness
 $scid = 37;
@@ -268,9 +269,9 @@ while (count($outlets) > 0) {
 
    
    error_log("Shaking the tree on $recid (IP: $serverip)\n");
-   error_log("Calling: shakeTree(listobject, serverip = $serverip, max_simultaneous = $max_simultaneous, recid = $recid, run_id = $run_id, startdate = $startdate, enddate = $enddate, cache_date = $cache_date, debug = $debug, strict = $strict, run_mode = $run_mode, url_params = $argv[12]);");
+   error_log("Calling: shakeTree(listobject, serverip = $serverip, max_simultaneous = $max_simultaneous, recid = $recid, run_id = $run_id, startdate = $startdate, enddate = $enddate, cache_date = $cache_date, debug = $debug, strict = $strict, run_mode = $run_mode, url_params = $argv[12], $runtype);");
    //die;
-   $run_finished = shakeTree($listobject, $serverip, $max_simultaneous, $recid, $run_id, $startdate, $enddate, $cache_date, $debug, $strict, $run_mode, $url_params);
+   $run_finished = shakeTree($listobject, $serverip, $max_simultaneous, $recid, $run_id, $startdate, $enddate, $cache_date, $debug, $strict, $run_mode, $url_params, $runtype);
    if (!$run_finished) {
       error_log("Model Element $recid not completed ... sleeping \n");
       // put it back in the array for further waiting

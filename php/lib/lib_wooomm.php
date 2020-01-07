@@ -9309,6 +9309,8 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
     error_log($listobject->querystring);
   };
   $listobject->performQuery();
+  $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
+  $manifest_elements = array();
   if ($runid <> -1) {
     if (isset($unserobjects[$elementid])) {
       $rfilename = $unserobjects[$elementid]->logfile;
@@ -9317,9 +9319,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       $rfilename = $outdir . "/runlog$runid" . "." . $elementid . ".log";
       $dfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
     }
-    $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
-    $manifest_elements = array();
-    $manifest_elements[] = $elementid;
+    $manifest_elements[] = $elementid;  // @todo: this might add a double of the base copy, which is not such a big deal but...
     $rdfilename = $outdir . "/debuglog.$runid" . "." . $elementid . ".log";
     $pfileurl = "http://$serverip" . $outurl . "/report" . $elementid . "-" . $runid .  ".log";
     copy($cfilename, $rfilename);
