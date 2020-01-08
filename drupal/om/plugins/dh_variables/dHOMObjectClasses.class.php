@@ -406,7 +406,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     return $export;
   }
   
-  public function exportVarDefs($entity, $export = array()) {
+  public function exportVarDefs($entity, &$export = array()) {
     // creates an array that can later be serialized as json, xml, or whatever
     $export[$entity->varcode] = (array)dh_vardef_info($entity->varid);
     $export[$entity->varcode]['varid'] = $export[$entity->varcode]['hydroid'];
