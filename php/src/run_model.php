@@ -126,7 +126,7 @@ switch ($runtype) {
 
 // handle post-processing
 if ($runtype == 'cached2') {
-  $runid = $runVars['runid'];
+  $runid = intval(trim($runVars['runid']));
   $elementid = $runVars['elementid'];
   $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
   error_log("Looking for manifest : $manifest");

@@ -11,9 +11,10 @@ runid=$2
 # Also, replace the normal dH/VAHydro call to php 
 # with a call to a shell script that runs the model, then runs a R summary script 
 
-# summarize all runoff containers 
+# Get info about this element, including its object_class
 info=`drush scr modules/om/src/om_get_element_info.php $elid`
 cd /var/www/R
+# summarize if a script exists for this object_class
 # Rscript vahydro/R/post.runoff.R $pid $elid $runid
 IFS="$IFS|" read pid elid object_class <<< "$info"
 sum_script="/opt/model/om/R/summarize/${object_class}.R"
