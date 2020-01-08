@@ -78,9 +78,30 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     return $defaults;
   }
   
+  public function addProperties(&$entity) {
+    // add properties that reside on this entity.
+    // this can add any number of properties that should reside on this entity.
+    // sub-class this and call repeatedly
+    // Example:
+    //$values = array(
+    //  'entity_type' => $entity->entityType(),
+    //  'propcode' => $this->object_class,
+    //  'propname' => 'object_class',
+    //  'featureid' => $entity->identifier(),
+    //  'varid' => dh_varkey2varid('om_object_class', TRUE),
+    //);
+    //dh_update_properties($values, 'singular');
+    $defaults = $this->getDefaults($entity);
+    foreach ($defaults as $thisone) {
+      //dpm($thisone,'adding default');
+      dh_update_properties($thisone, $thisone['singularity']);
+    }
+  }
+  
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     // check for transition from ts to prop
+    $this->addProperties($entity);
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
     parent::insert($entity);
@@ -742,30 +763,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     return $defaults;
   }
   
-  public function addProperties(&$entity) {
-    // add properties that reside on this entity.
-    // this can add any number of properties that should reside on this entity.
-    // sub-class this and call repeatedly
-    // Example:
-    //$values = array(
-    //  'entity_type' => $entity->entityType(),
-    //  'propcode' => $this->object_class,
-    //  'propname' => 'object_class',
-    //  'featureid' => $entity->identifier(),
-    //  'varid' => dh_varkey2varid('om_object_class', TRUE),
-    //);
-    //dh_update_properties($values, 'singular');
-    $defaults = $this->getDefaults($entity);
-    foreach ($defaults as $thisone) {
-      //dpm($thisone,'adding default');
-      dh_update_properties($thisone, $thisone['singularity']);
-    }
-  }
-  
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     $this->saveObjectClass($entity);
-    $this->addProperties($entity);
     parent::insert($entity);
   }
   
