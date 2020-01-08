@@ -129,6 +129,7 @@ if ($runtype == 'cached2') {
   $runid = $runVars['runid'];
   $elementid = $runVars['elementid'];
   $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
+  error_log("Looking for manifest : $manifest");
   $elements = file($manifest);
   foreach ($elements as $elid) {
     $cmd = "cd $sumdir";
