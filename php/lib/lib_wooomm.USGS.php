@@ -1007,6 +1007,7 @@ class USGSChannelGeomObject extends channelObject {
    function setState() {
       parent::setState();
       $this->state['drainage_area'] = $this->drainage_area;
+      $this->setSingleDataColumnType('drainage_area', 'float8', $this->drainage_area);
    }
    
    function create() {
