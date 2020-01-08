@@ -59,7 +59,7 @@ sceninfo <- list(
 
 # POSTING METRICS TO SCENARIO PROPERTIES ON VA HYDRO
 # QA
-loflows <- group2(flows);
+loflows <- group2(Runits);
 l90 <- loflows["90 Day Min"];
 
 if (is.na(l90)) {
