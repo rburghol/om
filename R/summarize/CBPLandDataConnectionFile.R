@@ -61,11 +61,17 @@ sceninfo <- list(
 # QA
 loflows <- group2(Runits);
 l90 <- loflows["90 Day Min"];
+ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+l90_RUnit = round(loflows[ndx,]$"90 Day Min",1);
+l90_year = loflows[ndx,]$"year";
 
 if (is.na(l90)) {
-  l90 = 0.0
+  l90_Runit = 0.0
+  l90_year = 0
 }
-l90prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90', l90, site, token)
+l90prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_RUnit', l90_RUnit, site, token)
+l90yr_prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, site, token)
+
 Rmean <- mean(as.numeric(dat$Runit) )
 if (is.na(Rmean)) {
   Rmean = 0.0
