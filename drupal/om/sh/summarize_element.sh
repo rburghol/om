@@ -23,5 +23,7 @@ if test -f "$sum_script"; then
   if [ $pid -gt 0 ]; then
     echo "Running: Rscript $sum_script $pid $elid $runid " >&2
     Rscript $sum_script $pid $elid $runid 
+    rm tempfile
+    rm "runlog${runid}.${elid}.log"
   fi
 fi
