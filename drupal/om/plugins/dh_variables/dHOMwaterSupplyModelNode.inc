@@ -7,7 +7,7 @@ $plugin = array(
     'file' => 'dHOMWaterSystemObjectClasses.class.php',
   ),
   'variable' =>  array(
-    'varname' => 'OM Water System Object',
+    'varname' => 'OM Water Model Node',
     'vardesc' => 'A watershed model container/node. Built for watershed outlet simulation.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',

@@ -25,7 +25,51 @@ if (syear != eyear) {
 }
 dat <- window(dat, start = sdate, end = edate);
 
-wd_mgd
-wd_cumulative_mgd
-ps_mgd
-ps_cumulative_mgd
+scen.propname<-paste0('runid_', runid)
+
+# GETTING SCENARIO PROPERTY FROM VA HYDRO
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
+scenprop <- getProperty(sceninfo, site, scenprop)
+# POST PROPERTY IF IT IS NOT YET CREATED
+if (identical(scenprop, FALSE)) {
+  # create
+  sceninfo$pid = NULL
+} else {
+  sceninfo$pid = scenprop$pid
+}
+scenprop = postProperty(inputs=sceninfo,base_url=base_url,prop)
+scenprop <- getProperty(sceninfo, site, scenprop)
+
+wd_mgd <- mean(as.numeric(dat$wd_mgd) )
+if (is.na(wd_mgd)) {
+  wd_mgd = 0.0
+}
+wd_cumulative_mgd <- mean(as.numeric(dat$wd_cumulative_mgd) )
+if (is.na(wd_cumulative_mgd)) {
+  wd_cumulative_mgd = 0.0
+}
+ps_mgd <- mean(as.numeric(dat$ps_mgd) )
+if (is.na(ps_mgd)) {
+  ps_mgd = 0.0
+}
+ps_cumulative_mgd <- mean(as.numeric(dat$ps_cumulative_mgd) )
+if (is.na(ps_cumulative_mgd)) {
+  ps_cumulative_mgd = 0.0
+}
+Qout <- mean(as.numeric(dat$Qout) )
+if (is.na(Qout)) {
+  Qout = 0.0
+}
+
+# post em up
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_cumulative_mgd', wd_cumulative_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_cumulative_mgd', ps_cumulative_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
+
