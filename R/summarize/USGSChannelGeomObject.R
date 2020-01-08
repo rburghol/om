@@ -8,8 +8,10 @@ basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
 # Camp Creek - 279191
-elid = 258409
-runid = 11
+argst <- commandArgs(trailingOnly=T)
+pid <- as.integer(argst[1])
+elid <- as.integer(argst[2])
+runid <- as.integer(argst[3])
 
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
 amn <- 10.0 * mean(as.numeric(dat$Qout))
