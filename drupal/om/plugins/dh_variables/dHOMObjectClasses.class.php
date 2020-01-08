@@ -406,6 +406,24 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     return $export;
   }
   
+  public function exportVarDefs($entity, $export = array()) {
+    // creates an array that can later be serialized as json, xml, or whatever
+    $export[$entity->varcode] = dh_vardef_info($entity->varid);
+    $export[$entity->varcode]['varid'] = $export[$entity->varcode]['hydroid'];
+    unset($export[$entity->varcode]['hydroid']);
+    // load subComponents 
+    $procnames = dh_get_dh_propnames('dh_properties', $entity->identifier());
+    foreach ($procnames as $thisname) {
+      $sub_entity = om_load_dh_property($entity, $thisname);
+      $plugin = dh_variables_getPlugins($sub_entity);
+      //dpm($plugin,'plugin');
+      if (is_object($plugin) and method_exists($plugin, 'exportVarDefs')) {
+        $plugin->exportVarDefs($sub_entity, $export);
+      }
+    }
+    return $export;
+  }
+  
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = array(
@@ -1372,6 +1390,17 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     }
     return $publix;
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue, 
+        'code' => $entity->propcode, 
+      )
+    return $export;
+  }
 }
 
 class dHOMEquation extends dHOMSubComp {
@@ -1445,7 +1474,6 @@ class dHOMEquation extends dHOMSubComp {
     // creates the base properties for this class
     $export = array(
       $entity->propname => array(
-        'host' => $_SERVER['HTTP_HOST'], 
         'id' => $entity->pid, 
         'name' => $entity->propname, 
         'default' => $entity->propvalue, 
