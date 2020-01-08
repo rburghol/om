@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]; then
+if [ $# -lt 2 ]; then
   echo 1>&2 "Usage: summarize_runoffs.sh elid runid "
   exit 2
 fi 
