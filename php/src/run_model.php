@@ -134,6 +134,7 @@ if ($runtype == 'cached2') {
   foreach ($elements as $elid) {
     $cmd_output = array();
     $cmd = "cd $sumdir \n";
+    $elid = intval(trim($elid));
     $cmd .= "/opt/model/om/drupal/om/sh/summarize_element.sh $elid $runid";
     error_log("Executing Summary : $cmd");
     $forkout = exec( "$cmd > /dev/null &", $cmd_output );
