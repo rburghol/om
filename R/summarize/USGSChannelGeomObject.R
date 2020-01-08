@@ -8,18 +8,58 @@ basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
 # Camp Creek - 279191
-elid = 258405
+elid = 258409
 runid = 11
 
-omsite = site 
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
 amn <- 10.0 * mean(as.numeric(dat$Qout))
 
 dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
 
-#plot(as.numeric(dat$Qout), ylim=c(0,amn))
+scen.propname<-paste0('runid_', runid)
 
-#boxplot(as.numeric(dat$Qout) ~ dat$year, ylim=c(0,amn))
-#boxplot(as.numeric(dat$Qin) ~ dat$month, ylim=c(0,amn))
-#boxplot(as.numeric(dat$Qout) ~ dat$month, ylim=c(0,amn))
-#boxplot(as.numeric(dat$Runit) ~ dat$month, ylim=c(0,10))
+# GETTING SCENARIO PROPERTY FROM VA HYDRO
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
+scenprop <- getProperty(sceninfo, site, scenprop)
+# POST PROPERTY IF IT IS NOT YET CREATED
+if (identical(scenprop, FALSE)) {
+  # create
+  sceninfo$pid = NULL
+} else {
+  sceninfo$pid = scenprop$pid
+}
+scenprop = postProperty(inputs=sceninfo,base_url=base_url,prop)
+scenprop <- getProperty(sceninfo, site, scenprop)
+
+# Metric defs
+
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
+
+
+Rmean <- mean(as.numeric(dat$Runit) )
+if (is.na(Rmean)) {
+  Rmean = 0.0
+}
+Rmeanprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Rmean', Rmean, site, token)
+
+Qin_mean <- mean(as.numeric(dat$Qin) )
+if (is.na(Rmean)) {
+  Rmean = 0.0
+}
+Qin_meanprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qin_mean', Qin_mean, site, token)
+
+Qout_mean <- mean(as.numeric(dat$Qout) )
+if (is.na(Rmean)) {
+  Rmean = 0.0
+}
+Qout_meanprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout_mean', Qout_mean, site, token)
