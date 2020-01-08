@@ -22,11 +22,9 @@ dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
 
 dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
 dat$Runit <- as.numeric(dat$Qout) / as.numeric(dat$area_sqmi)
-#boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
-# QA
-datQA <- window(dat, start = as.Date(paste0(tyear,"-01-01")), end = as.Date(paste0(tyear,"-12-31"))) 
-RQA <- mean(as.numeric(datQA$Runit) )
+Runits <- zoo(as.numeric(as.character( dat$Runit )), order.by = dat$thisdate);
 
+#boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
 # get feature attached to this element id using REST
 element <- getProperty(list(pid=pid), base_url, prop)
 # Post up a run summary for this runid
@@ -60,19 +58,14 @@ sceninfo <- list(
 )
 
 # POSTING METRICS TO SCENARIO PROPERTIES ON VA HYDRO
-QAyear <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'QAyear', tyear, site, token)
+# QA
+loflows <- group2(flows);
+l90 <- loflows["90 Day Min"];
 
-if (is.na(RQA)) {
-  RQA = 0.0
+if (is.na(l90)) {
+  l90 = 0.0
 }
-RQAprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'RQA', RQA, site, token)
-
-RQAsd <- sd(as.numeric(datQA$Runit) )
-if (is.na(RQAsd)) {
-  RQAsd = 0.0
-}
-RQAprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'RQAsd', RQAsd, site, token)
-
+l90prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90', l90, site, token)
 Rmean <- mean(as.numeric(dat$Runit) )
 if (is.na(Rmean)) {
   Rmean = 0.0
