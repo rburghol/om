@@ -44,6 +44,12 @@ if (identical(scenprop, FALSE)) {
 }
 scenprop = postProperty(inputs=sceninfo,base_url=base_url,prop)
 scenprop <- getProperty(sceninfo, site, scenprop)
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
 
 wd_mgd <- mean(as.numeric(dat$wd_mgd) )
 if (is.na(wd_mgd)) {
