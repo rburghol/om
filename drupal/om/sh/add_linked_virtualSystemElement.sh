@@ -6,13 +6,13 @@ entity_id=$3
 # Virtual County Facility Model Template
 template=5234733
 
-if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: add_linked_virtualSystemElement.sh pid [template$template]"
+if [ $# -lt 3 ]; then
+  echo 1>&2 "Usage: add_linked_virtualSystemElement.sh pid entity_type entity_id [template$template]"
   exit 2
 fi 
 
-if [ $# -gt 1 ]; then
-  template=$2
+if [ $# -gt 3 ]; then
+  template=$4
 fi 
 
 # copy the element fac_current_mgy from it's feature wd_current_mgy 
