@@ -92,14 +92,16 @@ foreach ($data as $element) {
     $dest_entity = entity_load_single($dest_entity_type, $dest_id);
     // cache and disable object synch if it exists
     $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
-    $result = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
+    $copy = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
     // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
-    error_log("Property $result->propname created with pid = $result->pid");
+    error_log("Property $copy->propname created with pid = $copy->pid");
     // restore original object synch if it exists
     //$dcc = 1; // force
-    $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
-    // do a final save if the link calls for it
-    $result->save();
+    if ($dcc) {
+      $link = om_dh_unstashlink($dest_entity, $dcc, 'om_element_connection');
+      // do a final save if the link calls for it
+      $copy->save();
+    }
   }
 }
 
