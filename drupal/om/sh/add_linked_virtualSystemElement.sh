@@ -4,7 +4,7 @@ pid=$1
 entity_type=$2
 entity_id=$3
 # Virtual County Facility Model Template
-template=5234733
+template=340402
 
 if [ $# -lt 3 ]; then
   echo 1>&2 "Usage: add_linked_virtualSystemElement.sh pid entity_type entity_id [template$template]"
