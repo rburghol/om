@@ -1654,6 +1654,18 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     }
     return $publix;
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propcode, 
+      )
+    );
+    return $export;
+  }
 }
 
 
