@@ -5860,6 +5860,13 @@ class timeSeriesInput extends modelObject {
          }
          // forbidden to overwrite the following:
          $forbidden = array('thisdate','month','day','year');
+         // check for run_mode and flow_mode from other sources, do not set if existing
+         if (in_array('run_mode', array_keys($this->state))) {
+           array_push($forbidden, 'run_mode');
+         }
+         if (in_array('flow_mode', array_keys($this->state))) {
+           array_push($forbidden, 'flow_mode');
+         }
          foreach(array_keys($tvals) as $tkey) {
             if (!in_array($tkey, $forbidden)) {
                if (isset($tvals[$tkey])) {
