@@ -2393,6 +2393,26 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     return 0;
   }
   
+  public function linkTypeLink($entity) {
+    // returns a href based on the type of link -- if prop link, return source, if parent:child returns dest 
+    if (!$entity->src_entity) {
+      $this->getLinkedEntity($entity);
+    }
+    switch ($this->link_type->propvalue) {
+      case 1:
+      // return dest 
+        $href = "om-model-info/" . $entity->dest_entity->identifier() ."/" . $entity->dest_entity->entityType();
+      break;
+      
+      default:
+      // return source 
+        $href = "om-model-info/" . $entity->src_entity->identifier() ."/" . $entity->src_entity->entityType();
+      break;
+    }
+    return $href;
+      
+  }
+  
   public function buildContent(&$content, &$entity, $view_mode) {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
@@ -2407,7 +2427,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
           $content['remote'] = array(
             '#type' => 'link',
             '#title' => "From: " . $entity->src_entity->label(),
-            '#href' => "om-model-info/" . $entity->src_entity->identifier() ."/" . $entity->src_entity->entityType(),
+            '#href' => $this->linkTypeLink($entity),
           );
         }
       break;
