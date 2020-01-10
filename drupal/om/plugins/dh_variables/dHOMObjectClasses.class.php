@@ -2354,7 +2354,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
           $content['remote'] = array(
             '#type' => 'link',
             '#title' => "From: " . $entity->src_entity->label(),
-            '#href' => "admin/content/" . $entity->src_entity->entityType() . "/manage/" . $entity->src_entity->identifier() . "/view",
+            '#href' => "om-model-info/" . $entity->src_entity->identifier() ."/" . $entity->src_entity->entityType(),
           );
         }
       break;
