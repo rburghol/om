@@ -1293,6 +1293,23 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     );
     return $export;
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue,
+        'scenario' => array(
+          'name' => 'scenario',
+          'object_class' => 'textField',
+          'value' =>  $entity->propcode
+        ), 
+      )
+    );
+    return $export;
+  }
 }
 
 class dHOMModelContainer extends dHOMModelElement {
@@ -1478,8 +1495,16 @@ class dHOMEquation extends dHOMSubComp {
       $entity->propname => array(
         'id' => $entity->pid, 
         'name' => $entity->propname, 
-        'default' => $entity->propvalue, 
-        'equation' => $entity->propcode, 
+        'default' => array(
+          'name' => 'default',
+          'object_class' => 'textField',
+          'value' => $entity->propvalue
+        ), 
+        'equation' => array(
+          'name' => 'equation',
+          'object_class' => 'textField',
+          'value' =>  $entity->propcode
+        ), 
       )
     );
     return $export;
@@ -2111,7 +2136,12 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = parent::exportOpenMIBase($entity);
-    $export[$entity->propname]['matrix'] = $this->getCSVTableField($entity);
+    $export[$entity->propname]['matrix'] = array(
+      'name' => 'matrix',
+      'object_class' => 'table',
+      'value' => $this->getCSVTableField($entity)
+    );
+    unset($export[$entity->propname]['code']);
     return $export;
   }
  
