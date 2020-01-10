@@ -125,7 +125,7 @@ switch ($runtype) {
 }
 
 // handle post-processing
-if ($runtype == 'cached2') {
+//if ($runtype == 'cached2') {
   $runid = intval(trim($runVars['runid']));
   $elementid = $runVars['elementid'];
   $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
@@ -139,5 +139,5 @@ if ($runtype == 'cached2') {
     error_log("Executing Summary : $cmd");
     $forkout = exec( $cmd, $cmd_output );
   }
-}
+//}
 ?>
