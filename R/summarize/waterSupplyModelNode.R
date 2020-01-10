@@ -67,6 +67,10 @@ ps_cumulative_mgd <- mean(as.numeric(dat$ps_cumulative_mgd) )
 if (is.na(ps_cumulative_mgd)) {
   ps_cumulative_mgd = 0.0
 }
+ps_nextdown_mgd <- mean(as.numeric(dat$ps_nextdown_mgd) )
+if (is.na(ps_nextdown_mgd)) {
+  ps_nextdown_mgd = 0.0
+}
 Qout <- mean(as.numeric(dat$Qout) )
 if (is.na(Qout)) {
   Qout = 0.0
@@ -78,4 +82,5 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_cum
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_cumulative_mgd', ps_cumulative_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nextdown_mgd', ps_nextdown_mgd, site, token)
 
