@@ -1764,6 +1764,18 @@ class dHOMConstant extends dHOMBaseObjectClass {
     }
     return $procnames;
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propvalue, 
+      )
+    );
+    return $export;
+  }
 }
 
 class dHOMtextField extends dHOMSubComp {
@@ -1821,6 +1833,18 @@ class dHOMtextField extends dHOMSubComp {
   
   public function getPropertyAttribute($property) {
     return $property->propcode;
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'value' => $entity->propcode, 
+      )
+    );
+    return $export;
   }
 }
 
