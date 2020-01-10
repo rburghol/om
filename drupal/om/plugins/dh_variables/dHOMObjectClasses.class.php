@@ -1288,24 +1288,11 @@ class dHOMModelElement extends dHOMBaseObjectClass {
         'host' => $_SERVER['HTTP_HOST'], 
         'id' => $entity->pid, 
         'name' => $entity->propname, 
-        'scenario' => $entity->propcode, 
-      )
-    );
-    return $export;
-  }
-  
-  public function exportOpenMIBase($entity) {
-    // creates the base properties for this class
-    $export = array(
-      $entity->propname => array(
-        'id' => $entity->pid, 
-        'name' => $entity->propname, 
-        'value' => $entity->propvalue,
         'scenario' => array(
           'name' => 'scenario',
           'object_class' => 'textField',
           'value' =>  $entity->propcode
-        ), 
+        ),  
       )
     );
     return $export;
