@@ -57,6 +57,9 @@ foreach ($data as $element) {
       $element[$key] = $value;
     }
   }
+  if (strtolower($element['propvalue'] ) == 'null') {
+    $element['propvalue'] = NULL;
+  }
   $prop = om_model_getSetProperty($element, 'name', FALSE);
   if (is_object($prop)) {
     error_log("Prop $prop->propname created with pid = $prop->pid $prop->propvalue $prop->propcode");
