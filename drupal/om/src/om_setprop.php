@@ -57,7 +57,10 @@ foreach ($data as $element) {
       $element[$key] = $value;
     }
   }
-  if (strtolower($element['propvalue'] ) == 'null') {
+  if ( 
+    (strtolower($element['propvalue'] ) == 'null')
+    or (empty($element['propvalue']))
+  ) {
     $element['propvalue'] = NULL;
   }
   $prop = om_model_getSetProperty($element, 'name', FALSE);
