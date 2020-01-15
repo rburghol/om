@@ -39,7 +39,7 @@ q="select b.pid, om.propvalue
   left outer join dh_properties as om
   on (
     a.pid = om.featureid
-    and b.propname = 'om_element_connection'
+    and om.propname = 'om_element_connection'
   )
   left outer join dh_properties as b
   on (
