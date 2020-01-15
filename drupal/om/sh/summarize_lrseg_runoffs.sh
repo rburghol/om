@@ -24,13 +24,8 @@ fi
 # with a call to a shell script that runs the model, then runs a R summary script 
 #
 # summarize all runoff containers 
-q="select b.pid, om.propvalue
+q="select a.pid, om.propvalue
   from dh_feature as f
-  left outer join field_data_dh_geofield as g
-  on (
-    f.hydroid = g.entity_id
-    and g.entity_type = 'dh_feature'
-  )
   left outer join dh_properties as a
   on (
     f.hydroid = a.featureid
