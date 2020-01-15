@@ -63,7 +63,6 @@ if [ "$rerun" == "0" ]; then
 fi
 
 echo $q
-exit
 
 echo $q | psql -h dbase2 drupal.dh03 > /tmp/runoff-models.txt 
 
