@@ -78,5 +78,5 @@ cd /var/www/R
 while IFS= read -r line; do
     #echo "Text read from file: $line"
     IFS="$IFS|" read pid elid <<< "$line"
-    Rscript /opt/model/vahydro/R/summarize/CBPLandDataConnectionFile.R $pid $elid $runid
+    Rscript /opt/model/om/R/summarize/CBPLandDataConnectionFile.R $pid $elid $runid
 done < /tmp/runoff-models.txt 
