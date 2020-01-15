@@ -15,7 +15,6 @@ argst <- commandArgs(trailingOnly=T)
 pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
 runid <- as.integer(argst[3])
-tyear = 1997
 
 omsite = "http://deq2.bse.vt.edu"
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
@@ -72,8 +71,8 @@ if (is.na(l90)) {
 l90prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_RUnit', l90_RUnit, site, token)
 l90yr_prop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, site, token)
 
-Rmean <- mean(as.numeric(dat$Runit) )
-if (is.na(Rmean)) {
-  Rmean = 0.0
+Runit <- mean(as.numeric(dat$Runit) )
+if (is.na(Runit)) {
+  Runit = 0.0
 }
-Rmeanprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Rmean', Rmean, site, token)
+Runitprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Runit', Runit, site, token)
