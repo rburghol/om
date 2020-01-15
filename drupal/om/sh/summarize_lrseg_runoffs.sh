@@ -24,13 +24,7 @@ fi
 # with a call to a shell script that runs the model, then runs a R summary script 
 #
 # summarize all runoff containers 
-q="select b.pid, a.propcode as model_version,
-    f.name, f.ftype,
-    b.propname as runid,
-    CASE
-      WHEN c.propvalue is null THEN -99999
-      ELSE c.propvalue
-    END as propvalue
+q="select b.pid, om.propvalue
   from dh_feature as f
   left outer join field_data_dh_geofield as g
   on (
@@ -41,6 +35,11 @@ q="select b.pid, a.propcode as model_version,
   on (
     f.hydroid = a.featureid
     and a.propcode = 'vahydro-1.0'
+  )
+  left outer join dh_properties as om
+  on (
+    a.pid = om.featureid
+    and b.propname = 'om_element_connection'
   )
   left outer join dh_properties as b
   on (
@@ -54,6 +53,8 @@ q="select b.pid, a.propcode as model_version,
   )
   where f.ftype = '$ftype'
     and f.bundle = 'landunit'
+    and a.pid is not null 
+    and om.pid is not null 
 "
 # p5 naming convention did not have a prefix, p6 has prefix cbp6, so eliminate 
 if [ "$region" == "nova" ]; then
