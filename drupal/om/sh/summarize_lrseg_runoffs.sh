@@ -55,11 +55,12 @@ q="select b.pid, a.propcode as model_version,
   where f.ftype = '$ftype'
     and f.bundle = 'landunit'
 "
+# p5 naming convention did not have a prefix, p6 has prefix cbp6, so eliminate 
 if [ "$region" == "nova" ]; then
-  q="$q and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,1) in ('P','J','Y','R')"
+  q="$q and substring(replace(f.hydrocode,'cbp6_', ''),8,1) in ('P','J','Y','R')"
 fi
 if [ "$region" == "sova" ]; then
-  q="$q and substring(replace(f.hydrocode,'vahydrosw_wshed_', ''),1,2) in ('BS', 'OD', 'OR', 'MN', 'NR', 'TU')"
+  q="$q and substring(replace(f.hydrocode,'cbp6_', ''),8,2) in ('BS', 'OD', 'OR', 'MN', 'NR', 'TU')"
 fi
 if [ "$rerun" == "0" ]; then
   q="$q and c.pid IS NOT NULL "
