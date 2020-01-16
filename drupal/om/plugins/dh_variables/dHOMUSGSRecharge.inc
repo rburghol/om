@@ -21,7 +21,7 @@ $plugin = array(
     'data_entry' => '',
     'plugin' => 'dHOMUSGSRecharge',
     'options' => '',
-    'varabbrev' => 'Element',
+    'varabbrev' => 'MLLR',
   ),
 );
 
