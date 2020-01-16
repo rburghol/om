@@ -1,13 +1,13 @@
 <?php
 
 $plugin = array(
-  'label' => t('OM Component Class - CBPLandDataConnection'),
+  'label' => t('OM Component Class - CBPLandDataConnection (legacy)'),
   'handler' =>  array(
     'class' => 'dHOMCBPLandDataConnection',
     'file' => 'CBPLandDataConnectionFile.class.php',
   ),
   'variable' =>  array(
-    'varname' => 'OM Object Class - CBPLandDataConnection',
+    'varname' => 'OM Object Class - Legacy CBPLandDataConnection',
     'vardesc' => 'Data Connection to legacy XML EOS export script.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
