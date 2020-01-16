@@ -1,13 +1,13 @@
 <?php
 
 $plugin = array(
-  'label' => t('OM Water System Object'),
+  'label' => t('OM USGS Recharge Object'),
   'handler' =>  array(
     'class' => 'dHOMUSGSRecharge',
     'file' => 'dHOMWaterSystemObjectClasses.class.php',
   ),
   'variable' =>  array(
-    'varname' => 'OM Water System Object',
+    'varname' => 'OM USGS Recharge Object',
     'vardesc' => 'A generic water use system object. Encompasses old BlankShell class.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
