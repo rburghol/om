@@ -8,7 +8,7 @@ $plugin = array(
   ),
   'variable' =>  array(
     'varname' => 'OM USGS Recharge Object',
-    'vardesc' => 'A generic water use system object. Encompasses old BlankShell class.',
+    'vardesc' => 'Uses MLLR method to estimate wintertime recharge probabilities.',
     'vocabulary' => 'om_object_classes',
     'varunits' => 'n/a',
     'varkey' => 'om_usgs_recharge',
