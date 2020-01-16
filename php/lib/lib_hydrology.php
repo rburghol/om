@@ -4427,9 +4427,9 @@ class dataMatrix extends modelSubObject {
          $this->arData = array();
       }
       $skeys = array_keys($this->arData);
-      if(trim($thisvar,"'\"") <> $thisvar) {
+      if(trim($thisvar,"'\":") <> $thisvar) {
          // this is a string variable, as indicated by ' or "
-         $thisval = trim($thisvar,"'\"");
+         $thisval = trim($thisvar,"'\":");
       } else {
          if (in_array($thisvar, $skeys)) {
             $thisval = $this->arData[$thisvar];
