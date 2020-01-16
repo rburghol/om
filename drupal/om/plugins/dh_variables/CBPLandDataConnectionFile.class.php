@@ -5,6 +5,11 @@ module_load_include('module', 'dh');
 $plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMModelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
 
+class dHOMCBPLandDataConnection extends dHOMModelElement {
+  // @todo: add getDefaults 
+  
+}
+
 class dHOMCBPLandDataConnectionFile extends dHOMModelElement {
   var $object_class = 'CBPLandDataConnectionFile';
   var $om_template_id = 340398; // remote server template ID, set FALSE if not used.
