@@ -24,7 +24,7 @@ if (count($args) >= 2) {
   $model_name = $args[1];
   $vahydro_pid = $args[2];
 } else {
-  print("Usage: php om_create_pair.php query_type model_name/file vahydro_pid \n");
+  print("Usage: php om_cbp_lrseg_landuse.php query_type model_name/file vahydro_pid \n");
   die;
 }
 
