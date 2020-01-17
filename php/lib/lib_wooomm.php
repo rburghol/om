@@ -985,6 +985,9 @@ function checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $c
             error_log("checkRunDate returned - $check *(status = $status) \n");
          }
          $branch_info = getRunFile($listobject, $branchid, $run_id, $debug);
+         if ($branch_info === FALSE) {
+           error_log("Branch $branchid has not been run for run ID $run_id .");
+         }
          $branch_date = $branch_info['run_date'];
          $branch_time = strtotime($branch_date);
          if ($debug) {
@@ -997,9 +1000,7 @@ function checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $c
          }
          if ( ($branch_info['run_verified'] <> 1) and ($branchid == $recid)  and ($require_verification) ) {
             $status = 0;
-            if ($debug) {
-               error_log("Root $branchid failed verification \n");
-            }
+            error_log("Root $branchid failed verification \n");
          }
       } else {
          if ($debug) {
