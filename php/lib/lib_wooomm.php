@@ -802,7 +802,7 @@ function verifyRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $ti
    $return_vals['status_flag'] = $status_flag;
    $return_vals['status_mesg'] = $status_mesg;
    $return_vals['interval'] = $interval;
-   $return_vals['runid'] = $runid;
+   $return_vals['runid'] = isset($runid) ? $runid : $qrunid;
    
    return $return_vals;
 }
