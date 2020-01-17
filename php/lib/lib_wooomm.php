@@ -960,69 +960,80 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
 }
 
 function checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $cache_date, $debug = 0, $remove_outdated = 0, $require_verification = 0) {
-   // checks whether the given tree has been run UP TO BUT NOT INCLUDING THE OUTLET since the desired cache_date
-   // @todo: THis is NOT a true statement, does nothing when the root is flagged complete but unsusccessful
-     // also requires that the run be completed successfully... according to the run_verified flag
-   $elements = getNestedContainers($listobject, $recid);
-   $root_info = getRunFile($listobject, $recid, $run_id, $debug);
-   $root_date = $root_info['run_date'];
-   $root_time = strtotime($root_date);
-   $cache_time = strtotime($cache_date);
-   $status = 1;
-   $i = 0;
-   // now check any branches, are they younger than the parent?
-   foreach ($elements as $thiselement) {
-      $branchid = $thiselement['elementid'];
-      $cacheable = getElementCacheable($listobject, $branchid);
-      $en = getElementName($listobject, $branchid);
-      if ($debug) {
-         error_log("Evaluating Branch $en \n");
-      }
-      // cacheable settings are 0 - not cacheable, 1 - cacheable, 2 - pass-through, 3 - persistent
-      if ($cacheable == 1) {
-         $check = checkRunDate($listobject, $branchid, $run_id, $cache_date, $startdate, $enddate, $debug);
-         $status = $status & $check;
-         if ($debug) {
-            error_log("checkRunDate returned - $check *(status = $status) \n");
-         }
-         $branch_info = getRunFile($listobject, $branchid, $run_id, $debug);
-         if ($branch_info === FALSE) {
-           error_log("Branch $branchid has not been run for run ID $run_id .");
-         }
-         $branch_date = $branch_info['run_date'];
-         $branch_time = strtotime($branch_date);
-         if ($debug) {
-            error_log("Comparing Branch $en ($branchid) time $branch_date to root ($recid) time $root_date \n");
-         }
-         if ( ($branch_time > $root_time) and ($branchid <> $recid) ) {
-            error_log("Branch $branchid time $branch_date > root $root_date ($recid) \n");
-            $i++;
-            $status = 0;
-         }
-         if ( ($branch_info['run_verified'] <> 1) and ($branchid == $recid)  and ($require_verification) ) {
-            $status = 0;
-            error_log("Root $branchid failed verification \n");
-         }
-      } else {
-         if ($debug) {
-            error_log("Branch $en cacheable setting $cacheable - skipping \n");
-         }
-      }
-   }
-   /*
-   if ($root_time < $cache_time) {
+  // checks whether the given tree has been run UP TO BUT NOT INCLUDING THE OUTLET since the desired cache_date
+  // @todo: THis is NOT a true statement, does nothing when the root is flagged complete but unsusccessful
+   // also requires that the run be completed successfully... according to the run_verified flag
+  $elements = getNestedContainers($listobject, $recid);
+  $root_info = getRunFile($listobject, $recid, $run_id, $debug);
+  $root_date = $root_info['run_date'];
+  $root_time = strtotime($root_date);
+  $cache_time = strtotime($cache_date);
+  $status = 1;
+  $i = 0;
+  $running = array(1,2);
+  // now check any branches, are they younger than the parent?
+  foreach ($elements as $thiselement) {
+    $branchid = $thiselement['elementid'];
+    $cacheable = getElementCacheable($listobject, $branchid);
+    $en = getElementName($listobject, $branchid);
+    if ($debug) {
+       error_log("Evaluating Branch $en \n");
+    }
+    // cacheable settings are 0 - not cacheable, 1 - cacheable, 2 - pass-through, 3 - persistent
+    $status_vars = verifyRunStatus($listobject, $branchid, $run_id);
+    $branch_status = $status_vars['status_flag'];
+    if ($debug) {
+      error_log("Run status Check -  $branch_status \n");
+    }
+    if (in_array($branch_status, $running)) {
+      // this element is currently running, return 0 (not finished) regardless of its cache status
       $status = 0;
-   }
-   */
-   if ( ($status == 0) and $remove_outdated ) {
-      // clear model run data clearRun
-      error_log("Clearing Outdated Run Data for $en ($recid)\n");
-   }
-   if ($debug) {
-      error_log("cache time = $cache_date, root time = $root_date  \n");
-      error_log("$i branches with time > root #$recid (status = $status) \n");
-   }
-   return $status;
+      error_log("Child Branch $branchid currently running.");
+    }
+    if ($cacheable == 1) {
+      $check = checkRunDate($listobject, $branchid, $run_id, $cache_date, $startdate, $enddate, $debug);
+      $status = $status & $check;
+      if ($debug) {
+        error_log("checkRunDate returned - $check *(status = $status) \n");
+      }
+      $branch_info = getRunFile($listobject, $branchid, $run_id, $debug);
+      if ($branch_info === FALSE) {
+       error_log("Branch $branchid has not been run for run ID $run_id .");
+      }
+      $branch_date = $branch_info['run_date'];
+      $branch_time = strtotime($branch_date);
+      if ($debug) {
+        error_log("Comparing Branch $en ($branchid) time $branch_date to root ($recid) time $root_date \n");
+      }
+      if ( ($branch_time > $root_time) and ($branchid <> $recid) ) {
+        error_log("Branch $branchid time $branch_date > root $root_date ($recid) \n");
+        $i++;
+        $status = 0;
+      }
+      if ( ($branch_info['run_verified'] <> 1) and ($branchid == $recid)  and ($require_verification) ) {
+        $status = 0;
+        error_log("Root $branchid failed verification \n");
+      }
+    } else {
+      if ($debug) {
+        error_log("Branch $en cacheable setting $cacheable - skipping \n");
+      }
+    }
+  }
+  /*
+  if ($root_time < $cache_time) {
+    $status = 0;
+  }
+  */
+  if ( ($status == 0) and $remove_outdated ) {
+    // clear model run data clearRun
+    error_log("Clearing Outdated Run Data for $en ($recid)\n");
+  }
+  if ($debug) {
+    error_log("cache time = $cache_date, root time = $root_date  \n");
+    error_log("$i branches with time > root #$recid (status = $status) \n");
+  }
+  return $status;
 }
 
 
