@@ -960,8 +960,9 @@ function addMessage($listobject, $elementid, $sip, $msg_type, $runid = NULL) {
 }
 
 function checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $cache_date, $debug = 0, $remove_outdated = 0, $require_verification = 0) {
-   // checks whether the given tree has been run TO THE OUTLET since the desired cache_date
-   // also requires that the run be completed successfully... according to the run_verified flag
+   // checks whether the given tree has been run UP TO BUT NOT INCLUDING THE OUTLET since the desired cache_date
+   // @todo: THis is NOT a true statement, does nothing when the root is flagged complete but unsusccessful
+     // also requires that the run be completed successfully... according to the run_verified flag
    $elements = getNestedContainers($listobject, $recid);
    $root_info = getRunFile($listobject, $recid, $run_id, $debug);
    $root_date = $root_info['run_date'];

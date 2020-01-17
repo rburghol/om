@@ -936,7 +936,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
    $child_status = 1;
    foreach ($children as $thischild) {
       $childid = $thischild['elementid'];
-      $check = shakeTree($listobject, $sip, $num_sim, $childid, $run_id, $startdate, $enddate, $cache_date, 0, $strict, $run_mode, $extra_params);
+      $check = shakeTree($listobject, $sip, $num_sim, $childid, $run_id, $startdate, $enddate, $cache_date, 0, $strict, $run_mode, $extra_params, $runtype);
       $child_status = $child_status & $check;
       if ($debug) {
          error_log("Result of shakeTree($childid) - $check / (group status - $child_status) \n");
