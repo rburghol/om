@@ -70,6 +70,12 @@ wd_mgd <- mean(as.numeric(dat$wd_mgd) )
 if (is.na(wd_mgd)) {
   wd_mgd = 0.0
 }
+ps_mgd <- mean(as.numeric(dat$discharge_mgd) )
+if (is.na(ps_mgd)) {
+  ps_mgd = 0.0
+}
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
+
