@@ -59,7 +59,7 @@ if [ "$region" == "sova" ]; then
   q="$q and substring(replace(f.hydrocode,'cbp6_', ''),8,2) in ('BS', 'OD', 'OR', 'MN', 'NR', 'TU')"
 fi
 if [ "$rerun" == "0" ]; then
-  q="$q and c.pid IS NOT NULL "
+  q="$q and c.pid IS NULL "
 fi
 
 echo $q
