@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# This adds common data matrixes from a template that do not get created 
+# by default with the model type plugin
 pid=$1
 template=4988636
 

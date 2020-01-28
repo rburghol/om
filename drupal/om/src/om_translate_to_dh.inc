@@ -156,6 +156,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     break;
     case 'wsp_flowby':
     case 'hydroImpSmall':
+    case 'Statistic':
       $translated = TRUE;
       error_log("Simple Translation supported for $om_comp->object_class");
     break;
