@@ -9203,6 +9203,14 @@ function covaWSPModelControlForm($formVars) {
    return $controlHTML;
 }
 
+function vwp_run_id_options() {
+  $options = array();
+  for ($i = 100; $i <= 1000; $i++) {
+    $options[$i] = "Run #$i";
+  }
+  //error_log("runid options " . print_r($options,1));
+  return $options;
+}
 
 function vwpModelControlForm($formVars) {
    global $listobject;
@@ -9239,7 +9247,10 @@ function vwpModelControlForm($formVars) {
    $controlHTML .= "<br><i>Model Time Span (YYY-MM-DD) ,</i> Start: " . showWidthTextField('startdate', $startdate, 6, '', 1);
    $controlHTML .= "End: " . showWidthTextField('enddate', $enddate, 6, '', 1) . " (leave blank to use parent setting)";
    
-   $controlHTML .= "<br><i>Store results as Run ID:</i> " . showWidthTextField('runid', -1, 6, '', 1);
+   //$controlHTML .= "<br><i>Store results as Run ID:</i> " . showWidthTextField('runid', -1, 6, '', 1);
+   $run_options = vwp_run_id_options();
+   $controlHTML .= "<br><i>Store results as Run ID:</i> " . showActiveList($run_options, 'runid', $run_options, 'run_name', 'runid', '' , -1, "", 'runid', $debug, 1, 0);
+   
    $controlHTML .= showHiddenField('cache_level', -1, 1);
    $controlHTML .= "<br>" . showGenericButton('run_bgmodel', 'Run Model', " xajax_runModelBackground(xajax.getFormValues(\"" . $formVars['formname'] . "\")); ", 1);
    $controlHTML .= "</form>";
