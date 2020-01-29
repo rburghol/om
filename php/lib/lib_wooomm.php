@@ -9204,12 +9204,12 @@ function covaWSPModelControlForm($formVars) {
 }
 
 function vwp_run_id_options() {
-  $options = array();
+  $run_options = array();
   for ($i = 100; $i <= 1000; $i++) {
-    $options[$i] = "Run #$i";
+    $run_options[] = array('runid'=>$i,'run_name'=>"Run #$i");
   }
   //error_log("runid options " . print_r($options,1));
-  return $options;
+  return $run_options;
 }
 
 function vwpModelControlForm($formVars) {
