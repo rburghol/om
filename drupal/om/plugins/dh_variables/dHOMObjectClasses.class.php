@@ -1434,7 +1434,7 @@ class dHOMEquation extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Non-Negative?',
-        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'vardesc' => 'Select TRUE to cause any negative result to be returned as default minimum value.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'minvalue' => array(
