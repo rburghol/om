@@ -51,39 +51,6 @@ sceninfo <- list(
   entity_type = "dh_properties"
 )
 
-wd_mgd <- mean(as.numeric(dat$wd_mgd) )
-if (is.na(wd_mgd)) {
-  wd_mgd = 0.0
-}
-wd_cumulative_mgd <- mean(as.numeric(dat$wd_cumulative_mgd) )
-if (is.na(wd_cumulative_mgd)) {
-  wd_cumulative_mgd = 0.0
-}
-ps_mgd <- mean(as.numeric(dat$ps_mgd) )
-if (is.na(ps_mgd)) {
-  ps_mgd = 0.0
-}
-ps_cumulative_mgd <- mean(as.numeric(dat$ps_cumulative_mgd) )
-if (is.na(ps_cumulative_mgd)) {
-  ps_cumulative_mgd = 0.0
-}
-ps_nextdown_mgd <- mean(as.numeric(dat$ps_nextdown_mgd) )
-if (is.na(ps_nextdown_mgd)) {
-  ps_nextdown_mgd = 0.0
-}
-Qout <- mean(as.numeric(dat$Qout) )
-if (is.na(Qout)) {
-  Qout = 0.0
-}
-
-# post em up
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_cumulative_mgd', wd_cumulative_mgd, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_cumulative_mgd', ps_cumulative_mgd, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nextdown_mgd', ps_nextdown_mgd, site, token)
-
 # Metrics that need Zoo (IHA)
 flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = dat$thisdate);
 loflows <- group2(flows);
