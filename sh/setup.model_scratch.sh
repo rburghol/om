@@ -2,7 +2,7 @@
 # shell
 pgpath="/data/postgres/9.5"
 bindir="/usr/lib/postgresql/9.5/bin"
-db_port=5433
+db_port=5444
 
 mkdir $pgpath/scratch
 $bindir/initdb -D $pgpath/scratch
