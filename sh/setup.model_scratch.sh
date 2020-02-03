@@ -16,3 +16,7 @@ $bindir/pg_ctl -D $pgpath/scratch start -l "logfile.scratch"
 
 $bindir/createdb model_scratch -p $db_port
 echo "CREATE EXTENSION postgis;" | psql model_scratch -p $db_port
+
+# Set up runoff tempalte db
+cat cbp_p6_lseg_runoff_template.sql | psql model_scratch -p $db_port
+
