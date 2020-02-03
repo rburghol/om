@@ -1205,6 +1205,7 @@ function loadModelUsingCached($modeldb, $elementid, $runid, $cache_runid, $input
       // check cache status, only allow caching if setting is 1 or 3
          $res = loadCachedObject($modeldb, $elid, $crid, $debug);
          $retarr['error'] .= $res['error'];
+        error_log("loadCachedObject($elid, $crid) tableinfo:" . print_r($res['tableinfo'],1));
          //copyTreeCacheFiles($elid, $crid, $runid, 0);
          copyTreeCacheFiles($elid, $crid, $runid, 1, 0, $run_date);
          // get all children of this object and copy the cache file into this file
