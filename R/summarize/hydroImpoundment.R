@@ -71,6 +71,7 @@ Qout <- mean(as.numeric(dat$Qout) )
 if (is.na(Qout)) {
   Qout = 0.0
 }
+lake_elev <- mean(as.numeric(dat$lake_elev) )
 if (is.na(lake_elev)) {
   elev_p0 <- 0
   elev_p10 <- 0
