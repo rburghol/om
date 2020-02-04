@@ -55,7 +55,7 @@ wd_mgd <- mean(as.numeric(dat$demand) )
 if (is.na(wd_mgd)) {
   wd_mgd = 0.0
 }
-ps_mgd <- mean(as.numeric(dat$ps_mgd) )
+ps_mgd <- mean(as.numeric(dat$discharge) )
 if (is.na(ps_mgd)) {
   ps_mgd = 0.0
 }
