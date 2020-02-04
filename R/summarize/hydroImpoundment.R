@@ -71,6 +71,16 @@ Qout <- mean(as.numeric(dat$Qout) )
 if (is.na(Qout)) {
   Qout = 0.0
 }
+if (is.na(lake_elev)) {
+  elev_p0 <- 0
+  elev_p10 <- 0
+  elev_p50 <- 0
+} else {
+  elev_qs = quantile(as.numeric(dat$lake_elev), c(0,0.1,0.5) )
+  elev_p0 <- elev_qs["0%"]
+  elev_p10 <- elev_qs["10%"]
+  elev_p50 <- elev_qs["50%"]
+}
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
@@ -78,4 +88,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'evap_mgd', evap_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qin', Qin, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p0', elev_p0, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p10', elev_p10, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p50', elev_p50, site, token)
 
