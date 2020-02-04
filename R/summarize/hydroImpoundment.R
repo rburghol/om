@@ -51,8 +51,8 @@ sceninfo <- list(
   entity_type = "dh_properties"
 )
 
-wd_mgd <- mean(as.numeric(dat$wd_mgd) )
-if (is.na(wd_mgd)) {
+wd_mgd <- mean(as.numeric(dat$demand) )
+if (is.na(demand)) {
   wd_mgd = 0.0
 }
 ps_mgd <- mean(as.numeric(dat$ps_mgd) )
