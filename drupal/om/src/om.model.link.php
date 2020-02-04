@@ -27,7 +27,7 @@ $src_entity_type = 'dh_properties';
 $dest_entity_type = 'dh_properties';
 
 // Is single command line arg?
-if ( (count($args) >= 4) or ($args[0] == 'file')) {
+if ( (count($args) >= 3) or ($args[0] == 'file')) {
   // Do command line, single element settings
   // set these if doing a single -- will fail if both not set
   // $dest_id = 4726070; // set these if doing a single (model: VIRGINIA BEACH SERVICE AREA:North Landing River)
