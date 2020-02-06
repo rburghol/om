@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 entity_type='dh_feature'
 entity_id=$1
