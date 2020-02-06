@@ -50,6 +50,7 @@ q="select a.pid, om.propvalue
     and f.bundle = 'watershed'
     and a.pid is not null 
     and om.pid is not null 
+    and b.pid is not null 
 "
 # p5 naming convention did not have a prefix, p6 has prefix cbp6, so eliminate 
 if [ "$region" == "nova" ]; then
