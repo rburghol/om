@@ -47,7 +47,7 @@ q="select a.pid, om.propvalue
     and c.propname = 'ps_mgd'
   )
   where f.ftype = '$ftype'
-    and f.bundle = 'vahydro'
+    and f.bundle = 'watershed'
     and a.pid is not null 
     and om.pid is not null 
 "
