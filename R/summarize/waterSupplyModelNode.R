@@ -24,7 +24,7 @@ if (syear != eyear) {
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
 dat <- window(dat, start = sdate, end = edate);
-
+mode(dat) <- 'numeric'
 scen.propname<-paste0('runid_', runid)
 
 # GETTING SCENARIO PROPERTY FROM VA HYDRO
@@ -75,6 +75,10 @@ Qout <- mean(as.numeric(dat$Qout) )
 if (is.na(Qout)) {
   Qout = 0.0
 }
+net_consumption_mgd <- wd_cumulative_mgd - ps_cumulative_mgd
+dat$Qbaseline <- dat$Qout + 
+  (dat$wd_cumulative_mgd - dat$ps_cumulative_mgd ) * 1.547
+dat$consumptive_use_frac <- 1.0 - (dat$Qout / dat$Qbaseline)
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)

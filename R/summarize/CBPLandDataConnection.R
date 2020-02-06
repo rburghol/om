@@ -18,8 +18,16 @@ runid <- as.integer(argst[3])
 
 omsite = "http://deq2.bse.vt.edu"
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
-
-dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
+syear = min(dat$year)
+eyear = max(dat$year)
+if (syear != eyear) {
+  sdate <- as.Date(paste0(syear,"-10-01"))
+  edate <- as.Date(paste0(eyear,"-09-30"))
+} else {
+  sdate <- as.Date(paste0(syear,"-02-01"))
+  edate <- as.Date(paste0(eyear,"-12-31"))
+}
+dat <- window(dat, start = sdate, end = edate);
 dat$Runit <- as.numeric(dat$Qout) / as.numeric(dat$area_sqmi)
 Runits <- zoo(as.numeric(as.character( dat$Runit )), order.by = dat$thisdate);
 
