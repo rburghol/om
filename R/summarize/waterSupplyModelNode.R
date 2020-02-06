@@ -76,17 +76,33 @@ if (is.na(Qout)) {
   Qout = 0.0
 }
 net_consumption_mgd <- wd_cumulative_mgd - ps_cumulative_mgd
+if (is.na(net_consumption_mgd)) {
+  net_consumption_mgd = 0.0
+}
 dat$Qbaseline <- dat$Qout + 
   (dat$wd_cumulative_mgd - dat$ps_cumulative_mgd ) * 1.547
+Qbaseline <- mean(as.numeric(dat$Qbaseline) )
+if (is.na(Qbaseline)) {
+  Qbaseline = Qout + 
+    (wd_cumulative_mgd - ps_cumulative_mgd ) * 1.547
+}
+
 dat$consumptive_use_frac <- 1.0 - (dat$Qout / dat$Qbaseline)
+consumptive_use_frac <-  mean(as.numeric(dat$consumptive_use_frac) )
+if (is.na(consumptive_use_frac)) {
+  consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
+}
 
 # post em up
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'net_consumption_mgd', net_consumption_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_cumulative_mgd', wd_cumulative_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_cumulative_mgd', ps_cumulative_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qbaseline', Qbaseline, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nextdown_mgd', ps_nextdown_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'consumptive_use_frac', consumptive_use_frac, site, token)
 
 
 # Metrics that need Zoo (IHA)
