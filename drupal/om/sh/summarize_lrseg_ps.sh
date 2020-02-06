@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: summarize_lrseg_ps.sh runid [rerun=0/1] [region=nova/all/sova] [ftype=cbp6_lrseg/cbp532_lrseg]"
+  echo 1>&2 "Usage: summarize_lrseg_ps.sh runid [rerun=0/1] [region=nova/all/sova] [ftype=vahydro]"
   exit 2
 fi 
 runid=$1
@@ -13,7 +13,7 @@ region='nova'
 if [ $# -gt 2 ]; then
   region=$3
 fi 
-ftype='cbp6_lrseg'
+ftype='vahydro'
 if [ $# -gt 3 ]; then
   ftype=$4
 fi 
