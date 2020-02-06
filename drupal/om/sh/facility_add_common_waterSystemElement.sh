@@ -1,17 +1,18 @@
 #!/bin/bash
 
 entity_type='dh_feature'
+model_version='vahydro-1.0'
 entity_id=$1
 # Water Supply Model Element Template 
 template=4988636
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: facility_add_common_waterSystemElement.sh entity_id [modelversion=vahydro-1.0] [entity_type=dh_feature]"
+  echo 1>&2 "Usage: facility_add_common_waterSystemElement.sh entity_id [model_version=vahydro-1.0] [entity_type=dh_feature]"
   exit 2
 fi 
 
 if [ $# -gt 1 ]; then
-  modelversion=$2
+  model_version=$2
 fi 
 if [ $# -gt 2 ]; then
   entity_type=$3
@@ -22,7 +23,7 @@ frac_query="
 select pid from dh_properties 
 where featureid in ($entity_id)
 and entity_type = '$entity_type'
-and propcode = '$modelversion';
+and propcode = '$model_version';
 "
 echo $frac_query 
 echo $frac_query | PGOPTIONS='--client-min-messages=warning' psql -h dbase2 drupal.dh03 > /tmp/wsp_facility_models.txt 
