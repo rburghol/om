@@ -24,6 +24,7 @@ where featureid in ($entity_id)
 and entity_type = '$entity_type'
 and propcode = '$modelversion';
 "
+echo $frac_query 
 echo $frac_query | PGOPTIONS='--client-min-messages=warning' psql -h dbase2 drupal.dh03 > /tmp/wsp_facility_models.txt 
 
 n=`< /tmp/wsp_facility_models.txt wc -l`
