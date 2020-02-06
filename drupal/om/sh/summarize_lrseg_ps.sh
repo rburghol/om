@@ -79,5 +79,6 @@ cd /var/www/R
 while IFS= read -r line; do
     #echo "Text read from file: $line"
     IFS="$IFS|" read pid elid <<< "$line"
+    echo "Calling: Rscript /opt/model/om/R/summarize/calculate_ps.R $pid $elid $runid"
     Rscript /opt/model/om/R/summarize/calculate_ps.R $pid $elid $runid
 done < /tmp/runoff-models.txt 
