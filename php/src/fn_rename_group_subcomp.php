@@ -83,6 +83,7 @@ foreach ($recs as $thisrec) {
     } else {
       error_log("Property $scs[0] does not exist ... skipping.");
     $i++;
+    }
   }
 }
 
