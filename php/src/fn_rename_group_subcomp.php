@@ -78,7 +78,7 @@ foreach ($recs as $thisrec) {
     if (isset($thisobject->processors[$scs[0]])) {
       $thisobject->processors[$scs[1]] = $thisobject->processors[$scs[0]];
       unset($thisobject->processors[$scs[0]]);
-      saveObjectSubComponents($listobject, $thisobject, $elid, 1);
+      saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
     } else {
       error_log("Property $scs[0] does not exist ... skipping.");
     }
