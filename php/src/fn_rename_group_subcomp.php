@@ -11,49 +11,39 @@ error_reporting(E_ERROR);
 //include_once("./lib_batchmodel.php");
 
 if (count($argv) < 4) {
-   print("Usage: php fn_rename_group_subcomp.php scenarioid src_elementid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2] \n");
+   print("Usage: php fn_rename_group_subcomp.php scenarioid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2] \n");
    print("Use '-1' as value for scenarioid to update all scenarios (use with caution) \n");
-   print("Example (copy \"Listen on Child\" from 211449 to 213933 \n");
-   print("php fn_rename_group_subcomp.php 37 211449 \"Listen on Child\" 213933 \n");
+   print("Example (rename \"Listen on Child|Listen to Children\" on 213933 \n");
+   print("php fn_rename_group_subcomp.php 37 \"Listen on Child\" 213933 \n");
    die;
 }
 
 $scenarioid = $argv[1];
-$src_elementid = $argv[2];
-if (isset($argv[3])) {
+if (isset($argv[2])) {
    $subcomps = explode(',', $argv[3]); 
 } else {
    $subcomps = array();
 }
-if (isset($argv[4])) {
-   $elementid = $argv[4];
+if (isset($argv[3])) {
+   $elementid = $argv[3];
 } else {
    $elementid = '';
 }
-if (isset($argv[5])) {
-   $elemname = $argv[5];
+if (isset($argv[4])) {
+   $elemname = $argv[4];
 } else {
    $elemname = '';
 }
-if (isset($argv[6])) {
-   $custom1 = $argv[6];
+if (isset($argv[5])) {
+   $custom1 = $argv[5];
 } else {
    $custom1 = '';
 }
-if (isset($argv[7])) {
-   $custom2 = $argv[7];
+if (isset($argv[6])) {
+   $custom2 = $argv[6];
 } else {
    $custom2 = '';
 }
-
-$obres = unserializeSingleModelObject($src_elementid);
-$srcob = $obres['object'];
-$name = $srcob->name;
-if (count($subcomps) == 0) {
-   $subcomps = array_keys($srcob->processors);
-}
-
-print("Copying components: " . print_r($subcomps,1) . "\n");
 
 $listobject->querystring = "  select elementid, elemname from scen_model_element ";
 $listobject->querystring .= " where ( (scenarioid = $scenarioid) or ($scenarioid = -1) ) ";
