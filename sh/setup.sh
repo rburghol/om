@@ -9,6 +9,8 @@ sudo chown www-data:allmodelers www/om/cache
 # live
 rm /var/www/html/om/fn_copy_element.php
 ln -s /opt/model/om/php/src/fn_copy_element.php /var/www/html/om/fn_copy_element.php
+rm /var/www/html/om/fn_rename_group_subcomp.php
+ln -s /opt/model/om/php/src/fn_rename_group_subcomp.php /var/www/html/om/fn_rename_group_subcomp.php
 rm /var/www/html/om/fn_copy_group_subcomp.php
 ln -s /opt/model/om/php/src/fn_copy_group_subcomp.php /var/www/html/om/fn_copy_group_subcomp.php
 rm /var/www/html/om/run_shakeTree.php
