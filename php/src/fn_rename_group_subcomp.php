@@ -19,7 +19,7 @@ if (count($argv) < 4) {
 
 $scenarioid = $argv[1];
 if (isset($argv[2])) {
-   $subcomps = explode(',', $argv[3]); 
+   $subcomps = explode(',', $argv[2]); 
 } else {
    $subcomps = array();
 }
