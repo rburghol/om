@@ -74,10 +74,10 @@ foreach ($recs as $thisrec) {
     if (isset($thisobject->processors[$thiscomp])) {
       unset($thisobject->processors[$thiscomp]);
       //saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
+      $i++;
     } else {
       $sk++;
     }
-    $i++;
   }
 }
 error_log("Deleted $i occurences, skipped/not-found $sk");
