@@ -62,15 +62,15 @@ if ($custom2 <> '') {
 error_log("$listobject->querystring ; <br>");
 $listobject->performQuery();
 
+error_log("Renaming Subcomps " . print_r($subcomps,1) );
 $recs = $listobject->queryrecords;
 //error_reporting(E_ALL);
 foreach ($recs as $thisrec) {
   $elid = $thisrec['elementid'];
-  error_log("Editing " . print_r($subcomps,1) . " on $elid \n");
   $loadres = unSerializeSingleModelObject($elid);
   $thisobject = $loadres['object'];
   foreach ($subcomps as $thiscomp) {
-    $scs = explode("\|", $thiscomp);
+    $scs = explode('|', $thiscomp);
     if ( (count($scs) == 1) or ($scs[0] == $scs[1]) ) {
       continue;
     }
