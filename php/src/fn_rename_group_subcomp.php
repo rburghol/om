@@ -66,7 +66,7 @@ $recs = $listobject->queryrecords;
 //error_reporting(E_ALL);
 foreach ($recs as $thisrec) {
   $elid = $thisrec['elementid'];
-  error_log("Editing $subcomp_name on $elemname ($elid) \n");
+  error_log("Editing " . print_r($subcomps,1) . " on $elid \n");
   $loadres = unSerializeSingleModelObject($elid);
   $thisobject = $loadres['object'];
   foreach ($subcomps as $thiscomp) {
