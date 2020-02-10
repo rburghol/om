@@ -74,15 +74,15 @@ foreach ($recs as $thisrec) {
     if ( (count($scs) == 1) or ($scs[0] == $scs[1]) ) {
       continue;
     }
-    error_log("Trying to rename Sub-comp $scs[0] to $scs[1] on element $elid ");
+    error_log("Trying to rename Sub-comp '$scs[0]' to '$scs[1]' on element $elid ");
     if (isset($thisobject->processors[$scs[0]])) {
       $thisobject->processors[$scs[1]] = $thisobject->processors[$scs[0]];
       unset($thisobject->processors[$scs[0]]);
       saveObjectSubComponents($listobject, $thisobject, $elid, 1);
     } else {
       error_log("Property $scs[0] does not exist ... skipping.");
-    $i++;
     }
+    $i++;
   }
 }
 
