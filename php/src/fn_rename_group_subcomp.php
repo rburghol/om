@@ -11,10 +11,10 @@ error_reporting(E_ERROR);
 //include_once("./lib_batchmodel.php");
 
 if (count($argv) < 4) {
-   print("Usage: php copy_group_subcomp.php scenarioid src_elementid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2] \n");
+   print("Usage: php fn_rename_group_subcomp.php scenarioid src_elementid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2] \n");
    print("Use '-1' as value for scenarioid to update all scenarios (use with caution) \n");
    print("Example (copy \"Listen on Child\" from 211449 to 213933 \n");
-   print("php copy_group_subcomp.php 37 211449 \"Listen on Child\" 213933 \n");
+   print("php fn_rename_group_subcomp.php 37 211449 \"Listen on Child\" 213933 \n");
    die;
 }
 
@@ -88,9 +88,9 @@ foreach ($recs as $thisrec) {
       continue;
     }
     print("Trying to rename Sub-comp $scs[0] to $scs[1] <br>\n" . print_r($scs,1) . "\n");
-    $dest_object->processors[$scs[1]] = $dest_object->processors[$scs[0]];
-    unset($dest_object->processors[$scs[0]]);
-    saveObjectSubComponents($listobject, $dest_object, $dest_elementid, 1);
+    $thisobject->processors[$scs[1]] = $thisobject->processors[$scs[0]];
+    unset($thisobject->processors[$scs[0]]);
+    saveObjectSubComponents($listobject, $thisobject, $elid, 1);
     print("$cr<br>\n");
     print("$msg<br>\n");
     $i++;
