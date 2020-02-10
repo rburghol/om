@@ -77,6 +77,7 @@ foreach ($recs as $thisrec) {
     error_log("Trying to rename Sub-comp '$scs[0]' to '$scs[1]' on element $elid ");
     if (isset($thisobject->processors[$scs[0]])) {
       $thisobject->processors[$scs[1]] = $thisobject->processors[$scs[0]];
+      $thisobject->processors[$scs[1]]->name = $scs[1];
       unset($thisobject->processors[$scs[0]]);
       saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
     } else {
