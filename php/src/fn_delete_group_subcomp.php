@@ -73,7 +73,7 @@ foreach ($recs as $thisrec) {
   foreach ($subcomps as $thiscomp) {
     if (isset($thisobject->processors[$thiscomp])) {
       unset($thisobject->processors[$thiscomp]);
-      //saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
+      saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
       $i++;
     } else {
       $sk++;
