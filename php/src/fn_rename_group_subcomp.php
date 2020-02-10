@@ -13,8 +13,8 @@ error_reporting(E_ERROR);
 if (count($argv) < 4) {
    print("Usage: php fn_rename_group_subcomp.php scenarioid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2] \n");
    print("Use '-1' as value for scenarioid to update all scenarios (use with caution) \n");
-   print("Example (rename \"Listen on Child|Listen to Children\" on 213933 \n");
-   print("php fn_rename_group_subcomp.php 37 \"Listen on Child\" 213933 \n");
+   print("Example (rename \"Listen on Child\" to \"Listen to Children\" on 213933 \n");
+   print("php fn_rename_group_subcomp.php 37 \"Listen on Child|Listen to Children\" 213933 \n");
    die;
 }
 
