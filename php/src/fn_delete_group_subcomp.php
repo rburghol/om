@@ -10,7 +10,7 @@ error_reporting(E_ERROR);
 //include_once("./lib_batchmodel.php");
 
 if (count($argv) < 4) {
-   error_log("Usage: php fn_delete_group_subcomp.php scenarioid [subcomp1|newname1],subcomp2...] [elementid] [elemname] [custom1] [custom2]");
+   error_log("Usage: php fn_delete_group_subcomp.php scenarioid [subcomp1,subcomp2...] [elementid] [elemname] [custom1] [custom2]");
    error_log("Use '-1' as value for scenarioid to update all scenarios (use with caution)");
    error_log("Example (delete \"Listen on Child\" to \"Listen to Children\" on 213933");
    error_log("php fn_delete_group_subcomp.php 37 \"Listen on Child|Listen to Children\" 213933");
@@ -71,13 +71,8 @@ foreach ($recs as $thisrec) {
   $loadres = unSerializeSingleModelObject($elid);
   $thisobject = $loadres['object'];
   foreach ($subcomps as $thiscomp) {
-    $scs = explode('|', $thiscomp);
-    if ( (count($scs) == 1) or ($scs[0] == $scs[1]) ) {
-      continue;
-    }
-    error_log("Trying to delete Sub-comp '$scs[0]' to '$scs[1]' on element $elid ");
-    if (isset($thisobject->processors[$scs[0]])) {
-      unset($thisobject->processors[$scs[0]]);
+    if (isset($thisobject->processors[$thiscomp])) {
+      unset($thisobject->processors[$thiscomp]);
       //saveObjectSubComponents($listobject, $thisobject, $elid, 1, 1);
     } else {
       $sk++;
