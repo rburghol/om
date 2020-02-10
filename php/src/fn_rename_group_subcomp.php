@@ -47,7 +47,6 @@ if (isset($argv[6])) {
 $listobject->querystring = "  select elementid, elemname from scen_model_element ";
 $listobject->querystring .= " where ( (scenarioid = $scenarioid) or ($scenarioid = -1) ) ";
 // don't overwrite the source
-$listobject->querystring .= " AND elementid <> $src_elementid ";
 if ($elementid <> '') {
    $listobject->querystring .= " AND elementid = $elementid ";
 }
