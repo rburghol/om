@@ -1237,26 +1237,6 @@ class dHOMModelElement extends dHOMBaseObjectClass {
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     $defaults += array(
-      'run_mode' => array(
-        'entity_type' => $entity->entityType(),
-        'propvalue_default' => 2, // default to "current" mode 
-        'propname' => 'run_mode',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'vardesc' => 'Default Run Mode, if not over-ridden by sub-props, globals, or broadcast.',
-        'varname' => 'Run Mode default',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ),
-      'flow_mode' => array(
-        'entity_type' => $entity->entityType(),
-        'propvalue_default' => 3, // default to "CBP Phase 5.3" mode 
-        'propname' => 'flow_mode',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'vardesc' => 'Default Flow Mode, if not over-ridden by sub-props, globals, or broadcast.',
-        'varname' => 'Flow Mode default',
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ),
       'run_info' => array(
         'entity_type' => $entity->entityType(),
         'propvalue_default' => -1, // default to "CBP Phase 5.3" mode 
@@ -1305,6 +1285,33 @@ class dHOMModelContainer extends dHOMModelElement {
   public function hiddenFields() {
     $hidden = array_merge(array('propvalue', 'startdate', 'enddate'), parent::hiddenFields());
     return $hidden;
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'run_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 2, // default to "current" mode 
+        'propname' => 'run_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Run Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Run Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'flow_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 3, // default to "CBP Phase 5.3" mode 
+        'propname' => 'flow_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Flow Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Flow Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+    );
+    return $defaults;
   }
   
   public function formRowEdit(&$rowform, $entity) {
