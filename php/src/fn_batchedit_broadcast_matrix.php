@@ -78,14 +78,14 @@ foreach ($recs as $thisrec) {
       if (isset($thisobject->processors[$subcomp_name])) {
          error_log("Editing Matrix $subcomp_name\n ");
          $thisobject->processors[$subcomp_name]->matrix->formatMatrix();
-         $orig = $thisobject->processors[$subcomp_name]->matrix->->matrix_formatted;
+         $orig = $thisobject->processors[$subcomp_name]->matrix->matrix_formatted;
          error_log("Original Matrix: " . error_log_r($orig,1) . "\n");
          $orig[$prop] = $value;
          ksort($orig);
          error_log("Modified Matrix: " . error_log_r($orig,1) . "\n");
-         $thisobject->processors[$subcomp_name]->matrix->->oneDimArrayToMatrix($orig);
-         $thisobject->processors[$subcomp_name]->matrix->->formatMatrix();
-         $mod = $thisobject->processors[$subcomp_name]->matrix->->matrix_formatted;
+         $thisobject->processors[$subcomp_name]->matrix->oneDimArrayToMatrix($orig);
+         $thisobject->processors[$subcomp_name]->matrix->formatMatrix();
+         $mod = $thisobject->processors[$subcomp_name]->matrix->matrix_formatted;
          error_log("Final Matrix: " . error_log_r($mod,1) . "\n");
          //$thisobject->processors[$subcomp_name]->$prop = $value;
          saveObjectSubComponents($listobject, $thisobject, $elid );
