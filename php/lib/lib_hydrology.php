@@ -3112,6 +3112,7 @@ class broadCastObject extends modelSubObject {
          if ($this->debug) {
             $this->logDebug("Iterating through local Inputs: " . print_r($this->local_varname,1) . "<br>\n");
          }
+         // get the array of elements from the hub with this broadcast_class as key
          $thisclass = $hub_data[$this->broadcast_class];
          if ($this->debug) {
             $this->logDebug("In data set: " . print_r($thisclass,1) . "<br>\n");
