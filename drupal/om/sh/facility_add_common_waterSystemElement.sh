@@ -32,7 +32,7 @@ n=`< /tmp/wsp_facility_models.txt wc -l`
 nm="$((n - 2))"
 head -n $nm /tmp/wsp_facility_models.txt > /tmp/fhead.txt 
 n=`< /tmp/fhead.txt wc -l`
-nm="$((n - 4))"
+nm="$((n - 2))"
 tail -n $nm /tmp/fhead.txt > /tmp/wsp_facility_models.txt 
 
 while IFS= read -r line; do
@@ -48,3 +48,5 @@ while IFS= read -r line; do
 
 done < /tmp/wsp_facility_models.txt 
 
+rm /tmp/fhead.txt 
+rm /tmp/wsp_facility_models.txt
