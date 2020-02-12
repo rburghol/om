@@ -34,6 +34,26 @@ class dHOMwaterSupplyModelNode extends dHOMModelElement {
         'vardesc' => 'riverseg.',
         'varid' => dh_varkey2varid('om_class_textField', TRUE),
       ), 
+      'run_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 2, // default to "current" mode 
+        'propname' => 'run_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Run Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Run Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'flow_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propvalue_default' => 3, // default to "CBP Phase 5.3" mode 
+        'propname' => 'flow_mode',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default Flow Mode, if not over-ridden by sub-props, globals, or broadcast.',
+        'varname' => 'Flow Mode default',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     ) + $defaults;
     //dpm($defaults,'defs');
     return $defaults; 

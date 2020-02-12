@@ -622,6 +622,21 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // can't call loadProperties here, it causes some kind of endless loop
     //$this->loadProperties($entity);
   }
+  
+  public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
+    // when we load these properties, we need to disable pushing to remote elements if an om_element_connection is set
+    // otherwise, we get a multitude of remote saves triggered each time these properties are saved if this is an 
+    // initial setup.  We will rely on things called after loadProperties() to save remotes.
+    // grab set_remote, stash a copy
+    $path = array();
+    $this->findRemoteOMElement($entity, $path);
+    $set_remote_save = $this->set_remote;
+    $this->set_remote = 0;
+    // call parent loadProperties() method 
+    parent::loadProperties($entity, $overwrite, $propname, $force_embed);
+    // restore set_remote to original value
+    $this->set_remote = $set_remote_save;
+  }
 
   function getPublicVars($entity, &$publix = array()) {
     //dpm($this,"called getPublicVars()");
@@ -984,10 +999,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     }
   }
     
-  public function findRemoteOMElement($entity, &$path) {
-    //dpm($entity, "findRemoteOMElement @ depth = $path");
-    $elid = 0;
-    $path[] = $entity->propname;
+  public function findRemoteOMElementProp($entity) {
     // check for a property with varkey om_element_connection on this entity
     $elvar_info = array(
       'featureid' => $entity->pid,
@@ -995,12 +1007,17 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       'bundle' => 'dh_properties',
       'varid' => dh_varkey2varid('om_element_connection', TRUE),
     );
-    // *************************************************
-    // Current MGY
-    // *************************************************
-    //dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
     $elvar = dh_properties_enforce_singularity($elvar_info, 'singular');
+    //dpm($elvar_info, " dh_get_properties(elvar_info, 'singular')");
     //dpm($elvar, " elvar");
+    return $elvar;
+  }
+  
+  public function findRemoteOMElement($entity, &$path) {
+    //dpm($entity, "findRemoteOMElement @ depth = $path");
+    $elid = 0;
+    $path[] = $entity->propname;
+    $elvar = $this->findRemoteOMElementProp($entity);
     if ($elvar) {
       $elid = $elvar->propvalue;
       $this->set_remote = $elvar->propcode;
