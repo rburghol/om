@@ -974,6 +974,9 @@ class modelObject {
           $raw_json = $propvalue;
           $json_props = json_decode($propvalue, TRUE);
           foreach ($json_props as $pname => $pvalue) {
+            if ($pname == 'object_class') {
+              continue;
+            }
             if (property_exists($this, $pname)) {
               switch ($pvalue['object_class']) {
                 case 'textField':
