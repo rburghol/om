@@ -965,30 +965,34 @@ class modelObject {
 
   function setProp($propname, $propvalue, $view = '') {
     // sets a specific state variable to a specific value
-    if ($this->json2d == TRUE) {
       switch ($view) {
         case 'json-2d':
-        // expects openMI style objects in json format 
-        $raw_json = $propvalue;
-        $json_props = json_decode($propvalue, TRUE);
-        foreach ($json_props as $pname => $pvalue) {
-          if (property_exists($this, $pname)) {
-            switch ($pvalue['object_class']) {
-              case 'textField':
-              case NULL:
-                //$this->setClassProp($pvalue['name'], $pvalue['value'], "");
-                error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
-              break;
-              default:
-              // can't handle anything other than this at the moment.
-              error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = $pvalue[object_class]");
-              break;
+        if ($this->json2d == TRUE) {
+          // expects openMI style objects in json format 
+          $raw_json = $propvalue;
+          $json_props = json_decode($propvalue, TRUE);
+          foreach ($json_props as $pname => $pvalue) {
+            if (property_exists($this, $pname)) {
+              switch ($pvalue['object_class']) {
+                case 'textField':
+                case NULL:
+                  //$this->setClassProp($pvalue['name'], $pvalue['value'], "");
+                  error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+                break;
+                default:
+                // can't handle anything other than this at the moment.
+                error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = $pvalue[object_class]");
+                break;
+              }
+            } else {
+              // this is not a property on the base class, look for processors
+              error_log("Warning: $pname not found on class -- setProp cannot yet add processors with json-2d ");
+              
             }
-          } else {
-            // this is not a property on the base class, look for processors
-            error_log("Warning: $pname not found on class -- setProp cannot yet handle processors with json-2d ");
-            
           }
+        } else {
+          // standard handling 
+          error_log("JSON2d handling not enabled for $propname of class " . get_class($this));
         }
         //error_log("JSON Props:" . print_r(array_keys($json_props),1));
         // needs to handle objectClass gracefully, treating things like constants and alphanumeric constants simply
@@ -1006,13 +1010,6 @@ class modelObject {
         $this->setClassProp($propname, $propvalue, $view);
         break;
       }
-    } else {
-      // standard handling 
-      if ($this->debug) {
-         $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
-      }
-      //error_log("Trying to set $propname to $propvalue on " . $this->name);
-      $this->setClassProp($propname, $propvalue, $view);
     }
     return;
     // @todo: processors (subcomps) over-ride locals
