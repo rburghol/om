@@ -966,7 +966,7 @@ class modelObject {
     // sets a specific state variable to a specific value
     switch ($view) {
       case 'json-2d':
-          error_log("Props of " . get_class($this) . " = " . print_r(get_class_vars(get_class($this)),1));
+        //error_log("Props of " . get_class($this) . " = " . print_r(get_class_vars(get_class($this)),1));
         if (property_exists($this, 'json2d')) {
         //if (get_class($this) == 'Equation') {
         //if ($this->json2d) {
@@ -997,7 +997,7 @@ class modelObject {
               }
             } else {
               // this is not a property on the base class, look for processors
-              error_log("Warning: $pname not found on class -- setProp cannot yet add processors with json-2d ");
+              error_log("Warning: Skipping $pname not found on class -- setProp cannot yet add processors with json-2d ");
               
             }
           }

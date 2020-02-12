@@ -1499,9 +1499,17 @@ class dHOMEquation extends dHOMSubComp {
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
+    // this replaces parent method in favor of full object json transfer
+    // @todo: make this work for all at base class 
+    // Old Code:
+    /*
     parent::setAllRemoteProperties($entity, $elid, $path);
     array_unshift($path, 'equation');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
+    */
+    
+    $exp = $this->exportOpenMI($entity);
+    $exp_json = addslashes(json_encode($exp));
+    $this->setRemoteProp($entity, $elid, $spath, $exp_json, $this->object_class, 'json-2d');
   }
   
   public function applyEntityAttribute($property, $value) {
