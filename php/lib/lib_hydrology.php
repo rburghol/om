@@ -985,6 +985,7 @@ class modelObject {
             }
           } else {
             // this is not a property on the base class, look for processors
+            error_log("Warning: $pname not found on class -- setProp cannot yet handle processors with json-2d ");
             
           }
         }
