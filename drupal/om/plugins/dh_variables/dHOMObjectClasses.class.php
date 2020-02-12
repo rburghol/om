@@ -1049,7 +1049,8 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     }
     $parent = $this->getParentEntity($entity);
     $pplug = dh_variables_getPlugins($parent);
-    return $pplug->checkParentJSON($parent);
+    $json2d = $pplug->checkParentJSON($parent);
+    return $json2d;
   }
   
   public function create(&$entity) {
