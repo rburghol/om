@@ -978,15 +978,19 @@ class modelObject {
               continue;
             }
             if (property_exists($this, $pname)) {
+              if (!is_array($pvalue)) {
+                // handle normal attributes
+                $this->setClassProp($name, $pvalue, "");
+              }
               switch ($pvalue['object_class']) {
                 case 'textField':
                 case NULL:
-                  //$this->setClassProp($pvalue['name'], $pvalue['value'], "");
+                  $this->setClassProp($pvalue['name'], $pvalue['value'], "");
                   error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
                 break;
                 default:
                 // can't handle anything other than this at the moment.
-                error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = $pvalue[object_class]");
+                error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = " . $pvalue['object_class']);
                 break;
               }
             } else {
