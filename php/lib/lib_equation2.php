@@ -624,6 +624,7 @@ function mathProcessor2( $sEquation, $arData, $debug = 0) {
     
 }
 
+/*
 function mathProcessor3($sEquation, $arData, $debug = 0) {
   $result = FALSE;
   # Robert Burgholzer, rburghol@vt.edu, 12-31-2019
@@ -664,6 +665,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   }
   return $result;
 }
+*/
 
 # Statistical functions
 
