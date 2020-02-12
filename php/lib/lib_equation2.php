@@ -516,7 +516,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
 
   if (preg_match($regexp, $q)) {
     $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
-    $result = eval('$result = ' . $equation . ';');
+    eval('$result = ' . $equation . ';');
   } else {
     $result = false;
   }
