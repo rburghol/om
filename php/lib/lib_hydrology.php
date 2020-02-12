@@ -968,7 +968,8 @@ class modelObject {
       case 'json-2d':
         //if ($this->json2d == TRUE) {
           error_log("JSON?:" . $this->json2d);
-        if (property_exists($this->json2d)) {
+        //if (property_exists($this->json2d)) {
+        if (get_class($this) == 'Equation') {
           // expects openMI style objects in json format 
           $raw_json = $propvalue;
           $json_props = json_decode($propvalue, TRUE);
