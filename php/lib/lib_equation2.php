@@ -1,9 +1,9 @@
 <?php
-    require_once 'phpmath/Math_Expression/Expression.php';
-    $t1 = microtime(true);
-    
-    #require_once 'phpmath/Math_Expression/Structures/Math_Expression_Structure_Real.php';
-    #Math_Expression::registerStructure(new Math_Expression_Structure_Real);
+include_once 'phpmath/Math_Expression/Expression.php';
+$t1 = microtime(true);
+
+#require_once 'phpmath/Math_Expression/Structures/Math_Expression_Structure_Real.php';
+#Math_Expression::registerStructure(new Math_Expression_Structure_Real);
     
 class Equation extends modelSubObject {
    var $arData = array();
