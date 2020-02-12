@@ -966,10 +966,10 @@ class modelObject {
     // sets a specific state variable to a specific value
     switch ($view) {
       case 'json-2d':
-        //if ($this->json2d == TRUE) {
           error_log("Props of " . get_class($this) . " = " . print_r(get_class_vars(get_class($this)),1));
-        //if (property_exists($this->json2d)) {
-        if (get_class($this) == 'Equation') {
+        //if (property_exists($this, 'json2d')) {
+        //if (get_class($this) == 'Equation') {
+        if ($this->json2d) {
           // expects openMI style objects in json format 
           $raw_json = $propvalue;
           $json_props = json_decode($propvalue, TRUE);
