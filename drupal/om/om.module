@@ -517,6 +517,9 @@ function om_ctools_plugin_type() {
 
 
 function dh_get_dh_propnames($entity_type, $entity_id) {
+  if (!($entity_id > 0)) {
+    return FALSE;
+  }
   $q = "  select propname from {dh_properties} ";
   $q .= " where featureid = :entity_id and entity_type = :entity_type";
   $result = db_query($q, array(':entity_id' => $entity_id, ':entity_type' => $entity_type));
