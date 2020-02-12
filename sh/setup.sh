@@ -35,6 +35,8 @@ rm /var/www/html/lib/lib_wooomm.cbp.php
 ln -s /opt/model/om/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
 rm /var/www/html/lib/lib_wooomm.wsp.php
 ln -s /opt/model/om/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
+rm /var/www/html/lib/lib_equation2.php
+ln -s /opt/model/om/php/lib/lib_equation2.php /var/www/html/lib/lib_equation2.php
 rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php

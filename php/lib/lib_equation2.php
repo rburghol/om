@@ -1,9 +1,9 @@
 <?php
-    require_once 'phpmath/Math_Expression/Expression.php';
-    $t1 = microtime(true);
-    
-    #require_once 'phpmath/Math_Expression/Structures/Math_Expression_Structure_Real.php';
-    #Math_Expression::registerStructure(new Math_Expression_Structure_Real);
+include_once 'phpmath/Math_Expression/Expression.php';
+$t1 = microtime(true);
+
+#require_once 'phpmath/Math_Expression/Structures/Math_Expression_Structure_Real.php';
+#Math_Expression::registerStructure(new Math_Expression_Structure_Real);
     
 class Equation extends modelSubObject {
    var $arData = array();
@@ -29,6 +29,8 @@ class Equation extends modelSubObject {
    var $loggable = 1; // can log the value in a data table
    var $numnull = 0;
    var $engine = 'mathProcessor2';
+   var $json2d = TRUE;
+
    
    function init() {
       $this->vars = array();
@@ -140,85 +142,84 @@ class Equation extends modelSubObject {
       }
    }
    
-  function evaluate() {
-    
-    $this->errorstring = '';
-    
-    if ($this->debug) {
-       $this->logDebug("<br> Evaluating: $this->name = ");
-    }
-    if ($this->debug) {
-       $this->logDebug(" <br>Trying to solve $this->equation <br>");
-       //error_log(" Trying to solve $this->equation <br>");
-       $this->logDebug(" Variables: " . print_r($this->vars,1));
+   function evaluate() {
+      
+      $this->errorstring = '';
+      
+      if ($this->debug) {
+         $this->logDebug("<br> Evaluating: $this->name = ");
+      }
+      if ($this->debug) {
+         $this->logDebug(" <br>Trying to solve $this->equation <br>");
+         //error_log(" Trying to solve $this->equation <br>");
+         $this->logDebug(" Variables: " . print_r($this->vars,1));
 
-    }
-    foreach ($this->vars as $tvar) {
-       if ( ($this->arData[$tvar] === NULL) 
-          or ($this->arData[$tvar] === 'NULL') 
-          or (strtolower($this->arData[$tvar]) == 'null') 
-          or ($this->arData[$tvar] === '') 
-          or (strlen(trim($this->arData[$tvar])) == 0) 
-       ) {
-       #if ( ($this->arData[$tvar] === NULL) ) {
-          if ($this->debug) {
-             $this->logDebug("NULL value found for: $tvar <br>");
-          }
-          if ($this->strictnull) {
-             $this->result = NULL;
-             return;
-          } else {
-             $this->arData[$tvar] = $this->nanvalue;
-          }
-       } else {
-          if ($this->debug) {
-             $this->logDebug("Variable $tvar = " . $this->arData[$tvar] . "<br>");
-          }
-       }
-    }
-    if ( (strlen(ltrim(rtrim($this->equation))) > 0) ) {
-      switch ($this->engine) {
-        case 'mathProcessor3':
-          $this->result = mathProcessor3( $this->equation, $this->arData, $this->debug);
-        break;
-        
-        default:
+      }
+      foreach ($this->vars as $tvar) {
+         if ( ($this->arData[$tvar] === NULL) 
+            or ($this->arData[$tvar] === 'NULL') 
+            or (strtolower($this->arData[$tvar]) == 'null') 
+            or ($this->arData[$tvar] === '') 
+            or (strlen(trim($this->arData[$tvar])) == 0) 
+         ) {
+         #if ( ($this->arData[$tvar] === NULL) ) {
+            if ($this->debug) {
+               $this->logDebug("NULL value found for: $tvar <br>");
+            }
+            if ($this->strictnull) {
+               $this->result = NULL;
+               return;
+            } else {
+               $this->arData[$tvar] = $this->nanvalue;
+            }
+         } else {
+            if ($this->debug) {
+               $this->logDebug("Variable $tvar = " . $this->arData[$tvar] . "<br>");
+            }
+         }
+      }
+      if ( (strlen(ltrim(rtrim($this->equation))) > 0) ) {
+        switch ($this->engine) {
+          case 'mathProcessor3':
+            $this->result = mathProcessor3( $this->equation, $this->arData, $this->debug);
+          break;
+          default:
           $this->result = mathProcessor2( $this->equation, $this->arData, $this->debug);
-        break;
+          break;
+        }
+      } else {
+         $this->result = $this->defaultval;
       }
-    } else {
-       $this->result = $this->defaultval;
-    }
-    if ($this->debug) {
-       $this->logDebug(" Checking Validity of result <br>");
-    }
-    if ($this->result === NULL) {
       if ($this->debug) {
-        $this->logError("NULL result in equation $this->name ($this->componentid) on object " . $this->parentobject->name);
+         $this->logDebug(" Checking Validity of result <br>");
       }
-      $this->numnull++;
+      if ($this->result === NULL) {
+         if ($this->debug) {
+            $this->logError("NULL result in equation $this->name ($this->componentid) on object " . $this->parentobject->name);
+         }
+         $this->numnull++;
+         if ($this->debug) {
+            $this->logDebug("NULL result in equation $this->name on object <br>");
+         }
+      }
+      if (is_nan($this->result) or is_infinite($this->result)) {
+         # not a number, 
+         if ($this->debug) {
+            $this->logDebug(" Result is not valid, using default: $this->nanvalue <br>");
+         }
+         $this->result = $this->nanvalue;
+      }
+      if ($this->nonnegative and ($this->result < $this->minvalue)) {
+         if ($this->debug) {
+            $this->logDebug("Negative value ($this->result), setting $this->name to minimum ($this->minvalue).<br>");
+         }
+         $this->result = $this->minvalue;
+      }
       if ($this->debug) {
-        $this->logDebug("NULL result in equation $this->name on object <br>");
+         $this->logDebug(" Input Values: " . print_r($this->arData,1));
+         $this->logDebug(" Result: $this->result <br>");
       }
-    }
-    if (is_nan($this->result) or is_infinite($this->result)) {
-      # not a number, 
-      if ($this->debug) {
-        $this->logDebug(" Result is not valid, using default: $this->nanvalue <br>");
-      }
-      $this->result = $this->nanvalue;
-    }
-    if ($this->nonnegative and ($this->result < $this->minvalue)) {
-      if ($this->debug) {
-        $this->logDebug("Negative value ($this->result), setting $this->name to minimum ($this->minvalue).<br>");
-      }
-      $this->result = $this->minvalue;
-    }
-    if ($this->debug) {
-      $this->logDebug(" Input Values: " . print_r($this->arData,1));
-      $this->logDebug(" Result: $this->result <br>");
-    }
-  }
+   }
 }
 
 
@@ -482,45 +483,7 @@ class Statistic extends Equation {
    }
 }
 
-function mathProcessor3($sEquation, $arData, $debug = 0) {
-  # Robert Burgholzer, rburghol@vt.edu, 12-31-2019
-  # does not use brackets, on the logic that if we simply order our variable names 
-  # by length (descending), and that variable names are not numbers (but may contain numbers) 
-  # then we can substitute all of the variables in and then evaluate based on numbers only
-  $arDataLength = array();
-  $orig = $sEquation;
-  foreach (array_keys($arData) as $thisvar) {
-     $vlen = strlen($thisvar);
-     # check to see if any variables with this length have been added
-     $arDataLength[$vlen][$thisvar] = $arData[$thisvar];
-  }
-  # sort these by the length of their keys
-  ksort($arDataLength, SORT_NUMERIC);
-  # reverse the order, going now from highest to lowest
-  $arSorted = array_reverse($arDataLength);
-  
-  foreach ($arSorted as $thisLengthData) {
-     foreach(array_keys($thisLengthData) as $thisvar) {
-        $sEquation = str_replace($thisvar,$arData[$thisvar], $sEquation);
-     }
-  }
-  # end variable substitution
-  // Remove whitespaces
-  $equation = preg_replace('/\s+/', '', $test);
 
-  $number = '(?:\d+(?:[,.]\d+)?|pi|π)'; // What is a number
-  $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
-  $operators = '[+\/*\^%-]'; // Allowed math operators
-  $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
-
-  if (preg_match($regexp, $q)) {
-    $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
-    $result = eval('$result = ' . $equation . ';');
-  } else {
-    $result = false;
-  }
-  return $result;
-}
 
 function mathProcessor2( $sEquation, $arData, $debug = 0) {
 /* USAGE:
@@ -661,6 +624,46 @@ function mathProcessor2( $sEquation, $arData, $debug = 0) {
     
 }
 
+function mathProcessor3($sEquation, $arData, $debug = 0) {
+  $result = FALSE;
+  # Robert Burgholzer, rburghol@vt.edu, 12-31-2019
+  # does not use brackets, on the logic that if we simply order our variable names 
+  # by length (descending), and that variable names are not numbers (but may contain numbers) 
+  # then we can substitute all of the variables in and then evaluate based on numbers only
+  $arDataLength = array();
+  $orig = $sEquation;
+  foreach (array_keys($arData) as $thisvar) {
+     $vlen = strlen($thisvar);
+     # check to see if any variables with this length have been added
+     $arDataLength[$vlen][$thisvar] = $arData[$thisvar];
+  }
+  # sort these by the length of their keys
+  ksort($arDataLength, SORT_NUMERIC);
+  # reverse the order, going now from highest to lowest
+  $arSorted = array_reverse($arDataLength);
+  
+  foreach ($arSorted as $thisLengthData) {
+     foreach(array_keys($thisLengthData) as $thisvar) {
+        $sEquation = str_replace($thisvar,$arData[$thisvar], $sEquation);
+     }
+  }
+  # end variable substitution
+  // Remove whitespaces
+  $equation = preg_replace('/\s+/', '', $test);
+
+  $number = '(?:\d+(?:[,.]\d+)?|pi|π)'; // What is a number
+  $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
+  $operators = '[+\/*\^%-]'; // Allowed math operators
+  $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
+
+  if (preg_match($regexp, $q)) {
+    $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
+    eval('$result = ' . $equation . ';');
+  } else {
+    $result = false;
+  }
+  return $result;
+}
 
 # Statistical functions
 

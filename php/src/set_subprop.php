@@ -3,11 +3,11 @@
 $noajax = 1;
 $projectid = 3;
 $scid = 28;
-
+error_reporting(E_ALL);
+error_reporting(E_ERROR);
 include_once('./xajax_modeling.element.php');
 $noajax = 1;
 $projectid = 3;
-error_reporting(E_ERROR);
 
 if ( count($argv) < 5 ) {
   // @todo: change syntax from elid comp_name "subprop_name=value" comp_class overwrite
@@ -21,14 +21,14 @@ if ( count($argv) < 5 ) {
 $supported = array();
 
 list($script, $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite) = $argv;
-//error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, overwrite=$overwrite");
+error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, overwrite=$overwrite");
 $setprop_mode = ($setprop_mode === NULL) ? '' : $setprop_mode;
 $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 // this is the object class of the parent component.
 //error_log("argv mods: elid=$elid, comp_name=$comp_name, comp_class=$comp_class, subprop_name=$subprop_name, subprop_value=$subprop_value, setprop_mode=$setprop_mode, overwrite=$overwrite");
 
 
-if (isset($argv[6])) {
+if (isset($argv[7])) {
    $overwrite = ( ($overwrite == 1) or (strtolower($overwrite) == 'true')) ? TRUE : FALSE;
 } else {
    $overwrite = FALSE;
@@ -64,6 +64,7 @@ if (is_object($thisobject)) {
     }
   }
 
+  error_log("Updating $subprop_name with mode $setprop_mode");
   if (isset($thisobject->processors[$comp_name]) and ($comp_name <> $prop_name) ) {
     //error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name  = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
@@ -76,6 +77,7 @@ if (is_object($thisobject)) {
     //    $thisobject->processors['impoundment']->setProp('storage_stage_area', 'JSON storage table');
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
     //error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode); on object of class " . get_class($thisobject->processors[$comp_name]));
+    error_log("Calling setProp() on $subprop_name");
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
     $thisobject->processors[$comp_name]->objectclass = $comp_class;
   }

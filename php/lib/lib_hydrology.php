@@ -964,11 +964,57 @@ class modelObject {
 
   function setProp($propname, $propvalue, $view = '') {
     // sets a specific state variable to a specific value
-    if ($this->debug) {
-       $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
+    switch ($view) {
+      case 'json-2d':
+        //error_log("Props of " . get_class($this) . " = " . print_r(get_class_vars(get_class($this)),1));
+        if (property_exists($this, 'json2d')) {
+        //if (get_class($this) == 'Equation') {
+        //if ($this->json2d) {
+          // expects openMI style objects in json format 
+          $raw_json = $propvalue;
+          $json_props = json_decode($propvalue, TRUE);
+          foreach ($json_props as $pname => $pvalue) {
+            if ($pname == 'object_class') {
+              continue;
+            }
+            if (property_exists($this, $pname)) {
+              if (!is_array($pvalue)) {
+                // handle normal attributes
+                $this->setClassProp($name, $pvalue, "");
+              } else {
+                // handle openmi structured attribute
+                switch ($pvalue['object_class']) {
+                  case 'textField':
+                  case NULL:
+                    $this->setClassProp($pvalue['name'], $pvalue['value'], "");
+                    error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+                  break;
+                  default:
+                  // can't handle anything other than this at the moment.
+                  error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = " . $pvalue['object_class']);
+                  break;
+                }
+              }
+            } else {
+              // this is not a property on the base class, look for processors
+              error_log("Warning: Skipping $pname not found on class -- setProp cannot yet add processors with json-2d ");
+              
+            }
+          }
+        } else {
+          // standard handling 
+          error_log("JSON2d handling not enabled for $propname of class " . get_class($this));
+        }
+      break;
+      
+      default:
+        if ($this->debug) {
+           $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
+        }
+        //error_log("Trying to set $propname to $propvalue on " . $this->name);
+        $this->setClassProp($propname, $propvalue, $view);
+      break;
     }
-    //error_log("Trying to set $propname to $propvalue on " . $this->name);
-    $this->setClassProp($propname, $propvalue, $view);
     return;
     // @todo: processors (subcomps) over-ride locals
     if (isset($this->processors[$propname])) {
@@ -15371,20 +15417,20 @@ class hydroImpSmall extends hydroImpoundment {
     // subprop_name can be name:subname 
     // if so, this is a special sub-prop like hydroImpSmall matrix
     list($subprop_name, $subsub_name) = explode(':', $propname);
-      if ( ($subprop_name == 'storage_stage_area') and ($subsub_name == 'matrix') ) {
-        // handle calls to set the stage-storage attributes 
-        // decode from json if applicable
-        //$this->matrix = array('storage','stage','surface_area',0,0,0);
-        switch ($view) {
-          case 'json-1d':
-          default:
-            $text2table = implode(",",json_decode($propvalue));
-          break;
-        }
-        error_log("$this->name Calling setupMatrix($text2table)");
-        $this->setupMatrix($text2table);
+    if ( ($subprop_name == 'storage_stage_area') and ($subsub_name == 'matrix') ) {
+      // handle calls to set the stage-storage attributes 
+      // decode from json if applicable
+      //$this->matrix = array('storage','stage','surface_area',0,0,0);
+      switch ($view) {
+        case 'json-1d':
+        default:
+          $text2table = implode(",",json_decode($propvalue));
+        break;
       }
-     parent::setProp($propname, $propvalue, $view);
+      error_log("$this->name Calling setupMatrix($text2table)");
+      $this->setupMatrix($text2table);
+    }
+    parent::setProp($propname, $propvalue, $view);
   }
    
 }
