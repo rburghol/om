@@ -1,5 +1,5 @@
 <?php
-include_once 'phpmath/Math_Expression/Expression.php';
+include_once '/var/www/html/lib/phpmath/Math_Expression/Expression.php';
 $t1 = microtime(true);
 
 #require_once 'phpmath/Math_Expression/Structures/Math_Expression_Structure_Real.php';
