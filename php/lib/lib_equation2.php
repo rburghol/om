@@ -484,6 +484,8 @@ class Statistic extends Equation {
 }
 
 function mathProcessor3($sEquation, $arData, $debug = 0) {
+  $result = FALSE;
+  /*
   # Robert Burgholzer, rburghol@vt.edu, 12-31-2019
   # does not use brackets, on the logic that if we simply order our variable names 
   # by length (descending), and that variable names are not numbers (but may contain numbers) 
@@ -520,6 +522,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   } else {
     $result = false;
   }
+  */
   return $result;
 }
 
