@@ -64,6 +64,7 @@ if (is_object($thisobject)) {
     }
   }
 
+    error_log("Updating $subprop_name with mode $setprop_mode");
   if (isset($thisobject->processors[$comp_name]) and ($comp_name <> $prop_name) ) {
     //error_log("Trying to change thisobject->processors[$comp_name] subprop $subprop_name  = $subprop_value; ");
     // now, we have insured that the component exists, we try to set the property supplied
@@ -76,7 +77,6 @@ if (is_object($thisobject)) {
     //    $thisobject->processors['impoundment']->setProp('storage_stage_area', 'JSON storage table');
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
     //error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode); on object of class " . get_class($thisobject->processors[$comp_name]));
-    error_log("Updateing $subprop_name with mode $setprop_mode");
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
     $thisobject->processors[$comp_name]->objectclass = $comp_class;
   }
