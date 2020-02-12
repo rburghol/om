@@ -1044,9 +1044,6 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function checkParentJSON($entity) {
-    if ($this->json2d) {
-      return TRUE;
-    }
     $parent = $this->getParentEntity($entity);
     $pplug = dh_variables_getPlugins($parent);
     if (is_object($pplug) and method_exists($pplug, 'checkParentJSON')) {
