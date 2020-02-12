@@ -1511,7 +1511,7 @@ class dHOMEquation extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     dpm($exp,"Using JSON export mode");
-    $exp_json = addslashes(json_encode($exp));
+    $exp_json = addslashes(json_encode($exp[$entity->propname]));
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
