@@ -39,7 +39,11 @@ $thisobject = $loadres['object'];
 
 if (is_object($thisobject)) {
   // this is a subcomp, so add if need be
-  error_log("Trying to set $comp_name -> $subprop_name = $subprop_value \n");
+  if (in_array($setprop_mode, array('json-2d', 'json-1d'))) {
+    error_log("Trying to set $comp_name -> $subprop_name from JSON  \n");
+  } else {
+    error_log("Trying to set $comp_name -> $subprop_name = $subprop_value \n");
+  }
   if ( $overwrite or (!isset($thisobject->processors[$comp_name])) 
     or (
       (  get_class($thisobject->processors[$comp_name]) <> $comp_class) 
