@@ -3,7 +3,7 @@
 $noajax = 1;
 $projectid = 3;
 $scid = 28;
-
+error_reporting(E_ALL);
 include_once('./xajax_modeling.element.php');
 $noajax = 1;
 $projectid = 3;
