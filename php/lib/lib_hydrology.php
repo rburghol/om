@@ -148,7 +148,6 @@ class modelObject {
   var $prop_desc = array();
   var $multivar = 0; // this is for sub-components, is the variable a "multivar", in other words, does it create more than one?
   var $multivarnames = array(); // for use if multivar
-  var $json2d = FALSE; // is it cleared for JSON2d property setting?
 
   function init() {
     if ($this->debug) {
@@ -967,7 +966,8 @@ class modelObject {
     // sets a specific state variable to a specific value
     switch ($view) {
       case 'json-2d':
-        if ($this->json2d == TRUE) {
+        //if ($this->json2d == TRUE) {
+        if (property_exists($this->json2d == TRUE) {
           // expects openMI style objects in json format 
           $raw_json = $propvalue;
           $json_props = json_decode($propvalue, TRUE);
