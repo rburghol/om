@@ -4,10 +4,10 @@ $noajax = 1;
 $projectid = 3;
 $scid = 28;
 error_reporting(E_ALL);
+error_reporting(E_ERROR);
 include_once('./xajax_modeling.element.php');
 $noajax = 1;
 $projectid = 3;
-error_reporting(E_ERROR);
 
 if ( count($argv) < 5 ) {
   // @todo: change syntax from elid comp_name "subprop_name=value" comp_class overwrite
