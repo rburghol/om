@@ -30,6 +30,7 @@ class Equation extends modelSubObject {
    var $numnull = 0;
    var $engine = 'mathProcessor2';
    var $json2d = TRUE;
+
    
    function init() {
       $this->vars = array();
@@ -141,85 +142,84 @@ class Equation extends modelSubObject {
       }
    }
    
-  function evaluate() {
-    
-    $this->errorstring = '';
-    
-    if ($this->debug) {
-       $this->logDebug("<br> Evaluating: $this->name = ");
-    }
-    if ($this->debug) {
-       $this->logDebug(" <br>Trying to solve $this->equation <br>");
-       //error_log(" Trying to solve $this->equation <br>");
-       $this->logDebug(" Variables: " . print_r($this->vars,1));
+   function evaluate() {
+      
+      $this->errorstring = '';
+      
+      if ($this->debug) {
+         $this->logDebug("<br> Evaluating: $this->name = ");
+      }
+      if ($this->debug) {
+         $this->logDebug(" <br>Trying to solve $this->equation <br>");
+         //error_log(" Trying to solve $this->equation <br>");
+         $this->logDebug(" Variables: " . print_r($this->vars,1));
 
-    }
-    foreach ($this->vars as $tvar) {
-       if ( ($this->arData[$tvar] === NULL) 
-          or ($this->arData[$tvar] === 'NULL') 
-          or (strtolower($this->arData[$tvar]) == 'null') 
-          or ($this->arData[$tvar] === '') 
-          or (strlen(trim($this->arData[$tvar])) == 0) 
-       ) {
-       #if ( ($this->arData[$tvar] === NULL) ) {
-          if ($this->debug) {
-             $this->logDebug("NULL value found for: $tvar <br>");
-          }
-          if ($this->strictnull) {
-             $this->result = NULL;
-             return;
-          } else {
-             $this->arData[$tvar] = $this->nanvalue;
-          }
-       } else {
-          if ($this->debug) {
-             $this->logDebug("Variable $tvar = " . $this->arData[$tvar] . "<br>");
-          }
-       }
-    }
-    if ( (strlen(ltrim(rtrim($this->equation))) > 0) ) {
-      switch ($this->engine) {
-        case 'mathProcessor3':
-          $this->result = mathProcessor3( $this->equation, $this->arData, $this->debug);
-        break;
-        
-        default:
+      }
+      foreach ($this->vars as $tvar) {
+         if ( ($this->arData[$tvar] === NULL) 
+            or ($this->arData[$tvar] === 'NULL') 
+            or (strtolower($this->arData[$tvar]) == 'null') 
+            or ($this->arData[$tvar] === '') 
+            or (strlen(trim($this->arData[$tvar])) == 0) 
+         ) {
+         #if ( ($this->arData[$tvar] === NULL) ) {
+            if ($this->debug) {
+               $this->logDebug("NULL value found for: $tvar <br>");
+            }
+            if ($this->strictnull) {
+               $this->result = NULL;
+               return;
+            } else {
+               $this->arData[$tvar] = $this->nanvalue;
+            }
+         } else {
+            if ($this->debug) {
+               $this->logDebug("Variable $tvar = " . $this->arData[$tvar] . "<br>");
+            }
+         }
+      }
+      if ( (strlen(ltrim(rtrim($this->equation))) > 0) ) {
+        switch ($this->engine) {
+          case 'mathProcessor3':
+            $this->result = mathProcessor3( $this->equation, $this->arData, $this->debug);
+          break;
+          default:
           $this->result = mathProcessor2( $this->equation, $this->arData, $this->debug);
-        break;
+          break;
+        }
+      } else {
+         $this->result = $this->defaultval;
       }
-    } else {
-       $this->result = $this->defaultval;
-    }
-    if ($this->debug) {
-       $this->logDebug(" Checking Validity of result <br>");
-    }
-    if ($this->result === NULL) {
       if ($this->debug) {
-        $this->logError("NULL result in equation $this->name ($this->componentid) on object " . $this->parentobject->name);
+         $this->logDebug(" Checking Validity of result <br>");
       }
-      $this->numnull++;
+      if ($this->result === NULL) {
+         if ($this->debug) {
+            $this->logError("NULL result in equation $this->name ($this->componentid) on object " . $this->parentobject->name);
+         }
+         $this->numnull++;
+         if ($this->debug) {
+            $this->logDebug("NULL result in equation $this->name on object <br>");
+         }
+      }
+      if (is_nan($this->result) or is_infinite($this->result)) {
+         # not a number, 
+         if ($this->debug) {
+            $this->logDebug(" Result is not valid, using default: $this->nanvalue <br>");
+         }
+         $this->result = $this->nanvalue;
+      }
+      if ($this->nonnegative and ($this->result < $this->minvalue)) {
+         if ($this->debug) {
+            $this->logDebug("Negative value ($this->result), setting $this->name to minimum ($this->minvalue).<br>");
+         }
+         $this->result = $this->minvalue;
+      }
       if ($this->debug) {
-        $this->logDebug("NULL result in equation $this->name on object <br>");
+         $this->logDebug(" Input Values: " . print_r($this->arData,1));
+         $this->logDebug(" Result: $this->result <br>");
       }
-    }
-    if (is_nan($this->result) or is_infinite($this->result)) {
-      # not a number, 
-      if ($this->debug) {
-        $this->logDebug(" Result is not valid, using default: $this->nanvalue <br>");
-      }
-      $this->result = $this->nanvalue;
-    }
-    if ($this->nonnegative and ($this->result < $this->minvalue)) {
-      if ($this->debug) {
-        $this->logDebug("Negative value ($this->result), setting $this->name to minimum ($this->minvalue).<br>");
-      }
-      $this->result = $this->minvalue;
-    }
-    if ($this->debug) {
-      $this->logDebug(" Input Values: " . print_r($this->arData,1));
-      $this->logDebug(" Result: $this->result <br>");
-    }
-  }
+   }
 }
 
 
@@ -482,6 +482,7 @@ class Statistic extends Equation {
       return $res;
    }
 }
+
 
 
 function mathProcessor2( $sEquation, $arData, $debug = 0) {
