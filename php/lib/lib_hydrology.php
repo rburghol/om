@@ -965,8 +965,8 @@ class modelObject {
 
   function setProp($propname, $propvalue, $view = '') {
     // sets a specific state variable to a specific value
-      switch ($view) {
-        case 'json-2d':
+    switch ($view) {
+      case 'json-2d':
         if ($this->json2d == TRUE) {
           // expects openMI style objects in json format 
           $raw_json = $propvalue;
@@ -994,22 +994,15 @@ class modelObject {
           // standard handling 
           error_log("JSON2d handling not enabled for $propname of class " . get_class($this));
         }
-        //error_log("JSON Props:" . print_r(array_keys($json_props),1));
-        // needs to handle objectClass gracefully, treating things like constants and alphanumeric constants simply
-        //  if no object_class, or if object_class is textField or Constant or AlphanumericConstant then 
-        // 
-        // and other objects with complex behavior, determining if they are resident on the object or are part 
-        // of the processors array().
-        break;
-        
-        default:
+      break;
+      
+      default:
         if ($this->debug) {
            $this->logDebug("Trying to set $propname to " . print_r((array)$propvalue,1) . " on " . $this->name);
         }
         //error_log("Trying to set $propname to $propvalue on " . $this->name);
         $this->setClassProp($propname, $propvalue, $view);
-        break;
-      }
+      break;
     }
     return;
     // @todo: processors (subcomps) over-ride locals
