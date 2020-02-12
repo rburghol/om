@@ -932,7 +932,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
       //dpm( $path, "Exec Path ");
-      dpm( $cmd, "Executing ");
+      //dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
@@ -1536,7 +1536,7 @@ class dHOMEquation extends dHOMSubComp {
     array_unshift($ppath, $entity->propname);
     $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
-    dpm($exp,"Using JSON export mode");
+    //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
