@@ -483,48 +483,6 @@ class Statistic extends Equation {
    }
 }
 
-function mathProcessor3($sEquation, $arData, $debug = 0) {
-  $result = FALSE;
-  /*
-  # Robert Burgholzer, rburghol@vt.edu, 12-31-2019
-  # does not use brackets, on the logic that if we simply order our variable names 
-  # by length (descending), and that variable names are not numbers (but may contain numbers) 
-  # then we can substitute all of the variables in and then evaluate based on numbers only
-  $arDataLength = array();
-  $orig = $sEquation;
-  foreach (array_keys($arData) as $thisvar) {
-     $vlen = strlen($thisvar);
-     # check to see if any variables with this length have been added
-     $arDataLength[$vlen][$thisvar] = $arData[$thisvar];
-  }
-  # sort these by the length of their keys
-  ksort($arDataLength, SORT_NUMERIC);
-  # reverse the order, going now from highest to lowest
-  $arSorted = array_reverse($arDataLength);
-  
-  foreach ($arSorted as $thisLengthData) {
-     foreach(array_keys($thisLengthData) as $thisvar) {
-        $sEquation = str_replace($thisvar,$arData[$thisvar], $sEquation);
-     }
-  }
-  # end variable substitution
-  // Remove whitespaces
-  $equation = preg_replace('/\s+/', '', $test);
-
-  $number = '(?:\d+(?:[,.]\d+)?|pi|π)'; // What is a number
-  $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
-  $operators = '[+\/*\^%-]'; // Allowed math operators
-  $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
-
-  if (preg_match($regexp, $q)) {
-    $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
-    eval('$result = ' . $equation . ';');
-  } else {
-    $result = false;
-  }
-  */
-  return $result;
-}
 
 function mathProcessor2( $sEquation, $arData, $debug = 0) {
 /* USAGE:
