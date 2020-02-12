@@ -29,6 +29,7 @@ class Equation extends modelSubObject {
    var $loggable = 1; // can log the value in a data table
    var $numnull = 0;
    var $engine = 'mathProcessor2';
+   var $json2d = TRUE;
    
    function init() {
       $this->vars = array();
