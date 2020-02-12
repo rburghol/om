@@ -821,8 +821,13 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $this->synchronize($entity);
   }
   
-  public function synchronize(&$entity) {
+  public function synchronize(&$entity, $force = FALSE) {
     //dsm("New synchronize method used");
+    // Skip if this is a child of an object that uses json2d for synch,unless $force == TRUE
+    $json2d = $this->checkParentJSON($entity);
+    if ($json2d and !$force) {
+      return;
+    }
     $elid = $this->findRemoteOMElement($entity, $path);
     // take the last parent out since that is just the name of the model element
     // and we don't need that, since we have the elementid 
@@ -1036,6 +1041,15 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     }
     // if not, load parent, check for findRemoteOMElement() method, if present, call it, if not, return
     return $elid;
+  }
+  
+  public function checkParentJSON($entity) {
+    if ($entity->json2d) {
+      return TRUE;
+    }
+    $parent = $this->getParentEntity($entity);
+    $pplug = dh_variables_getPlugins($parent);
+    return $pplug->checkParentJSON($parent);
   }
   
   public function create(&$entity) {
@@ -1435,6 +1449,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
 
 class dHOMEquation extends dHOMSubComp {
   var $object_class = 'Equation';
+  var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
