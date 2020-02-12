@@ -21,7 +21,7 @@ if ( count($argv) < 5 ) {
 $supported = array();
 
 list($script, $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, $overwrite) = $argv;
-//error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, overwrite=$overwrite");
+error_log("argv: $elid, $comp_name, $comp_class, $subprop_name, $subprop_value, $setprop_mode, overwrite=$overwrite");
 $setprop_mode = ($setprop_mode === NULL) ? '' : $setprop_mode;
 $overwrite = ($overwrite === NULL) ? FALSE : $overwrite;
 // this is the object class of the parent component.
