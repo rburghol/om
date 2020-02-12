@@ -1506,10 +1506,13 @@ class dHOMEquation extends dHOMSubComp {
     parent::setAllRemoteProperties($entity, $elid, $path);
     array_unshift($path, 'equation');
     */
+    $ppath = $path;
+    array_unshift($ppath, $entity->propname);
+    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp));
-    $this->setRemoteProp($entity, $elid, $path, $exp_json, $this->object_class, 'json-2d');
+    $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
   public function applyEntityAttribute($property, $value) {
