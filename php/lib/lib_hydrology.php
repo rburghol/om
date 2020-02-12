@@ -967,6 +967,7 @@ class modelObject {
     switch ($view) {
       case 'json-2d':
         //if ($this->json2d == TRUE) {
+          error_log("JSON?:" . $this->json2d);
         if (property_exists($this->json2d)) {
           // expects openMI style objects in json format 
           $raw_json = $propvalue;
