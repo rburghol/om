@@ -4204,7 +4204,7 @@ class dataMatrix extends modelSubObject {
    var $delimiter = 0; // 0|Comma,1|Tab,2|pipe,3|Space
    var $autosetvars = 0; // 1 = will create automatic wvars on parent based on column headers
    var $autovars = null; // 1 = will create automatic wvars on parent based on column headers
-   var $json2d = TRUE;
+   //var $json2d = TRUE;
 
 
    function subState() {
