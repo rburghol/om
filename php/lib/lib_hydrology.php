@@ -4799,6 +4799,14 @@ class dataMatrix extends modelSubObject {
        parent::setProp($propname, $propvalue, $view);
      }
    }
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+    if ($propname == 'matrix') {
+      $this->assocArrayToMatrix($propvalue);
+    } else {
+      parent::setClassProp($propname, $propvalue, $view);
+    }
+  }
    
    function assocArrayToMatrix($thisarray = array()) {
       // sets this objects matric to the input matrix
