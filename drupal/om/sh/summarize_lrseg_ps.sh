@@ -82,3 +82,6 @@ while IFS= read -r line; do
     echo "Calling: Rscript /opt/model/om/R/summarize/calculate_ps.R $pid $elid $runid"
     Rscript /opt/model/om/R/summarize/calculate_ps.R $pid $elid $runid
 done < /tmp/runoff-models.txt 
+
+rm /tmp/runoff-models.txt
+rm /tmp/head.txt

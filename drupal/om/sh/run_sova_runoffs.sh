@@ -43,3 +43,6 @@ tail -n $nm /tmp/head.txt > /tmp/sova_runoffs.txt
 
 cd /var/www/html/om/
 /usr/bin/php run_shakeTree.php 6 '/tmp/sova_runoffs.txt' $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode 
+
+rm /tmp/sova_runoffs.txt
+rm /tmp/head.txt

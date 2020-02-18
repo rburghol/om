@@ -80,3 +80,6 @@ while IFS= read -r line; do
     IFS="$IFS|" read pid elid <<< "$line"
     Rscript /opt/model/om/R/summarize/CBPLandDataConnectionFile.R $pid $elid $runid
 done < /tmp/runoff-models.txt 
+
+rm /tmp/head.txt 
+rm /tmp/runoff-models.txt

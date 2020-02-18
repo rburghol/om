@@ -968,39 +968,7 @@ class modelObject {
       case 'json-2d':
         //error_log("Props of " . get_class($this) . " = " . print_r(get_class_vars(get_class($this)),1));
         if (property_exists($this, 'json2d')) {
-        //if (get_class($this) == 'Equation') {
-        //if ($this->json2d) {
-          // expects openMI style objects in json format 
-          $raw_json = $propvalue;
-          $json_props = json_decode($propvalue, TRUE);
-          foreach ($json_props as $pname => $pvalue) {
-            if ($pname == 'object_class') {
-              continue;
-            }
-            if (property_exists($this, $pname)) {
-              if (!is_array($pvalue)) {
-                // handle normal attributes
-                $this->setClassProp($name, $pvalue, "");
-              } else {
-                // handle openmi structured attribute
-                switch ($pvalue['object_class']) {
-                  case 'textField':
-                  case NULL:
-                    $this->setClassProp($pvalue['name'], $pvalue['value'], "");
-                    //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
-                  break;
-                  default:
-                  // can't handle anything other than this at the moment.
-                  error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = " . $pvalue['object_class']);
-                  break;
-                }
-              }
-            } else {
-              // this is not a property on the base class, look for processors
-              error_log("Warning: Skipping $pname not found on class -- setProp cannot yet add processors with json-2d ");
-              
-            }
-          }
+          $this->setPropJSON2d($propname, $propvalue, $view);
         } else {
           // standard handling 
           error_log("JSON2d handling not enabled for $propname of class " . get_class($this));
@@ -1021,6 +989,44 @@ class modelObject {
       $this->processors[$propname]->setProp($propname, $propvalue, $view);
     } else {
       $this->setClassProp($propname, $propvalue, $view);
+    }
+  }
+  
+  function setPropJSON2d($propname, $propvalue, $view = '') {
+    // this can set all attributes of an object class in one lloop
+    //if (get_class($this) == 'Equation') {
+    //if ($this->json2d) {
+    // expects openMI style objects in json format 
+    $raw_json = $propvalue;
+    $json_props = json_decode($propvalue, TRUE);
+    foreach ($json_props as $pname => $pvalue) {
+      if ($pname == 'object_class') {
+        continue;
+      }
+      if (property_exists($this, $pname)) {
+        if (!is_array($pvalue)) {
+          // handle normal attributes
+          $this->setClassProp($name, $pvalue, "");
+        } else {
+          // handle openmi structured attribute
+          switch ($pvalue['object_class']) {
+            //default, flat properties are all for now.
+            case NULL:
+            case 'textField':
+              $this->setClassProp($pvalue['name'], $pvalue['value'], "");
+              //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+            break;
+            default:
+            // Handle more complex object properties 
+            error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = " . $pvalue['object_class']);
+            break;
+          }
+        }
+      } else {
+        // this is not a property on the base class, look for processors
+        error_log("Warning: Skipping $pname not found on class -- setProp cannot yet add processors with json-2d ");
+        
+      }
     }
   }
   

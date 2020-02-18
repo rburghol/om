@@ -79,3 +79,7 @@ while IFS= read -r line; do
   pid=`echo $findpid | psql -h dbase2 drupal.dh03 | head -n 3 | tail -n 1`
   Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid
 done < /tmp/rerunoffs.txt 
+
+
+rm /tmp/rerunoffs.txt
+rm /tmp/head.txt

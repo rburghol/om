@@ -42,3 +42,5 @@ while IFS= read -r line; do
     IFS="$IFS|" read pid elid <<< "$line"
     Rscript /opt/model/vahydro/R/post.runoff.R $pid $elid $runid $tyear 
 done < /tmp/runoff-models.txt 
+rm /tmp/runoff-models.txt 
+rm /tmp/head.txt 
