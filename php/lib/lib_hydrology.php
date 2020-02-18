@@ -1016,6 +1016,15 @@ class modelObject {
               $this->setClassProp($pvalue['name'], $pvalue['value'], "");
               //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
             break;
+            case 'table':
+            case 'array':
+            if (is_array($pvalue['value'])) {
+              $this->setClassProp($pvalue['name'], $pvalue['value'], "");
+            } else {
+              error_log("Error: Property $pvalue[name] is object_class $pvalue[object_class] but is not valid array");
+            }
+              //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+            break;
             default:
             // Handle more complex object properties 
             error_log("Warning: Skipping $pname -- setProp cannot handle json-2d with object_class = " . $pvalue['object_class']);
