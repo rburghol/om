@@ -2095,7 +2095,25 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
+  
   public function setAllRemoteProperties($entity, $elid, $path) {
+    // this replaces parent method in favor of full object json transfer
+    // @todo: make this work for all at base class 
+    // Old Code:
+    /*
+    parent::setAllRemoteProperties($entity, $elid, $path);
+    array_unshift($path, 'equation');
+    */
+    $ppath = $path;
+    array_unshift($ppath, $entity->propname);
+    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    $exp = $this->exportOpenMI($entity);
+    //dpm($exp,"Using JSON export mode");
+    $exp_json = addslashes(json_encode($exp[$entity->propname]));
+    $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
+  }
+  
+  public function setAllRemotePropertiesOld($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
     //dpm($entity, 'before loadProp()');
