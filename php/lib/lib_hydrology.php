@@ -4800,7 +4800,8 @@ class dataMatrix extends modelSubObject {
      }
    }
   
-  function setClassProp($propname, $propvalue, $view = '') { 
+  function setClassPropDISABLED($propname, $propvalue, $view = '') { 
+  // for some reason, assocArrayToMatrix does not seem to work?
     if ($propname == 'matrix') {
       $this->assocArrayToMatrix($propvalue);
     } else {
