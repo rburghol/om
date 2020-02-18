@@ -4784,7 +4784,7 @@ class dataMatrix extends modelSubObject {
          $raw_json = $propvalue;
          $propvalue = json_decode($propvalue, TRUE);
          if (is_array($propvalue)) {
-           //error_log("Array located, handling " . print_r($propvalue,1));
+           error_log("Array located, handling " . print_r($propvalue,1));
            $this->matrix = $propvalue;
          } else {
            error_log("JSON decode failed wih $propvalue for $raw_json");
