@@ -176,7 +176,7 @@ class dHOMWaterSystemObject extends dHOMModelElement {
         'entity_type' => $entity->entityType(),
         'propcode_default' => 'fac_demand_mgy * riverseg_frac * historic_monthly_pct / modays',
         'propvalue_default' => 0.0,
-        'propname' => 'wsp2020_2030_mgy',
+        'propname' => 'fac_demand_mgd',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'WSP Facility 2040 MGY',
