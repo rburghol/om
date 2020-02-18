@@ -246,7 +246,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   if ($defprops) {
     $default_subprops = array();
     $plugin = dh_variables_getPlugins($src_prop);
-    if (is_object($plugin )) {
+    if (is_object($plugin ) and method_exists($plugin, 'getDefaults')) {
       $default_subprops = $plugin->getDefaults($src_prop);
     }
     //error_log("Found def props: " . print_r($default_subprops,1));
