@@ -2021,7 +2021,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   var $object_class = 'DataMatrix';
   var $default_bundle = 'om_data_matrix';
   var $matrix_field = 'field_dh_matrix';
-  var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
+  //var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
