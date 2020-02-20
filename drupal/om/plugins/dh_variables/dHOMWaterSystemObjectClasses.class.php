@@ -498,9 +498,9 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     $consumption = FALSE;
     $parent = $this->getParentEntity($entity);
     // load matrix property on parent
-    dpm($parent,'found parent');
+    //dpm($parent,'found parent');
     $wd_matrix_entity = om_load_dh_property($parent, $this->wd_matrix_name);
-    dpm($wd_matrix_entity,'found historic_monthly_pct');
+    //dpm($wd_matrix_entity,'found historic_monthly_pct');
     // get matrix property entity from parent 
     if (is_object($wd_matrix_entity)) {
       // load plugin for Matrix entity 
@@ -523,7 +523,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
             $mf_checksum += $mofrac[1];
             $consumption[$x] = array($x, $cfrac);
           }
-          dpm($consumption,'consumption calculated');
+          //dpm($consumption,'consumption calculated');
           // consider consumption above annual total of 50%, or below 3% to be erroneous for CWS.
           if ( ($checksum > 6.0) or ($checksum < 0.03 ) ) {
             $consumption = FALSE;
