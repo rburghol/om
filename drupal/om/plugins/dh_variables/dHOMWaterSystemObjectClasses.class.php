@@ -527,7 +527,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
           // consider consumption above annual total of 50%, or below 1% to be erroneous for CWS.
           if ( ($checksum > 6.0) or ($checksum < 0.12 ) ) {
             $consumption = FALSE;
-            dsm("Calculated consumption outside bounds 0.5 to 0.01");
+            dsm("Calculated consumption " . ($checksum/12.0) . " outside bounds 0.5 to 0.01");
           }
           if ( ($mf_checksum < 0.9) or ($mf_checksum > 1.1)) {
             // must be a problem in the mo frac
