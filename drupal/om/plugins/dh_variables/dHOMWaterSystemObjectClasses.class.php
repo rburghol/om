@@ -500,7 +500,7 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
     // load matrix property on parent
     dpm($parent,'found parent');
     $wd_matrix_entity = om_load_dh_property($parent, $this->wd_matrix_name);
-    dpm($parent,'found historic_monthly_pct');
+    dpm($wd_matrix_entity,'found historic_monthly_pct');
     // get matrix property entity from parent 
     if (is_object($wd_matrix_entity)) {
       // load plugin for Matrix entity 
