@@ -524,8 +524,8 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
             $consumption[$x] = array($x, $cfrac);
           }
           dpm($consumption,'consumption calculated');
-          // consider consumption above annual total of 50%, or below 5% to be erroneous for CWS.
-          if ( ($checksum > 6.0) or ($checksum < 0.05 ) ) {
+          // consider consumption above annual total of 50%, or below 3% to be erroneous for CWS.
+          if ( ($checksum > 6.0) or ($checksum < 0.03 ) ) {
             $consumption = FALSE;
           }
           if ( ($mf_checksum < 0.9) or ($mf_checksum > 1.1)) {
