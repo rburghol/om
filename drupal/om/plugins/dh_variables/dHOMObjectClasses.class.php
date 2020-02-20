@@ -2109,6 +2109,8 @@ class dHOMDataMatrix extends dHOMSubComp {
     array_unshift($ppath, $entity->propname);
     $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
+    // rewrite matrix as 1-d list because OM setProp import breaks otherwise
+    $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
     //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');

@@ -4799,22 +4799,12 @@ class dataMatrix extends modelSubObject {
        parent::setProp($propname, $propvalue, $view);
      }
    }
-  
-  function setClassPropDISABLED($propname, $propvalue, $view = '') { 
-  // for some reason, assocArrayToMatrix does not seem to work?
-  // expects a key value array, but this should still work, although maybe it adds an extra header?
-    if ($propname == 'matrix') {
-      $this->twoDimArrayToMatrix($propvalue);
-    } else {
-      parent::setClassProp($propname, $propvalue, $view);
-    }
-  }
    
   function twoDimArrayToMatrix($thisarray = array()) {
     // sets this objects matric to a flattened version of the input matrix
     $this->matrix = array();
     if (count($thisarray) > 0) {
-      $this->numrows = count($thisarray);
+      $this->matrix = $propvalue;
       foreach($thisarray as $thisline) {
         foreach ($thisline as $key => $value) {
           $this->matrix[] = $value;

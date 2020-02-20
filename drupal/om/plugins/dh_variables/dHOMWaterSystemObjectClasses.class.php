@@ -520,11 +520,16 @@ class dHOMConsumptiveUseFractionsPWS extends dHOMDataMatrix {
             $cfrac = ($Fx > 0) ? (1.0 - ( ($this->modays[$x] * $Ff) / ($this->modays[2] * $Fx) )) : 0.0;
             $cfrac = ($cfrac < 0) ? 0.0 : $cfrac;
             $checksum += $cfrac;
+            $mf_checksum += $mofrac;
             $consumption[$x] = array($x, $cfrac);
           }
           dpm($consumption,'consumption calculated');
           // consider consumption above annual total of 50% to be erroneous.
           if ($checksum > 6.0) {
+            $consumption = FALSE;
+          }
+          if ( ($mf_checksum < 0.9) or ($mf_checksum > 1.1)) {
+            // must be a problem in the mo frac
             $consumption = FALSE;
           }
         }
