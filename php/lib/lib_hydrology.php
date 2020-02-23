@@ -6937,6 +6937,9 @@ class channelObject extends hydroObject {
          list($Vout, $Qout, $depth, $Storage, $its) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
          if ( ($I1 > 0) and ($I2 > 0) and ($demand < $I1) and ($demand < $I2) and ($Qout == 0) ) {
             // numerical error, adjust
+            // @todo: revisit this.  If storage is available in the channel, flow may theoretically be 0.0
+            //        but a withdrawal could be possible?  Mannings roughness etc?
+            //        Also need to create handling of rejected demand.  That is, do not let the storage be < 0.0
             $Qout = (($I1 + $I2) / 2.0) - $demand;
          }
       } else {

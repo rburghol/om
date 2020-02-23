@@ -28,6 +28,7 @@ drush scr modules/om/src/om_saveprop.php cmd $entity_type $entity_id "$system_na
 # Save a few extras that won't be pushed by the base save, like matrices
 # If the VAHydro model has the property in question, then this will save it, otherwise, it will just move on
 drush scr modules/om/src/om_saveprop.php cmd dh_properties $vahydro_model_pid consumption_monthly
+drush scr modules/om/src/om_saveprop.php cmd dh_properties $vahydro_model_pid historic_monthly_pct
 drush scr modules/om/src/om_saveprop.php cmd dh_properties $vahydro_model_pid ps_enabled
 drush scr modules/om/src/om_saveprop.php cmd dh_properties $vahydro_model_pid fac_demand_mgy
 drush scr modules/om/src/om_saveprop.php cmd dh_properties $vahydro_model_pid wd_mgd
