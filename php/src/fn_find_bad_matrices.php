@@ -52,6 +52,11 @@ foreach ($elements as $element) {
         if (!in_array($thisproc->name, $bad_props)) {
           $bad_props[] = $thisproc->name;
         }
+        if (!in_array($vahydro_hydroid, $bad_pids)) {
+          if ($vahydro_hydroid > 0) {
+            $bad_pids[] = $vahydro_hydroid;
+          }
+        }
         if (!in_array($elid, $bad_els)) {
           $bad_els[] = $elid;
         }
@@ -64,6 +69,7 @@ foreach ($elements as $element) {
   }
 }
 error_log("Bad Elements: " . implode(" ", $bad_els));
+error_log("Bad VAHydro pids: " . implode(" ", $bad_pids));
 error_log("Bad Props: " . implode(" ", $bad_props));
 error_log("Bad Details: " . print_r($bad_deets,1));
 
