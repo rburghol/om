@@ -63,8 +63,8 @@ foreach ($elements as $element) {
     }
   }
 }
-error_log("Bad Elements: " . print_r($bad_els,1));
-error_log("Bad Props: " . print_r($bad_props,1));
+error_log("Bad Elements: " . implode(" ", $bad_els));
+error_log("Bad Props: " . implode(" ", $bad_props));
 error_log("Bad Details: " . print_r($bad_deets,1));
 
 
