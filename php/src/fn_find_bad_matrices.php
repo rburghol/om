@@ -41,7 +41,7 @@ foreach ($elements as $element) {
   } else {
     $vahydro_hydroid = -1;
   }
-  error_log("Checking $thisproc->name ");
+  error_log("Checking $object->name ");
   foreach ($object->processors as $thisproc) {
     // check first for new method, with props.
     // this is the VWUDS/VADEQ UserID value
