@@ -26,7 +26,7 @@ if ($elementid > 0) {
 }
 $listobject->performQuery();
 error_log("$listobject->querystring ");
-$rsegs = $listobject->queryrecords;
+$elements = $listobject->queryrecords;
 
 foreach ($elements as $element) {
   $elid = $element['elementid'];
