@@ -6374,6 +6374,13 @@ class timeSeriesFile extends timeSeriesInput {
     $file_info = FALSE;
     parent::sleep();
   }
+  
+  function logState($logvalues = array()) {
+    // need to call this to fix timestamp values such as modays that may get interpolated if
+    // the source file is a model run record.
+    $this->setStateTimerVars();
+    parent::logState($logvalues);
+  }
 
   function wake() {
     parent::wake();
