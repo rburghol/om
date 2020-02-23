@@ -25,6 +25,7 @@ if ($elementid > 0) {
   $listobject->querystring .= " and elementid = $elementid ";
 }
 $listobject->performQuery();
+error_log("$listobject->querystring ");
 $rsegs = $listobject->queryrecords;
 
 foreach ($elements as $element) {
@@ -32,7 +33,7 @@ foreach ($elements as $element) {
   $riverseg = $element['custom2'];
   $loadres = unSerializeSingleModelObject($elid);
   $object = $loadres['object'];
-  
+  error_log("Checking $thisproc->name ");
   foreach ($object->processors as $thisproc) {
     // check first for new method, with props.
     // this is the VWUDS/VADEQ UserID value
