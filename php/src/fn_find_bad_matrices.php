@@ -27,6 +27,8 @@ if ($elementid > 0) {
 $listobject->performQuery();
 error_log("$listobject->querystring ");
 $elements = $listobject->queryrecords;
+$bad_els = array();
+$bad_props = array();
 
 foreach ($elements as $element) {
   $elid = $element['elementid'];
@@ -41,6 +43,12 @@ foreach ($elements as $element) {
       $count = count($thisproc->matrix);
       if (!($count > 0)) {
         error_log("$thisproc->name on Element $object->name ($elid) is empty");
+        if (!in_array($thisproc->name, $bad_props)) {
+          $bad_props[] = $thisproc->name;
+        }
+        if (!in_array($elid, $bad_els)) {
+          $bad_els[] = $elid;
+        }
       }
     }
   }
