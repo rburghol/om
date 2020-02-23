@@ -58,7 +58,7 @@ foreach ($elements as $element) {
         if (!isset($bad_deets[$elid])) {
           $bad_deets[$elid] = array('elementid'=>$elid, 'vahydro_pid' => $vahydro_hydroid);
         }
-        $bad_deets[$elid][$proc_name] = 'empty';
+        $bad_deets[$elid][$thisproc->name] = 'empty';
       }
     }
   }
