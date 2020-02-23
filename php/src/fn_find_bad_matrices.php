@@ -29,12 +29,18 @@ error_log("$listobject->querystring ");
 $elements = $listobject->queryrecords;
 $bad_els = array();
 $bad_props = array();
+$bad_deets = array();
 
 foreach ($elements as $element) {
   $elid = $element['elementid'];
   $riverseg = $element['custom2'];
   $loadres = unSerializeSingleModelObject($elid);
   $object = $loadres['object'];
+  if (isset($object->processors['vahydro_hydroid'])) {
+    $vahydro_hydroid = $object->processors['vahydro_hydroid']->getProp('value');
+  } else {
+    $vahydro_hydroid = -1;
+  }
   error_log("Checking $thisproc->name ");
   foreach ($object->processors as $thisproc) {
     // check first for new method, with props.
@@ -49,11 +55,17 @@ foreach ($elements as $element) {
         if (!in_array($elid, $bad_els)) {
           $bad_els[] = $elid;
         }
+        if (!isset($bad_deets[$elid])) {
+          $bad_deets[$elid] = array('elementid'=>$elid, 'vahydro_pid' => $vahydro_hydroid);
+        }
+        $bad_deets[$elid][$proc_name] = 'empty';
       }
     }
   }
 }
-
+error_log("Bad Elements: " . print_r($bad_els,1));
+error_log("Bad Props: " . print_r($bad_props,1));
+error_log("Bad Details: " . print_r($bad_deets,1));
 
 
 ?>
