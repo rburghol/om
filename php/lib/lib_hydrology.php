@@ -4626,8 +4626,8 @@ class dataMatrix extends modelSubObject {
    
    function evaluate() {
       
-      $key1 = $this->arData[$this->keycol1];
-      $key2 = $this->arData[$this->keycol2];
+      $key1 = isset($this->arData[$this->keycol1]) ? $this->arData[$this->keycol1] : '';
+      $key2 = isset($this->arData[$this->keycol2]) ? $this->arData[$this->keycol2] : '';
       if ($this->debug) {
          if (isset($this->arData['the_geom'])) {
             $geomcache = $this->arData['the_geom'];
