@@ -17,7 +17,7 @@ if (count($args) >= 4) {
 } elseif ($query_type == 'pid') {
   $vars['pid'] = $args[1];
 } else {
-  error_log("Usage: php om_saveprop.php query_type entity_type featureid propname");
+  error_log("Usage: php om_deleteprop.php query_type entity_type featureid propname");
   error_log("Note: 'file' is not yet enabled");
   error_log("Note: Use featureid = -1 for all ");
   die;
@@ -49,7 +49,7 @@ error_log($q . "vars " . print_r($vars,1));
 $rez = db_query($q, $vars);
 while ($pid = $rez->fetchColumn()) {
   $prop = entity_load_single('dh_properties', $pid);
-  error_log("saving $prop->propname ($prop->pid)");
+  error_log("Deleting $prop->propname ($prop->pid)");
   entity_delete('dh_properties', $prop->pid);
 }
 
