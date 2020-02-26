@@ -2080,6 +2080,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'defaultval' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'defaultval',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Default value.',
+        'varname' => 'Default Value',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
