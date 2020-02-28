@@ -90,8 +90,8 @@ class dHOMWaterSystemObject extends dHOMModelElement {
     // taken directly from om library -- will revisit after full porting
     // children will subclass this and add their own like:
     // $publix = parent::getPublicProps($entity)
-    $publix = parent::getPublicProps($entity) + array('drought_status');
-    //dpm($publix,'publix');
+    $publix = array_merge(parent::getPublicProps($entity), array('drought_status'));
+    dpm($publix,'publix');
     return $publix;
   }
   
