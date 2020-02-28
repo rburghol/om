@@ -2083,6 +2083,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       'defaultval' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
         'propname' => 'defaultval',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
