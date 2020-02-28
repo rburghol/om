@@ -25,7 +25,6 @@ class dHOMwaterSupplyModelNode extends dHOMModelElement {
     // children will subclass this and add their own like:
     // $publix = parent::getPublicProps($entity)
     $publix = parent::getPublicProps($entity) + array('drought_status');
-    dpm($publix,'publix');
     return $publix;
   }
   
@@ -84,6 +83,16 @@ class dHOMWaterSystemObject extends dHOMModelElement {
   public function hiddenFields() {
     $hidden = array_merge(array('propvalue'), parent::hiddenFields());
     return $hidden;
+  }
+
+  public function getPublicProps($entity) {
+    // gets only properties that are visible (must be manually defined for now, could allow this to be set later)
+    // taken directly from om library -- will revisit after full porting
+    // children will subclass this and add their own like:
+    // $publix = parent::getPublicProps($entity)
+    $publix = parent::getPublicProps($entity) + array('drought_status');
+    //dpm($publix,'publix');
+    return $publix;
   }
   
   public function getDefaults($entity, &$defaults = array()) {
