@@ -25,6 +25,7 @@ class dHOMwaterSupplyModelNode extends dHOMModelElement {
     // children will subclass this and add their own like:
     // $publix = parent::getPublicProps($entity)
     $publix = parent::getPublicProps($entity) + array('drought_status');
+    dpm($publix,'publix');
     return $publix;
   }
   
