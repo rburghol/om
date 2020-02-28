@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: summarize_riversegs.sh runid "
+  echo 1>&2 "Usage: summarize_riversegs.sh runid [elids=csv list]"
   exit 2
 fi 
-tyear=2007
+elids=-1
 if [ $# -gt 1 ]; then
-  tyear=$2
+  elids=$2
 fi 
 
 runid=$1
@@ -26,6 +26,9 @@ q="$q left outer join dh_feature as c "
 q="$q on (m.featureid = c.hydroid ) "
 q="$q where a.bundle = 'watershed'"
 q="$q and a.ftype = 'vahydro'"
+if [ $elids -ne -1 ]; then
+  q="$q and b.propvalue in ($elids) "
+fi
 echo $q | psql -h dbase2 drupal.dh03 > /tmp/runoff-models.txt 
 
 n=`< /tmp/runoff-models.txt wc -l`
@@ -43,5 +46,5 @@ while IFS= read -r line; do
     IFS="$IFS|" read elid <<< "$line"
     Rscript /opt/model/vahydro/R/post.runoff.R $pid $runid
 done < /tmp/runoff-models.txt 
-rm /tmp/runoff-models.txt 
-rm /tmp/head.txt 
+#rm /tmp/runoff-models.txt 
+#rm /tmp/head.txt 
