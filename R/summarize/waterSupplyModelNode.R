@@ -118,5 +118,19 @@ if (is.na(l90)) {
   l90_year = 0
 }
 
+l30 <- loflows["30 Day Min"];
+ndx = which.min(as.numeric(l30[,"30 Day Min"]));
+l30_Qout = round(loflows[ndx,]$"30 Day Min",6);
+l30_year = loflows[ndx,]$"year";
+
+if (is.na(l30)) {
+  l30_Runit = 0.0
+  l30_year = 0
+}
+
+
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, site, token)
+
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, site, token)
