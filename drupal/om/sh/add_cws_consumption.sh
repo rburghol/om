@@ -1,5 +1,11 @@
 #!/bin/sh
 
+
+if [ $# -lt 1 ]; then
+  echo 1>&2 "Usage: add_cws_consumption.sh vahydro_model_pid "
+  exit 2
+fi 
+
 pid=$1
 # Water Supply Model Element Template 
 template=4988636
