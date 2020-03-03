@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ $# -lt 1 ]; then
+  echo 1>&2 "Usage: add_cws_ps.sh vahydro_model_pid "
+  exit 2
+fi 
+
 pid=$1
 entity_type=$2
 entity_id=$3
