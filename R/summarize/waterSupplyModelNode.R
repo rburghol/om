@@ -104,7 +104,6 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qbasel
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nextdown_mgd', ps_nextdown_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'consumptive_use_frac', consumptive_use_frac, site, token)
 
-
 # Metrics that need Zoo (IHA)
 flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = dat$thisdate);
 loflows <- group2(flows);
@@ -118,6 +117,9 @@ if (is.na(l90)) {
   l90_year = 0
 }
 
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, site, token)
+
 l30 <- loflows["30 Day Min"];
 ndx = which.min(as.numeric(l30[,"30 Day Min"]));
 l30_Qout = round(loflows[ndx,]$"30 Day Min",6);
@@ -128,9 +130,76 @@ if (is.na(l30)) {
   l30_year = 0
 }
 
-
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_Qout', l90_Qout, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_year', l90_year, site, token)
-
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_Qout', l30_Qout, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, site, token)
+
+# 7q10 -- also requires PearsonDS packages
+x <- as.vector(as.matrix(loflows["7 Day Min"]))
+for (k in 1:length(x)) {
+  if (x[k] <= 0) {
+    x[k] <- 0.00000001
+  }
+}
+x <- log(x)
+pars <- PearsonDS:::pearsonIIIfitML(x)
+x7q10 <- round(exp(qpearsonIII(0.1, params = pars$par)),6) #1 note
+
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, '7q10', x7q10, site, token)
+
+# ALF -- also requires IHA package and lubridate
+alf_data <- data.frame(matrix(data = NA, nrow = length(dat$thisdate), ncol = 5))
+colnames(alf_data) <- c('Qout', 'thisdate', 'year', 'month', 'day')
+alf_data$Qout <- dat$Qout
+alf_data$thisdate <- dat$thisdate
+alf_data$year <- year(ymd(alf_data$thisdate))
+alf_data$month <- month(ymd(alf_data$thisdate))
+alf_data$day <- day(ymd(alf_data$thisdate))
+monthly_mins <- zoo(alf_data$Qout, order.by = alf_data$thisdate)
+modat <- group1(monthly_mins,'water','min')
+g1vec <- as.vector(as.matrix(modat[,7]))
+alf <- round(quantile(g1vec, 0.5, na.rm = TRUE),6)
+
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ml8', alf, site, token)
+
+# Sept. 10%
+sept_flows <- subset(alf_data, month == '9')
+sept_10 <- round(quantile(sept_flows$flow, 0.10),6)
+
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, site, token)
+
+# Metrics trimmed to climate change scenario timescale (Jan. 1 1990 -- Dec. 31 2000)
+if (syear <= 1990 && eyear >= 2000) {
+  sdate_trim <- as.Date(paste0(1990,"-10-01"))
+  edate_trim <- as.Date(paste0(2000,"-09-30"))
+  
+  dat_trim <- window(dat, start = sdate_trim, end = edate_trim);
+  mode(dat_trim) <- 'numeric'
+  
+  flows_trim <- zoo(as.numeric(as.character( dat_trim$Qout )), order.by = dat_trim$thisdate);
+  loflows_trim <- group2(flows_trim);
+  l90 <- loflows["90 Day Min"];
+  ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+  l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
+  l90_year = loflows[ndx,]$"year";
+  
+  if (is.na(l90)) {
+    l90_Runit = 0.0
+    l90_year = 0
+  }
+  
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_Qout', l90_Qout, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_year', l90_year, site, token)
+  
+  l30 <- loflows_trim["30 Day Min"];
+  ndx = which.min(as.numeric(l30[,"30 Day Min"]));
+  l30_Qout = round(loflows[ndx,]$"30 Day Min",6);
+  l30_year = loflows[ndx,]$"year";
+  
+  if (is.na(l30)) {
+    l30_Runit = 0.0
+    l30_year = 0
+  }
+  
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_Qout', l30_Qout, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_year', l30_year, site, token)
+}
