@@ -177,29 +177,29 @@ if (syear <= 1990 && eyear >= 2000) {
   
   flows_trim <- zoo(as.numeric(as.character( dat_trim$Qout )), order.by = dat_trim$thisdate);
   loflows_trim <- group2(flows_trim);
-  l90 <- loflows["90 Day Min"];
-  ndx = which.min(as.numeric(l90[,"90 Day Min"]));
-  l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
-  l90_year = loflows[ndx,]$"year";
+  l90_trim <- loflows_trim["90 Day Min"];
+  ndx_trim = which.min(as.numeric(l90_trim[,"90 Day Min"]));
+  l90_Qout_trim = round(loflows_trim[ndx_trim,]$"90 Day Min",6);
+  l90_year_trim = loflows_trim[ndx_trim,]$"year";
   
-  if (is.na(l90)) {
-    l90_Runit = 0.0
-    l90_year = 0
+  if (is.na(l90_trim)) {
+    l90_Qout_trim = 0.0
+    l90_year_trim = 0
   }
   
-  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_Qout', l90_Qout, site, token)
-  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_year', l90_year, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_Qout', l90_Qout_trim, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l90_cc_year', l90_year_trim, site, token)
   
-  l30 <- loflows_trim["30 Day Min"];
-  ndx = which.min(as.numeric(l30[,"30 Day Min"]));
-  l30_Qout = round(loflows[ndx,]$"30 Day Min",6);
-  l30_year = loflows[ndx,]$"year";
+  l30_trim <- loflows_trim["30 Day Min"];
+  ndx_trim = which.min(as.numeric(l30_trim[,"30 Day Min"]));
+  l30_Qout_trim = round(loflows_trim[ndx_trim,]$"30 Day Min",6);
+  l30_year_trim = loflows_trim[ndx_trim,]$"year";
   
-  if (is.na(l30)) {
-    l30_Runit = 0.0
-    l30_year = 0
+  if (is.na(l30_trim)) {
+    l30_Qout_trim = 0.0
+    l30_year_trim = 0
   }
   
-  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_Qout', l30_Qout, site, token)
-  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_year', l30_year, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_Qout', l30_Qout_trim, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_year', l30_year_trim, site, token)
 }
