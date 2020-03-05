@@ -6881,7 +6881,7 @@ class channelObject extends hydroObject {
     $depth = $this->state['depth'];
     $demand = $this->state['demand'];
     // avoid Storage < 0 by adjusting demand as much as possible 
-    $demand_balance = $demand - (($I1 + $I2) / 2.0);
+    $demand_balance = $demand - $I2;
     $rejected_demand_mgd = 0.0;
     $rejected_demand_pct = 0.0;
    if ( ($demand_balance > 0) and ($demand > 0) ) {
