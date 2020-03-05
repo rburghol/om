@@ -12,13 +12,14 @@ include_once('xajax_modeling.element.php');
 ##include_once("./lib_batchmodel.php");
 
 if (count($argv) < 3) {
-   print("Usage: fn_set_vahydro1_hydrocode.php scenario custom1 [elementid] \n");
+   print("Usage: fn_set_vahydro1_hydrocode.php scenario subcomp custom1 [elementid] \n");
    die;
 }
 error_log(print_r($argv,1));
 $scenario = $argv[1];
-$custom1 = $argv[2];
-$elementid = isset($argv[3]) ? $argv[3] : -1;
+$subcomp = $argv[2];
+$custom1 = $argv[3];
+$elementid = isset($argv[4]) ? $argv[4] : -1;
 
 $listobject->querystring = "select elementid, custom2 from scen_model_element where custom1 = '$custom1' and scenarioid = $scenarioid ";
 if ($elementid > 0) {
@@ -45,13 +46,9 @@ foreach ($elements as $element) {
   foreach ($object->processors as $thisproc) {
     // check first for new method, with props.
     // this is the VWUDS/VADEQ UserID value
-    if (get_class($thisproc) == 'dataMatrix') {
-      $count = count($thisproc->matrix);
+    if ($thisprop->name == $subcomp) {
       if (!($count > 0)) {
         error_log("$thisproc->name on Element $object->name ($elid) is empty");
-        if (!in_array($thisproc->name, $bad_props)) {
-          $bad_props[] = $thisproc->name;
-        }
         if (!in_array($vahydro_hydroid, $bad_pids)) {
           if ($vahydro_hydroid > 0) {
             $bad_pids[] = $vahydro_hydroid;
@@ -68,10 +65,9 @@ foreach ($elements as $element) {
     }
   }
 }
-error_log("Bad Elements: " . implode(" ", $bad_els));
-error_log("Bad VAHydro pids: " . implode(" ", $bad_pids));
-error_log("Bad Props: " . implode(" ", $bad_props));
-error_log("Bad Details: " . print_r($bad_deets,1));
+error_log("Elements Missing $subcomp: " . implode(" ", $bad_els));
+error_log("VAHydro pids : " . implode(" ", $bad_pids));
+error_log("Details: " . print_r($bad_deets,1));
 
 
 ?>
