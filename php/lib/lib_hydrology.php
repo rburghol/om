@@ -6886,9 +6886,9 @@ class channelObject extends hydroObject {
     $rejected_demand_pct = 0.0;
    if ( ($demand_balance > 0) and ($demand > 0) ) {
     $rejected_demand = $demand_balance;
-    $demand = $demand - $rejected_demand;
     $rejected_demand_mgd = $rejected_demand / 1.547;
     $rejected_demand_pct = $rejected_demand / $demand;
+    $demand = $demand - $rejected_demand;
    }
     if ($this->length > 0) {
        // if length is set to zero we automatically pass inflows
