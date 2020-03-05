@@ -6799,215 +6799,199 @@ class channelObject extends hydroObject {
       $this->setSingleDataColumnType('substrateclass', 'varchar(2)', $this->substrateclass);
       $this->setSingleDataColumnType('pdepth', 'float8', $this->pdepth);
       
-      $statenums = array('Qout', 'depth', 'Vout', 'Storage', 'T', 'U', 'Uout','demand', 'pdepth', 'Rin', 'discharge', 'last_discharge', 'last_demand', 'imp_off', 'Qlocal');
+      $statenums = array('Qout', 'depth', 'Vout', 'Storage', 'T', 'U', 'Uout','demand', 'pdepth', 'Rin', 'discharge', 'last_discharge', 'last_demand', 'imp_off', 'Qlocal', 'rejected_demand_mgd', 'rejected_demand_pct');
       foreach ($statenums as $thiscol) {
          $this->setSingleDataColumnType($thiscol, 'float8', 0);
          //$this->dbcolumntypes[$thiscol] = 'float8';
          //$this->data_cols[] = $thiscol;
       }
-      /*
-      $this->state['Qout'] = 0.0;
-      $this->state['Qlocal'] = 0.0;
-      $this->state['Qin'] = 0.0;
-      $this->state['Rin'] = 0.0;
-      $this->state['depth'] = 0.0;
-      $this->state['Vout'] = 0.0;
-      $this->state['Storage'] = 0.0;
-      $this->state['T'] = 0.0; // temperature
-      $this->state['U'] = 0.0; // Heat (in BTU or Kcal) - expects Uin to be set (heat in)
-      $this->state['Uout'] = 0.0; // Heat leaving (in BTU or Kcal)
-      $this->state['demand'] = 0.0; // this replaces the object based withdrawals
-      $this->state['last_demand'] = 0.0; // this replaces the object based withdrawals
-      $this->state['discharge'] = 0.0; // point source flows into this watershed - these could be routed as Qin, but by 
-      // putting them in as discharge, they are combined with Qin for the calculations, but recorded separately in the run data
-      $this->state['last_discharge'] = 0.0; // point source flows into this channel during last timestep 
-      $this->state['pdepth'] = $this->pdepth;
-      */
    }
    
    function setDataColumnTypes() {
       parent::setDataColumnTypes();
-      
-      /*
-      $statenums = array('slope','base','Z','length','substrateclass', 'Qout', 'depth', 'Vout', 'Storage', 'T', 'U', 'Uout','demand', 'pdepth', 'Rin', 'discharge', 'last_discharge', 'last_demand', 'imp_off', 'Qlocal');
-      foreach ($statenums as $thiscol) {
-         $this->setSingleDataColumnType($thiscol, 'float8');
-         //$this->dbcolumntypes[$thiscol] = 'float8';
-         //$this->data_cols[] = $thiscol;
-      }
-      */
-      
       // set log formats
       $this->logformats['runoff_in'] = '%s';
 
       
    }
    
-   function step() {
-      // all step methods MUST call preStep(),execProcessors(), postStep()
-      $this->preStep();
-      if ($this->debug) {
-         $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
-      }
-      // execute sub-components
-      // execute child components (since this is a model container)
-      $this->execComponents();
-      # now execute any operations
-      $this->execProcessors();
+  function step() {
+    // all step methods MUST call preStep(),execProcessors(), postStep()
+    $this->preStep();
+    if ($this->debug) {
+       $this->logDebug("$this->name Inputs obtained. thisdate = " . $this->state['thisdate']);
+    }
+    // execute sub-components
+    // execute child components (since this is a model container)
+    $this->execComponents();
+    # now execute any operations
+    $this->execProcessors();
 
-      $this->state['year'] = $this->timer->thistime->format('Y');
-      $this->state['month'] = $this->timer->thistime->format('n');
-      $this->state['day'] = $this->timer->thistime->format('j');
-      $this->state['weekday'] = $this->timer->thistime->format('N');
-      $this->state['week'] = $this->timer->thistime->format('W');
-      $this->state['hour'] = $this->timer->thistime->format('G');
-      $this->state['thisdate'] = $this->timer->thistime->format('Y-m-d');
-      if ($this->debug) {
-         $this->logDebug("<b>$this->name step() method called at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . ".</b><br>\n");
-      }
-      
-      $Uin = $this->state['Uin']; // heat in
-      $U0 = $this->state['U']; // heat in BTU/Kcal at previous timestep
-      $T = $this->state['T']; // Temp at previous timestep
-      $area = $this->state['area'];
-      $Qafps = $this->state['Qafps'];
-      $Rin = $this->state['Rin'];
-      $discharge = $this->state['discharge']; // get any point source discharges into this water body (MGD)
-      $Qlocal = 0.0;
-      if ( ($area > 0) and ($Qafps > 0)) {
-         $Qlocal = $Qafps * $area * 640.0 * 43560.0;
-      }
-      //error_log("Calculating Equation Qlocal += Rin - > $Qlocal += $Rin ;");
-      if ( ($Rin > 0) ) {
-         $Qlocal += $Rin;
-      }
-      //error_log("I2 = this->state['Qin'] + Qlocal + discharge * 1.547 -> $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge * 1.547 ;");
-      
-      // track previous days mean flow
-      /*
-      $pjday = $this->state['prev_jday'];
-      if ( ( $pjday < ($jday -1)) or ( ($pjday == 365) and ($jday == 1 )) ) {
-        // need to re-up
-        $this->state['prevday_Qin'] = $this->state['prevday_Qin_count'] > 0 ? ($this->state['prevday_Qin_sum'] / $this->state['prevday_Qin_count']) : $this->state['prevday_Qin_sum'];
-        $this->state['prevday_Qin_count'] = 1;
-        $this->state['prevday_Qin_sum'] = $this->state['Qin'];
-      } else {
-        $this->state['prevday_Qin_count'] += 1;
-        $this->state['prevday_Qin_sum'] += $this->state['Qin'];        
-      }
-      
-      */
-      
-      $I2 = $this->state['Qin'] + $Qlocal + $discharge * 1.547;
-      if ($this->debug) {
-         $this->logDebug("Final Inflows I2 : $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge <br>\n");
-      }
-      $I1 = $this->state['Iold'];
-      $O1 = $this->state['Qout'];
-      $S1 = $this->state['Storage'];
-      $initialStorage = $this->state['Storage'];
-      $depth = $this->state['depth'];
-      $demand = $this->state['demand'];
-      if ($this->length > 0) {
-         // if length is set to zero we automatically pass inflows
+    $this->state['year'] = $this->timer->thistime->format('Y');
+    $this->state['month'] = $this->timer->thistime->format('n');
+    $this->state['day'] = $this->timer->thistime->format('j');
+    $this->state['weekday'] = $this->timer->thistime->format('N');
+    $this->state['week'] = $this->timer->thistime->format('W');
+    $this->state['hour'] = $this->timer->thistime->format('G');
+    $this->state['thisdate'] = $this->timer->thistime->format('Y-m-d');
+    if ($this->debug) {
+       $this->logDebug("<b>$this->name step() method called at hour " . $this->state['hour'] . " on " . $this->state['thisdate'] . ".</b><br>\n");
+    }
 
-         if ($this->storageinitialized == 0) {
-            # first time, need to estimate initial storage,
-            # assuems that we are in steady state, that is,
-            # the initial and final Q, and S are equivalent
-            $I1 = $I2;
-            $O1 = $I2;
-            if ($this->debug) {
-               $this->logDebug("Estimating initial storage, calling: storageroutingInitS($I2, $this->base, $this->Z, $this->channeltype, $this->length, $this->slope, $dt, $this->n, $this->units, 0)");
-            }
-            $S1 = storageroutingInitS($I2, $this->base, $this->Z, $this->channeltype, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
-            if ($this->debug) {
-               $this->logDebug("Initial storage estimated as $S1 <br>\n");
-            }
-            $this->storageinitialized = 1;
-         }
+    $Uin = $this->state['Uin']; // heat in
+    $U0 = $this->state['U']; // heat in BTU/Kcal at previous timestep
+    $T = $this->state['T']; // Temp at previous timestep
+    $area = $this->state['area'];
+    $Qafps = $this->state['Qafps'];
+    $Rin = $this->state['Rin'];
+    $discharge = $this->state['discharge']; // get any point source discharges into this water body (MGD)
+    $Qlocal = 0.0;
+    if ( ($area > 0) and ($Qafps > 0)) {
+       $Qlocal = $Qafps * $area * 640.0 * 43560.0;
+    }
+    //error_log("Calculating Equation Qlocal += Rin - > $Qlocal += $Rin ;");
+    if ( ($Rin > 0) ) {
+       $Qlocal += $Rin;
+    }
+    //error_log("I2 = this->state['Qin'] + Qlocal + discharge * 1.547 -> $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge * 1.547 ;");
 
-         # get time step from timer object
-         $dt = $this->timer->dt;
+    // track previous days mean flow
+    /*
+    $pjday = $this->state['prev_jday'];
+    if ( ( $pjday < ($jday -1)) or ( ($pjday == 365) and ($jday == 1 )) ) {
+      // need to re-up
+      $this->state['prevday_Qin'] = $this->state['prevday_Qin_count'] > 0 ? ($this->state['prevday_Qin_sum'] / $this->state['prevday_Qin_count']) : $this->state['prevday_Qin_sum'];
+      $this->state['prevday_Qin_count'] = 1;
+      $this->state['prevday_Qin_sum'] = $this->state['Qin'];
+    } else {
+      $this->state['prevday_Qin_count'] += 1;
+      $this->state['prevday_Qin_sum'] += $this->state['Qin'];        
+    }
 
-         if($this->debug) {
-            $dtime = $this->timer->thistime->format('r');
-            $this->logDebug("Calculating flow at time $dtime <br>\n");
-            $this->logDebug("Iold = $I1, Qin = $I2, Last Qout = $O1, base = $this->base, Z = $this->Z, type = 2, Storage = $S1, length = $this->length, slope = $this->slope, $dt, n = $this->n <br>\n");
-            #die;
-         }
-         
+    */
 
-         # now execute any operations
-         #$this->execProcessors();
-         # re-calculate the channel flow parameters, if any other operations have altered the flow:
-         list($Vout, $Qout, $depth, $Storage, $its) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
-         if ( ($I1 > 0) and ($I2 > 0) and ($demand < $I1) and ($demand < $I2) and ($Qout == 0) ) {
-            // numerical error, adjust
-            // @todo: revisit this.  If storage is available in the channel, flow may theoretically be 0.0
-            //        but a withdrawal could be possible?  Mannings roughness etc?
-            //        Also need to create handling of rejected demand.  That is, do not let the storage be < 0.0
-            $Qout = (($I1 + $I2) / 2.0) - $demand;
-         }
-      } else {
-         // zero length channel, this is a pass-through - still decrement storage if we ask for it though
-         $Vout = 0.0;
-         $Storage = 0.0;
-         $depth = 0.0;
-         if ($demand > 0) {
-            if ($I2 > $demand) {
-               $Qout = $I2 - $demand;
-            } else {
-               $Qout = 0.0;
-            }
-         } else {
-            $Qout = $I2;
-         }
-      }
-      
-      $this->state['Qin'] = $I2;
-      $this->state['Qlocal'] = $Qlocal;
-      $this->state['Vout'] = $Vout;
-      $this->state['area'] = $area;
-      $this->state['Qout'] = $Qout;
-      $this->state['depth'] = $depth;
-      $this->state['Storage'] = $Storage;
-      $this->state['last_demand'] = $demand;
-      $this->state['last_discharge'] = $discharge;
-      $this->state['its'] = $its;
-
-      if($this->debug) {
-         $this->logDebug("Qout = $Qout <br>\n");
-      }
-      
-      // now calculate heat flux
-      // O1 is outflow at last time step, 
-      $U = ($Storage * ($U0 + $Uin)) / ( $Qout * $dt + $Storage);
-      switch ($this->units) {
-         case 1:
-         // SI
-         $T = $U / $Storage; // this is NOT right, don't know what units for storage would be in SI, since this is not really implemented
-         break;
-         
-         case 2:
-         // EE
-         $T = 32.0 + ($U / ($Storage * 7.4805)) * (1.0 / 8.34); // Storage - cubic feet, 7.4805 gal/ft^3
-         break;
-      }
-      // let's also assume that the water isn't frozen, so we limit this to zero
-      if ($T < 0) {
-         $T = 0;
-      }
-      $Uout = $U0 + $Uin - $U;
-      $this->state['U'] = floatval($U);
-      $this->state['Uout'] = floatval($Uout);
-      $this->state['T'] = floatval($T);
-         
-      $this->postStep();
-      $this->totalflow += floatval($Qout * $dt);
-      $this->totalinflow += floatval($I2 * $dt);
-      $this->totalwithdrawn += floatval($demand * $dt);
+    $I2 = $this->state['Qin'] + $Qlocal + $discharge * 1.547;
+    if ($this->debug) {
+       $this->logDebug("Final Inflows I2 : $I2 = " . $this->state['Qin'] . " + $Qlocal + $discharge <br>\n");
+    }
+    $I1 = $this->state['Iold'];
+    $O1 = $this->state['Qout'];
+    $S1 = $this->state['Storage'];
+    $initialStorage = $this->state['Storage'];
+    $depth = $this->state['depth'];
+    $demand = $this->state['demand'];
+    // avoid Storage < 0 by adjusting demand as much as possible 
+    $demand_balance = $demand - $I2;
+    $rejected_demand_mgd = 0.0;
+    $rejected_demand_pct = 0.0;
+   if ( ($demand_balance > 0) and ($demand > 0) ) {
+    $rejected_demand = $demand_balance;
+    $rejected_demand_mgd = $rejected_demand / 1.547;
+    $rejected_demand_pct = $rejected_demand / $demand;
+    $demand = $demand - $rejected_demand;
    }
+    if ($this->length > 0) {
+       // if length is set to zero we automatically pass inflows
+
+       if ($this->storageinitialized == 0) {
+          # first time, need to estimate initial storage,
+          # assuems that we are in steady state, that is,
+          # the initial and final Q, and S are equivalent
+          $I1 = $I2;
+          $O1 = $I2;
+          if ($this->debug) {
+             $this->logDebug("Estimating initial storage, calling: storageroutingInitS($I2, $this->base, $this->Z, $this->channeltype, $this->length, $this->slope, $dt, $this->n, $this->units, 0)");
+          }
+          $S1 = storageroutingInitS($I2, $this->base, $this->Z, $this->channeltype, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
+          if ($this->debug) {
+             $this->logDebug("Initial storage estimated as $S1 <br>\n");
+          }
+          $this->storageinitialized = 1;
+       }
+
+       # get time step from timer object
+       $dt = $this->timer->dt;
+
+       if($this->debug) {
+          $dtime = $this->timer->thistime->format('r');
+          $this->logDebug("Calculating flow at time $dtime <br>\n");
+          $this->logDebug("Iold = $I1, Qin = $I2, Last Qout = $O1, base = $this->base, Z = $this->Z, type = 2, Storage = $S1, length = $this->length, slope = $this->slope, $dt, n = $this->n <br>\n");
+          #die;
+       }
+       
+
+       # now execute any operations
+       #$this->execProcessors();
+       # re-calculate the channel flow parameters, if any other operations have altered the flow:
+       list($Vout, $Qout, $depth, $Storage, $its) = storagerouting($I1, $I2, $O1, $demand, $this->base, $this->Z, $this->channeltype, $S1, $this->length, $this->slope, $dt, $this->n, $this->units, 0);
+       if ( ($I1 > 0) and ($I2 > 0) and ($demand < $I1) and ($demand < $I2) and ($Qout == 0) ) {
+          // numerical error, adjust
+          // @todo: revisit this.  If storage is available in the channel, flow may theoretically be 0.0
+          //        but a withdrawal could be possible?  Mannings roughness etc?
+          //        Also need to create handling of rejected demand.  That is, do not let the storage be < 0.0
+          $Qout = (($I1 + $I2) / 2.0) - $demand;
+       }
+    } else {
+       // zero length channel, this is a pass-through - still decrement storage if we ask for it though
+       $Vout = 0.0;
+       $Storage = 0.0;
+       $depth = 0.0;
+       if ($demand > 0) {
+          if ($I2 > $demand) {
+             $Qout = $I2 - $demand;
+          } else {
+             $Qout = 0.0;
+          }
+       } else {
+          $Qout = $I2;
+       }
+    }
+    
+    $this->state['Qin'] = $I2;
+    $this->state['Qlocal'] = $Qlocal;
+    $this->state['Vout'] = $Vout;
+    $this->state['area'] = $area;
+    $this->state['Qout'] = $Qout;
+    $this->state['depth'] = $depth;
+    $this->state['Storage'] = $Storage;
+    $this->state['last_demand'] = $demand;
+    $this->state['last_discharge'] = $discharge;
+    $this->state['rejected_demand_mgd'] = $rejected_demand_mgd;
+    $this->state['rejected_demand_pct'] = $rejected_demand_pct;
+    $this->state['its'] = $its;
+
+    if($this->debug) {
+       $this->logDebug("Qout = $Qout <br>\n");
+    }
+    
+    // now calculate heat flux
+    // O1 is outflow at last time step, 
+    $U = ($Storage * ($U0 + $Uin)) / ( $Qout * $dt + $Storage);
+    switch ($this->units) {
+       case 1:
+       // SI
+       $T = $U / $Storage; // this is NOT right, don't know what units for storage would be in SI, since this is not really implemented
+       break;
+       
+       case 2:
+       // EE
+       $T = 32.0 + ($U / ($Storage * 7.4805)) * (1.0 / 8.34); // Storage - cubic feet, 7.4805 gal/ft^3
+       break;
+    }
+    // let's also assume that the water isn't frozen, so we limit this to zero
+    if ($T < 0) {
+       $T = 0;
+    }
+    $Uout = $U0 + $Uin - $U;
+    $this->state['U'] = floatval($U);
+    $this->state['Uout'] = floatval($Uout);
+    $this->state['T'] = floatval($T);
+       
+    $this->postStep();
+    $this->totalflow += floatval($Qout * $dt);
+    $this->totalinflow += floatval($I2 * $dt);
+    $this->totalwithdrawn += floatval($demand * $dt);
+  }
 
    function getPublicProps() {
       # gets only properties that are visible (must be manually defined)

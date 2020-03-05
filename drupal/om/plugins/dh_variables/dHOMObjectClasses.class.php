@@ -1494,7 +1494,7 @@ class dHOMEquation extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Value to use if variable is type Non-Negative.',
-        'varname' => 'Initial Value',
+        'varname' => 'Non-Negative Default Value',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'engine' => array(
