@@ -44,7 +44,7 @@ foreach ($elements as $element) {
   }
   error_log("Checking $subcomp on $object->name ");
   if (!isset($object->processors[$subcomp])) {
-    error_log("$thisproc->name on Element $object->name ($elid) is empty");
+    error_log("$subcomp on Element $object->name ($elid) is empty");
     if (!in_array($vahydro_hydroid, $bad_pids)) {
       if ($vahydro_hydroid > 0) {
         $bad_pids[] = $vahydro_hydroid;
