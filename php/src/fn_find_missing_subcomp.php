@@ -32,6 +32,7 @@ $bad_els = array();
 $bad_props = array();
 $bad_deets = array();
 $i = 0;
+$j = 0;
 foreach ($elements as $element) {
   $elid = $element['elementid'];
   $riverseg = $element['custom2'];
@@ -45,6 +46,7 @@ foreach ($elements as $element) {
   $i++;
   error_log("Checking $subcomp on $object->name ");
   if (!isset($object->processors[$subcomp])) {
+    $j++;
     error_log("$subcomp on Element $object->name ($elid) is empty");
     if (!in_array($vahydro_hydroid, $bad_pids)) {
       if ($vahydro_hydroid > 0) {
@@ -63,7 +65,7 @@ foreach ($elements as $element) {
 error_log("Elements Missing $subcomp: " . implode(" ", $bad_els));
 error_log("VAHydro pids : " . implode(" ", $bad_pids));
 error_log("Details: " . print_r($bad_deets,1));
-error_log("Total items checked = $i");
+error_log("Total Missing items $j out of $i checked.");
 
 
 ?>
