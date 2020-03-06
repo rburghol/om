@@ -43,21 +43,20 @@ foreach ($elements as $element) {
     $vahydro_hydroid = -1;
   }
   error_log("Checking $subcomp on $object->name ");
-    if (!isset($object->processors[$subcomp]) {
-      error_log("$thisproc->name on Element $object->name ($elid) is empty");
-      if (!in_array($vahydro_hydroid, $bad_pids)) {
-        if ($vahydro_hydroid > 0) {
-          $bad_pids[] = $vahydro_hydroid;
-        }
+  if (!isset($object->processors[$subcomp])) {
+    error_log("$thisproc->name on Element $object->name ($elid) is empty");
+    if (!in_array($vahydro_hydroid, $bad_pids)) {
+      if ($vahydro_hydroid > 0) {
+        $bad_pids[] = $vahydro_hydroid;
       }
-      if (!in_array($elid, $bad_els)) {
-        $bad_els[] = $elid;
-      }
-      if (!isset($bad_deets[$elid])) {
-        $bad_deets[$elid] = array('elementid'=>$elid, 'vahydro_pid' => $vahydro_hydroid);
-      }
-      $bad_deets[$elid][$thisproc->name] = 'empty';
     }
+    if (!in_array($elid, $bad_els)) {
+      $bad_els[] = $elid;
+    }
+    if (!isset($bad_deets[$elid])) {
+      $bad_deets[$elid] = array('elementid'=>$elid, 'vahydro_pid' => $vahydro_hydroid);
+    }
+    $bad_deets[$elid][$thisproc->name] = 'empty';
   }
 }
 error_log("Elements Missing $subcomp: " . implode(" ", $bad_els));
