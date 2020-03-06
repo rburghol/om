@@ -31,7 +31,7 @@ $elements = $listobject->queryrecords;
 $bad_els = array();
 $bad_props = array();
 $bad_deets = array();
-
+$i = 0;
 foreach ($elements as $element) {
   $elid = $element['elementid'];
   $riverseg = $element['custom2'];
@@ -42,6 +42,7 @@ foreach ($elements as $element) {
   } else {
     $vahydro_hydroid = -1;
   }
+  $i++;
   error_log("Checking $subcomp on $object->name ");
   if (!isset($object->processors[$subcomp])) {
     error_log("$subcomp on Element $object->name ($elid) is empty");
@@ -62,6 +63,7 @@ foreach ($elements as $element) {
 error_log("Elements Missing $subcomp: " . implode(" ", $bad_els));
 error_log("VAHydro pids : " . implode(" ", $bad_pids));
 error_log("Details: " . print_r($bad_deets,1));
+error_log("Total items checked = $i");
 
 
 ?>
