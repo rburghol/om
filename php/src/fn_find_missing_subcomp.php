@@ -12,7 +12,7 @@ include_once('xajax_modeling.element.php');
 ##include_once("./lib_batchmodel.php");
 
 if (count($argv) < 3) {
-   print("Usage: fn_set_vahydro1_hydrocode.php scenario subcomp custom1 [elementid] \n");
+   print("Usage: fn_find_missing_subcomp.php scenario subcomp custom1 [elementid] \n");
    die;
 }
 error_log(print_r($argv,1));
