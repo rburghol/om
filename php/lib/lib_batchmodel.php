@@ -983,10 +983,12 @@ function setNLCDLanduse($elid, $lu_matrix_name = 'landuse_nlcd', $minyear = 1980
   switch ($translate) {
     case 1:
     case TRUE:
+    error_log("Translating NLCD to CBP5 land uses");
       $lr = translateNLCDtoCBP($lu, $minyear, $maxyear);
     break;
     
     case 'cbp6':
+    error_log("Translating NLCD to CBP6 land uses");
       $lr = translateNLCDtoCBP6($lu, $minyear, $maxyear);
     break;
     
