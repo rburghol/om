@@ -528,7 +528,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varname' => 'Upstream Inflow (cfs):',
         'vardesc' => 'Upstream tributaries flow here.',
-        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'r_var' => array(
         'entity_type' => $entity->entityType(),
@@ -539,7 +539,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varname' => 'Runoff In (cfs)o:',
         'vardesc' => 'Local drainage area inflows.',
-        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'w_var' => array(
         'entity_type' => $entity->entityType(),
@@ -550,7 +550,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
         'featureid' => $entity->identifier(),
         'varname' => 'Withdrawals (mgd):',
         'vardesc' => 'Direct withdrawals from this stream.',
-        'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
     ) + $defaults;
     return $defaults;
