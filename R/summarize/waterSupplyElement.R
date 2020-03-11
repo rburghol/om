@@ -75,6 +75,11 @@ if (is.na(ps_mgd)) {
   ps_mgd = 0.0
 }
 
+# Analyze rejected demands
+flows <- zoo(dat$rejected_demand_pct, order.by = index(dat));
+loflows <- group2(flows);
+
+
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
