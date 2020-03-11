@@ -134,7 +134,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       '3' => 'All watershed nodes',
     ),
     '#size' => 1,
-    '#default' => $model->force_overwrite
+    '#default' => 2
   );
   
   // add controls
