@@ -1527,6 +1527,12 @@ class dHOMEquation extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     // this replaces parent method in favor of full object json transfer
     // @todo: make this work for all at base class 
+    //     JSON enabled objects must have:
+    //     - var $json2d = TRUE; // for all plugins in Drupal/om module
+    //     - var $json2d = TRUE; // on OM class 
+    //     - The attribute types must be supported in function setPropJSON2d($p
+    //       in the base OM class, or in the subclass 
+    //       Current supported types: normal attributes, array, textField
     // Old Code:
     /*
     parent::setAllRemoteProperties($entity, $elid, $path);

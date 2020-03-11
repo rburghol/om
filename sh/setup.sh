@@ -7,6 +7,8 @@ sudo chown www-data:allmodelers www/om/cache
 # We used to do dev separate from live, because the path is /opt/model/om-dev,  but now we have a 
 # soft-link for opt/model/om to opt/model/om-dev so all is one. we can regenerate if need be later
 # live
+rm /var/www/html/om/set_elemNHDlanduse.php
+ln -s /opt/model/om/php/src/set_elemNHDlanduse.php /var/www/html/om/set_elemNHDlanduse.php
 rm /var/www/html/om/fn_find_missing_subcomp.php
 ln -s /opt/model/om/php/src/fn_find_missing_subcomp.php /var/www/html/om/fn_find_missing_subcomp.php
 rm /var/www/html/om/fn_find_bad_matrices.php
