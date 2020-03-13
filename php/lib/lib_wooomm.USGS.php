@@ -1152,6 +1152,8 @@ class USGSChannelGeomObject_sub extends USGSChannelGeomObject {
       $this->wvars[] = 'area';
       $this->wvars[] = 'demand';
       $this->wvars[] = 'its';
+      $this->wvars[] = 'rejected_demand_mgd';
+      $this->wvars[] = 'rejected_demand_pct';
       $this->rvars[] = $this->q_var;
       $this->rvars[] = $this->r_var;
       $this->rvars[] = $this->w_var;
