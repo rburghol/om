@@ -78,9 +78,17 @@ if (is.na(ps_mgd)) {
 # Analyze rejected demands
 flows <- zoo(as.numeric(dat$rejected_demand_pct), order.by = index(dat));
 loflows <- group2(flows);
+r90 <- loflows["90 Day Max"];
+r30 <- loflows["30 Day Max"];
+r7 <- loflows["7 Day Max"];
+r1 <- loflows["1 Day Max"];
 
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r90_mgd', r90, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r30_mgd', r30, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r7_mgd', r7, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r1_mgd', r1, site, token)
 
