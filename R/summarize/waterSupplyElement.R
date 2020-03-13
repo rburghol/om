@@ -76,7 +76,7 @@ if (is.na(ps_mgd)) {
 }
 
 # Analyze rejected demands
-flows <- zoo(dat$rejected_demand_pct, order.by = index(dat));
+flows <- zoo(as.numeric(dat$rejected_demand_pct), order.by = index(dat));
 loflows <- group2(flows);
 
 
