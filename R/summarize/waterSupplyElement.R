@@ -79,9 +79,17 @@ if (is.na(ps_mgd)) {
 flows <- zoo(as.numeric(dat$rejected_demand_pct), order.by = index(dat));
 loflows <- group2(flows);
 r90 <- loflows["90 Day Max"];
+ndx = which.min(as.numeric(r90[,"90 Day Max"]));
+r90 = round(loflows[ndx,]$"90 Day Max",6);
 r30 <- loflows["30 Day Max"];
+ndx = which.min(as.numeric(r30[,"30 Day Max"]));
+r30 = round(loflows[ndx,]$"30 Day Max",6);
 r7 <- loflows["7 Day Max"];
+ndx = which.min(as.numeric(r7[,"7 Day Max"]));
+r7 = round(loflows[ndx,]$"7 Day Max",6);
 r1 <- loflows["1 Day Max"];
+ndx = which.min(as.numeric(r1[,"1 Day Max"]));
+r1 = round(loflows[ndx,]$"1 Day Max",6);
 
 
 # post em up
