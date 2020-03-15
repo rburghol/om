@@ -1,8 +1,9 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: add_system_gw_ps.sh vahydro_model_pid"
+  echo 1>&2 "Usage: set_gw_only_system_props.sh vahydro_model_pid"
   exit 2
+fi
 
 # Water Supply Model Element Template 
 template=5564183
