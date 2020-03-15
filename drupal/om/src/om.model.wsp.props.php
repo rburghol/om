@@ -40,7 +40,7 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
   $src_entity_type = $args[6];
 } else {
   // warn and quit
-  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] dest_id src_id prop_varkey dest_prop src_prop src_entity_type");
+  error_log("Usage: om.model.wsp.props.php query_type=[cmd/file] dest_id src_id (use 'auto' to use featureid) prop_varkey dest_prop src_prop src_entity_type");
   die;
 }
 
@@ -104,7 +104,7 @@ foreach ($data as $element) {
 
 	//load model property
   $model = entity_load_single('dh_properties', $dest_id);
-  if ($src_id == -1) {
+  if ($src_id == 'auto' {
     // assume we want the parent of the destination element 
     $src_id = $model->featureid;
     $src_entity_type = $model->entity_type;
