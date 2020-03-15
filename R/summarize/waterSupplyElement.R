@@ -70,6 +70,14 @@ wd_mgd <- mean(as.numeric(dat$wd_mgd) )
 if (is.na(wd_mgd)) {
   wd_mgd = 0.0
 }
+gw_demand_mgd <- mean(as.numeric(dat$gw_demand_mgd) )
+if (is.na(gw_demand_mgd)) {
+  gw_demand_mgd = 0.0
+}
+unmet_demand_mgd <- mean(as.numeric(dat$unmet_demand_mgd) )
+if (is.na(unmet_demand_mgd)) {
+  unmet_demand_mgd = 0.0
+}
 ps_mgd <- mean(as.numeric(dat$discharge_mgd) )
 if (is.na(ps_mgd)) {
   ps_mgd = 0.0
@@ -94,6 +102,8 @@ r1 = round(loflows[ndx,]$"1 Day Max",6);
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'wd_mgd', wd_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'gw_demand_mgd', gw_demand_mgd, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet_demand_mgd', unmet_demand_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd', ps_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r90_mgd', r90, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'r30_mgd', r30, site, token)
