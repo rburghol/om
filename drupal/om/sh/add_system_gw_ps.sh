@@ -18,4 +18,4 @@ drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equ
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_sw_factor
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_demand_mgd
-drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_discharge_mgd
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_from_gw_mgd
