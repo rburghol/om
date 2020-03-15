@@ -19,7 +19,7 @@ template=4988636
 
 # add facility gw_frac variable as an equation on model
 echo "Calling: drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation gw_frac gw_frac $entity_type "
-drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation gw_frac gw_frac $entity_type 
+drush scr modules/om/src/om.model.wsp.props.php cmd $pid "$entity_id" om_class_Equation gw_frac gw_frac $entity_type 
 drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation sw_frac sw_frac $entity_type 
 # fac_demand_mgy has changed to use wsp2020_2020_mgy in the exemptrun (runid 9), so that gw point source can still be calculated.  Actual surface water withdrawal is *still* based on vwp_exempt_mgd however.
 drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation fac_demand_mgy fac_demand_mgy $entity_type 
