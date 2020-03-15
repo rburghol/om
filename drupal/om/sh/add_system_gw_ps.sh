@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: add_cws_ps.sh vahydro_model_pid entity_type entity_id"
+  echo 1>&2 "Usage: add_system_gw_ps.sh vahydro_model_pid entity_type entity_id"
   exit 2
 fi 
 
