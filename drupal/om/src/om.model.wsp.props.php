@@ -104,6 +104,11 @@ foreach ($data as $element) {
 
 	//load model property
   $model = entity_load_single('dh_properties', $dest_id);
+  if ($src_id == -1) {
+    // assume we want the parent of the destination element 
+    $src_id = $model->featureid;
+    $src_entity_type = $model->entity_type;
+  }
   
 	//create or load om_class_Equation
 	$values = array(
