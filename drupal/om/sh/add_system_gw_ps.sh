@@ -10,7 +10,7 @@ entity_type='dh_feature'
 if [ $# -gt 1 ]; then
   entity_type=$2
 fi 
-entity_id=-1
+entity_id="-1"
 if [ $# -gt 2 ]; then
   entity_id=$3
 fi 
