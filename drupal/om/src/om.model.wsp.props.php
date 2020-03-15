@@ -44,7 +44,7 @@ if ( (count($args) >= 4) or ($args[0] == 'file')) {
   die;
 }
 
-error_log("query_type = $query_type, featureid = $dest_id, dest_prop = $dest_prop, varkey = $prop_varkey");
+error_log("query_type = $query_type, featureid = $dest_id, src_id = $src_id, dest_prop = $dest_prop, varkey = $prop_varkey");
 
 
 // read csv of dest_id / src_id pairs
