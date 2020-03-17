@@ -1692,13 +1692,14 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     foreach ($this->hiddenFields() as $hide) {
       unset($content[$hide]);
     }
+    $modate = date("Y-m-d h:m a", dh_handletimestamp($entity->modified) );
     switch ($view_mode) {
       case 'plugin':
       case 'teaser':
       default:
         $content['propname'] = array(
           '#type' => 'item',
-          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub>"
+          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub> (mod: $modate)"
         );
         $content['propcode'] = array(
           '#type' => 'item',
