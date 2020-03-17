@@ -220,19 +220,19 @@ foreach ($outlets as $thisrec) {
 
   switch ($force_overwrite) {
     case 1:
-      print("Removing all in tree $recid / run id $run_id \n");
+      error_log("Removing all in tree $recid / run id $run_id \n");
       removeTreeCache($listobject, $recid, $run_id);
     break;
     
     case 2:
       // just remove the trunk of this tree, leave all branches alone
-      print("Removing trunk of tree $recid / run id $run_id \n");
+      error_log("Removing trunk of tree $recid / run id $run_id \n");
       removeRunCache($listobject, $recid, $run_id);
     break;
     
     case 3:
       // Remove branches of watershed container types
-      print("Removing trunk of tree $recid / run id $run_id \n");
+      error_log("Removing types (cova_ws_container, cova_ws_subnodal) of tree $recid / run id $run_id \n");
       removeTreeCacheCriteria($listobject, $recid, $run_id, array(), array('cova_ws_container', 'cova_ws_subnodal'), array(), array());
     break;
     
@@ -261,7 +261,7 @@ while (count($outlets) > 0) {
    $thisrec = array_shift($outlets);
    $recid = $thisrec['elementid'];
    $recname = $thisrec['elemname'];
-   print("$now : Run $thisid / $recname, running $recid \n");
+   error_log("$now : Run $thisid / $recname, running $recid \n");
 
    // shaketree
    // if it is finished, do nothing,
