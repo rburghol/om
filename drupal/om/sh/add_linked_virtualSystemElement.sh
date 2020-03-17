@@ -15,6 +15,9 @@ if [ $# -gt 3 ]; then
   template=$4
 fi 
 
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid riverseg_frac;
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid current_mgy;
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid vwp_exempt_mgd;
 # copy the element fac_current_mgy from it's feature wd_current_mgy 
 echo "drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation riverseg_frac sw_frac $entity_type "
 drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation riverseg_frac sw_frac $entity_type 
