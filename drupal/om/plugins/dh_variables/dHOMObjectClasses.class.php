@@ -362,7 +362,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       default:
         $content['propname'] = array(
           '#type' => 'item',
-          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub> (mod: $modate)"
+          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub> <br>(mod: $modate)"
         );
         if (isset($content['propvalue'])) {
           $content['propvalue'] = array(
@@ -1700,7 +1700,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
       default:
         $content['propname'] = array(
           '#type' => 'item',
-          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub> (mod: $modate)"
+          '#markup' => "<b>Name:</b> $entity->propname<sub>($entity->varname)</sub>  <br>(mod: $modate)"
         );
         $content['propcode'] = array(
           '#type' => 'item',
