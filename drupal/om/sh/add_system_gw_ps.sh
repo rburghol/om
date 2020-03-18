@@ -24,6 +24,7 @@ drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equ
 # fac_demand_mgy has changed to use wsp2020_2020_mgy in the exemptrun (runid 9), so that gw point source can still be calculated.  Actual surface water withdrawal is *still* based on vwp_exempt_mgd however.
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid fac_demand_mgy
 # make sure it is using the new discharge_mgd variable 
+drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation current_mgy wd_current_mgy $entity_type 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_sw_factor
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_demand_mgd
