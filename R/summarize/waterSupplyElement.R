@@ -55,10 +55,10 @@ sceninfo <- list(
 )
 
 #omsite = site <- "http://deq2.bse.vt.edu"
-dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
-amn <- 10.0 * mean(as.numeric(dat$Qreach))
+#dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
+#amn <- 10.0 * mean(as.numeric(dat$Qreach))
 
-dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
+#dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
 #boxplot(as.numeric(dat$Qreach) ~ dat$year, ylim=c(0,amn))
 
 datdf <- as.data.frame(dat)
