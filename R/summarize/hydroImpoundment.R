@@ -93,3 +93,28 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p10', elev_p10, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p50', elev_p50, site, token)
 
+# Dat for Critical Period
+flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = index(dat));
+loflows <- group2(flows);
+l90 <- loflows["90 Day Min"];
+ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
+l90_year = loflows[ndx,]$"year";
+datpd <- window(
+  dat, 
+  start = as.Date(paste0(l90_year,"-06-01")), 
+  end = as.Date(paste0(l90_year,"-12-31"))
+);
+# Lake Plots
+
+par(mar = c(5,5,2,5))
+plot(
+  datpd$lake_elev, 
+  ylim=c(220,260), 
+  ylab="Reservoir Surface Elevation (ft. asl)"
+)
+par(new = TRUE)
+plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+lines(datpd$Qout,col='green')
+axis(side = 4)
+mtext(side = 4, line = 3, 'Flow (cfs)')

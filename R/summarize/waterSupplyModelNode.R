@@ -105,7 +105,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nex
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'consumptive_use_frac', consumptive_use_frac, site, token)
 
 # Metrics that need Zoo (IHA)
-flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = dat$thisdate);
+flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = index(dat));
 loflows <- group2(flows);
 l90 <- loflows["90 Day Min"];
 ndx = which.min(as.numeric(l90[,"90 Day Min"]));
