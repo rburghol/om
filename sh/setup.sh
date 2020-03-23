@@ -13,6 +13,8 @@ rm /var/www/html/om/fn_find_missing_subcomp.php
 ln -s /opt/model/om/php/src/fn_find_missing_subcomp.php /var/www/html/om/fn_find_missing_subcomp.php
 rm /var/www/html/om/fn_find_bad_matrices.php
 ln -s /opt/model/om/php/src/fn_find_bad_matrices.php /var/www/html/om/fn_find_bad_matrices.php
+rm /var/www/html/om/fn_find_prop_value.php
+ln -s /opt/model/om/php/src/fn_find_prop_value.php /var/www/html/om/fn_find_prop_value.php
 rm /var/www/html/om/fn_copy_element.php
 ln -s /opt/model/om/php/src/fn_copy_element.php /var/www/html/om/fn_copy_element.php
 rm /var/www/html/om/fn_rename_group_subcomp.php

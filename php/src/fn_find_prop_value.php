@@ -13,7 +13,7 @@ include_once('xajax_modeling.element.php');
 $propvalue = NULL;
 
 if (count($argv) < 3) {
-   print("Usage: fn_set_vahydro1_hydrocode.php scenario custom1 [elementid=-1] propname [propvalue=NULL]\n");
+   print("Usage: fn_find_prop_value.php scenario custom1 [elementid=-1] propname [propvalue=NULL]\n");
    die;
 }
 error_log(print_r($argv,1));
