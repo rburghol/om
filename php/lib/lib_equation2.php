@@ -649,7 +649,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   }
   # end variable substitution
   // Remove whitespaces
-  //$equation = preg_replace('/\s+/', '', $test);
+  $equation = preg_replace('/\s+/', '', $equation);
 
   $number = '(?:\d+(?:[,.]\d+)?|pi|π)'; // What is a number
   $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
