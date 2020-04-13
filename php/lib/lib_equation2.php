@@ -651,7 +651,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   // Remove whitespaces
   $equation = preg_replace('/\s+/', '', $sEquation);
 
-  $number = '(?:\d+(?:[,.]\d+)?|pi|π|E|e)'; // What is a number
+  $number = '(?:\d+(?:[Ee,.]\d+)?|pi|π)'; // What is a number
   $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
   $operators = '[+\/*\^%-]'; // Allowed math operators
   $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
