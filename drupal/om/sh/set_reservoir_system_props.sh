@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: set_gw_only_system_props.sh vahydro_model_pid (entity_type=model parent, default=auto) (entity_id=model parent)"
+  echo 1>&2 "Usage: set_reservoir_system_props.sh vahydro_model_pid (entity_type=model parent, default=auto) (entity_id=model parent)"
   exit 2
 fi
 pid=$1

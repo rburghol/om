@@ -597,7 +597,7 @@ function mathProcessor2( $sEquation, $arData, $debug = 0) {
         
         // Or, preferable, use the Math_Expression engine!
         
-   if ( (!preg_match("/[a-zA-Z]/", $sEquation)) and (strlen(trim($sEquation)) > 0) ) {
+   if ( (!preg_match("/[a-df-zA-DF-Z]/", $sEquation)) and (strlen(trim($sEquation)) > 0) ) {
    //if (strpos($sEquation,'Array') === FALSE) {
        //error_log("Expression \"$sEquation\" looks valid  ");
        $expression = new Math_Expression($sEquation);
@@ -649,14 +649,14 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   }
   # end variable substitution
   // Remove whitespaces
-  $equation = preg_replace('/\s+/', '', $test);
+  $equation = preg_replace('/\s+/', '', $sEquation);
 
-  $number = '(?:\d+(?:[,.]\d+)?|pi|π)'; // What is a number
+  $number = '(?:\d+(?:[Ee,.]\d+)?|pi|π)'; // What is a number
   $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
   $operators = '[+\/*\^%-]'; // Allowed math operators
   $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
-
-  if (preg_match($regexp, $q)) {
+error_log("Final eq: $equation");
+  if (preg_match($regexp, $equation)) {
     $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
     eval('$result = ' . $equation . ';');
   } else {

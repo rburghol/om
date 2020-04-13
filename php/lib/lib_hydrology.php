@@ -876,7 +876,7 @@ class modelObject {
         //error_log("Model Controller Setting run_mode = $run_mode, flow_mode = $flow_mode");
       }
     }
-    
+    error_log("Model Controller Setting run_mode = $run_mode, flow_mode = $flow_mode");
   }
 
   function subState() {
@@ -6436,6 +6436,10 @@ class timeSeriesFile extends timeSeriesInput {
     
     }
     if (strlen(trim($retfile)) == 0) {
+      if (strlen(trim($this->remote_url)) > 0) {
+        // try this, as we are migrating to all remote url field treatment instead of filenice.
+        $retfile = $this->remote_url;
+      }
       $retfile = null;
     }
     //error_log("Returning file name: $retfile ");
