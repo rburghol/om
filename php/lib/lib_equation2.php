@@ -655,7 +655,7 @@ function mathProcessor3($sEquation, $arData, $debug = 0) {
   $functions = '(?:sinh?|cosh?|tanh?|abs|acosh?|asinh?|atanh?|exp|log10|deg2rad|rad2deg|sqrt|ceil|floor|round)'; // Allowed PHP functions
   $operators = '[+\/*\^%-]'; // Allowed math operators
   $regexp = '/^(('.$number.'|'.$functions.'\s*\((?1)+\)|\((?1)+\))(?:'.$operators.'(?2))?)+$/'; // Final regexp, heavily using recursive patterns
-
+error_log("Final eq: $equation");
   if (preg_match($regexp, $equation)) {
     $equation = preg_replace('!pi|π!', 'pi()', $equation); // Replace pi with pi function
     eval('$result = ' . $equation . ';');
