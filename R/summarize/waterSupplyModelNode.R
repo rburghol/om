@@ -144,7 +144,7 @@ x <- log(x)
 pars <- PearsonDS:::pearsonIIIfitML(x)
 x7q10 <- round(exp(qpearsonIII(0.1, params = pars$par)),6) #1 note
 
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, '7q10', x7q10, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, '7q10', NULL, '7q10', x7q10, site, token)
 
 # ALF -- also requires IHA package and lubridate
 alf_data <- data.frame(matrix(data = NA, nrow = length(dat$thisdate), ncol = 5))
