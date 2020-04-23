@@ -483,12 +483,10 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     // are defined in code, like the chem sample, we need to over-ride.  Perhaps there is another case, 
     //   i.e. "plugin attached Properties" that take precedence. 
     // OR, perhaps we allow a setting at the vardef level to control the hierarchy of label/format changes?
-    $vardesc = empty($row->vardesc) ? $varinfo->vardesc : $row->vardesc;
-    $title = empty($row->varname) ? $varinfo->varname : $row->varname;
     $rowform[$mname] = array(
-      '#title' => t($title),
+      '#title' => t($entity->varname),
       '#type' => 'textfield',
-      '#description' => $vardesc,
+      '#description' => t($entity->vardesc),
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
   }
@@ -1689,6 +1687,8 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
+    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -1862,6 +1862,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propvalue'];
+    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function getPublicProcs($entity) {
@@ -1938,6 +1940,8 @@ class dHOMtextField extends dHOMSubComp {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
+    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
