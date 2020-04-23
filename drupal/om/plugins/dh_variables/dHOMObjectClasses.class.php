@@ -152,11 +152,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function loadSingleProperty(&$entity, $propname, $thisvar, $overwrite = FALSE) {
     // @todo: Replace this function with loadSingleProperty2() 
-    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
-    if ($varinfo === FALSE) {
-      watchdog("loadProperty called without varid", 'error');
-      return;
-    }
     if ($overwrite 
       or !property_exists($entity, $propname) 
       or (property_exists($entity, $propname) 
@@ -165,6 +160,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
+      $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      if ($varinfo === FALSE) {
+        watchdog("loadProperty called without varid", 'error');
+        return;
+      }
       dpm($thisvar, "Setting info ");
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
