@@ -22,6 +22,6 @@ $result = findMergedTribs($usgsdb,$outlet, $debug);
 print("\\nMerged Tribs : \n");
 print_r($result['merged_segments']);
 print("\n");
-$wktgeom = getMergedNHDShape($usgsdb, array($comid), array(), 1);
-storeNHDMergedShape($usgsdb, $comid, $wktgeom, 0, 1);
+$wktgeom = getMergedNHDShape($usgsdb, array($outlet), array(), 1);
+storeNHDMergedShape($usgsdb, $outlet, $wktgeom, 0, 1);
 ?>
