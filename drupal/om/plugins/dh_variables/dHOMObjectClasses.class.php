@@ -256,6 +256,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function addAttachedProperties(&$form, &$entity) {
     $dopples = $this->getDefaults($entity);
+    dpm($entity, 'addAttachedProperties');
     foreach ($dopples as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         $pn = $this->handleFormPropname($thisvar['propname']);
