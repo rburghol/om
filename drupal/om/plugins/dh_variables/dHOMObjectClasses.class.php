@@ -265,8 +265,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         // Attach_method is the parent override of embedded attributes.  This is weird, but will keep for now.
         switch ($this->attach_method) {
           case 'contained':
-          dsm("Trying to attach $pn as contained");
           $plugin = dh_variables_getPlugins($dopple);
+          dsm("Trying to attach $pn as contained for plugin class " . get_class($plugin));
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
               //dsm("Using attachNamedForm()");
