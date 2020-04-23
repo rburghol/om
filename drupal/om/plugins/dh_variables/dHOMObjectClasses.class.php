@@ -573,12 +573,12 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         $i += $inc;
       }
     }
-    dpm($pcts,'pcts');
     return $pcts;
   }
   
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $entity) {
+    dpm($entity,'entity');
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
@@ -590,7 +590,6 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $rowform[$mname] = $formshell['propvalue'];
     $rowform[$mname]['#title'] = t($entity->varname);
     $rowform[$mname]['#description'] = t($entity->vardesc);
-    dpm($entity,'entity');
     dpm($rowform[$mname],$mname);
   }
   
