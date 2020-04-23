@@ -165,7 +165,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         watchdog("loadProperty called without varid", 'error');
         return;
       }
-      dpm($thisvar, "Setting info ");
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
         return FALSE;
@@ -174,7 +173,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
       $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
       $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
-      dpm($prop,'loadSingleProperty');
       $entity->{$prop->propname} = $prop;
     }
   }
@@ -190,6 +188,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
+      $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      if ($varinfo === FALSE) {
+        watchdog("loadProperty called without varid", 'error');
+        return;
+      }
       //dpm($thisvar, "Insuring ");
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
@@ -197,9 +200,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       //dpm($prop,'prop');
       // apply over-rides if given
-      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       $entity->{$prop->propname} = $prop;
     }
   }
@@ -261,7 +264,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function addAttachedProperties(&$form, &$entity) {
     $dopples = $this->getDefaults($entity);
-    dpm($entity, 'addAttachedProperties');
+    //dpm($entity, 'addAttachedProperties');
     foreach ($dopples as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         $pn = $this->handleFormPropname($thisvar['propname']);
@@ -271,7 +274,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
-          dsm("Trying to attach $pn as contained for plugin class " . get_class($plugin));
+          //dsm("Trying to attach $pn as contained for plugin class " . get_class($plugin));
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
               //dsm("Using attachNamedForm()");
@@ -587,11 +590,11 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $entity) {
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
-    dpm($varinfo,'var info');
+    //dpm($varinfo,'var info');
     if (!$varinfo) {
       return FALSE;
     }
-    dpm($entity, 'attaching');
+    //dpm($entity, 'attaching');
     $formshell = array();
     // use standard formatting to enable choices.
     $this->formRowEdit($formshell, $entity);
@@ -1862,7 +1865,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
   }
   
   public function attachNamedForm(&$form, $entity) {
-    dpm($entity,'numeric constant ' . $mname);
+    //dpm($entity,'numeric constant ' . $mname);
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
