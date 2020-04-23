@@ -586,6 +586,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
+    dpm($entity, 'attaching');
     $formshell = array();
     // use standard formatting to enable choices.
     $this->formRowEdit($formshell, $entity);
