@@ -582,6 +582,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $entity) {
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    dpm($varinfo,'var info');
     if (!$varinfo) {
       return FALSE;
     }
