@@ -1853,6 +1853,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
   }
   
   public function attachNamedForm(&$form, $entity) {
+    dpm($entity,'numeric constant ' . $mname);
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
@@ -1865,7 +1866,6 @@ class dHOMConstant extends dHOMBaseObjectClass {
     $form[$mname] = $pform['propvalue'];
     $form[$mname]['#title'] = t($entity->varname);
     $form[$mname]['#description'] = t($entity->vardesc);
-    dpm($entity,'numeric constant ' . $mname);
   }
   
   public function getPublicProcs($entity) {
