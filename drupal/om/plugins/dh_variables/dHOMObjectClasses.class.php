@@ -1865,6 +1865,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     $form[$mname] = $pform['propvalue'];
     $form[$mname]['#title'] = t($entity->varname);
     $form[$mname]['#description'] = t($entity->vardesc);
+    dpm($entity,'numeric constant ' . $mname);
   }
   
   public function getPublicProcs($entity) {
