@@ -152,6 +152,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function loadSingleProperty(&$entity, $propname, $thisvar, $overwrite = FALSE) {
     // @todo: Replace this function with loadSingleProperty2() 
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if ($varinfo === FALSE) {
+      watchdog("loadProperty called without varid", 'error');
+      return;
+    }
     if ($overwrite 
       or !property_exists($entity, $propname) 
       or (property_exists($entity, $propname) 
@@ -166,9 +171,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         return FALSE;
       }
       // apply over-rides if given
-      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       dpm($prop,'loadSingleProperty');
       $entity->{$prop->propname} = $prop;
     }
