@@ -589,6 +589,8 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $rowform[$mname] = $formshell['propvalue'];
     $rowform[$mname]['#title'] = t($entity->varname);
     $rowform[$mname]['#description'] = t($entity->vardesc);
+    dpm($entity,'entity');
+    dpm($rowform[$mname],$mname);
   }
   
   public function applyEntityAttribute($property, $value) {
