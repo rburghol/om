@@ -1,7 +1,7 @@
 <?php
 
 $noajax = 1;
-include('./xajax_config.php');
+include_once('xajax_modeling.element.php');
 if (count($argv) < 3) {
    print("USAGE: php get_nhd_basins.php pointname lat lon [debug=0]\n");
    die;
