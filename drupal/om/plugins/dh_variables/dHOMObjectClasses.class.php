@@ -573,7 +573,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         $i += $inc;
       }
     }
-    dpm($pcts,'pcts';);
+    dpm($pcts,'pcts');
     return $pcts;
   }
   
