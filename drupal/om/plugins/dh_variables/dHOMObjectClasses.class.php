@@ -467,6 +467,22 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       return FALSE;
     }
     $mname = $this->handleFormPropname($row->propname);
+    // This is labeling overrides.  What should hierarchy be?
+    // - This variation goes 
+    //    - plugin
+    //    - vardef 
+    // But what should it be? Shouldn't it be UI/database over code?
+    //    - entity sub-property label over-ride 
+    //    - vardef sub-property 
+    //    - vardef 
+    //    - plugin 
+    //    - module code default.
+    // BUT! Plugins will often employ a generic, like om_constant, in which case 
+    // the plugin *should* over-ride the base vardef.  Especially in the case of 
+    // attached properties, in other words, when we have a meta form whose attachements 
+    // are defined in code, like the chem sample, we need to over-ride.  Perhaps there is another case, 
+    //   i.e. "plugin attached Properties" that take precedence. 
+    // OR, perhaps we allow a setting at the vardef level to control the hierarchy of label/format changes?
     $vardesc = empty($row->vardesc) ? $varinfo->vardesc : $row->vardesc;
     $title = empty($row->varname) ? $varinfo->varname : $row->varname;
     $rowform[$mname] = array(
