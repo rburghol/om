@@ -467,10 +467,12 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       return FALSE;
     }
     $mname = $this->handleFormPropname($row->propname);
+    $vardesc = empty($row->vardesc) ? $varinfo->vardesc : $row->vardesc;
+    $title = empty($row->varname) ? $varinfo->varname : $row->varname;
     $rowform[$mname] = array(
-      '#title' => t($varinfo->varname),
+      '#title' => t($title),
       '#type' => 'textfield',
-      '#description' => $varinfo->vardesc,
+      '#description' => $vardesc,
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
   }
