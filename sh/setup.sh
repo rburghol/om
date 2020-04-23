@@ -9,6 +9,8 @@ sudo chown www-data:allmodelers www/om/cache
 # live
 rm /var/www/html/om/set_elemNHDlanduse.php
 ln -s /opt/model/om/php/src/set_elemNHDlanduse.php /var/www/html/om/set_elemNHDlanduse.php
+rm /var/www/html/om/get_nhd_basins.php
+ln -s /opt/model/om/php/src/get_nhd_basins.php /var/www/html/om/get_nhd_basins.php
 rm /var/www/html/om/fn_find_missing_subcomp.php
 ln -s /opt/model/om/php/src/fn_find_missing_subcomp.php /var/www/html/om/fn_find_missing_subcomp.php
 rm /var/www/html/om/fn_find_bad_matrices.php
