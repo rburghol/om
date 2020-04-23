@@ -261,25 +261,18 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $pn = $this->handleFormPropname($thisvar['propname']);
         $dopple = $entity->{$thisvar['propname']};
         // @todo: if this is a code variable, we should get propcode?
-        switch ($this->attach_method) {
-          case 'contained':
-          $plugin = dh_variables_getPlugins($dopple);
-          if ($plugin) {
-            if (method_exists($plugin, 'attachNamedForm')) {
-              //dsm("Using attachNamedForm()");
-              $plugin->attachNamedForm($form, $dopple);
-            } else {
-              $plugin->formRowEdit($dopple_form, $dopple);
-              $form[$pn] = $dopple_form['propvalue'];
-            }
+        // Attach_method is redundant to the embed attribute.
+        $plugin = dh_variables_getPlugins($dopple);
+        if ($plugin) {
+          if (method_exists($plugin, 'attachNamedForm')) {
+            //dsm("Using attachNamedForm()");
+            $plugin->attachNamedForm($form, $dopple);
+          } else {
+            $plugin->formRowEdit($dopple_form, $dopple);
+            $form[$pn] = $dopple_form['propvalue'];
           }
-          break;
-          default:
-          $dopple_form = array();
-          dh_variables_formRowPlugins($dopple_form, $dopple);
-          $form[$pn] = $dopple_form['propvalue'];
-          break;
         }
+        break;
       }
       if (isset($thisvar['#weight'])) {
         $form[$pn]['#weight'] = $thisvar['#weight'];
