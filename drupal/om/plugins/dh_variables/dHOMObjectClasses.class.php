@@ -261,18 +261,26 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $pn = $this->handleFormPropname($thisvar['propname']);
         $dopple = $entity->{$thisvar['propname']};
         // @todo: if this is a code variable, we should get propcode?
-        // Attach_method is redundant to the embed attribute.
-        $plugin = dh_variables_getPlugins($dopple);
-        if ($plugin) {
-          if (method_exists($plugin, 'attachNamedForm')) {
-            //dsm("Using attachNamedForm()");
-            $plugin->attachNamedForm($form, $dopple);
-          } else {
-            $plugin->formRowEdit($dopple_form, $dopple);
-            $form[$pn] = $dopple_form['propvalue'];
+        // Attach_method is the parent override of embedded attributes.  This is weird, but will keep for now.
+        switch ($this->attach_method) {
+          case 'contained':
+          $plugin = dh_variables_getPlugins($dopple);
+          if ($plugin) {
+            if (method_exists($plugin, 'attachNamedForm')) {
+              //dsm("Using attachNamedForm()");
+              $plugin->attachNamedForm($form, $dopple);
+            } else {
+              $plugin->formRowEdit($dopple_form, $dopple);
+              $form[$pn] = $dopple_form['propvalue'];
+            }
           }
+          break;
+          default:
+          $dopple_form = array();
+          dh_variables_formRowPlugins($dopple_form, $dopple);
+          $form[$pn] = $dopple_form['propvalue'];
+          break;
         }
-        break;
       }
       if (isset($thisvar['#weight'])) {
         $form[$pn]['#weight'] = $thisvar['#weight'];
@@ -571,7 +579,6 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $entity) {
-    dpm($entity,'entity');
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
@@ -583,7 +590,6 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $rowform[$mname] = $formshell['propvalue'];
     $rowform[$mname]['#title'] = t($entity->varname);
     $rowform[$mname]['#description'] = t($entity->vardesc);
-    dpm($rowform[$mname],$mname);
   }
   
   public function applyEntityAttribute($property, $value) {
