@@ -165,7 +165,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
         return FALSE;
       }
-      //dpm($prop,'prop');
+      dpm($prop,'loadSingleProperty');
       // apply over-rides if given
       $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
       $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
