@@ -160,16 +160,20 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
-      //dpm($thisvar, "Insuring ");
+      $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      if ($varinfo === FALSE) {
+        watchdog("loadProperty called without varid", 'error');
+        return;
+      }
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
         return FALSE;
       }
-      //dpm($prop,'prop');
       // apply over-rides if given
-      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
+      $prop->title = isset($thisvar['title']) ? $thisvar['title'] : $varinfo->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       $entity->{$prop->propname} = $prop;
     }
   }
@@ -185,6 +189,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
+      $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      if ($varinfo === FALSE) {
+        watchdog("loadProperty called without varid", 'error');
+        return;
+      }
       //dpm($thisvar, "Insuring ");
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
@@ -192,9 +201,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       }
       //dpm($prop,'prop');
       // apply over-rides if given
-      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $prop->vardesc;
-      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $prop->varname;
-      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $prop->datatype;
+      $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
+      $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
+      $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       $entity->{$prop->propname} = $prop;
     }
   }
@@ -256,14 +265,17 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function addAttachedProperties(&$form, &$entity) {
     $dopples = $this->getDefaults($entity);
+    //dpm($entity, 'addAttachedProperties');
     foreach ($dopples as $thisvar) {
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         $pn = $this->handleFormPropname($thisvar['propname']);
         $dopple = $entity->{$thisvar['propname']};
         // @todo: if this is a code variable, we should get propcode?
+        // Attach_method is the parent override of embedded attributes.  This is weird, but will keep for now.
         switch ($this->attach_method) {
           case 'contained':
           $plugin = dh_variables_getPlugins($dopple);
+          //dsm("Trying to attach $pn as contained for plugin class " . get_class($plugin));
           if ($plugin) {
             if (method_exists($plugin, 'attachNamedForm')) {
               //dsm("Using attachNamedForm()");
@@ -468,10 +480,26 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
       return FALSE;
     }
     $mname = $this->handleFormPropname($row->propname);
+    // This is labeling overrides.  What should hierarchy be?
+    // - This variation goes 
+    //    - plugin
+    //    - vardef 
+    // But what should it be? Shouldn't it be UI/database over code?
+    //    - entity sub-property label over-ride 
+    //    - vardef sub-property 
+    //    - vardef 
+    //    - plugin 
+    //    - module code default.
+    // BUT! Plugins will often employ a generic, like om_constant, in which case 
+    // the plugin *should* over-ride the base vardef.  Especially in the case of 
+    // attached properties, in other words, when we have a meta form whose attachements 
+    // are defined in code, like the chem sample, we need to over-ride.  Perhaps there is another case, 
+    //   i.e. "plugin attached Properties" that take precedence. 
+    // OR, perhaps we allow a setting at the vardef level to control the hierarchy of label/format changes?
     $rowform[$mname] = array(
-      '#title' => t($varinfo->varname),
+      '#title' => isset($entity->title) ? t($entity->title) : t($entity->varname),
       '#type' => 'textfield',
-      '#description' => $varinfo->vardesc,
+      '#description' => t($entity->vardesc),
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
     );
   }
@@ -564,15 +592,17 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   // @todo: move this into dh module once we are satisifed that it is robust
   public function attachNamedForm(&$rowform, $entity) {
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    //dpm($varinfo,'var info');
     if (!$varinfo) {
       return FALSE;
     }
+    //dpm($entity, 'attaching');
     $formshell = array();
     // use standard formatting to enable choices.
     $this->formRowEdit($formshell, $entity);
     $mname = $this->handleFormPropname($entity->propname);
     $rowform[$mname] = $formshell['propvalue'];
-    $rowform[$mname]['#title'] = t($entity->varname);
+    $rowform[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
     $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
@@ -1678,6 +1708,8 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
@@ -1842,6 +1874,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
   }
   
   public function attachNamedForm(&$form, $entity) {
+    //dpm($entity,'numeric constant ' . $mname);
     $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
@@ -1852,6 +1885,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propvalue'];
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function getPublicProcs($entity) {
@@ -1928,6 +1963,8 @@ class dHOMtextField extends dHOMSubComp {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
+    $form[$mname]['#description'] = t($entity->vardesc);
   }
   
   public function applyEntityAttribute($property, $value) {
