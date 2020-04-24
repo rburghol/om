@@ -5,7 +5,7 @@ include_once('xajax_modeling.element.php');
 //include_once('lib_batchmodel.php');
 
 if (count($argv) < 3) {
-   print("Usage: php set_elemNHDlanduse.php elementid landuse_name [mode=element,cova_parent] [units=sqmi,acres,sqkm] [translate=0(nlcd),1(cbp)]\n");
+   print("Usage: php set_elemNHDlanduse.php elementid landuse_name [mode=element,cova_parent] [units=sqmi,acres,sqkm] [translate=0(nlcd),1(cbp5.3),cbp6]\n");
    die;
 }
 $elid = $argv[1];

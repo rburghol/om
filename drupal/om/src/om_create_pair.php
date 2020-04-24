@@ -29,6 +29,7 @@ if (count($args) >= 2) {
   print("Usage: php om_create_pair.php query_type template_id om_parentid vahydro_parentid varkey model_name vahydro_search_type [object_class=modelObject] [scenarioid=37] \n");
   die;
 }
+error_log("Called: query_type = $query_type, template_id = $template_id, om_parentid = $om_parentid, vahydro_parentid = $vahydro_parentid, varkey = $varkey, model_name = $model_name, vahydro_search_type = $vahydro_search_type, object_class = $object_class, scenarioid = $scenarioid ");
 
 if ($query_type == 'file') {
   $filepath = $om_parentid;
