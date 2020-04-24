@@ -172,6 +172,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       // apply over-rides if given
       $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
       $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
+      $prop->title = isset($thisvar['title']) ? $thisvar['title'] : $varinfo->varname;
       $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       $entity->{$prop->propname} = $prop;
     }
@@ -495,7 +496,7 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     //   i.e. "plugin attached Properties" that take precedence. 
     // OR, perhaps we allow a setting at the vardef level to control the hierarchy of label/format changes?
     $rowform[$mname] = array(
-      '#title' => t($entity->varname),
+      '#title' => isset($entity->title) ? t($entity->title) : t($entity->varname),
       '#type' => 'textfield',
       '#description' => t($entity->vardesc),
       '#default_value' => !empty($row->propcode) ? $row->propcode : "0.0",
@@ -600,7 +601,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $this->formRowEdit($formshell, $entity);
     $mname = $this->handleFormPropname($entity->propname);
     $rowform[$mname] = $formshell['propvalue'];
-    $rowform[$mname]['#title'] = t($entity->varname);
+    $rowform[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
     $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
@@ -1700,7 +1701,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
-    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
@@ -1876,7 +1877,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propvalue'];
-    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
@@ -1954,7 +1955,7 @@ class dHOMtextField extends dHOMSubComp {
     // harvest pieces I want to keep
     $mname = $this->handleFormPropname($entity->propname);
     $form[$mname] = $pform['propcode'];
-    $form[$mname]['#title'] = t($entity->varname);
+    $form[$mname]['#title'] = isset($entity->title) ? t($entity->title) : t($entity->varname);
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
