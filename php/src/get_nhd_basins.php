@@ -19,8 +19,8 @@ $basininfo = getMergedNHDBasin($usgsdb, $latdd, $londd, 0, $debug);
 //print(" NHD+ Shape Retrieved \n");
 $wkt_geom = $basininfo['the_geom'];
 $outlet_comid = $basininfo['outlet_comid'];
-error_log("Basin Info flow_segments" . print_r($basininfo['flow_segments',1));
-error_log("Basin Info merged_segments" . print_r($basininfo['merged_segments',1));
+error_log("Basin Info flow_segments" . print_r($basininfo['flow_segments'],1));
+error_log("Basin Info merged_segments" . print_r($basininfo['merged_segments'],1));
 if ($outlet_comid <> $outlet) {
   error_log("Warning: Mismatch outlet, findNHDSegment = $outlet, getMergedNHDBasin = $outlet_comid ");
 }
