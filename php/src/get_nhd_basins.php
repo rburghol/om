@@ -14,14 +14,14 @@ $carea = $outlet_info['cumdrainag'];
 print("Outlet COMID : $outlet \n");
 print("Outlet Cumulative Area : $carea \n");
 print("Outlet Local Area : $area \n");
-print("Finding Tribs $outlet \n");
-$result = findTribs($usgsdb,$outlet, $debug);
-print("Individual Tribs : \n");
-print_r($result['segment_list']);
-$result = findMergedTribs($usgsdb,$outlet, $debug);
-print("\\nMerged Tribs : \n");
-print_r($result['merged_segments']);
-print("\n");
-$wktgeom = getMergedNHDShape($usgsdb, array($outlet), array(), 1);
-storeNHDMergedShape($usgsdb, $outlet, $wktgeom, 0, 1);
+print("Finding Merged Shape $latdd $londd \n");
+$basininfo = getMergedNHDBasin($usgsdb, $latdd, $londd, 0, $debug);
+//print(" NHD+ Shape Retrieved \n");
+$wkt_geom = $basininfo['the_geom'];
+$outlet_comid = $basininfo['outlet_comid'];
+if ($outlet_comid <> $outlet) {
+  error_log("Warning: Mismatch outlet, findNHDSegment = $outlet, getMergedNHDBasin = $outlet_comid ");
+}
+storeNHDMergedShape($usgsdb, $outlet_comid, $wkt_geom, 0, 1);
+
 ?>
