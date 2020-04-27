@@ -3,10 +3,10 @@
 $noajax = 1;
 include_once('xajax_modeling.element.php');
 if (count($argv) < 3) {
-   print("USAGE: php get_nhd_basins.php pointname lat lon [debug=0]\n");
+   print("USAGE: php get_nhd_basins.php pointname lat lon [debug=0] [overwrite=0]\n");
    die;
 }
-list($pointname, $latdd, $londd, $debug) = array($argv[1], $argv[2], $argv[3], $argv[4]);
+list($pointname, $latdd, $londd, $debug, $overwrite) = array($argv[1], $argv[2], $argv[3], $argv[4], $argv[5]);
 $outlet_info = findNHDSegment($usgsdb, $latdd, $londd);
 $outlet = $outlet_info['comid'];
 $area = $outlet_info['areasqkm'];
@@ -22,6 +22,6 @@ $outlet_comid = $basininfo['outlet_comid'];
 if ($outlet_comid <> $outlet) {
   error_log("Warning: Mismatch outlet, findNHDSegment = $outlet, getMergedNHDBasin = $outlet_comid ");
 }
-storeNHDMergedShape($usgsdb, $outlet_comid, $wkt_geom, 0, 1);
+storeNHDMergedShape($usgsdb, $outlet_comid, $wkt_geom, $overwrite,  $debug);
 
 ?>
