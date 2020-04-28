@@ -3764,7 +3764,7 @@ class cova_watershedContainerLink extends textField {
          $locid = $this->value;
          //error_log("Location object $this->name has locid = $locid");
          $scenarioid = 37;
-         $debug = 1;
+         //$debug = 1;
          // this needs to be made more generic, whereby the component is a generic remote container
          // could screen on objectclass, custom1, custom2, and scenarioid to find those that contain it
          $options = findCOVALocationPossibilities($this->listobject, $scenarioid, $this->latdd, $this->londd, $debug);
