@@ -255,7 +255,7 @@ if("imp_off" %in% cols) {
         axis(side = 4)
         mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
         dev.off()
-        print(paste("Saved file: ", fname))
+        print(paste("Saved file: ", fname, "with URL", furl))
         vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
         
       }
