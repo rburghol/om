@@ -2,6 +2,7 @@
 save_directory <- "/var/www/html/data/proj3/out"
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='/');
 #----------------------------------------------
 # Load Libraries
 basepath='/var/www/R';
@@ -227,6 +228,14 @@ if("imp_off" %in% cols) {
           ),
           sep = '/'
         )
+        furl <- paste(
+          save_url,
+          paste0(
+            'l90_imp_storage.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
         png(fname)
         plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
         lines(datpd$Qout,col='blue')
@@ -245,6 +254,8 @@ if("imp_off" %in% cols) {
         axis(side = 4)
         mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
         dev.off()
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
+        
       }
     }
   }
