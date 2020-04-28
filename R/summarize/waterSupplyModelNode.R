@@ -6,6 +6,7 @@ save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='/');
 #----------------------------------------------
 # Load Libraries
 basepath='/var/www/R';
+library('stringr')
 source(paste(basepath,'config.R',sep='/'))
 
 # Read Args
