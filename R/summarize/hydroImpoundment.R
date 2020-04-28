@@ -1,11 +1,13 @@
-# dirs/URLs
-save_directory <- "/var/www/html/files/fe/plots"
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
+library(stringr)
+# dirs/URLs
+save_directory <- "/var/www/html/data/proj3/out"
+save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 # Read Args
 argst <- commandArgs(trailingOnly=T)
@@ -24,6 +26,15 @@ if (syear != eyear) {
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
 dat <- window(dat, start = sdate, end = edate);
+mode(dat) <- 'numeric'
+cols <- names(dat)
+if ("pct_use_remain" %in% cols) {
+  # nothing
+} else {
+  # this uses 10% dead as estimate for those that hae not been re-run
+  # since reporting for pct_use_remain was enabled
+  dat$pct_use_remain <- dat$use_remain_mg * 3.07 / (0.9 * dat$maxcapacity)
+}
 
 scen.propname<-paste0('runid_', runid)
 
@@ -94,7 +105,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p50', elev_p50, site, token)
 
 # Dat for Critical Period
-flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = index(dat));
+flows <- zoo(dat$Qout, order.by = index(dat));
 loflows <- group2(flows);
 l90 <- loflows["90 Day Min"];
 ndx = which.min(as.numeric(l90[,"90 Day Min"]));
@@ -105,16 +116,46 @@ datpd <- window(
   start = as.Date(paste0(l90_year,"-06-01")), 
   end = as.Date(paste0(l90_year,"-12-31"))
 );
-# Lake Plots
 
-par(mar = c(5,5,2,5))
-plot(
-  datpd$lake_elev, 
-  ylim=c(220,260), 
-  ylab="Reservoir Surface Elevation (ft. asl)"
-)
-par(new = TRUE)
-plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
-lines(datpd$Qout,col='green')
-axis(side = 4)
-mtext(side = 4, line = 3, 'Flow (cfs)')
+# Lake Plots
+# is imp_off = 0?
+imp_off <- as.integer(median(dat$imp_off))
+if (!is.null(imp_off)) {
+  if (imp_off == 0) {
+    fname <- paste(
+      save_directory,
+      paste0(
+        'l90_imp_storage.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    furl <- paste(
+      save_url,
+      paste0(
+        'l90_imp_storage.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    png(fname)
+    ymn <- 1
+    ymx <- 100
+    par(mar = c(5,5,2,5))
+    plot(
+      datpd$pct_use_remain * 100.0, 
+      ylim=c(ymn,ymx), 
+      ylab="Reservoir Storage (%)"
+    )
+    par(new = TRUE)
+    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+    lines(datpd$Qout,col='green')
+    lines(datpd$wd_mgd * 1.547,col='red')
+    axis(side = 4)
+    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    dev.off()
+    print(paste("Saved file: ", fname, "with URL", furl))
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
+    
+  }
+}

@@ -7140,6 +7140,7 @@ class hydroImpoundment extends hydroObject {
       $this->setSingleDataColumnType('evap_mgd', 'float8',0);
       $this->setSingleDataColumnType('et_in', 'float8',0);
       $this->setSingleDataColumnType('precip_in', 'float8',0);
+      $this->setSingleDataColumnType('pct_use_remain', 'float8',0);
       $this->setSingleDataColumnType('use_remain_mg', 'float8',0);
       $this->setSingleDataColumnType('days_remaining', 'float8',0);
       $this->setSingleDataColumnType('demand_met_mgd', 'float8',0);
