@@ -1,5 +1,5 @@
 # dirs/URLs
-save_directory <- "/var/www/html/files/fe/plots"
+save_directory <- "/var/www/html/data/proj3/out"
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
 #----------------------------------------------
@@ -202,4 +202,51 @@ if (syear <= 1990 && eyear >= 2000) {
   
   vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_Qout', l30_Qout_trim, site, token)
   vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_year', l30_year_trim, site, token)
+}
+
+# does this have an impoundment sub-comp and is imp_off = 0?
+cols <- names(dat)
+if("imp_off" %in% cols) {
+  imp_off <- as.integer(median(dat$imp_off))
+  if (!is.null(imp_off)) {
+    if (imp_off == 0) {
+      if("impoundment" %in% cols) {
+        dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+        # this has an impoundment.  Plot it up.
+        # Now zoom in on critical drought period
+        datpd <- window(
+          dat, 
+          start = as.Date(paste0(l90_year,"-06-01") ), 
+          end = as.Date(paste0(l90_year, "-10-30") )
+        );
+        fname <- paste(
+          save_directory,
+          paste0(
+            'l90_imp_storage.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
+        png(fname)
+        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
+        lines(datpd$Qout,col='blue')
+        ymn <- 1
+        ymx <- 100
+        par(mar = c(5,5,2,5))
+        plot(
+          datpd$storage_pct * 100.0, 
+          ylim=c(ymn,ymx), 
+          ylab="Reservoir Storage (%)"
+        )
+        par(new = TRUE)
+        plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+        lines(datpd$impoundment_Qout,col='green')
+        lines(datpd$wd_mgd * 1.547,col='red')
+        axis(side = 4)
+        mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+        dev.off()
+      }
+    }
+  }
+  
 }
