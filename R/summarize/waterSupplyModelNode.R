@@ -247,7 +247,7 @@ if("imp_off" %in% cols) {
           datpd$storage_pct * 100.0, 
           ylim=c(ymn,ymx), 
           ylab="Reservoir Storage (%)",
-          xlab=paste("Lowest 90 Day Flow Period",paste0(l90_year,"-06-01"),"to",paste0(l90_year,"-106-01"))
+          xlab=paste("Lowest 90 Day Flow Period",paste0(l90_year,"-06-01"),"to",paste0(l90_year,"-10-01"))
           
         )
         par(new = TRUE)
