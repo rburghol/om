@@ -216,10 +216,12 @@ if("imp_off" %in% cols) {
         dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
         # this has an impoundment.  Plot it up.
         # Now zoom in on critical drought period
+        pdstart = as.Date(paste0(l90_year,"-06-01") )
+        pdend = as.Date(paste0(l90_year, "-11-15") )
         datpd <- window(
           dat, 
-          start = as.Date(paste0(l90_year,"-06-01") ), 
-          end = as.Date(paste0(l90_year, "-10-30") )
+          start = pdstart, 
+          end = pdend
         );
         fname <- paste(
           save_directory,
@@ -247,8 +249,7 @@ if("imp_off" %in% cols) {
           datpd$storage_pct * 100.0, 
           ylim=c(ymn,ymx), 
           ylab="Reservoir Storage (%)",
-          xlab=paste("Lowest 90 Day Flow Period",paste0(l90_year,"-06-01"),"to",paste0(l90_year,"-10-01"))
-          
+          xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
         )
         par(new = TRUE)
         plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
