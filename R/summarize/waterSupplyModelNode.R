@@ -152,7 +152,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, '7q10', NULL, '7q10', x7q10, site,
 alf_data <- data.frame(matrix(data = NA, nrow = length(dat$thisdate), ncol = 5))
 colnames(alf_data) <- c('Qout', 'thisdate', 'year', 'month', 'day')
 alf_data$Qout <- dat$Qout
-alf_data$thisdate <- dat$thisdate
+alf_data$thisdate <- index(dat)
 alf_data$year <- year(ymd(alf_data$thisdate))
 alf_data$month <- month(ymd(alf_data$thisdate))
 alf_data$day <- day(ymd(alf_data$thisdate))
