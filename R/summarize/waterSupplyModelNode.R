@@ -246,7 +246,9 @@ if("imp_off" %in% cols) {
         plot(
           datpd$storage_pct * 100.0, 
           ylim=c(ymn,ymx), 
-          ylab="Reservoir Storage (%)"
+          ylab="Reservoir Storage (%)",
+          xlab=paste("Lowest 90 Day Flow Period",paste0(l90_year,"-06-01"),"to",paste0(l90_year,"-106-01"))
+          
         )
         par(new = TRUE)
         plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
