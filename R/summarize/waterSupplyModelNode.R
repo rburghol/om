@@ -165,7 +165,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ml8', 
 
 # Sept. 10%
 sept_flows <- subset(alf_data, month == '9')
-sept_10 <- round(quantile(sept_flows$flow, 0.10),6)
+sept_10 <- as.numeric(round(quantile(sept_flows$Qout, 0.10),6))
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, site, token)
 
