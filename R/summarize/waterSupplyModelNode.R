@@ -262,6 +262,9 @@ if("imp_off" %in% cols) {
         vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
         
       }
+    } else {
+      # plot Qin, Qout of mainstem, and wd_mgd, and wd_cumulative_mgd
+      # TBD
     }
   }
   
