@@ -172,7 +172,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       // apply over-rides if given
       $prop->vardesc = isset($thisvar['vardesc']) ? $thisvar['vardesc'] : $varinfo->vardesc;
       $prop->varname = isset($thisvar['varname']) ? $thisvar['varname'] : $varinfo->varname;
-      $prop->title = isset($thisvar['title']) ? $thisvar['title'] : $varinfo->varname;
+      $prop->title = isset($thisvar['title']) ? $thisvar['title'] : $varinfo->propname;
       $prop->datatype = isset($thisvar['datatype']) ? $thisvar['datatype'] : $varinfo->datatype;
       $entity->{$prop->propname} = $prop;
     }
