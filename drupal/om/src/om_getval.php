@@ -17,9 +17,9 @@ if (count($args) >= 3) {
   error_log("Usage: php om_getval.php entity_type featureid propname [target=propvalue]");
   die;
 }
-$vars['target'] = isset($args[3]) ? $args[3] : 'propvalue';
+$target = isset($args[3]) ? $args[3] : 'propvalue';
 
-$q = "select :target from {dh_properties} ";
+$q = "select $target from {dh_properties} ";
 $q .= " where propname = :propname ";
 $q .= " and entity_type = :entity_type ";
 $q .= " and featureid = :featureid ";
