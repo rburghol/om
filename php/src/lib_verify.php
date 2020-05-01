@@ -956,6 +956,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
 
    $active_models = returnCommands('php','run_model.php');
    $num_running = count($active_models);
+   error_log("$num_running models currently running");
    if ($num_running < $num_sim) {
       // spawn a new one
       $run_params = array();
@@ -994,7 +995,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       //}
       deleteRunRecord($listobject, $recid, $run_id);
    } else {
-     error_log("$num_running models currently running, max $num_sim, sleeping");
+     error_log("$num_running models currently running, max $num_sim, awaiting free processes");
    }
    return 0;
    
