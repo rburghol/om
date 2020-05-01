@@ -930,7 +930,10 @@ class modelObject {
                 if( $this->state[$varname] === NULL) {
                    $this->state[$varname] = 0;
                 }
-                error_log("Adding $inval to " . $this->state[$varname] );
+                if (is_array($this->state[$varname])) {
+                  error_log("Malformed broadcast variables, array $varname on $this->name " );
+                  error_log("Adding $inval to " . $this->state[$varname] );
+                }
                 $this->state[$varname] += $inval;
              } else {
                 $this->state[$varname] = $inval;
