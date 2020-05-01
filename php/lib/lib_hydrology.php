@@ -930,7 +930,7 @@ class modelObject {
                 if( $this->state[$varname] === NULL) {
                    $this->state[$varname] = 0;
                 }
-                //error_log("Adding $inval to " . $this->state[$varname] );
+                error_log("Adding $inval to " . $this->state[$varname] );
                 $this->state[$varname] += $inval;
              } else {
                 $this->state[$varname] = $inval;
