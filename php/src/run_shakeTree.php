@@ -29,7 +29,7 @@ $enddate = '2005-12-31';
 $cache_date = '2010-10-18 12:00:00';
 $runtype = 'cached2';
 // specify max models to run at a time
-$max_simultaneous = 8; // set to 4 while dumping WDMs cause it caues all kinds of slowness
+$max_simultaneous = 6; // set to 4 while dumping WDMs cause it caues all kinds of slowness
 $scid = 37;
 error_log("Arguments: " . print_r($argv,1));
 print("Using DBConn to $dbip \n");
