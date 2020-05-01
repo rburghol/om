@@ -568,6 +568,7 @@ function returnCommands($command, $like='') {
   exec("ps -C $command -o command=",$cmds);
   foreach ($cmds as $key=>$value) {
     if (strlen($like) > 0) {
+      error_log("Sea3rching for $like in $value ");
       if (!(strpos($value, $like) === FALSE)) {
         $cmds[$key]=trim($value);
       }
