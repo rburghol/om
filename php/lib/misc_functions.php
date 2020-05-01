@@ -569,7 +569,7 @@ function returnCommands($command, $like='') {
   $ret = array();
   foreach ($cmds as $key=>$value) {
     if (strlen($like) > 0) {
-      //error_log("Sea3rching for $like in $value -> " . strpos($value, $like));
+      //error_log("Searching for $like in $value -> " . strpos($value, $like));
       if (!(strpos($value, $like) === FALSE)) {
         $ret[$key]=trim($value);
       }
@@ -577,7 +577,7 @@ function returnCommands($command, $like='') {
       $ret[$key]=trim($value);
     }
   }
-  return $cmds;
+  return $ret;
 }    
 
 /*
