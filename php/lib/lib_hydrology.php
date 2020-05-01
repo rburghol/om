@@ -3201,6 +3201,9 @@ class broadCastObject extends modelSubObject {
                         $this->logDebug("Reading from Comp $thiskey (my ID: $this->componentid)<br>\n");
                      }
                      $remote_vals[] = $thisrecord['value'];
+                     if (is_array($thisrecord['value'])) {
+                       error_log("Component $thiskey sent Array $local to broadcast object $remote ");
+                     }
                   }
                }
             }
