@@ -43,6 +43,8 @@ rm /var/www/html/lib/lib_usgs.php
 ln -s /opt/model/om/php/lib/lib_usgs.php /var/www/html/lib/lib_usgs.php
 rm /var/www/html/lib/lib_wooomm.cbp.php
 ln -s /opt/model/om/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
+rm /var/www/html/lib/misc_functions.php
+ln -s /opt/model/om/php/lib/misc_functions.php /var/www/html/lib/misc_functions.php
 rm /var/www/html/lib/lib_wooomm.wsp.php
 ln -s /opt/model/om/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
 rm /var/www/html/lib/lib_equation2.php
