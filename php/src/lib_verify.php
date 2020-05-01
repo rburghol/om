@@ -993,6 +993,8 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
          error_log("With parameters: " . print_r($run_params,1) . " \n");
       //}
       deleteRunRecord($listobject, $recid, $run_id);
+   } else {
+     error_log("$num_running models currently running, max $num_sim, sleeping");
    }
    return 0;
    
