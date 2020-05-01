@@ -983,6 +983,7 @@ function checkTreeRunDate($listobject, $recid, $run_id, $startdate, $enddate, $c
     $status_vars = verifyRunStatus($listobject, $branchid, $run_id);
     $branch_status = $status_vars['status_flag'];
     if ($debug) {
+      error_log("Branch $en cacheable setting $cacheable (0 - not cacheable, 1 - cacheable, 2 - pass-through, 3 - persistent)\n");
       error_log("Run status Check -  $branch_status \n");
     }
     if (in_array($branch_status, $running)) {
