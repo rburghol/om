@@ -565,9 +565,9 @@ function returnPids($command) {
 }
 
 function returnCommands($command) {
-   exec("ps -C $command -o command=",$cmds);
-   foreach ($cmds as $key=>$value) $cmds[$key]=trim($value);
-   return $cmds;
+  exec("ps -C $command -o command=",$cmds);
+  foreach ($cmds as $key=>$value) $cmds[$key]=trim($value);
+  return $cmds;
 }    
 
 /*
