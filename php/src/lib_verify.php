@@ -954,7 +954,7 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       return 1;
    } 
 
-   $active_models = returnPids('php');
+   $active_models = returnCommands('php','run_model.php');
    $num_running = count($active_models);
    if ($num_running < $num_sim) {
       // spawn a new one
