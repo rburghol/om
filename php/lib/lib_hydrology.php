@@ -932,6 +932,7 @@ class modelObject {
                 }
                 if (is_array($this->state[$varname])) {
                   error_log("Malformed broadcast variables, array $varname on $this->name ($this->componentid)" );
+                  $this->systemLog("Malformed broadcast variables, array $varname on $this->name ($this->componentid)");
                   error_log("Adding $inval to " . $this->state[$varname] );
                 }
                 $this->state[$varname] += $inval;
