@@ -8581,7 +8581,8 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    //error_log("Element $elementid: Cache Settings: " . print_r($cache_res,1));
    
    if ( ($cache_type <> 'disabled') and (count($unserobjects) >= 1) ) {
-      setStatus($listobject, $modelcontainerid, "Loading $elemname ($elementid) as cached.", $serverip, 1, $cache_id, -1, 1);
+      error_log("Loading $elemname ($elementid) as cached.");
+      setStatus($listobject, $modelcontainerid, "Loading $elemname ($elementid) as cached.", $serverip, 1, $cache_id, -1, 0);
       // use new loadCachedObject routine
       $res = loadCachedObject($model_listobj, $elementid, $cache_id, $debug);
       $thisobject = $res['object'];
@@ -8597,8 +8598,8 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
       // return the object 
       
    } else {
-      //error_log("Loading $elementid anew<br>");
-      setStatus($listobject, $modelcontainerid, "Loading $elemname ($elementid) as live model element.", $serverip, 1, $cache_id, -1, 1);
+      error_log("Loading $elemname ($elementid) as live model element.");
+      setStatus($listobject, $modelcontainerid, "Loading $elemname ($elementid) as live model element.", $serverip, 1, $cache_id, -1, 0);
       array_push($returnArray['live'], $elementid);
       // instantiate this model to run
       // new code, uses unserializeSingleModelObject
