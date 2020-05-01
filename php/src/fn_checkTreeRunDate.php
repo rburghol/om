@@ -25,7 +25,7 @@ if (isset($argv[2])) {
 $startdate = isset($argv[3]) ? $argv[3] : '1984-01-01';
 $enddate = isset($argv[4]) ? $argv[4] : '2005-12-31';
 $cache_date = isset($argv[5]) ? $argv[5] : date('Y-m-d');
-$debug = isset($argv[6]) ? $argv[6] : $0;
+$debug = isset($argv[6]) ? $argv[6] : 0;
 error_reporting(E_ALL);
 print("Clearing elementid $elementid, Run - $runid \n");
 $status = checkTreeRunDate($listobject, $elementid, $runid, $startdate, $enddate, $cache_date, $debug);

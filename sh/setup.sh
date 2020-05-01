@@ -31,6 +31,8 @@ rm  /var/www/html/om/run_model.php
 ln -s /opt/model/om/php/src/run_model.php /var/www/html/om/run_model.php
 rm /var/www/html/om/lib_verify.php
 ln -s /opt/model/om/php/src/lib_verify.php /var/www/html/om/lib_verify.php
+rm /var/www/html/om/fn_checkTreeRunDate.php
+ln -s /opt/model/om/php/src/fn_checkTreeRunDate.php /var/www/html/om/fn_checkTreeRunDate.php
 rm /var/www/html/om/fn_batchedit_broadcast_matrix.php
 ln -s /opt/model/om/php/src/fn_batchedit_broadcast_matrix.php /var/www/html/om/fn_batchedit_broadcast_matrix.php
 rm /var/www/html/lib/lib_hydrology.php
