@@ -564,9 +564,17 @@ function returnPids($command) {
    return $pids;
 }
 
-function returnCommands($command) {
+function returnCommands($command, $like='') {
   exec("ps -C $command -o command=",$cmds);
-  foreach ($cmds as $key=>$value) $cmds[$key]=trim($value);
+  foreach ($cmds as $key=>$value) {
+    if (strlen($like) > 0) {
+      if (!(strpos($value, $like) === FALSE)) {
+        $cmds[$key]=trim($value);
+      }
+    } else {
+      $cmds[$key]=trim($value);
+    }
+  }
   return $cmds;
 }    
 
