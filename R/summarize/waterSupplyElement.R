@@ -27,7 +27,7 @@ if (syear != eyear) {
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
 dat <- window(dat, start = sdate, end = edate);
-
+mode(dat) <- 'numeric'
 scen.propname<-paste0('runid_', runid)
 
 # GETTING SCENARIO PROPERTY FROM VA HYDRO

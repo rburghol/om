@@ -357,10 +357,10 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
     om_translate_to_dh($om_object, $dh_model);
     //error_log("Post save: A: $dh_model->area, DA: $dh_model->drainage_area ");
     $dh_model->save();
-    // finally, restore the link setting to enable saves from dH to OM if requested.
-    $om_link->propcode = $link_set_remote;
-    $om_link->save();
   }
+  // finally, restore the link setting to enable saves from dH to OM if requested.
+  $om_link->propcode = $link_set_remote;
+  $om_link->save();
 }
 
 function om_copy_element($scenarioid, $template_elementid, $parentid = -1, $new_name = '', $copy_children = 0) {
