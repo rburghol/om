@@ -2125,6 +2125,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
+      'autosetvars' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'autosetvars',
+        'vardesc' => 'Create Column Vars on parent in form: [propname]_[colname] (0 or 1).',
+        'title' => 'Auto-Set Parent Vars',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
       'defaultval' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
