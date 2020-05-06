@@ -687,6 +687,7 @@ class modelObject {
     // do nothing here, this is sub-classed where necessary
     foreach ($this->processors as $thisproc) {
        // set state vars for this proc, so that it knows what it will be able to gain access to
+       error_log("$thisproc->name - > preProcess()");
        $thisproc->arData = $this->state;
        $thisproc->preProcess();
     }
