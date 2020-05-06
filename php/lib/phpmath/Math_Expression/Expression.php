@@ -109,7 +109,7 @@ class Math_Expression
         try {
         
             if ($this->_status != self::S_VALID) {
-                throw new Math_Expression_Exception_Fatal('Unable to recover from an erroneous Math_Expression');
+                throw new Math_Expression_Exception_Fatal('Unable to recover from an erroneous Math_Expression: ' . $this->_expression);
             }
         
             $rpn = $this->_toRPN();
