@@ -261,6 +261,98 @@ if("imp_off" %in% cols) {
         print(paste("Saved file: ", fname, "with URL", furl))
         vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
         
+        # l90 2 year
+        dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+        # this has an impoundment.  Plot it up.
+        # Now zoom in on critical drought period
+        pdstart = as.Date(paste0( (as.integer(l90_year) - 1),"-01-01") )
+        pdend = as.Date(paste0(l90_year, "-12-31") )
+        datpd <- window(
+          dat, 
+          start = pdstart, 
+          end = pdend
+        );
+        fname <- paste(
+          save_directory,
+          paste0(
+            'l90_imp_storage.2yr.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
+        furl <- paste(
+          save_url,
+          paste0(
+            'l90_imp_storage.2yr.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
+        png(fname)
+        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
+        lines(datpd$Qout,col='blue')
+        ymn <- 1
+        ymx <- 100
+        par(mar = c(5,5,2,5))
+        plot(
+          datpd$storage_pct * 100.0, 
+          ylim=c(ymn,ymx), 
+          ylab="Reservoir Storage (%)",
+          xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+        )
+        par(new = TRUE)
+        plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+        lines(datpd$impoundment_Qout,col='green')
+        lines(datpd$wd_mgd * 1.547,col='red')
+        axis(side = 4)
+        mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+        dev.off()
+        print(paste("Saved file: ", fname, "with URL", furl))
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage.2yr', 0.0, site, token)
+        
+        # All Periods
+        dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+        # this has an impoundment.  Plot it up.
+        # Now zoom in on critical drought period
+        datpd <- dat
+        fname <- paste(
+          save_directory,
+          paste0(
+            'l90_imp_storage.all.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
+        furl <- paste(
+          save_url,
+          paste0(
+            'l90_imp_storage.all.',
+            elid, '.', runid, '.png'
+          ),
+          sep = '/'
+        )
+        png(fname)
+        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
+        lines(datpd$Qout,col='blue')
+        ymn <- 1
+        ymx <- 100
+        par(mar = c(5,5,2,5))
+        plot(
+          datpd$storage_pct * 100.0, 
+          ylim=c(ymn,ymx), 
+          ylab="Reservoir Storage (%)",
+          xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+        )
+        par(new = TRUE)
+        plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+        lines(datpd$impoundment_Qout,col='green')
+        lines(datpd$wd_mgd * 1.547,col='red')
+        axis(side = 4)
+        mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+        dev.off()
+        print(paste("Saved file: ", fname, "with URL", furl))
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+        
       }
     } else {
       # plot Qin, Qout of mainstem, and wd_mgd, and wd_cumulative_mgd
