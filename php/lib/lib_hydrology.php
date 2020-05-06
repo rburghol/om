@@ -2283,6 +2283,7 @@ class modelObject {
              $this->logDebug("Error: Sub-component not set $thisvar<br>\n");
           }
        }
+       error_log("done $this->name ---> $thisvar ");
     }
     //error_log("Finished with processors on $this->name . <br>\n");
   }
