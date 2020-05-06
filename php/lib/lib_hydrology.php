@@ -687,7 +687,7 @@ class modelObject {
     // do nothing here, this is sub-classed where necessary
     foreach ($this->processors as $thisproc) {
        // set state vars for this proc, so that it knows what it will be able to gain access to
-       error_log("$thisproc->name - > preProcess()");
+       //error_log("$thisproc->name - > preProcess()");
        $thisproc->arData = $this->state;
        $thisproc->preProcess();
     }
@@ -2197,7 +2197,7 @@ class modelObject {
        if ($this->debug) {
           $this->logDebug("Next subcomp: $thisvar<br>\n");
        }
-       error_log("exec $this->name ---> $thisvar ");
+       //error_log("exec $this->name ---> $thisvar ");
        if (is_object($this->processors[$thisvar])) {
           // broadcast components get executed in the preStep() and postStep() methods
           if ( !(get_class($this->processors[$thisvar]) == 'broadCastObject') ) {
@@ -2283,7 +2283,7 @@ class modelObject {
              $this->logDebug("Error: Sub-component not set $thisvar<br>\n");
           }
        }
-       error_log("done $this->name ---> $thisvar ");
+       //error_log("done $this->name ---> $thisvar ");
     }
     //error_log("Finished with processors on $this->name . <br>\n");
   }
@@ -2599,7 +2599,7 @@ class modelObject {
 
   function getInputs() {
     // debug
-    error_log("Getting Inputs for $this->name <br>");
+    //error_log("Getting Inputs for $this->name <br>");
     if ($this->debug) {
        $this->logDebug("Getting Inputs for $this->name <br>");
        $sv = $this->state;
