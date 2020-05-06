@@ -341,7 +341,8 @@ function om_run_model_form_run(&$form, &$form_state) {
       om_run_stash_modes($model, $model_config);
       if ($status_flag == 0) {
         $output = om_run_model($model_config);
-        $element['run_model']['#value'] = 'Update Model Status';
+        $element['run_model']['#value'] = 'Run Requested';
+        $element['run_model']['#disabled'] = TRUE;
         $element['model_status']['#value'] = 1; // set as 1 to prevent accidental overwriting
         $message = "Model Run forked " . print_r($output,1);
       } else {

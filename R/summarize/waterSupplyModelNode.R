@@ -262,7 +262,6 @@ if("imp_off" %in% cols) {
         vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
         
         # l90 2 year
-        dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
         # this has an impoundment.  Plot it up.
         # Now zoom in on critical drought period
         pdstart = as.Date(paste0( (as.integer(l90_year) - 1),"-01-01") )
@@ -311,7 +310,6 @@ if("imp_off" %in% cols) {
         vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage.2yr', 0.0, site, token)
         
         # All Periods
-        dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
         # this has an impoundment.  Plot it up.
         # Now zoom in on critical drought period
         datpd <- dat
