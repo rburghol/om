@@ -1283,7 +1283,7 @@ if($result === true)
    $who_xmlobjects['hydroImpSmall']['type'] = '2'; 
    $who_xmlobjects['hydroImpSmall']['toolgroup'] = 9;
    $who_xmlobjects['hydroImpSmall']['name'] = 'hydroImpSmall';
-   $who_xmlobjects['hydroImpSmall']['parent'] = array('wsp_vpdesvwuds','wsp_VWUDSData','wsp_waterUser','waterSupplyElement', 'hydroImpoundment');
+   $who_xmlobjects['hydroImpSmall']['parent'] = array('wsp_vpdesvwuds','wsp_VWUDSData','wsp_waterUser','waterSupplyElement', 'hydroImpoundment','waterSupplyModelNode');
    $who_xmlobjects['hydroImpSmall']['parentprops'] = array('release'=>'publicvars','Qin'=>'publicvars','et_in'=>'publicvars', 'precip_in'=>'publicvars', 'demand'=>'publicvars', 'refill'=>'publicvars');
    $who_xmlobjects['hydroImpSmall']['description'] = 'Creates a compact storage entity on this object.';
 }
