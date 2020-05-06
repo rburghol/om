@@ -5695,7 +5695,7 @@ class timeSeriesInput extends modelObject {
       $dt = $this->dt;
       if ($this->listobject->tableExists($this->db_cache_name)) {
       
-         $this->listobject->querystring = "  select count(*) as numts ";
+         $this->listobject->querystring = "  select count(*) as numts, min(\"timestamp\") as mints, max(\"timestamp\") as maxts ";
          $this->listobject->querystring .= " from  \"$this->db_cache_name\"";
          $this->listobject->querystring .= " where \"timestamp\" > $this->lasttimesec and \"timestamp\" <= ($current_time + $dt) ";
          if ($this->debug) {
