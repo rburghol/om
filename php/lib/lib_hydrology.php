@@ -2599,7 +2599,7 @@ class modelObject {
 
   function getInputs() {
     // debug
-    error_log"Getting Inputs for $this->name <br>");
+    error_log("Getting Inputs for $this->name <br>");
     if ($this->debug) {
        $this->logDebug("Getting Inputs for $this->name <br>");
        $sv = $this->state;
