@@ -177,7 +177,7 @@ if (syear <= 1990 && eyear >= 2000) {
   dat_trim <- window(dat, start = sdate_trim, end = edate_trim);
   mode(dat_trim) <- 'numeric'
   
-  flows_trim <- zoo(as.numeric(as.character( dat_trim$Qout )), order.by = dat_trim$thisdate);
+  flows_trim <- zoo(as.numeric(as.character( dat_trim$Qout )), order.by = index(dat_trim));
   loflows_trim <- group2(flows_trim);
   l90_trim <- loflows_trim["90 Day Min"];
   ndx_trim = which.min(as.numeric(l90_trim[,"90 Day Min"]));
