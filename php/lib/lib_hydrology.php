@@ -2197,6 +2197,7 @@ class modelObject {
        if ($this->debug) {
           $this->logDebug("Next subcomp: $thisvar<br>\n");
        }
+       error_log("exec $this->name ---> $thisvar ");
        if (is_object($this->processors[$thisvar])) {
           // broadcast components get executed in the preStep() and postStep() methods
           if ( !(get_class($this->processors[$thisvar]) == 'broadCastObject') ) {
