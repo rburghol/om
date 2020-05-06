@@ -597,7 +597,7 @@ function mathProcessor2( $sEquation, $arData, $debug = 0) {
         
         // Or, preferable, use the Math_Expression engine!
         
-   if ( (!preg_match("/[a-df-zA-DF-Z]/", $sEquation)) and (strlen(trim($sEquation)) > 0) ) {
+   if ( (!preg_match("/[a-df-zA-DF-Z-_]/", $sEquation)) and (strlen(trim($sEquation)) > 0) ) {
    //if (strpos($sEquation,'Array') === FALSE) {
        //error_log("Expression \"$sEquation\" looks valid  ");
        $expression = new Math_Expression($sEquation);
