@@ -4707,7 +4707,7 @@ class dataMatrix extends modelSubObject {
             // this will interpolate in both directions
             // first get the matching row array, or interpolated row array that fits the row key
             if ($this->debug) {
-               $this->logDebug("Final Matrix = " . print_r($this->matrix_formatted,1) . "<br>");
+               //$this->logDebug("Final Matrix = " . print_r($this->matrix_formatted,1) . "<br>");
             }
             $rowvals = arrayLookup($this->matrix_formatted, $key1, $this->lutype1, $this->defaultval, $this->debug);
             if ($this->debug) {
