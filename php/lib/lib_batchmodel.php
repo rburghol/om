@@ -988,7 +988,7 @@ function setNLCDLanduse($elid, $lu_matrix_name = 'landuse_nlcd', $minyear = 1980
     break;
     
     case 'cbp6':
-    error_log("Translating NLCD to CBP6 land uses");
+    error_log("Translating NLCD to CBP6 land uses for $elid using geom from $shape_elid");
       $lr = translateNLCDtoCBP6($lu, $minyear, $maxyear);
     break;
     
