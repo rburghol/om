@@ -974,6 +974,7 @@ function setNLCDLanduse($elid, $lu_matrix_name = 'landuse_nlcd', $minyear = 1980
     $shape_elid = $elid;
     $wktgeom = getElementShape($elid);
   }
+  $wktsnip = substr($wktgeom, 1, 64);
   $lu = getNHDLandUseWKT($usgsdb, $wktgeom, 'acres');
   $lr = array();
   foreach ( $lu as $thislu => $thisarea ) {
@@ -983,12 +984,12 @@ function setNLCDLanduse($elid, $lu_matrix_name = 'landuse_nlcd', $minyear = 1980
   }
   switch ($translate) {
     case 1:
-    error_log("Translating NLCD to CBP5 land uses for $elid using geom from $shape_elid ");
+    error_log("Translating NLCD to CBP5 land uses for $elid using geom from $shape_elid (wkt: $wktsnip...) ");
       $lr = translateNLCDtoCBP($lu, $minyear, $maxyear);
     break;
     
     case 'cbp6':
-    error_log("Translating NLCD to CBP6 land uses for $elid using geom from $shape_elid");
+    error_log("Translating NLCD to CBP6 land uses for $elid using geom from $shape_elid (wkt: $wktsnip...)");
       $lr = translateNLCDtoCBP6($lu, $minyear, $maxyear);
     break;
     
