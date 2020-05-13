@@ -157,5 +157,48 @@ if (!is.null(imp_off)) {
     print(paste("Saved file: ", fname, "with URL", furl))
     vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
     
+    
+    # All Periods
+    # this has an impoundment.  Plot it up.
+    # Now zoom in on critical drought period
+    datpd <- dat
+    fname <- paste(
+      save_directory,
+      paste0(
+        'l90_imp_storage.all.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    furl <- paste(
+      save_url,
+      paste0(
+        'l90_imp_storage.all.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    png(fname)
+    plot(datpd$Qin, ylim=c(-0.1,15))
+    lines(datpd$Qout,col='blue')
+    ymn <- 1
+    ymx <- 100
+    par(mar = c(5,5,2,5))
+    plot(
+      datpd$storage_pct * 100.0, 
+      ylim=c(ymn,ymx), 
+      ylab="Reservoir Storage (%)",
+      xlab=paste("Full Period",pdstart,"to",pdend)
+    )
+    par(new = TRUE)
+    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+    lines(datpd$Qout,col='green')
+    lines(datpd$wd_mgd * 1.547,col='red')
+    axis(side = 4)
+    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    dev.off()
+    print(paste("Saved file: ", fname, "with URL", furl))
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+    
   }
 }

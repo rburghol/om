@@ -976,6 +976,7 @@ function setNLCDLanduse($elid, $lu_matrix_name = 'landuse_nlcd', $minyear = 1980
   }
   $wktsnip = substr($wktgeom, 1, 64);
   $lu = getNHDLandUseWKT($usgsdb, $wktgeom, 'acres');
+  error_log("Found land use: " . print_r($lu, 1));
   $lr = array();
   foreach ( $lu as $thislu => $thisarea ) {
     if (substr($thislu,0,4) == 'nlcd') {
