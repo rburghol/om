@@ -188,7 +188,7 @@ if (!is.null(imp_off)) {
       datpd$storage_pct * 100.0, 
       ylim=c(ymn,ymx), 
       ylab="Reservoir Storage (%)",
-      xlab=paste("Full Period",pdstart,"to",pdend)
+      xlab=paste("Full Period",sdate,"to",edate)
     )
     par(new = TRUE)
     plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
