@@ -185,7 +185,7 @@ if (!is.null(imp_off)) {
     ymx <- 100
     par(mar = c(5,5,2,5))
     plot(
-      datpd$storage_pct * 100.0, 
+      datpd$pct_use_remain * 100.0, 
       ylim=c(ymn,ymx), 
       ylab="Reservoir Storage (%)",
       xlab=paste("Full Period",sdate,"to",edate)
