@@ -19,4 +19,5 @@ drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_prop
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid drought_pct; 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid flowby; 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid available_mgd; 
-drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid pump_mgd; 
+# Deprecated - was old part of vwp templates.  Try to remove.
+#drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid pump_mgd; 
