@@ -384,7 +384,7 @@ if("imp_off" %in% cols) {
       png(fname)
       ymx <- max(datpd$Qbaseline, datpd$Qout)
       plot(
-        datpd$Qbaseline, ylim = c(0,ymx)
+        datpd$Qbaseline, ylim = c(0,ymx),
         ylab="Flow/WD/PS (cfs)",
         xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
       )
