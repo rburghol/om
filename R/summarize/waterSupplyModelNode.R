@@ -409,6 +409,44 @@ if("imp_off" %in% cols) {
       print(paste("Saved file: ", fname, "with URL", furl))
       vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_flows.2yr', 0.0, site, token)
       
+      datpd <- dat
+      fname <- paste(
+        save_directory,
+        paste0(
+          'flows.all.',
+          elid, '.', runid, '.png'
+        ),
+        sep = '/'
+      )
+      furl <- paste(
+        save_url,
+        paste0(
+          'flows.all.',
+          elid, '.', runid, '.png'
+        ),
+        sep = '/'
+      )
+      png(fname)
+      ymx <- max(datpd$Qbaseline, datpd$Qout)
+      plot(
+        datpd$Qbaseline, ylim = c(0,ymx),
+        ylab="Flow/WD/PS (cfs)",
+        xlab=paste("Model Flow Period",sdate,"to",edate)
+      )
+      lines(datpd$Qout,col='blue')
+      par(new = TRUE)
+      ymx <- max(datpd$wd_cumulative_mgd * 1.547, datpd$ps_cumulative_mgd * 1.547)
+      plot(
+        datpd$wd_cumulative_mgd * 1.547,col='red', 
+        axes=FALSE, xlab="", ylab="", ylim=c(0,ymx)
+      )
+      lines(datpd$ps_cumulative_mgd * 1.547,col='green')
+      axis(side = 4)
+      mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+      dev.off()
+      print(paste("Saved file: ", fname, "with URL", furl))
+      vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.flows.all', 0.0, site, token)
+      
     }
   }
   
