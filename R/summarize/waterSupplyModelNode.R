@@ -390,7 +390,7 @@ if("imp_off" %in% cols) {
       )
       lines(datpd$Qout,col='blue')
       par(new = TRUE)
-      ymx <- max(datpd$wd_cumulative_mgd, datpd$ps_cumulative_mgd)
+      ymx <- max(datpd$wd_cumulative_mgd * 1.547, datpd$ps_cumulative_mgd * 1.547)
       plot(
         datpd$wd_cumulative_mgd * 1.547,col='red', 
         axes=FALSE, xlab="", ylab="", ylim=c(0,ymx)
