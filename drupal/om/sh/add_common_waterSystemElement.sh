@@ -17,6 +17,8 @@ drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_prop
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid fac_demand_mgy; 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid wd_mgd;
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_mgd; 
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_local_mgd; 
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_other_mgd; 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_sw_factor
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid gw_demand_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid discharge_from_gw_mgd
