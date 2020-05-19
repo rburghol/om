@@ -389,17 +389,9 @@ if("imp_off" %in% cols) {
         xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
       )
       lines(datpd$Qout,col='blue')
-      ymn <- 1
-      ymx <- 100
-      par(mar = c(5,5,2,5))
-      plot(
-        datpd$storage_pct * 100.0, 
-        ylim=c(ymn,ymx), 
-      )
       par(new = TRUE)
-      plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
-      lines(datpd$impoundment_Qout,col='green')
-      lines(datpd$wd_mgd * 1.547,col='red')
+      plot(datpd$wd_cumulative_mgd,col='red', axes=FALSE, xlab="", ylab="")
+      lines(datpd$ps_cumulative_mgd,col='green')
       axis(side = 4)
       mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
       dev.off()
