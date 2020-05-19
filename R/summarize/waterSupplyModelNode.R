@@ -390,7 +390,11 @@ if("imp_off" %in% cols) {
       )
       lines(datpd$Qout,col='blue')
       par(new = TRUE)
-      plot(datpd$wd_cumulative_mgd * 1.547,col='red', axes=FALSE, xlab="", ylab="")
+      ymx <- max(datpd$wd_cumulative_mgd, datpd$ps_cumulative_mgd)
+      plot(
+        datpd$wd_cumulative_mgd * 1.547,col='red', 
+        axes=FALSE, xlab="", ylab="", ylim=c(0,ymx)
+      )
       lines(datpd$ps_cumulative_mgd * 1.547,col='green')
       axis(side = 4)
       mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
