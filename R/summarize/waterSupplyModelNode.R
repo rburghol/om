@@ -169,6 +169,13 @@ sept_10 <- as.numeric(round(quantile(sept_flows$Qout, 0.10),6))
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'mne9_10', sept_10, site, token)
 
+#Unmet demand
+unment_demand_mgd <- mean(as.numeric(dat$unment_demand_mgd) )
+if (is.na(unment_demand_mgd)) {
+  unment_demand_mgd = 0.0
+}
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unment_demand_mgd', unment_demand_mgd, site, token)
+
 # Metrics trimmed to climate change scenario timescale (Jan. 1 1990 -- Dec. 31 2000)
 if (syear <= 1990 && eyear >= 2000) {
   sdate_trim <- as.Date(paste0(1990,"-10-01"))
