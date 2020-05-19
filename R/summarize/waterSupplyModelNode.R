@@ -368,7 +368,7 @@ if("imp_off" %in% cols) {
       fname <- paste(
         save_directory,
         paste0(
-          'l90_imp_storage.2yr.',
+          'l90_flows.2yr.',
           elid, '.', runid, '.png'
         ),
         sep = '/'
@@ -390,8 +390,8 @@ if("imp_off" %in% cols) {
       )
       lines(datpd$Qout,col='blue')
       par(new = TRUE)
-      plot(datpd$wd_cumulative_mgd,col='red', axes=FALSE, xlab="", ylab="")
-      lines(datpd$ps_cumulative_mgd,col='green')
+      plot(datpd$wd_cumulative_mgd * 1.547,col='red', axes=FALSE, xlab="", ylab="")
+      lines(datpd$ps_cumulative_mgd * 1.547,col='green')
       axis(side = 4)
       mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
       dev.off()
