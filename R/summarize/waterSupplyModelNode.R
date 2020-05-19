@@ -16,8 +16,8 @@ elid <- as.integer(argst[2])
 runid <- as.integer(argst[3])
 
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
-syear = min(dat$year)
-eyear = max(dat$year)
+syear = as.integer(min(dat$year))
+eyear = as.integer(max(dat$year))
 if (syear != eyear) {
   sdate <- as.Date(paste0(syear,"-10-01"))
   edate <- as.Date(paste0(eyear,"-09-30"))
@@ -355,6 +355,57 @@ if("imp_off" %in% cols) {
     } else {
       # plot Qin, Qout of mainstem, and wd_mgd, and wd_cumulative_mgd
       # TBD
+      # l90 2 year
+      # this has an impoundment.  Plot it up.
+      # Now zoom in on critical drought period
+      pdstart = as.Date(paste0(l90_year,"-06-01") )
+      pdend = as.Date(paste0(l90_year, "-11-15") )
+      datpd <- window(
+        dat, 
+        start = pdstart, 
+        end = pdend
+      );
+      fname <- paste(
+        save_directory,
+        paste0(
+          'l90_imp_storage.2yr.',
+          elid, '.', runid, '.png'
+        ),
+        sep = '/'
+      )
+      furl <- paste(
+        save_url,
+        paste0(
+          'l90_imp_storage.2yr.',
+          elid, '.', runid, '.png'
+        ),
+        sep = '/'
+      )
+      png(fname)
+      ymx <- max(datpd$Qbaseline, datpd$Qout)
+      plot(
+        datpd$Qbaseline, ylim = c(0,ymx)
+        ylab="Flow/WD/PS (cfs)",
+        xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+      )
+      lines(datpd$Qout,col='blue')
+      ymn <- 1
+      ymx <- 100
+      par(mar = c(5,5,2,5))
+      plot(
+        datpd$storage_pct * 100.0, 
+        ylim=c(ymn,ymx), 
+      )
+      par(new = TRUE)
+      plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+      lines(datpd$impoundment_Qout,col='green')
+      lines(datpd$wd_mgd * 1.547,col='red')
+      axis(side = 4)
+      mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+      dev.off()
+      print(paste("Saved file: ", fname, "with URL", furl))
+      vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage.2yr', 0.0, site, token)
+      
     }
   }
   
