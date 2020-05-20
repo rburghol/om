@@ -105,16 +105,35 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p50', elev_p50, site, token)
 
 # Dat for Critical Period
-flows <- zoo(dat$Qout, order.by = index(dat));
+flows <- zoo(dat$Qin, order.by = index(dat));
 loflows <- group2(flows);
 l90 <- loflows["90 Day Min"];
 ndx = which.min(as.numeric(l90[,"90 Day Min"]));
 l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
 l90_year = loflows[ndx,]$"year";
+l90_start = as.Date(paste0(l90_year - 2,"-01-01"))
+l90_end = as.Date(paste0(l90_year,"-12-31"))
 datpd <- window(
   dat, 
-  start = as.Date(paste0(l90_year,"-06-01")), 
-  end = as.Date(paste0(l90_year,"-12-31"))
+  start = l90_start, 
+  end = l90_end
+);
+
+# Elevation periods
+
+# Dat for Critical Period
+elevs <- zoo(dat$pct_use_remain, order.by = index(dat));
+loelevs <- group2(elevs);
+l90 <- loelevs["90 Day Min"];
+ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+l90_elev = round(loelevs[ndx,]$"90 Day Min",6);
+l90_elevyear = loelevs[ndx,]$"year";
+l90_elev_start = as.Date(paste0(l90_elevyear - 2,"-01-01"))
+l90_elev_end = as.Date(paste0(l90_elevyear,"-12-31"))
+elevdatpd <- window(
+  dat, 
+  start = l90_elev_start, 
+  end = l90_elev_end
 );
 
 # Lake Plots
@@ -145,7 +164,8 @@ if (!is.null(imp_off)) {
     plot(
       datpd$pct_use_remain * 100.0, 
       ylim=c(ymn,ymx), 
-      ylab="Reservoir Storage (%)"
+      ylab="Reservoir Storage (%)",
+      xlab=paste("Model Flow Period",l90_start,"to",l90_end)
     )
     par(new = TRUE)
     plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
@@ -189,6 +209,47 @@ if (!is.null(imp_off)) {
       ylim=c(ymn,ymx), 
       ylab="Reservoir Storage (%)",
       xlab=paste("Full Period",sdate,"to",edate)
+    )
+    par(new = TRUE)
+    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+    lines(datpd$Qout,col='green')
+    lines(datpd$wd_mgd * 1.547,col='red')
+    axis(side = 4)
+    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    dev.off()
+    print(paste("Saved file: ", fname, "with URL", furl))
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+    
+    
+    # Low Elevation Period
+    datpd <- elevdatpd
+    fname <- paste(
+      save_directory,
+      paste0(
+        'elev90_imp_storage.all.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    furl <- paste(
+      save_url,
+      paste0(
+        'elev90_imp_storage.all.',
+        elid, '.', runid, '.png'
+      ),
+      sep = '/'
+    )
+    png(fname)
+    plot(datpd$Qin, ylim=c(-0.1,15))
+    lines(datpd$Qout,col='blue')
+    ymn <- 1
+    ymx <- 100
+    par(mar = c(5,5,2,5))
+    plot(
+      datpd$pct_use_remain * 100.0, 
+      ylim=c(ymn,ymx), 
+      ylab="Reservoir Storage (%)",
+      xlab=paste("Model Flow Period",l90_elev_start,"to",l90_elev_end)
     )
     par(new = TRUE)
     plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
