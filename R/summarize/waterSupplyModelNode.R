@@ -229,7 +229,7 @@ if("imp_off" %in% cols) {
           usable_pct_p10 <- 0
           usable_pct_p50 <- 0
         } else {
-          usable_pcts = quantile(as.numeric(dat$lake_elev), c(0,0.1,0.5) )
+          usable_pcts = quantile(as.numeric(dat$storage_pct), c(0,0.1,0.5) )
           usable_pct_p0 <- usable_pcts["0%"]
           usable_pct_p10 <- usable_pcts["10%"]
           usable_pct_p50 <- usable_pcts["50%"]

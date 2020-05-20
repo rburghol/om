@@ -82,16 +82,16 @@ Qout <- mean(as.numeric(dat$Qout) )
 if (is.na(Qout)) {
   Qout = 0.0
 }
-lake_elev <- mean(as.numeric(dat$lake_elev) )
-if (is.na(lake_elev)) {
-  elev_p0 <- 0
-  elev_p10 <- 0
-  elev_p50 <- 0
+storage_pct <- mean(as.numeric(dat$pct_use_remain) )
+if (is.na(storage_pct)) {
+  usable_pct_p0 <- 0
+  usable_pct_p10 <- 0
+  usable_pct_p50 <- 0
 } else {
-  elev_qs = quantile(as.numeric(dat$lake_elev), c(0,0.1,0.5) )
-  elev_p0 <- elev_qs["0%"]
-  elev_p10 <- elev_qs["10%"]
-  elev_p50 <- elev_qs["50%"]
+  usable_pcts = quantile(as.numeric(dat$pct_use_remain), c(0,0.1,0.5) )
+  usable_pct_p0 <- usable_pcts["0%"]
+  usable_pct_p10 <- usable_pcts["10%"]
+  usable_pct_p50 <- usable_pcts["50%"]
 }
 
 # post em up
@@ -100,9 +100,9 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_mgd
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'evap_mgd', evap_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout', Qout, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qin', Qin, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p0', elev_p0, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p10', elev_p10, site, token)
-vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elev_p50', elev_p50, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p0', usable_pct_p0, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p10', usable_pct_p10, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p50', usable_pct_p50, site, token)
 
 # Dat for Critical Period
 flows <- zoo(dat$Qin, order.by = index(dat));
