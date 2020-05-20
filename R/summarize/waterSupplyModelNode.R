@@ -399,8 +399,9 @@ if("imp_off" %in% cols) {
         plot(
           datpd$storage_pct * 100.0, 
           ylim=c(ymn,ymx), 
+          main="Minimum Modeled Reservoir Storage Period",
           ylab="Reservoir Storage (%)",
-          xlab=paste("Model Flow Period",l90_elev_start,"to",l90_elev_end)
+          xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
         )
         par(new = TRUE)
         plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
