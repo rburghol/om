@@ -248,8 +248,9 @@ if (!is.null(imp_off)) {
     plot(
       datpd$pct_use_remain * 100.0, 
       ylim=c(ymn,ymx), 
+      main="Minimum Modeled Reservoir Storage Period",
       ylab="Reservoir Storage (%)",
-      xlab=paste("Model Flow Period",l90_elev_start,"to",l90_elev_end)
+      xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
     )
     par(new = TRUE)
     plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
@@ -259,7 +260,7 @@ if (!is.null(imp_off)) {
     mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
     dev.off()
     print(paste("Saved file: ", fname, "with URL", furl))
-    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'elev90_imp_storage', 0.0, site, token)
     
   }
 }
