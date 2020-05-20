@@ -220,7 +220,27 @@ if("imp_off" %in% cols) {
   if (!is.null(imp_off)) {
     if (imp_off == 0) {
       if("impoundment" %in% cols) {
+        # Plot and analyze impoundment sub-comps
         dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+        # 
+        storage_pct <- mean(as.numeric(dat$storage_pct) )
+        if (is.na(storage_pct)) {
+          usable_pct_p0 <- 0
+          usable_pct_p10 <- 0
+          usable_pct_p50 <- 0
+        } else {
+          usable_pcts = quantile(as.numeric(dat$lake_elev), c(0,0.1,0.5) )
+          usable_pct_p0 <- usable_pcts["0%"]
+          usable_pct_p10 <- usable_pcts["10%"]
+          usable_pct_p50 <- usable_pcts["50%"]
+        }
+        
+        # post em up
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p0', usable_pct_p0, site, token)
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p10', usable_pct_p10, site, token)
+        vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p50', usable_pct_p50, site, token)
+        
+        
         # this has an impoundment.  Plot it up.
         # Now zoom in on critical drought period
         pdstart = as.Date(paste0(l90_year,"-06-01") )
