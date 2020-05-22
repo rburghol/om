@@ -136,15 +136,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_Qo
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_year', l30_year, site, token)
 
 # 7q10 -- also requires PearsonDS packages
-x <- as.vector(as.matrix(loflows["7 Day Min"]))
-for (k in 1:length(x)) {
-  if (x[k] <= 0) {
-    x[k] <- 0.00000001
-  }
-}
-x <- log(x)
-pars <- PearsonDS:::pearsonIIIfitML(x)
-x7q10 <- round(exp(qpearsonIII(0.1, params = pars$par)),6) #1 note
+x7q10 <- fn_iha_7q10(flows)
 
 vahydro_post_metric_to_scenprop(scenprop$pid, '7q10', NULL, '7q10', x7q10, site, token)
 
