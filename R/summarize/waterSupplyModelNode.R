@@ -259,8 +259,6 @@ if("imp_off" %in% cols) {
           sep = '/'
         )
         png(fname)
-        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
-        lines(datpd$Qout,col='blue')
         ymn <- 1
         ymx <- 100
         par(mar = c(5,5,2,5))
@@ -307,8 +305,6 @@ if("imp_off" %in% cols) {
           sep = '/'
         )
         png(fname)
-        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
-        lines(datpd$Qout,col='blue')
         ymn <- 1
         ymx <- 100
         par(mar = c(5,5,2,5))
@@ -349,8 +345,6 @@ if("imp_off" %in% cols) {
           sep = '/'
         )
         png(fname)
-        plot(datpd$impoundment_Qin, ylim=c(-0.1,15))
-        lines(datpd$Qout,col='blue')
         ymn <- 1
         ymx <- 100
         par(mar = c(5,5,2,5))
@@ -358,7 +352,7 @@ if("imp_off" %in% cols) {
           datpd$storage_pct * 100.0, 
           ylim=c(ymn,ymx), 
           ylab="Reservoir Storage (%)",
-          xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+          xlab=paste("Storage and Flows",sdate,"to",edate)
         )
         par(new = TRUE)
         plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
@@ -403,8 +397,6 @@ if("imp_off" %in% cols) {
           sep = '/'
         )
         png(fname)
-        plot(datpd$Qin, ylim=c(-0.1,15))
-        lines(datpd$Qout,col='blue')
         ymn <- 1
         ymx <- 100
         par(mar = c(5,5,2,5))
@@ -416,7 +408,7 @@ if("imp_off" %in% cols) {
           xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
         )
         par(new = TRUE)
-        plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+        plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
         lines(datpd$Qout,col='green')
         lines(datpd$wd_mgd * 1.547,col='red')
         axis(side = 4)
