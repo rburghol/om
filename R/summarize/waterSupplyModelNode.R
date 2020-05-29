@@ -18,7 +18,7 @@ runid <- as.integer(argst[3])
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 syear = as.integer(min(dat$year))
 eyear = as.integer(max(dat$year))
-if (syear != eyear) {
+if (syear < (eyear - 2)) {
   sdate <- as.Date(paste0(syear,"-10-01"))
   edate <- as.Date(paste0(eyear,"-09-30"))
 } else {
@@ -138,6 +138,9 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_ye
 # 7q10 -- also requires PearsonDS packages
 x7q10 <- fn_iha_7q10(flows)
 
+if (is.na(x7q10)) {
+  x7q10 = 0.0
+}
 vahydro_post_metric_to_scenprop(scenprop$pid, '7q10', NULL, '7q10', x7q10, site, token)
 
 # ALF -- also requires IHA package and lubridate
@@ -271,7 +274,7 @@ if("imp_off" %in% cols) {
         par(new = TRUE)
         plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
         lines(datpd$impoundment_Qout,col='green')
-        lines(datpd$wd_mgd * 1.547,col='red')
+        lines(datpd$impoundment_demand * 1.547,col='red')
         axis(side = 4)
         mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
         dev.off()
@@ -331,7 +334,7 @@ if("imp_off" %in% cols) {
         fname <- paste(
           save_directory,
           paste0(
-            'l90_imp_storage.all.',
+            'fig.imp_storage.all.',
             elid, '.', runid, '.png'
           ),
           sep = '/'
@@ -339,7 +342,7 @@ if("imp_off" %in% cols) {
         furl <- paste(
           save_url,
           paste0(
-            'l90_imp_storage.all.',
+            'fig.imp_storage.all.',
             elid, '.', runid, '.png'
           ),
           sep = '/'
