@@ -299,7 +299,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
   }
   
-  public function convert_attributes_to_dh_props($entity) {
+  public function convert_attributes_to_dh_props(&$entity) {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
@@ -508,7 +508,7 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     return $this->getPropertyAttribute($entity);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
@@ -606,7 +606,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1130,7 +1130,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $defprops = $this->getDefaults($entity);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1578,7 +1578,7 @@ class dHOMEquation extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   /*
@@ -1712,7 +1712,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
@@ -1865,7 +1865,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     return $pcts;
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1967,7 +1967,7 @@ class dHOMtextField extends dHOMSubComp {
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
