@@ -213,7 +213,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     $thisvar['featureid'] = $entity->{$this->row_map['id']};
     //dpm($thisvar, "Checking for property default");
     $thisvar = $thisvar + array('singularity' => 'name');
-    $prop = om_model_getSetProperty($thisvar, $thisvar['singularity']);
+    $prop = om_model_getSetProperty($thisvar, $thisvar['singularity'], FALSE);
     return $prop;
   }
   
