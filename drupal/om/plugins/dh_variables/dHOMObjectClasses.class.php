@@ -304,6 +304,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
   }
   
+  
   public function convert_attributes_to_dh_props(&$entity) {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
@@ -357,7 +358,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $prop->featureid = $entity->identifier();
       }
     }
-    //dpm($entity,'entity post conversion to props');
+    //dpm($entity,'entity post convert_attributes_to_dh_props()');
   }
   
   public function formRowSave(&$rowvalues, &$row) {
