@@ -107,7 +107,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // this converts known attributes to dh_properties.
     $this->convert_attributes_to_dh_props($entity);
     // now, load any others that didn't get passed in already -- this function defaults not to overwrite
-    $this->loadProperties($entity);
+    //$this->loadProperties($entity);
     $this->updateProperties($entity);
     parent::insert($entity);
   }
