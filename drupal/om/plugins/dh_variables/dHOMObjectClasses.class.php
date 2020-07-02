@@ -101,7 +101,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     // check for transition from ts to prop
-    $this->addProperties($entity);
+    //$this->addProperties($entity);
+    $this->loadProperties($entity);
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
     parent::insert($entity);
