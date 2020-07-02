@@ -103,7 +103,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // check for transition from ts to prop
     //$this->addProperties($entity);
     //$this->loadProperties($entity);
+    // anything that came in from the form API will already be a scalar property/attribute 
+    // this converts known attributes to dh_properties.
     $this->convert_attributes_to_dh_props($entity);
+    // now, load any others that didn't get passed in already -- this function defaults not to overwrite
+    $this->loadProperties($entity);
     $this->updateProperties($entity);
     parent::insert($entity);
   }
