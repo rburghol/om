@@ -2456,6 +2456,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       $result = db_query("select propvalue from dh_properties where pid = $entity->pid");
       $propvalue = $result->fetchField();
       $entity->propvalue = $propvalue;
+      dpm($propvalue, 'actual value');
     }
     parent::formRowEdit($rowform, $entity);
     // @todo:
