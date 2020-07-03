@@ -302,8 +302,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $form[$pn]['#weight'] = $thisvar['#weight'];
       }
     }
-  }
-  
+  }  
   
   public function convert_attributes_to_dh_props(&$entity) {
     // this will be called after a form submittal, the added form fields from attached props will be/
@@ -330,20 +329,23 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       if (property_exists($entity, $propname) and !is_object($entity->{$propname})) {
         // if the prop is not an object, stash the value and load property, 
         $convert_value = TRUE;
-        $propvalue = $entity->{$thisvar['propname']};
+        $propvalue = $entity->{$propname};
         $load_property = TRUE;
+        //dsm("Propvalue from $propname = " . $propvalue);
       }
       if ( ($pn <> $propname) and property_exists($entity, $pn) ) {
         // handle case where prop name had spaces and was munged by form API
         // we assume that this is not going to be an object sine form API will return just a value
         $propvalue = $entity->{$pn};
         $convert_value = TRUE;
+        //dsm("Propvalue from converted propname $pn = " . $propvalue);
       }
       if (!property_exists($entity, $propname) ) {
         $load_property = TRUE;
       }
       if ($load_property) {
         //dsm("Loading property $pn");
+        //dsm("Initializing property $propname");
         $this->loadProperties($entity, FALSE, $propname);
       }
       // now, apply the stashed value to the property
