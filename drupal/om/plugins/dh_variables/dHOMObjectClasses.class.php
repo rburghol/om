@@ -2452,6 +2452,11 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   public function formRowEdit(&$rowform, $entity) {
+    if ($entity->pid > 0) {
+      $result = db_query("select propvalue from dh_properties where pid = $entity->pid");
+      $propvalue = $result->fetchField();
+      $entity->propvalue = $propvalue;
+    }
     parent::formRowEdit($rowform, $entity);
     // @todo:
     // - Link Type Select List
