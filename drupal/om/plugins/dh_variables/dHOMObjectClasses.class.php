@@ -2458,6 +2458,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       $propvalue = $result->fetchField();
       $entity->propvalue = $propvalue;
     }
+    dpm("Fix int $entity->propvalue");
   }
   
   public function formRowEdit(&$rowform, $entity) {
@@ -2475,6 +2476,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#weight'] = 2;
     $rowform['propvalue']['#title'] = 'Source Entity ID';
     $rowform['propvalue']['#weight'] = 3;
+    dpm($rowform['propvalue'],'pv');
   }
   
   public function updateProperties(&$entity) {
