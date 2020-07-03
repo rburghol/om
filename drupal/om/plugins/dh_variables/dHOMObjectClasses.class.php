@@ -2476,6 +2476,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#weight'] = 2;
     $rowform['propvalue']['#title'] = 'Source Entity ID';
     $rowform['propvalue']['#weight'] = 3;
+    $rowform['propvalue']['#default_value'] = $entity->propvalue;
     dpm($rowform['propvalue'],'pv');
   }
   
