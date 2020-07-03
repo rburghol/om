@@ -2451,13 +2451,17 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     return $defaults;
   }
   
-  public function formRowEdit(&$rowform, $entity) {
+  public function fix_bigint(&$entity) {
+    // @todo: move to base dh class 
     if ($entity->pid > 0) {
       $result = db_query("select propvalue from dh_properties where pid = $entity->pid");
       $propvalue = $result->fetchField();
       $entity->propvalue = $propvalue;
-      dpm($propvalue, 'actual value');
     }
+  }
+  
+  public function formRowEdit(&$rowform, $entity) {
+    $this->fix_bigint($entity);
     parent::formRowEdit($rowform, $entity);
     // @todo:
     // - Link Type Select List
@@ -2501,6 +2505,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function setLocalhostLinkedValue(&$entity, $linked_value) {
+    $this->fix_bigint($entity);
     $dest_entity_type = $entity->dest_entity_type->propcode;
     $dest_entity_id = $entity->dest_entity_id->propcode;
     $dest_prop = $entity->dest_prop->propcode;
