@@ -2666,12 +2666,10 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     parent::delete($entity);
   }
   public function delete_replicant(&$entity) {
-      dpm($entity, 'calling delete_replicant for linked object');
     switch ($entity->delete_setting->propcode) {
       case 'delete':
       $rep = $this->getDestEntity($entity);
-      dpm($rep, 'delete for linked object');
-      entity_delete($rep);
+      entity_delete('dh_timeseries', $rep->tid);
       break;
     }    
   }
