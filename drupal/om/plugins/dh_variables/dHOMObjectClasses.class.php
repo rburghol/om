@@ -101,8 +101,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function insert(&$entity) {
     //$entity->propname = 'blankShell';
     // check for transition from ts to prop
-    $this->addProperties($entity);
+    //$this->addProperties($entity);
+    //$this->loadProperties($entity);
+    // anything that came in from the form API will already be a scalar property/attribute 
+    // this converts known attributes to dh_properties.
     $this->convert_attributes_to_dh_props($entity);
+    // now, load any others that didn't get passed in already -- this function defaults not to overwrite
+    //$this->loadProperties($entity);
     $this->updateProperties($entity);
     parent::insert($entity);
   }
@@ -117,6 +122,10 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function save(&$entity) {
     parent::save($entity);
+  }
+  
+  public function delete(&$entity) {
+    parent::delete($entity);
   }
   
   public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
@@ -213,7 +222,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     $thisvar['featureid'] = $entity->{$this->row_map['id']};
     //dpm($thisvar, "Checking for property default");
     $thisvar = $thisvar + array('singularity' => 'name');
-    $prop = om_model_getSetProperty($thisvar, $thisvar['singularity']);
+    $prop = om_model_getSetProperty($thisvar, $thisvar['singularity'], FALSE);
     return $prop;
   }
   
@@ -254,7 +263,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           } else {
             $prop = $entity->{$thisvar['propname']};
             // already a loaded form object, so just let it rip.
-            //dpm($prop, "object from parent");
             //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           }
@@ -297,9 +305,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $form[$pn]['#weight'] = $thisvar['#weight'];
       }
     }
-  }
+  }  
   
-  public function convert_attributes_to_dh_props($entity) {
+  public function convert_attributes_to_dh_props(&$entity) {
     // this will be called after a form submittal, the added form fields from attached props will be/
     // added as plain fields on the entity, we then grab them by name and handle their contents.
     $props = $this->getDefaults($entity);
@@ -324,20 +332,23 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       if (property_exists($entity, $propname) and !is_object($entity->{$propname})) {
         // if the prop is not an object, stash the value and load property, 
         $convert_value = TRUE;
-        $propvalue = $entity->{$thisvar['propname']};
+        $propvalue = $entity->{$propname};
         $load_property = TRUE;
+        //dsm("Propvalue from $propname = " . $propvalue);
       }
       if ( ($pn <> $propname) and property_exists($entity, $pn) ) {
         // handle case where prop name had spaces and was munged by form API
         // we assume that this is not going to be an object sine form API will return just a value
         $propvalue = $entity->{$pn};
         $convert_value = TRUE;
+        //dsm("Propvalue from converted propname $pn = " . $propvalue);
       }
       if (!property_exists($entity, $propname) ) {
         $load_property = TRUE;
       }
       if ($load_property) {
         //dsm("Loading property $pn");
+        //dsm("Initializing property $propname");
         $this->loadProperties($entity, FALSE, $propname);
       }
       // now, apply the stashed value to the property
@@ -352,7 +363,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
         $prop->featureid = $entity->identifier();
       }
     }
-    //dpm($entity,'entity post conversion to props');
+    //dpm($entity,'entity post convert_attributes_to_dh_props()');
   }
   
   public function formRowSave(&$rowvalues, &$row) {
@@ -508,7 +519,7 @@ class dHVariablePluginCodeAttribute extends dHVariablePluginDefault {
     return $this->getPropertyAttribute($entity);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
@@ -606,7 +617,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     $rowform[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1130,7 +1141,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $defprops = $this->getDefaults($entity);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1301,10 +1312,11 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
   }
   
-  public function delete($entity) {
+  public function delete(&$entity) {
     // @todo: ask if we want to delete the corresponding remote
     // @todo: enable to delete the corresponding remote
     //dpm($entity,'plugin delete() method called');
+    parent::delete($entity);
   }
   
   public function getDefaults($entity, &$defaults = array()) {
@@ -1418,7 +1430,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     }
   }
   
-  public function delete($entity) {
+  public function delete(&$entity) {
     dpm($entity,'plugin delete() method called');
     $comp_path = array(); // initialize the path var. 
                      // We will than use it later to determine if we should 
@@ -1442,6 +1454,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
+    parent::delete($entity);
   }
   
   public function getPublicProcs($entity) {
@@ -1578,7 +1591,7 @@ class dHOMEquation extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   /*
@@ -1712,7 +1725,7 @@ class dHOMAlphanumericConstant extends dHOMBaseObjectClass {
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
@@ -1865,7 +1878,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
     return $pcts;
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propvalue = $value;
   }
   
@@ -1967,7 +1980,7 @@ class dHOMtextField extends dHOMSubComp {
     $form[$mname]['#description'] = t($entity->vardesc);
   }
   
-  public function applyEntityAttribute($property, $value) {
+  public function applyEntityAttribute(&$property, $value) {
     $property->propcode = $value;
   }
   
@@ -2390,7 +2403,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'propname' => 'dest_entity_id',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => 'Destination Entity Unique Identifier.',
+        'vardesc' => 'Destination Entity Unique Identifier, if blank, assumed to be this properties parent.',
         'title' => 'Destination Entity ID',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         '#weight' => 6,
@@ -2439,11 +2452,33 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         '#weight' => 10,
       ),
+      'delete_setting' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'delete_setting',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Valid settings: delete, confirm_delete, none (or empty).',
+        'title' => 'Update Setting',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 10,
+      ),
     );
     return $defaults;
   }
   
+  public function fix_bigint(&$entity) {
+    // @todo: move to base dh class 
+    if ($entity->pid > 0) {
+      $result = db_query("select propvalue from dh_properties where pid = $entity->pid");
+      $propvalue = $result->fetchField();
+      $entity->propvalue = $propvalue;
+    }
+    //dpm("Fix int $entity->propvalue");
+  }
+  
   public function formRowEdit(&$rowform, $entity) {
+    $this->fix_bigint($entity);
     parent::formRowEdit($rowform, $entity);
     // @todo:
     // - Link Type Select List
@@ -2457,6 +2492,8 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propcode']['#weight'] = 2;
     $rowform['propvalue']['#title'] = 'Source Entity ID';
     $rowform['propvalue']['#weight'] = 3;
+    $rowform['propvalue']['#default_value'] = $entity->propvalue;
+    //dpm($rowform['propvalue'],'pv');
   }
   
   public function updateProperties(&$entity) {
@@ -2487,13 +2524,12 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function setLocalhostLinkedValue(&$entity, $linked_value) {
-    $dest_entity_type = $entity->dest_entity_type->propcode;
-    $dest_entity_id = $entity->dest_entity_id->propcode;
+    $this->fix_bigint($entity);
     $dest_prop = $entity->dest_prop->propcode;
     // @todo: we don't yet use the dest_entity_type, or dest_entity_id since 
     //        we assumed this is attached to a parent property to set value 
     //        but we may later allow this
-    $dest_entity = $this->getParentEntity($entity);
+    $dest_entity = $this->getDestEntity($entity);
     if (is_object($dest_entity)) {
       if (property_exists($dest_entity, $dest_prop)) {
         $dest_entity->{$dest_prop} = $linked_value;
@@ -2503,18 +2539,31 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     }
   }
   
-  function getLinkedEntity(&$entity) {
+  function getSourceEntity(&$entity) {
     $entity->src_entity_type = $entity->propcode;
     $entity->src_entity_id = $entity->propvalue;
     $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
     return $entity->src_entity;
   }
   
+  function getDestEntity(&$entity) {
+    if (!is_object($entity->dest_entity)) {
+      $dest_entity_type = $entity->dest_entity_type->propcode;
+      $dest_entity_id = $entity->dest_entity_id->propcode;
+      if ( empty($dest_entity_id) or empty($dest_entity_type)) {
+        $entity->dest_entity = $this->getParentEntity($entity);
+      } else {
+        $entity->dest_entity = entity_load_single($dest_entity_type, $dest_entity_id);
+      }
+    }
+    return $entity->dest_entity;
+  }
+  
   function getLocalhostLinkedValue(&$entity) {
     //dpm($entity,'getLocalhostLinkedValue entity');
     //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
-      $this->getLinkedEntity($entity);
+      $this->getSourceEntity($entity);
     }
     if (is_object($entity->src_entity)) {
       // check if prop already exists, if so, just grab it,
@@ -2566,7 +2615,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function linkTypeLink($entity) {
     // returns a href based on the type of link -- if prop link, return source, if parent:child returns dest 
     if (!$entity->src_entity) {
-      $this->getLinkedEntity($entity);
+      $this->getSourceEntity($entity);
     }
     switch ($this->link_type->propvalue) {
       case 1:
@@ -2586,7 +2635,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function buildContent(&$content, &$entity, $view_mode) {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
-    $this->getLinkedEntity($entity);
+    $this->getSourceEntity($entity);
     //dpm($entity->src_entity,'ent to content');
     switch ($view_mode) {
       case 'plugin':
@@ -2603,6 +2652,25 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       break;
     }
   }  
+  
+  public function delete(&$entity) {
+    // cascade delete for certain link types
+    $this->loadProperties($entity);
+    switch ($entity->link_type->propcode) {      
+      case 4:
+        $this->delete_replicant($entity);
+      break;
+    }
+    parent::delete($entity);
+  }
+  public function delete_replicant(&$entity) {
+    switch ($entity->delete_setting->propcode) {
+      case 'delete':
+      $rep = $this->getDestEntity($entity);
+      entity_delete('dh_timeseries', $rep->tid);
+      break;
+    }    
+  }
 }
 
 
