@@ -2655,9 +2655,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   public function delete(&$entity) {
     // cascade delete for certain link types
-    dpm($entity, 'plugin delete() called');
     $this->loadProperties($entity);
-    dpm($entity, 'loadProperties() called');
     switch ($entity->link_type->propcode) {      
       case 4:
         $this->delete_replicant($entity);
