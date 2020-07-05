@@ -124,6 +124,10 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     parent::save($entity);
   }
   
+  public function delete(&$entity) {
+    parent::delete($entity);
+  }
+  
   public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
     $props = $this->getDefaults($entity);
     if (!($propname === FALSE)) {
@@ -2398,7 +2402,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'propname' => 'dest_entity_id',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'vardesc' => 'Destination Entity Unique Identifier.',
+        'vardesc' => 'Destination Entity Unique Identifier, if blank, assumed to be this properties parent.',
         'title' => 'Destination Entity ID',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         '#weight' => 6,
@@ -2509,13 +2513,11 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   function setLocalhostLinkedValue(&$entity, $linked_value) {
     $this->fix_bigint($entity);
-    $dest_entity_type = $entity->dest_entity_type->propcode;
-    $dest_entity_id = $entity->dest_entity_id->propcode;
     $dest_prop = $entity->dest_prop->propcode;
     // @todo: we don't yet use the dest_entity_type, or dest_entity_id since 
     //        we assumed this is attached to a parent property to set value 
     //        but we may later allow this
-    $dest_entity = $this->getParentEntity($entity);
+    $dest_entity = $this->getDestEntity($entity);
     if (is_object($dest_entity)) {
       if (property_exists($dest_entity, $dest_prop)) {
         $dest_entity->{$dest_prop} = $linked_value;
@@ -2525,18 +2527,31 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     }
   }
   
-  function getLinkedEntity(&$entity) {
+  function getSourceEntity(&$entity) {
     $entity->src_entity_type = $entity->propcode;
     $entity->src_entity_id = $entity->propvalue;
     $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
     return $entity->src_entity;
   }
   
+  function getDestEntity(&$entity) {
+    if (!is_object($entity->dest_entity)) {
+      $dest_entity_type = $entity->dest_entity_type->propcode;
+      $dest_entity_id = $entity->dest_entity_id->propcode;
+      if ( empty($dest_entity_id) or empty($dest_entity_type)) {
+        $entity->dest_entity = $this->getParentEntity($entity);
+      } else {
+        $entity->dest_entity = entity_load_single($dest_entity_type, $dest_entity_id);
+      }
+    }
+    return $entity->dest_entity;
+  }
+  
   function getLocalhostLinkedValue(&$entity) {
     //dpm($entity,'getLocalhostLinkedValue entity');
     //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
-      $this->getLinkedEntity($entity);
+      $this->getSourceEntity($entity);
     }
     if (is_object($entity->src_entity)) {
       // check if prop already exists, if so, just grab it,
@@ -2588,7 +2603,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function linkTypeLink($entity) {
     // returns a href based on the type of link -- if prop link, return source, if parent:child returns dest 
     if (!$entity->src_entity) {
-      $this->getLinkedEntity($entity);
+      $this->getSourceEntity($entity);
     }
     switch ($this->link_type->propvalue) {
       case 1:
@@ -2608,7 +2623,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function buildContent(&$content, &$entity, $view_mode) {
     // @todo: handle teaser mode and full mode with plugin support
     parent::buildContent($content, $entity, $view_mode);
-    $this->getLinkedEntity($entity);
+    $this->getSourceEntity($entity);
     //dpm($entity->src_entity,'ent to content');
     switch ($view_mode) {
       case 'plugin':
@@ -2625,6 +2640,23 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       break;
     }
   }  
+  
+  public function delete(&$entity) {
+    // cascade delete for certain link types
+    $this->loadProperties($entity);
+    switch ($entity->link_type->propcode) {      
+      case 4:
+        $this->delete_replicant($entity);
+      break;
+    }
+    parent::delete($entity);
+  }
+  public function delete_replicant(&$entity) {
+    switch ($entity->delete_setting->propcode) {
+      case 'delete':
+      
+    }    
+  }
 }
 
 
