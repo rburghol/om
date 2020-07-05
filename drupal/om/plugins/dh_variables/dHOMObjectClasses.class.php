@@ -1312,10 +1312,11 @@ class dHOMModelElement extends dHOMBaseObjectClass {
     //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
   }
   
-  public function delete($entity) {
+  public function delete(&$entity) {
     // @todo: ask if we want to delete the corresponding remote
     // @todo: enable to delete the corresponding remote
     //dpm($entity,'plugin delete() method called');
+    parent::delete($entity);
   }
   
   public function getDefaults($entity, &$defaults = array()) {
@@ -1429,7 +1430,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     }
   }
   
-  public function delete($entity) {
+  public function delete(&$entity) {
     dpm($entity,'plugin delete() method called');
     $comp_path = array(); // initialize the path var. 
                      // We will than use it later to determine if we should 
@@ -1453,6 +1454,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
+    parent::delete($entity);
   }
   
   public function getPublicProcs($entity) {
@@ -2653,8 +2655,9 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   
   public function delete(&$entity) {
     // cascade delete for certain link types
+    dpm($entity, 'plugin delete() called');
     $this->loadProperties($entity);
-    dpm($entity, 'plugin delete() caleld');
+    dpm($entity, 'loadProperties() called');
     switch ($entity->link_type->propcode) {      
       case 4:
         $this->delete_replicant($entity);
