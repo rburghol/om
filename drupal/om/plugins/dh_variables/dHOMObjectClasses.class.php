@@ -263,9 +263,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
           } else {
             $prop = $entity->{$thisvar['propname']};
             // already a loaded form object, so just let it rip.
-            if ($prop->propname == 'dest_entity_id') {
-              dpm($prop, "saving dest_entity_id");
-            }
             //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           }
