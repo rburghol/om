@@ -2450,6 +2450,17 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         '#weight' => 10,
       ),
+      'delete_setting' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'delete_setting',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Valid settings: delete, confirm_delete, none (or empty).',
+        'title' => 'Update Setting',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        '#weight' => 10,
+      ),
     );
     return $defaults;
   }
@@ -2461,7 +2472,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
       $propvalue = $result->fetchField();
       $entity->propvalue = $propvalue;
     }
-    dpm("Fix int $entity->propvalue");
+    //dpm("Fix int $entity->propvalue");
   }
   
   public function formRowEdit(&$rowform, $entity) {
@@ -2480,7 +2491,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     $rowform['propvalue']['#title'] = 'Source Entity ID';
     $rowform['propvalue']['#weight'] = 3;
     $rowform['propvalue']['#default_value'] = $entity->propvalue;
-    dpm($rowform['propvalue'],'pv');
+    //dpm($rowform['propvalue'],'pv');
   }
   
   public function updateProperties(&$entity) {
@@ -2653,7 +2664,10 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function delete_replicant(&$entity) {
     switch ($entity->delete_setting->propcode) {
       case 'delete':
-      
+      dpm($entity, 'calling delete for linked object');
+      $rep = $this->getDestEntity($entity);
+      entity_delete($rep);
+      break;
     }    
   }
 }
