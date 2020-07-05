@@ -2654,6 +2654,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   public function delete(&$entity) {
     // cascade delete for certain link types
     $this->loadProperties($entity);
+    dpm($entity, 'plugin delete() caleld');
     switch ($entity->link_type->propcode) {      
       case 4:
         $this->delete_replicant($entity);
@@ -2662,10 +2663,11 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     parent::delete($entity);
   }
   public function delete_replicant(&$entity) {
+      dpm($entity, 'calling delete_replicant for linked object');
     switch ($entity->delete_setting->propcode) {
       case 'delete':
-      dpm($entity, 'calling delete for linked object');
       $rep = $this->getDestEntity($entity);
+      dpm($rep, 'delete for linked object');
       entity_delete($rep);
       break;
     }    
