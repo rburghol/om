@@ -572,3 +572,11 @@ function om_message_model($elementid, $host, $msg, $run_id) {
   $result = shell_exec($cmd);
   return $result;
 }
+
+function om_summarize_model($elementid, $run_id) {
+  $path = "/var/www/html/om/"; // @todo: put this in the module settings somewhere
+  $cmd = "cd $path \n";
+  $cmd .= "php fn_summarize_model_manifest.php $elementid $run_id ";
+  $result = shell_exec($cmd);
+  return $result;
+}
