@@ -1,0 +1,16 @@
+# Shared config
+library(pander);
+library(httr);
+library(hydroTSM);
+library(sqldf);
+library(stats);
+# paths and libs
+source(paste(basepath,'config.local.private',sep='/'));
+source(paste(hydro_tools,"VAHydro-2.0/rest_functions.R", sep = "/")); 
+source(paste(hydro_tools,"VAHydro-1.0/fn_vahydro-1.0.R", sep = "/"));  
+source(paste(hydro_tools,"LowFlow/fn_iha.R", sep = "/"));  
+source(paste(basepath,"auth.private", sep = "/"));#load rest username and password, contained in auth.private file
+source(paste(github_location, "cbp6/code","cbp6_functions.R", sep = "/"));  
+omsite = "http://deq2.bse.vt.edu"
+token <- rest_token(site, token, rest_uname, rest_pw);
+options(timeout=1200); # set timeout to twice default level to avoid abort due to high traffic
