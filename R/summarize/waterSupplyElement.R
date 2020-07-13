@@ -1,6 +1,8 @@
 ################################
 #### *** Water Supply Element
 ################################
+library(stringr)
+
 # dirs/URLs
 save_directory <-  "/var/www/html/data/proj3/out"
 
