@@ -2,13 +2,14 @@
 #### *** Water Supply Element
 ################################
 # dirs/URLs
-save_directory <- "C:\\Desktop\\var\\www\\html\\files\\fe\\plots"
+save_directory <-  "/var/www/html/data/proj3/out"
+
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/ou", sep='');
+save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 #----------------------------------------------
 # Load Libraries
-basepath ='C:\\Desktop\\var\\www\\R';
+basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
 # Read Args
@@ -24,7 +25,7 @@ if (syear != eyear) {
   sdate <- as.Date(paste0(syear,"-10-01"))
   edate <- as.Date(paste0(eyear,"-09-30"))
 } else {
-  sdate <- as.Date(paste0(syear,"-01-01"))
+  sdate <- as.Date(paste0(syear,"-02-01"))
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
 dat <- window(dat, start = sdate, end = edate);
@@ -122,7 +123,7 @@ u30_year2 = loflows[ndx1,]$"year";
 fname <- paste(
   save_directory,
   paste0(
-    '30daymax_unmet_vs_base.',
+    'fig.30daymax_unmet.',
     elid, '.', runid, '.png'
   ),
   sep = '/'
@@ -131,7 +132,7 @@ fname <- paste(
 furl <- paste(
   save_url,
   paste0(
-    '30daymax_unmet_vs_base.',
+    'fig.30daymax_unmet.',
     elid, '.', runid, '.png'
   ),
   sep = '/'
