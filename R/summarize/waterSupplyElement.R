@@ -182,8 +182,8 @@ plt <- ggplot(df, aes(x=date)) +
   guides(colour = guide_legend(override.aes = list(size=5)))+
   labs(y = "Flow (cfs)")
 #dev.off()
-print(fname)
-ggsave(fname,plt,width=1400,height=950)
+print(furl)
+ggsave(furl,plt,width=1400,height=950)
 
 ##### Naming for saving and posting to VAHydro (do we need these lines?)
 # hydroImpoundment, lines 152-178
