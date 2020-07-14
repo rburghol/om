@@ -183,7 +183,7 @@ ggplot(df, aes(x=date)) +
   labs(y = "Flow (cfs)")
 #dev.off()
 print(furl)
-ggsave(furl,plt,width=7,height=4.75)
+ggsave(furl,width=7,height=4.75)
 
 ##### Naming for saving and posting to VAHydro (do we need these lines?)
 # hydroImpoundment, lines 152-178
