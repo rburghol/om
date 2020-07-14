@@ -140,7 +140,7 @@ furl <- paste(
   sep = '/'
 )
 
-#png(furl)
+png(furl)
 
 ##### Define data for graph, just within that defined year, and graph it
 # Lal's code, lines 410-446 (412 commented out)
@@ -158,7 +158,7 @@ df <- data.frame(as.Date(map2$date), map2$flow, map2$base_demand_mgd,map2$unmetd
 
 colnames(df)<-c("date","flow","base_demand_mgd","unmetdemand")
 
-#options(scipen=5, width = 1400, height = 950)
+options(scipen=5, width = 1400, height = 950)
 ggplot(df, aes(x=date)) + 
   geom_line(aes(y=flow, color="Flow"), size=0.5) +
   geom_line(aes(y=base_demand_mgd, colour="Base demand"), size=0.5)+
@@ -181,9 +181,9 @@ ggplot(df, aes(x=date)) +
   scale_colour_manual(values=c("purple","black","blue"))+
   guides(colour = guide_legend(override.aes = list(size=5)))+
   labs(y = "Flow (cfs)")
-#dev.off()
+dev.off()
 print(furl)
-ggsave(furl,width=7,height=4.75)
+#ggsave(furl,width=7,height=4.75)
 
 ##### Naming for saving and posting to VAHydro (do we need these lines?)
 # hydroImpoundment, lines 152-178
