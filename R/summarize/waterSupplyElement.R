@@ -143,7 +143,7 @@ furl <- paste(
   sep = '/'
 )
 
-#png(furl)
+#png(fname)
 
 ##### Define data for graph, just within that defined year, and graph it
 # Lal's code, lines 410-446 (412 commented out)
