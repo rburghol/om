@@ -28,6 +28,8 @@ if (syear != eyear) {
   sdate <- as.Date(paste0(syear,"-10-01"))
   edate <- as.Date(paste0(eyear,"-09-30"))
 } else {
+  # special case to handle 1 year model runs
+  # just omit January in order to provide a short warmup period.
   sdate <- as.Date(paste0(syear,"-02-01"))
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
