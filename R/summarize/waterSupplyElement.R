@@ -183,7 +183,7 @@ ggplot(df, aes(x=date)) +
         panel.grid.minor=element_blank())+
   scale_colour_manual(values=c("purple","black","blue"))+
   guides(colour = guide_legend(override.aes = list(size=5)))+
-  labs(y = "Flow (cfs)")
+  labs(y = "Flow (cfs)", x= paste("Critical Period:",u30_year, sep=' '))
 #dev.off()
 print(fname)
 ggsave(fname,width=7,height=4.75)
