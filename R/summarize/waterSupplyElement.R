@@ -183,13 +183,12 @@ ggplot(df, aes(x=date)) +
         panel.grid.minor=element_blank())+
   scale_colour_manual(values=c("purple","black","blue"))+
   guides(colour = guide_legend(override.aes = list(size=5)))+
-  labs(y = "Flow (cfs)")
+  labs(y = "Flow (cfs)", x= paste("Critical Period:",u30_year2, sep=' '))
 #dev.off()
 print(fname)
 ggsave(fname,width=7,height=4.75)
 
-##### Naming for saving and posting to VAHydro (do we need these lines?)
-# hydroImpoundment, lines 152-178
+##### Naming for saving and posting to VAHydro 
 
 print(paste("Saved file: ", fname, "with URL", furl))
 
