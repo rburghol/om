@@ -118,6 +118,13 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet3
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet7_mgd', unmet7, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet1_mgd', unmet1, site, token)
 
+#defines critical period based on Qintake if there is no unmet demand
+if (sum(datdf$unmet_demand_mgd)==0) {
+  flows <- zoo(as.numeric(dat$Qintake*1.547), order.by = index(dat));
+  loflows <- group2(flows)
+  Qin30 <- loflows["30 Day Min"];
+  ndx1 = which.min(as.numeric(Qin30[,"30 Day Min"]))
+}
 # Define year at which highest 30 Day Max occurs (Lal's code, line 405)
 u30_year2 = loflows[ndx1,]$"year";
 
