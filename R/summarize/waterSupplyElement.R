@@ -37,6 +37,7 @@ if (syear != eyear) {
   sdate <- as.Date(paste0(syear,"-02-01"))
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
+dat2 <- dat #Used for calendar years in heatmap
 dat <- window(dat, start = sdate, end = edate);
 mode(dat) <- 'numeric'
 scen.propname<-paste0('runid_', runid)
@@ -208,13 +209,10 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.30daym
 
 ##### HEATMAP
 
-# @tdb: eliminate this fn_get_runfile call, this is redundant since data is alrady loaded in top of script
-dat2 <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE) # get data
+# Uses dat2 for heatmap calendar years
 # set start and end dates based on inputs
-syear <- min(dat2$year)
 sdate <- as.Date(paste0(syear,"-01-01"))
 
-eyear <- max(dat2$year)
 edate <- as.Date(paste0(eyear,"-12-31"))
 
 dat2 <- window(dat2, start = sdate, end = edate);
@@ -245,23 +243,15 @@ mosum$year <- rep(num_eyear+1,12)
 yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY year")
 yesum$month <- rep(13,length(yesum$year))
 
-# @tdb: replace these dplyr calls with sqldf and/or standard data.frame manipulations
 # create monthly averages 
-moavg<-
-  mosum %>%
-  mutate(avg=count_unmet_days/((num_eyear-num_syear)+1)) %>%
-  mutate(year=num_eyear+2)
-
-moavg$avg<-round(moavg$avg, 1)
+moavg<- sqldf('SELECT * FROM mosum')
+moavg$year <- moavg$year + 1
+moavg$avg <- round(moavg$count_unmet_days/((num_eyear-num_syear)+1),1)
 
 # create yearly averages
-# @tdb: replace these dplyr calls with sqldf and/or standard data.frame manipulations
-yeavg <-  
-  yesum %>%
-  mutate(avg=count_unmet_days/12) %>%
-  mutate(month=14)
-
-yeavg$avg<-round(yeavg$avg, 1)
+yeavg<- sqldf('SELECT * FROM yesum')
+yeavg$month <- yeavg$month + 1
+yeavg$avg <- round(yeavg$count_unmet_days/12,1)
 
 # create x and y axis breaks
 y_breaks <- seq(syear,num_eyear+2,1)
@@ -273,6 +263,7 @@ x_labs <- c(month.abb,'Totals','Avg')
 
 
 ############################################################### Plot and Save
+# If loop makes sure plots are green if there is no unmet demand
 if (sum(mosum$count_unmet_days) == 0) {
   count_grid <- ggplot() +
     geom_tile(data=modat2, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
