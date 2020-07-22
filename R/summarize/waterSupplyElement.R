@@ -208,6 +208,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.30daym
 
 ##### HEATMAP
 
+# @tdb: eliminate this fn_get_runfile call, this is redundant since data is alrady loaded in top of script
 dat2 <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE) # get data
 # set start and end dates based on inputs
 syear <- min(dat2$year)
@@ -244,6 +245,7 @@ mosum$year <- rep(num_eyear+1,12)
 yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY year")
 yesum$month <- rep(13,length(yesum$year))
 
+# @tdb: replace these dplyr calls with sqldf and/or standard data.frame manipulations
 # create monthly averages 
 moavg<-
   mosum %>%
@@ -253,6 +255,7 @@ moavg<-
 moavg$avg<-round(moavg$avg, 1)
 
 # create yearly averages
+# @tdb: replace these dplyr calls with sqldf and/or standard data.frame manipulations
 yeavg <-  
   yesum %>%
   mutate(avg=count_unmet_days/12) %>%
@@ -335,13 +338,13 @@ if (sum(mosum$count_unmet_days) == 0) {
 }
 
 
-fname2 <- paste(save_directory,paste0('fig.unmet_heatmap_',elid, '.', runid, '.png'),sep = '/')
+fname2 <- paste(save_directory,paste0('fig.unmet_heatmap.',elid, '.', runid, '.png'),sep = '/')
 
-furl2 <- paste(save_url, paste0('fig.unmet_heatmap_.',elid, '.', runid, '.png'),sep = '/')
+furl2 <- paste(save_url, paste0('fig.unmet_heatmap.',elid, '.', runid, '.png'),sep = '/')
 
 ggsave(fname2,plot = unmet_avg, width= 7, height=7)
 
-print('File saved to save_directory')
+print(paste('File saved to save_directory:', fname2))
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl2, 'fig.unmet_heatmap', 0.0, site, token)
 
