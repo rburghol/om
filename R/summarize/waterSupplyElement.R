@@ -343,5 +343,5 @@ ggsave(fname2,plot = unmet_avg, width= 7, height=7)
 
 print('File saved to save_directory')
 
-vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl2, 'fig.unmet_heatmap_', 0.0, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl2, 'fig.unmet_heatmap', 0.0, site, token)
 
