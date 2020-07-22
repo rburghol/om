@@ -2,6 +2,10 @@
 #### *** Water Supply Element
 ################################
 library(stringr)
+library(ggplot2)
+library(sqldf)
+library(ggnewscale)
+library(dplyr)
 
 # dirs/URLs
 
@@ -200,4 +204,144 @@ ggsave(fname,width=7,height=4.75)
 print(paste("Saved file: ", fname, "with URL", furl))
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.30daymax_unmet', 0.0, site, token)
+
+
+##### HEATMAP
+
+dat2 <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE) # get data
+# set start and end dates based on inputs
+syear <- min(dat2$year)
+sdate <- as.Date(paste0(syear,"-01-01"))
+
+eyear <- max(dat2$year)
+edate <- as.Date(paste0(eyear,"-12-31"))
+
+dat2 <- window(dat2, start = sdate, end = edate);
+mode(dat2) <- 'numeric'
+
+datdf2 <- as.data.frame(dat2)
+
+modat2 <- sqldf(" select month months, year years, count(*) count from datdf2 where unmet_demand_mgd > 0
+group by month, year") #Counts sum of unmet_days by month and year
+
+#Join counts with original data frame to get missing month and year combos then selects just count month and year
+modat2 <- sqldf("SELECT * FROM datdf2 LEFT JOIN modat2 ON modat2.years = datdf2.year AND modat2.months = datdf2.month group by month, year")
+modat2 <- sqldf('SELECT month, year, count count_unmet_days FROM modat2 GROUP BY month, year')
+
+#Replace NA for count with 0s
+modat2[is.na(modat2)] = 0
+
+########################################################### Calculating Totals
+# numeric versions of eyear and syear
+num_syear <- as.numeric(syear)  
+num_eyear <- as.numeric(eyear)
+
+# monthly totals via sqldf
+mosum <- sqldf("SELECT  month, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY month")
+mosum$year <- rep(num_eyear+1,12)
+
+#yearly sum
+yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY year")
+yesum$month <- rep(13,length(yesum$year))
+
+# create monthly averages 
+moavg<-
+  mosum %>%
+  mutate(avg=count_unmet_days/((num_eyear-num_syear)+1)) %>%
+  mutate(year=num_eyear+2)
+
+moavg$avg<-round(moavg$avg, 1)
+
+# create yearly averages
+yeavg <-  
+  yesum %>%
+  mutate(avg=count_unmet_days/12) %>%
+  mutate(month=14)
+
+yeavg$avg<-round(yeavg$avg, 1)
+
+# create x and y axis breaks
+y_breaks <- seq(syear,num_eyear+2,1)
+x_breaks <- seq(1,14,1)
+
+# create x and y labels
+y_labs <- c(seq(syear,eyear,1),'Totals', 'Avg')
+x_labs <- c(month.abb,'Totals','Avg')
+
+
+############################################################### Plot and Save
+if (sum(mosum$count_unmet_days) == 0) {
+  count_grid <- ggplot() +
+    geom_tile(data=modat2, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(aes(label=modat2$count_unmet_days, x=modat2$month, y= modat2$year), size = 3.5, colour = "black") +
+    scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar", 
+                         name= 'Unmet Days') +
+    theme(panel.background = element_rect(fill = "transparent"))+
+    theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
+    theme(axis.ticks= element_blank()) +
+    theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
+    theme(legend.title.align = 0.5) 
+  
+  unmet <- count_grid + new_scale_fill() +
+    geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(data = yesum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
+    geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
+    scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid="#63D1F4",
+                         midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
+  
+  
+  unmet_avg <- unmet + new_scale_fill()+
+    geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
+    geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
+    geom_text(data = yeavg, size = 3.5, color='black', aes(x = month, y = year, label = avg)) +
+    geom_text(data = moavg, size = 3.5, color='black', aes(x = month, y = year, label = avg))+
+    scale_fill_gradient2(low = "#FFF8DC", mid = "#FFF8DC", high ="#FFF8DC",
+                         name= 'Average Unmet Days', midpoint = mean(yeavg$avg))
+} else{
+  count_grid <- ggplot() +
+    geom_tile(data=modat2, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(aes(label=modat2$count_unmet_days, x=modat2$month, y= modat2$year), size = 3.5, colour = "black") +
+    scale_fill_gradient2(low = "#00cc00", high = "red",mid ='yellow',
+                         midpoint = 15, guide = "colourbar", 
+                         name= 'Unmet Days') +
+    theme(panel.background = element_rect(fill = "transparent"))+
+    theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
+    theme(axis.ticks= element_blank()) +
+    theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
+    theme(legend.title.align = 0.5) 
+  
+  unmet <- count_grid + new_scale_fill() +
+    geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(data = yesum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
+    geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
+    scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid='#CAB8FF',
+                         midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
+  
+  
+  unmet_avg <- unmet + new_scale_fill()+
+    geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
+    geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
+    geom_text(data = yeavg, size = 3.5, color='black', aes(x = month, y = year, label = avg)) +
+    geom_text(data = moavg, size = 3.5, color='black', aes(x = month, y = year, label = avg))+
+    scale_fill_gradient2(low = "#FFF8DC", mid = "#FFDEAD", high ="#DEB887",
+                         name= 'Average Unmet Days', midpoint = mean(yeavg$avg))
+  
+}
+
+
+fname2 <- paste(save_directory,paste0('fig.unmet_heatmap_',elid, '.', runid, '.png'),sep = '/')
+
+furl2 <- paste(save_url, paste0('fig.unmet_heatmap_.',elid, '.', runid, '.png'),sep = '/')
+
+ggsave(fname2,plot = unmet_avg, width= 7, height=7)
+
+print('File saved to save_directory')
+
+vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl2, 'fig.unmet_heatmap', 0.0, site, token)
 
