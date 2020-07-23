@@ -37,7 +37,15 @@ if (syear != eyear) {
   sdate <- as.Date(paste0(syear,"-02-01"))
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
-dat2 <- dat #Used for calendar years in heatmap
+# yrdat will be used for generating the heatmap with calendar years
+yrdat <- dat 
+
+yr_sdate <- as.Date(paste0((as.numeric(syear) + 1),"-01-01"))
+yr_edate <- as.Date(paste0(eyear,"-12-31"))
+
+yrdat <- window(yrdat, start = yr_sdate, end = yr_edate);
+
+# water year data frame
 dat <- window(dat, start = sdate, end = edate);
 mode(dat) <- 'numeric'
 scen.propname<-paste0('runid_', runid)
@@ -210,37 +218,31 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.30daym
 ##### HEATMAP
 
 # Uses dat2 for heatmap calendar years
-# set start and end dates based on inputs
-sdate <- as.Date(paste0(syear,"-01-01"))
+# make numeric versions of syear and eyear
+num_syear <- as.numeric(syear) + 1 
+num_eyear <- as.numeric(eyear)
 
-edate <- as.Date(paste0(eyear,"-12-31"))
+mode(yrdat) <- 'numeric'
 
-dat2 <- window(dat2, start = sdate, end = edate);
-mode(dat2) <- 'numeric'
+yrdatdf <- as.data.frame(yrdat)
 
-datdf2 <- as.data.frame(dat2)
-
-modat2 <- sqldf(" select month months, year years, count(*) count from datdf2 where unmet_demand_mgd > 0
+yrmodat <- sqldf(" select month months, year years, count(*) count from yrdatdf where unmet_demand_mgd > 0
 group by month, year") #Counts sum of unmet_days by month and year
 
 #Join counts with original data frame to get missing month and year combos then selects just count month and year
-modat2 <- sqldf("SELECT * FROM datdf2 LEFT JOIN modat2 ON modat2.years = datdf2.year AND modat2.months = datdf2.month group by month, year")
-modat2 <- sqldf('SELECT month, year, count count_unmet_days FROM modat2 GROUP BY month, year')
+yrmodat <- sqldf("SELECT * FROM yrdatdf LEFT JOIN yrmodat ON yrmodat.years = yrdatdf.year AND yrmodat.months = yrdatdf.month group by month, year")
+yrmodat <- sqldf('SELECT month, year, count count_unmet_days FROM yrmodat GROUP BY month, year')
 
 #Replace NA for count with 0s
-modat2[is.na(modat2)] = 0
+yrmodat[is.na(yrmodat)] = 0
 
 ########################################################### Calculating Totals
-# numeric versions of eyear and syear
-num_syear <- as.numeric(syear)  
-num_eyear <- as.numeric(eyear)
-
 # monthly totals via sqldf
-mosum <- sqldf("SELECT  month, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY month")
+mosum <- sqldf("SELECT  month, sum(count_unmet_days) count_unmet_days FROM yrmodat GROUP BY month")
 mosum$year <- rep(num_eyear+1,12)
 
 #yearly sum
-yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM modat2 GROUP BY year")
+yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM yrmodat GROUP BY year")
 yesum$month <- rep(13,length(yesum$year))
 
 # create monthly averages 
@@ -266,8 +268,8 @@ x_labs <- c(month.abb,'Totals','Avg')
 # If loop makes sure plots are green if there is no unmet demand
 if (sum(mosum$count_unmet_days) == 0) {
   count_grid <- ggplot() +
-    geom_tile(data=modat2, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
-    geom_text(aes(label=modat2$count_unmet_days, x=modat2$month, y= modat2$year), size = 3.5, colour = "black") +
+    geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(aes(label=yrmodat$count_unmet_days, x=yrmodat$month, y= yrmodat$year), size = 3.5, colour = "black") +
     scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar", 
                          name= 'Unmet Days') +
     theme(panel.background = element_rect(fill = "transparent"))+
@@ -296,8 +298,8 @@ if (sum(mosum$count_unmet_days) == 0) {
                          name= 'Average Unmet Days', midpoint = mean(yeavg$avg))
 } else{
   count_grid <- ggplot() +
-    geom_tile(data=modat2, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
-    geom_text(aes(label=modat2$count_unmet_days, x=modat2$month, y= modat2$year), size = 3.5, colour = "black") +
+    geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
+    geom_text(aes(label=yrmodat$count_unmet_days, x=yrmodat$month, y= yrmodat$year), size = 3.5, colour = "black") +
     scale_fill_gradient2(low = "#00cc00", high = "red",mid ='yellow',
                          midpoint = 15, guide = "colourbar", 
                          name= 'Unmet Days') +
