@@ -2528,6 +2528,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function setLocalhostLinkedValue(&$entity, $linked_value) {
+    dpm($entity, 'setLocalhostLinkedValue');
     $this->fix_bigint($entity);
     $dest_prop = $entity->dest_prop->propcode;
     // @todo: we don't yet use the dest_entity_type, or dest_entity_id since 
