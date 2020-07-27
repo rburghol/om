@@ -3654,9 +3654,6 @@ function showElementInputBrowser($formValues, $disabled=0) {
   // Need to add the name and elid of linked prop if it does not show up in local link list
   // elemlist 
   $optels = array_column($elemlist, 'elementid');
-  foreach ($optels as $thiskey => $thisopt) {
-    array_column 
-  }
    foreach ($linkrecs as $thiselem) {
       if ($i == 0) {
          #error_log("Link variables " . print_r(array_keys($thiselem),1));
