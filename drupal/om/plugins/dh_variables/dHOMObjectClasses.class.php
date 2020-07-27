@@ -2544,6 +2544,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getSourceEntity(&$entity) {
+    dpm($entity, 'getSourceEntity'); 
     $entity->src_entity_type = $entity->propcode;
     $entity->src_entity_id = $entity->propvalue;
     if (!empty($entity->src_entity_type) and !empty($entity->src_entity_id)) {
@@ -2554,6 +2555,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getDestEntity(&$entity) {
+    dpm($entity, 'getDestEntity');
     if (!is_object($entity->dest_entity)) {
       $dest_entity_type = $entity->dest_entity_type->propcode;
       $dest_entity_id = $entity->dest_entity_id->propcode;
@@ -2567,7 +2569,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    //dpm($entity,'getLocalhostLinkedValue entity');
+    dpm($entity,'getLocalhostLinkedValue entity');
     //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
       $this->getSourceEntity($entity);
