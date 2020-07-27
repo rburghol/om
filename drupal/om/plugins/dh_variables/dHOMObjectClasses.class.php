@@ -2520,6 +2520,10 @@ class dHOMLinkage extends dHOMBaseObjectClass {
         }
       }
       break;
+      case 'step':
+      // this is a model runtime linkage.  If this model element has an om_element_connection.
+      // Nothing is done here, see this classes method setAllRemoteProperties()
+      break;
     }
   }
   
@@ -2542,8 +2546,11 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   function getSourceEntity(&$entity) {
     $entity->src_entity_type = $entity->propcode;
     $entity->src_entity_id = $entity->propvalue;
-    $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
-    return $entity->src_entity;
+    if (!empty($entity->src_entity_type) and !empty($entity->src_entity_id)) {
+      $entity->src_entity = entity_load_single($entity->src_entity_type, $entity->src_entity_id);
+      return $entity->src_entity;
+    } 
+    return FALSE;
   }
   
   function getDestEntity(&$entity) {
@@ -2601,6 +2608,18 @@ class dHOMLinkage extends dHOMBaseObjectClass {
     //        the om 1.0 system.  This should simply utilize the 
     //        w_linkElements script plumbing 
     // For now, we just return.
+    $link_type = $entity->link_type->propcode;
+    $update_setting = empty($entity->update_setting->propcode) ? 'none' : $entity->update_setting->propcode;
+    if (in_array($link_type, array(2,3))) {
+      switch ($update_setting) {
+        case 'step':
+        // this is a model runtime linkage.  If this model element has an om_element_connection 
+        // we need to push this to the remote model database.
+        // using: om_fn_addObjectLink($srcid, $destid, $srcpropname='', $destpropname='', $linktype = 3)
+          
+        break;
+      }
+    }
     return;
     // Copied from Equation class - to be modified.
     //parent::setAllRemoteProperties($entity, $elid, $path);
