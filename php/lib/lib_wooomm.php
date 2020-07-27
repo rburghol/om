@@ -3651,6 +3651,12 @@ function showElementInputBrowser($formValues, $disabled=0) {
    # print the opening line for the object menu
    $i = 0;
    $innerHTML .= "<table><tr><td>Delete Link</td><td>Local Variable Name</td><td>Source Object</td><td>Object Property Name</td></tr>";
+  // Need to add the name and elid of linked prop if it does not show up in local link list
+  // elemlist 
+  $optels = array_column($elemlist, 'elementid');
+  foreach ($optels as $thiskey => $thisopt) {
+    array_column 
+  }
    foreach ($linkrecs as $thiselem) {
       if ($i == 0) {
          #error_log("Link variables " . print_r(array_keys($thiselem),1));
@@ -3660,6 +3666,10 @@ function showElementInputBrowser($formValues, $disabled=0) {
       $src_prop = $thiselem['src_prop'];
       $dest_prop = $thiselem['dest_prop'];
       $prop_xml = $thiselem['elemprops'];
+      if (!in_array($src_id, $optels)) {
+        // add the source info 
+        $elemlist[] = array('elementid' => $src_id, 'elemname' => $elemname, 'elemprops' => $prop_xml);
+      }
       #$innerHTML .= 'Props:' .  $prop_xml;
       $innerHTML .= '<tr><td valign=top>' . showCheckBox("deleteinput[$i]", 1, '', '', 1, $disabled) . '</td>';
       $innerHTML .= '<td valign=top>' . showWidthTextField("inputname[$i]", $dest_prop, 16, '', 1, $disabled) . '</td>';

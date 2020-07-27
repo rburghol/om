@@ -2528,7 +2528,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function setLocalhostLinkedValue(&$entity, $linked_value) {
-    dpm($entity, 'setLocalhostLinkedValue');
+    //dpm($entity, 'setLocalhostLinkedValue');
     $this->fix_bigint($entity);
     $dest_prop = $entity->dest_prop->propcode;
     // @todo: we don't yet use the dest_entity_type, or dest_entity_id since 
@@ -2545,7 +2545,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getSourceEntity(&$entity) {
-    dpm($entity, 'getSourceEntity'); 
+    //dpm($entity, 'getSourceEntity'); 
     $entity->src_entity_type = $entity->propcode;
     $entity->src_entity_id = $entity->propvalue;
     if (!empty($entity->src_entity_type) and !empty($entity->src_entity_id)) {
@@ -2556,7 +2556,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getDestEntity(&$entity) {
-    dpm($entity, 'getDestEntity');
+    //dpm($entity, 'getDestEntity');
     if (!is_object($entity->dest_entity)) {
       $dest_entity_type = $entity->dest_entity_type->propcode;
       $dest_entity_id = $entity->dest_entity_id->propcode;
@@ -2570,7 +2570,7 @@ class dHOMLinkage extends dHOMBaseObjectClass {
   }
   
   function getLocalhostLinkedValue(&$entity) {
-    dpm($entity,'getLocalhostLinkedValue entity');
+    //dpm($entity,'getLocalhostLinkedValue entity');
     //dpm($entity->src_entity,'getLocalhostLinkedValue src_entity');
     if (!$entity->src_entity) {
       $this->getSourceEntity($entity);
