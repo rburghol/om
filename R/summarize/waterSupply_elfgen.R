@@ -45,8 +45,7 @@ flow_reduction_pct <- 10
 ##########################################################
 #Retrieve intake hydroid from facility:riverseg model pid
 intake.df <- model_2_intake(pid,site)
-intake.hydroid <- intake.df$intake.hydroid
-hydroid <- intake.hydroid
+hydroid <- intake.df$intake.hydroid
 ##########################################################
 
 #### Take in watershed and mean intake data
