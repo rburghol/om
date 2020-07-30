@@ -19,7 +19,7 @@ save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 basepath ='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 source(paste(om_location,'R/summarize/model_2_intake.R',sep='/'))
-
+site <- "http://deq2.bse.vt.edu/d.dh"
 
 #### Input arguments
 
@@ -49,7 +49,7 @@ hydroid <- intake.df$intake.hydroid
 ##########################################################
 
 #### Take in watershed and mean intake data
-site_comparison <- paste('http://deq1.bse.vt.edu/d.dh/dh-feature-contained-within-export', hydroid, 'watershed', sep = '/')
+site_comparison <- paste(site,'dh-feature-contained-within-export', hydroid, 'watershed', sep = '/')
 
 containing_watersheds <- read.csv(file=site_comparison, header=TRUE, sep=",")
 
@@ -147,7 +147,7 @@ b2 <- ymax2 - (m2*log(xmax))
 plt <- elf$plot +
   geom_segment(aes(x = mean_intake, y = -Inf, xend = mean_intake, yend = int), color = 'red', linetype = 'dashed') +
   geom_segment(aes(x = 0, xend = mean_intake, y = int, yend = int), color = 'red', linetype = 'dashed') +
-  geom_point(aes(x = mean_intake, y = int, fill = 'Mean intake flow'), color = 'red', shape = 'triangle', size = 2) +
+  geom_point(aes(x = mean_intake, y = int, fill = 'Intake'), color = 'red', shape = 'triangle', size = 2) +
   geom_segment(aes(x = xmin, y = (m1 * log(xmin) + b1), xend = xmax, yend = (m1 * log(xmax)) + b1), color = 'blue', linetype = 'dashed') +
   geom_segment(aes(x = xmin, y = (m2 * log(xmin) + b2), xend = xmax, yend = (m2 * log(xmax)) + b2), color = 'blue', linetype = 'dashed') +
   labs(fill = 'Intake Legend')
