@@ -27,7 +27,7 @@ site <- "http://deq2.bse.vt.edu/d.dh"
 # pid <- as.integer(argst[1])
 # elid <- as.integer(argst[2])
 # runid <- as.integer(argst[3])
-
+runid <- 18
 #Additional arguments 
 # huc_level <- as.integer(argst[4])
 # flow_metric <- as.integer(argst[5])
@@ -89,13 +89,13 @@ watershed.df <- elfdata_vahydro(watershed.code,watershed.bundle,watershed.ftype,
 watershed.df <- clean_vahydro(watershed.df)
 
 elf_quantile <- 0.80
-breakpt <- bkpt_pwit("watershed.df" = watershed.df, "quantile" = elf_quantile, "blo" = 100, "bhi" = 1000)  
+breakpt <- bkpt_pwit("watershed.df" = watershed.df, "quantile" = elf_quantile, "blo" = mean(watershed.df$x.metric), "bhi" = max(watershed.df$x.metric))  
 
 elf <- elfgen("watershed.df" = watershed.df,
               "quantile" = elf_quantile,
               "breakpt" = breakpt,
-              "yaxis_thresh" = 53, 
-              "xlabel" = flow_metric,
+              "yaxis_thresh" = 50, 
+              "xlabel" = 'Flow [cfs]',
               "ylabel" = "Fish Species Richness")
 
 
@@ -133,7 +133,7 @@ ymax2 <- yval2[2] # bottom right point, line 2
 
 m <- elf$stats$m
 b <- elf$stats$b
-int <- m*log(mean_intake) + b      # solving for mean_intake y-value
+int <- round((m*log(mean_intake) + b),2)      # solving for mean_intake y-value
 
 m1 <- (ymax1-ymin1)/(log(xmax)-log(xmin)) # line 1
 b1 <- ymax1-(m1*log(xmax))
@@ -141,6 +141,12 @@ b1 <- ymax1-(m1*log(xmax))
 m2 <- (ymax2-ymin2)/(log(xmax)-log(xmin)) # line 2
 b2 <- ymax2 - (m2*log(xmax))
 
+# Calculating y max value based on greatest point value or intake y val
+if (int > max(watershed.df$NT.TOTAL.UNIQUE)) {
+  ymax <- int + 2
+} else {
+  ymax <- as.numeric(max(watershed.df$NT.TOTAL.UNIQUE)) + 2
+}
 
 #### Plot
 
@@ -150,25 +156,63 @@ plt <- elf$plot +
   geom_point(aes(x = mean_intake, y = int, fill = 'Intake'), color = 'red', shape = 'triangle', size = 2) +
   geom_segment(aes(x = xmin, y = (m1 * log(xmin) + b1), xend = xmax, yend = (m1 * log(xmax)) + b1), color = 'blue', linetype = 'dashed') +
   geom_segment(aes(x = xmin, y = (m2 * log(xmin) + b2), xend = xmax, yend = (m2 * log(xmax)) + b2), color = 'blue', linetype = 'dashed') +
-  labs(fill = 'Intake Legend')
+  labs(fill = 'Intake Legend', subtitle = paste('Flow Metric:', flow_metric,sep=' ')) + 
+  theme(plot.title = element_text(face = 'bold', vjust = -5)) + 
+  ylim(0,ymax)
 
 
+#### Calculating median percent/absolute richness change
+
+pct_change <- richness_change(elf$stats, "pctchg" = flow_reduction_pct, "xval" = mean_intake)
+abs_change <- richness_change(elf$stats, "pctchg" = flow_reduction_pct)
 
 #### Using confidence interval lines to find percent/absolute richness bounds
 
 elf$bound1stats$m <- m1
 elf$bound1stats$b <- b1
 
-percent_richness_change_bound1 <- richness_change(elf$bound1stats, "pctchg" = flow_reduction_pct, "xval" = mean_intake)
-abs_richness_change_bound1 <- richness_change(elf$bound1stats, "pctchg" = flow_reduction_pct)
+percent_richness_change_bound1 <- round(richness_change(elf$bound1stats, "pctchg" = flow_reduction_pct, "xval" = mean_intake),2)
+abs_richness_change_bound1 <- round(richness_change(elf$bound1stats, "pctchg" = flow_reduction_pct),2)
 
 elf$bound2stats$m <- m2
 elf$bound2stats$b <- b2
 
-percent_richness_change_bound2 <- richness_change(elf$bound2stats, "pctchg" = flow_reduction_pct, "xval" = mean_intake)
-abs_richness_change_bound2 <- richness_change(elf$bound2stats, "pctchg" = flow_reduction_pct)
+percent_richness_change_bound2 <- round(richness_change(elf$bound2stats, "pctchg" = flow_reduction_pct, "xval" = mean_intake),2)
+abs_richness_change_bound2 <- round(richness_change(elf$bound2stats, "pctchg" = flow_reduction_pct),2)
 
+# checking diffs in pct richness
+diff1 <- round((pct_change - percent_richness_change_bound1),2)
+diff2 <- round((pct_change - percent_richness_change_bound2),2)
 
+#checking diffs in abs richness
+abs_d1 <- round((abs_change - abs_richness_change_bound1),2)
+abs_d2 <- round((abs_change - abs_richness_change_bound2),2)
+
+# creating percent change range values
+if (abs(diff1) == abs(diff2)) {
+  pct_range <- paste('The percent richness change is ',pct_change,' +/-', abs(diff1),sep='')
+} else{
+  if (diff1 < 0) {
+    pct_range <- paste('The percent richness change is ',round(pct_change,2),' +', abs(diff1),'/-', abs(diff2),sep='')
+  } else {
+    pct_range <- paste('The percent richness change is ',round(pct_change,2),' +', abs(diff2),'/-', abs(diff1),sep='')
+  }
+}
+
+#creating abs change range values
+
+######## create abs/pct change range vals
+#abs
+if (abs(abs_d1) == abs(abs_d2)) {
+  abs_range <-paste('The absolute richness change is ',round(abs_change,2),' +/-', round(abs(abs_d1),2),sep='')
+}else{
+  if (abs_d1 < 0) {
+    abs_range <- paste('The absolute richness change is ',round(abs_change,2),' +', abs(abs_d1),'/-', abs(abs_d2),sep='')
+  } else {
+    abs_range <- paste('The absolute richness change is ',round(abs_change,2),' +', abs(abs_d2),'/-', abs(abs_d1),sep='')
+  }
+}
+  
 
 #### Saving
 
@@ -176,7 +220,7 @@ fname <- paste(
   save_directory,
   paste0(
     'fig.elfgen.',
-    watershed.code, '.', x.metric, '.', y.metric, '.png'
+    pid, '.', runid,'.',x.metric, '.', '.png'
   ),
   sep = '/'
 )
@@ -196,4 +240,41 @@ ggsave(fname, width = 7, height = 5.5)
 print(paste("Saved file: ", fname, "with URL", furl))
 
 
-#### Posting to VAHydro
+########## Posting to VAHydro
+
+# GETTING SCENARIO PROPERTY FROM VA HYDRO
+scen.propname<-paste0('runid_', runid)
+
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
+scenprop <- getProperty(sceninfo, site, scenprop)
+# POST PROPERTY IF IT IS NOT YET CREATED
+if (identical(scenprop, FALSE)) {
+  # create
+  sceninfo$pid = NULL
+} else {
+  sceninfo$pid = scenprop$pid
+}
+scenprop = postProperty(inputs=sceninfo,base_url=base_url,prop)
+scenprop <- getProperty(sceninfo, site, scenprop)
+sceninfo <- list(
+  varkey = 'om_scenario',
+  propname = scen.propname,
+  featureid = pid,
+  entity_type = "dh_properties"
+)
+
+#Posting elfgen plot
+#vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.elfgen', 0.0, site, token)
+
+#Posting absolute richness change and percent richness
+#vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elfgen_pct_change', pct_range, site, token)
+#vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'elfgen_abs_change', abs_range, site, token)
+
+# Posting additional properties
+#y val at intake
+#vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'proj_species_rich', int, site, token)
