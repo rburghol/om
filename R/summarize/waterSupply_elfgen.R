@@ -30,7 +30,7 @@ site <- "http://deq2.bse.vt.edu/d.dh"
 runid <- 18
 #Additional arguments 
 # huc_level <- as.integer(argst[4])
-# flow_metric <- as.integer(argst[5])
+# flow_number <- as.integer(argst[5])   #1-13, 13 is mean annual and the other correspond to the months
 # flow_reduction_pct <- as.integer(argst[6])
 
 pid <- 4827139 #WILDERNESS SERVICE AREA:Rapidan River
@@ -39,9 +39,19 @@ pid <- 4827139 #WILDERNESS SERVICE AREA:Rapidan River
 # runid <- ''
 
 huc_level <- 'huc8'
-flow_metric <- 'erom_q0001e_mean'
+
+#create flow metric df and corresponding month vector
+month_flow <- append(month.name, 'Mean Annual')
+flow_metric_df <- as.data.frame(cbind('erom_q0001e_jan', 'erom_q0001e_feb',
+                                      'erom_q0001e_mar', 'erom_q0001e_apr', 'erom_q0001e_may',
+                                      'erom_q0001e_jun', 'erom_q0001e_jul', 'erom_q0001e_aug', 
+                                      'erom_q0001e_sept','erom_q0001e_oct', 'erom_q0001e_nov',
+                                      'erom_q0001e_dec', 'erom_q0001e_mean'))
+flow_number <- 13
+
 flow_reduction_pct <- 10
 
+flow_metric <-as.character(flow_metric_df[flow_number])
 ##########################################################
 #Retrieve intake hydroid from facility:riverseg model pid
 intake.df <- model_2_intake(pid,site)
@@ -148,6 +158,7 @@ if (int > max(watershed.df$NT.TOTAL.UNIQUE)) {
   ymax <- as.numeric(max(watershed.df$NT.TOTAL.UNIQUE)) + 2
 }
 
+
 #### Plot
 
 plt <- elf$plot +
@@ -156,7 +167,9 @@ plt <- elf$plot +
   geom_point(aes(x = mean_intake, y = int, fill = 'Intake'), color = 'red', shape = 'triangle', size = 2) +
   geom_segment(aes(x = xmin, y = (m1 * log(xmin) + b1), xend = xmax, yend = (m1 * log(xmax)) + b1), color = 'blue', linetype = 'dashed') +
   geom_segment(aes(x = xmin, y = (m2 * log(xmin) + b2), xend = xmax, yend = (m2 * log(xmax)) + b2), color = 'blue', linetype = 'dashed') +
-  labs(fill = 'Intake Legend', subtitle = paste('Flow Metric:', flow_metric,sep=' ')) + 
+  labs(fill = 'Intake Legend', 
+       subtitle = paste('Flow Metric:', month_flow[flow_number], 'Flow',sep=' '),
+       x=paste(elf$plot$labels$x, '  Breakpt:',round(breakpt,1),sep=' ')) + 
   theme(plot.title = element_text(face = 'bold', vjust = -5)) + 
   ylim(0,ymax)
 
