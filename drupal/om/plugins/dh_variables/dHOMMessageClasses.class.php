@@ -96,8 +96,8 @@ class dHOMbroadCastObject extends dHOMSubComp {
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = parent::exportOpenMIBase($entity);
-    $export[$entity->propname]['matrix'] = array(
-      'name' => 'matrix',
+    $export[$entity->propname]['broadcast_params'] = array(
+      'name' => 'broadcast_params',
       'object_class' => 'array',
       'value' => $this->getCSVTableField($entity)
     );

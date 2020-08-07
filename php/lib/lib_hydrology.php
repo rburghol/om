@@ -2955,7 +2955,7 @@ class broadCastObject extends modelSubObject {
    // HUB object communication entities
    var $parentHub; // the "up-link" for peer-broadcast sharing in this container space
    var $childHub; // the hub space for this objects contained children (their parentHub - if they exist)
-   var $broadcast_params = array(); 
+   var $broadcast_params = array();  // used for remote setting of local_varname and broadcast_varname -- @tbd replace them with this single variable as an array
    var $read_vars = array();
    var $cast_vars = array();
    // in form 'groupName'=>array(
