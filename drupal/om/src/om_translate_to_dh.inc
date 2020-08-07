@@ -126,7 +126,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
       }
       $translated = TRUE;
     break;
-    case 'broadcastObject':
+    case 'broadCastObject':
       if (method_exists($plugin, 'setCSVTableField')) {
         while ( $local_var = array_shift($om_comp->local_varnames) ) {
           $remote_var = array_shift($om_comp->broadcast_varnames);
@@ -134,7 +134,7 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
         }
         //error_log("Translating 1tierflowby matrix to tablefield" . print_r((array)$om_comp,1));
         //error_log("Translating matrix to tablefield" . print_r($in,1));
-        error_log("Translating broadcastObject lists to tablefield" . print_r($varpairs,1));
+        error_log("Translating broadCastObject lists to tablefield" . print_r($varpairs,1));
         $plugin->setCSVTableField($dh_prop, $varpairs);
       } else {
         error_log("could not find function setCSVTableField");
