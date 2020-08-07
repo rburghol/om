@@ -3314,8 +3314,8 @@ class broadCastObject extends modelSubObject {
         $this->broadcast_varname = array();
         foreach ($propvalue as $pair) {
           error_log("Trying to write array: " . print_r($pair,1));
-          //$this->local_varname[] = $pair[0];
-          //$this->broadcast_varname[] = $pair[1];
+          $this->local_varname[] = $pair[0];
+          $this->broadcast_varname[] = $pair[1];
         }
       break;
       default:
