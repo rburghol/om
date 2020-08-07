@@ -128,8 +128,8 @@ function om_translate_to_dh($om_comp, &$dh_prop) {
     break;
     case 'broadCastObject':
       if (method_exists($plugin, 'setCSVTableField')) {
-        while ( $local_var = array_shift($om_comp->local_varnames) ) {
-          $remote_var = array_shift($om_comp->broadcast_varnames);
+        while ( $local_var = array_shift($om_comp->local_varname) ) {
+          $remote_var = array_shift($om_comp->broadcast_varname);
           $varpairs[] = array($local_var, $remote_var);
         }
         //error_log("Translating 1tierflowby matrix to tablefield" . print_r((array)$om_comp,1));
