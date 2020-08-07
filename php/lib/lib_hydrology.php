@@ -2977,6 +2977,7 @@ class broadCastObject extends modelSubObject {
    var $multivar = 1; // this is a multi-var entity
    var $loggable = 0; 
    var $exclude_my_broadcasts = 0; // don't READ values from this objects broadcasts to hub
+   var $json2d = TRUE;
    
    function getInputs() {
       // has an entirely different approach to getting inputs
