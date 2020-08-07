@@ -12,7 +12,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
   
   public function formRowEdit(&$form, $entity) {
     dpm($form,'form');
-    $form['field_dh_matrix']['und'][0]['#description'] = 'Defined local variables in the left hand column and remote variables in the right hand column.  Do not use a header line.';
+    $form['field_dh_matrix']['und'][0]['tablefield']['#description'] = 'Defined local variables in the left hand column and remote variables in the right hand column.  Do not use a header line.';
     parent::formRowEdit($form, $entity);
     
   }
