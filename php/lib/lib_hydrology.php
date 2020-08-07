@@ -3307,7 +3307,7 @@ class broadCastObject extends modelSubObject {
   
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
-      case 'varnames':
+      case 'broadcast_params':
       error_log("setClassProp called with $propname = " . print_r($propvalue,1));
         // this is a special array variable that we split into local_varname and broadcast_varname 
         $this->local_varname = array();
