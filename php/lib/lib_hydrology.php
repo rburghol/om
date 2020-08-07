@@ -3303,6 +3303,23 @@ class broadCastObject extends modelSubObject {
          return $returnInfo;
       }
    }
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+    switch ($propname) {
+      case 'varnames':
+        // this is a special array variable that we split into local_varname and broadcast_varname 
+        $this->local_varname = array();
+        $this->broadcast_varname = array();
+        foreach ($propvalue as $pair) {
+          $this->local_varname[] = $pair['local_varname'];
+          $this->broadcast_varname[] = $pair['broadcast_varname'];
+        }
+      break;
+      default:
+        parent::setClassProp($propname, $propvalue, $view);
+      break;
+    }
+  }
 
 }
 
