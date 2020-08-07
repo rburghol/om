@@ -11,8 +11,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
   var $matrix_field = 'field_dh_matrix';
   
   public function formRowEdit(&$form, $entity) {
-    dpm($entity,'entity');
-    dpm($this,'plugin');
+    dpm($form,'form');
     parent::formRowEdit($form, $entity);
     
   }
