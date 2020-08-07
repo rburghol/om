@@ -78,8 +78,8 @@ class dHOMbroadCastObject extends dHOMSubComp {
   public function setAllRemoteProperties($entity, $elid, $path) {
     // this replaces parent method in favor of full object json transfer
     // for now just invoke the parent and return 
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    return;
+    //parent::setAllRemoteProperties($entity, $elid, $path);
+    //return;
     
     // experimental code to use json 
     $ppath = $path;
@@ -89,6 +89,18 @@ class dHOMbroadCastObject extends dHOMSubComp {
     //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
+  }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = parent::exportOpenMIBase($entity);
+    $export[$entity->propname]['matrix'] = array(
+      'name' => 'matrix',
+      'object_class' => 'array',
+      'value' => $this->getCSVTableField($entity)
+    );
+    unset($export[$entity->propname]['code']);
+    return $export;
   }
   
   // ***************************
