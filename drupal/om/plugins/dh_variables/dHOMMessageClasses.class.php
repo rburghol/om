@@ -18,6 +18,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
       'read' => "Read",
       'cast' => "Cast",
     );
+    $form['field_dh_matrix']['und'][0]['tablefield']['#weight'] = 10;
     $form['broadcast_mode']['#type'] = 'select';
     $form['broadcast_mode']['#options'] = $lutypes;
     $form['broadcast_mode']['#size'] = 1;
