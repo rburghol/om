@@ -952,10 +952,10 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         $setstr = "php set_subprop.php $elid \"$parentname\" \"$object_class\" \"$propname\" \"$propvalue\" \"$mode\" 0 ";
       break;
       case 3:
-      // @todo: this would be a sub-comp of a sub-comp,
-      //        Ex: a matrix on a subcomp, like the land use matrix of a CBP object or the stage-storage of lake
-      //        Or, like an equation on a subcomp like channelObject
-      //        at this time I don't think we should have any Equations sub-subs, but just in case 
+        // @todo: this would be a sub-comp of a sub-comp,
+        //        Ex: a matrix on a subcomp, like the land use matrix of a CBP object or the stage-storage of lake
+        //        Or, like an equation on a subcomp like channelObject
+        //        at this time I don't think we should have any Equations sub-subs, but just in case 
         list($propname, $parentname, $grandparentname) = $path;
         // this is a property on a subcomp of the element
         //$setstr = "php set_subprop.php $elid $parentname $object_class $propname \"$propvalue\" \"$mode\" 0 ";
