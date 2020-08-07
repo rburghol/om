@@ -37,6 +37,16 @@ class dHOMbroadCastObject extends dHOMSubComp {
   // BEGIN Code borowed from dHOMDataMatrix
   // ***************************
   
+  public function load(&$entity) {
+    // get field default basics
+    //dpm($entity, 'load()');
+    parent::load($entity);
+    if ($entity->is_new or $entity->reset_defaults) {
+      $datatable = $this->tableDefault($entity);
+      $this->setCSVTableField($entity, $datatable);
+    }
+  }
+  
   public function entityDefaults(&$entity) {
     //dpm($entity,'entity');
     // special render handlers when displaying in a grouped property block
@@ -63,6 +73,28 @@ class dHOMbroadCastObject extends dHOMSubComp {
       $csv[] = array_values($rowvals);
     }
     return $csv;
+  }
+  
+  function setCSVTableField(&$entity, $csvtable) {
+    // requires a table to be set in non-associative format (essentially a csv)
+    $instance = field_info_instance($entity->entityType(), $this->matrix_field, $entity->bundle);
+    $field = field_info_field($this->matrix_field);
+    $default = field_get_default_value($entity->entityType(), $entity, $field, $instance);
+    //dpm($default,'default');
+    list($imported_tablefield, $row_count, $max_col_count) = dh_tablefield_parse_array($csvtable);
+    // set some default basics
+    $default[0]['tablefield']['tabledata'] = $imported_tablefield;
+    $default[0]['tablefield']['rebuild']['count_cols'] = $max_col_count;
+    $default[0]['tablefield']['rebuild']['count_rows'] = $row_count;
+    if (function_exists('tablefield_serialize')) {
+      $default[0]['value'] = tablefield_serialize($field, $default[0]['tablefield']);
+    } else {
+      $default[0]['value'] = serialize($default[0]['tablefield']);
+    }
+    $default[0]['format'] = !isset($default[0]['format']) ? NULL : $default[0]['format'];
+    $entity->{$this->matrix_field} = array(
+      'und' => $default
+    );
   }
   
   public function getMatrixField($entity) {
