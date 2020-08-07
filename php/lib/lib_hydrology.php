@@ -2955,7 +2955,7 @@ class broadCastObject extends modelSubObject {
    // HUB object communication entities
    var $parentHub; // the "up-link" for peer-broadcast sharing in this container space
    var $childHub; // the hub space for this objects contained children (their parentHub - if they exist)
-   var $broadcast_params = array(); 
+   var $broadcast_params = array();  // used for remote setting of local_varname and broadcast_varname -- @tbd replace them with this single variable as an array
    var $read_vars = array();
    var $cast_vars = array();
    // in form 'groupName'=>array(
@@ -2977,6 +2977,7 @@ class broadCastObject extends modelSubObject {
    var $multivar = 1; // this is a multi-var entity
    var $loggable = 0; 
    var $exclude_my_broadcasts = 0; // don't READ values from this objects broadcasts to hub
+   var $json2d = TRUE;
    
    function getInputs() {
       // has an entirely different approach to getting inputs
@@ -3306,13 +3307,15 @@ class broadCastObject extends modelSubObject {
   
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
-      case 'varnames':
+      case 'broadcast_params':
+      error_log("setClassProp called with $propname = " . print_r($propvalue,1));
         // this is a special array variable that we split into local_varname and broadcast_varname 
         $this->local_varname = array();
         $this->broadcast_varname = array();
         foreach ($propvalue as $pair) {
-          $this->local_varname[] = $pair['local_varname'];
-          $this->broadcast_varname[] = $pair['broadcast_varname'];
+          //error_log("Trying to write array: " . print_r($pair,1));
+          $this->local_varname[] = $pair[0];
+          $this->broadcast_varname[] = $pair[1];
         }
       break;
       default:

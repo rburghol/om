@@ -949,17 +949,17 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
         list($propname, $parentname) = $path;
         // this is a property on a subcomp of the element
         // setprop_mode = 'json' for matrices, '' is default
-        $setstr = "php set_subprop.php $elid $parentname \"$object_class\" $propname \"$propvalue\" \"$mode\" 0 ";
+        $setstr = "php set_subprop.php $elid \"$parentname\" \"$object_class\" \"$propname\" \"$propvalue\" \"$mode\" 0 ";
       break;
       case 3:
-      // @todo: this would be a sub-comp of a sub-comp,
-      //        Ex: a matrix on a subcomp, like the land use matrix of a CBP object or the stage-storage of lake
-      //        Or, like an equation on a subcomp like channelObject
-      //        at this time I don't think we should have any Equations sub-subs, but just in case 
+        // @todo: this would be a sub-comp of a sub-comp,
+        //        Ex: a matrix on a subcomp, like the land use matrix of a CBP object or the stage-storage of lake
+        //        Or, like an equation on a subcomp like channelObject
+        //        at this time I don't think we should have any Equations sub-subs, but just in case 
         list($propname, $parentname, $grandparentname) = $path;
         // this is a property on a subcomp of the element
         //$setstr = "php set_subprop.php $elid $parentname $object_class $propname \"$propvalue\" \"$mode\" 0 ";
-        $setstr = "php set_subprop.php $elid $grandparentname $object_class $parentname:$propname \"$propvalue\" \"$mode\" 0 ";
+        $setstr = "php set_subprop.php $elid \"$grandparentname\" \"$object_class\" \"$parentname:$propname\" \"$propvalue\" \"$mode\" 0 ";
         // @todo: change syntax from elid propname "subpropname=value" parent_object_class overwrite
         //        to:
         //        elid propname subpropname subpropvalue parent_object_class setprop_mode overwrite 
