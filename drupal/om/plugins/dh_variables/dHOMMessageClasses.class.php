@@ -11,10 +11,67 @@ class dHOMbroadCastObject extends dHOMSubComp {
   var $matrix_field = 'field_dh_matrix';
   
   public function formRowEdit(&$form, $entity) {
-    dpm($form,'form');
-    $form['field_dh_matrix']['und'][0]['tablefield']['#description'] = 'Defined local variables in the left hand column and remote variables in the right hand column.  Do not use a header line.';
+    //dpm($form,'form');
     parent::formRowEdit($form, $entity);
+    $form['field_dh_matrix']['und'][0]['tablefield']['#description'] = 'Defined local variables in the left hand column and remote variables in the right hand column.  Do not use a header line.';
+    $modes = array(
+      'read' => "Read",
+      'cast' => "Cast",
+    );
+    $form['broadcast_mode']['#type'] = 'select';
+    $form['broadcast_mode']['#options'] = $lutypes;
+    $form['broadcast_mode']['#size'] = 1;
+    $form['broadcast_mode']["#empty_value"] = "read";
+    $form['broadcast_mode']["#empty_option"] = "read";
+    $hubs = array(
+      'child' => "child",
+      'parent' => "parent",
+      'global' => "Global (not yet functional)",
+    );
+    $form['broadcast_hub']['#type'] = 'select';
+    $form['broadcast_hub']['#options'] = $lutypes;
+    $form['broadcast_hub']['#size'] = 1;
+    $form['broadcast_hub']["#empty_value"] = "parent";
+    $form['broadcast_hub']["#empty_option"] = "parent";
     
+  }
+  
+  public function getDefaults($entity, &$defaults = array()) {
+    $defaults = parent::getDefaults($entity, $defaults);
+    $defaults += array(
+      'broadcast_class' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'broadcast_class',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'vardesc' => 'Name of the broadcast class for these variables.',
+        'title' => 'Row Key',
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'broadcast_hub' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'broadcast_hub',
+        'vardesc' => 'Select the entity scope (hub) of this broadcast channel.',
+        'title' => 'Column Key',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+      'broadcast_mode' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'broadcast_mode',
+        'vardesc' => 'Read or send to broadcast channel.',
+        'title' => 'Row Lookup Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
+      ),
+    );
+    return $defaults;
   }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
