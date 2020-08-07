@@ -37,6 +37,15 @@ class dHOMbroadCastObject extends dHOMSubComp {
   // BEGIN Code borowed from dHOMDataMatrix
   // ***************************
   
+  public function entityDefaults(&$entity) {
+    //dpm($entity,'entity');
+    // special render handlers when displaying in a grouped property block
+    $entity->bundle = $this->default_bundle;
+    $datatable = $this->tableDefault($entity);
+    $this->setCSVTableField($entity, $datatable);
+    //dpm($entity, 'entityDefaults');
+  }
+  
   public function tableDefault($entity) {
     if (isset($entity->field_dh_matrix_default)) {
       $table = $entity->field_dh_matrix_default;
