@@ -12,6 +12,12 @@ class dHOMbroadCastObject extends dHOMSubComp {
   var $default_bundle = 'om_data_matrix'; // by declaring this we automatically inherit the tablefield data, but need to supply our own code to make it work
   var $matrix_field = 'field_dh_matrix';
   
+  public function formRowEdit(&$form, $entity) {
+    dpm($entity,'entity');
+    dpm($this,'plugin');
+    parent::formRowEdit($form, $entity);
+    
+  }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     // this replaces parent method in favor of full object json transfer
