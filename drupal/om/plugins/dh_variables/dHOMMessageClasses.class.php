@@ -16,7 +16,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
     $form['field_dh_matrix']['und'][0]['tablefield']['#description'] = 'Defined local variables in the left hand column and remote variables in the right hand column.  Do not use a header line.';
     $modes = array(
       'read' => "Read",
-      'cast' => "Cast",
+      'cast' => "Send",
     );
     $form['field_dh_matrix']['und'][0]['tablefield']['#weight'] = 10;
     $form['broadcast_mode']['#type'] = 'select';
@@ -25,8 +25,8 @@ class dHOMbroadCastObject extends dHOMSubComp {
     $form['broadcast_mode']["#empty_value"] = "read";
     $form['broadcast_mode']["#empty_option"] = "read";
     $hubs = array(
-      'child' => "child",
-      'parent' => "parent",
+      'child' => "Child",
+      'parent' => "Parent",
       'global' => "Global (not yet functional)",
     );
     $form['broadcast_hub']['#type'] = 'select';
