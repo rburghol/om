@@ -5,8 +5,6 @@ module_load_include('module', 'dh');
 // make sure that we have base plugins 
 $plugin_def = ctools_get_plugins('dh', 'dh_variables', 'dHOMmodelElement');
 $class = ctools_plugin_get_class($plugin_def, 'handler');
-
-class dHOMbroadCastTable extends dHVarWithTableFieldBase {
   
 class dHOMbroadCastObject extends dHOMSubComp {
   var $default_bundle = 'om_data_matrix'; // by declaring this we automatically inherit the tablefield data, but need to supply our own code to make it work
