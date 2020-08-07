@@ -20,7 +20,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
     );
     $form['field_dh_matrix']['und'][0]['tablefield']['#weight'] = 10;
     $form['broadcast_mode']['#type'] = 'select';
-    $form['broadcast_mode']['#options'] = $lutypes;
+    $form['broadcast_mode']['#options'] = $modes;
     $form['broadcast_mode']['#size'] = 1;
     $form['broadcast_mode']["#empty_value"] = "read";
     $form['broadcast_mode']["#empty_option"] = "read";
@@ -30,7 +30,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
       'global' => "Global (not yet functional)",
     );
     $form['broadcast_hub']['#type'] = 'select';
-    $form['broadcast_hub']['#options'] = $lutypes;
+    $form['broadcast_hub']['#options'] = $hubs;
     $form['broadcast_hub']['#size'] = 1;
     $form['broadcast_hub']["#empty_value"] = "parent";
     $form['broadcast_hub']["#empty_option"] = "parent";
