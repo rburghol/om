@@ -3,13 +3,13 @@ site <- 'http://deq1.bse.vt.edu/d.alpha';
 #Cross-site Request Forgery protection (Token needed for POST and PUT)
 csrf <- GET(
   url=paste(site, '/restws/session/token/',sep=''),
-  authenticate("restws_admin", "@dmin123RESTFUL")
+  authenticate(rest_uname, rest_pw)
 );
 token <- content(csrf)
 hydroid=77499;
 # without authentication
 sp <- GET(
-  paste(site,"dh-project-feature",hydroid,sep="/"), 
+  paste(site,"dh-project-feature",hydroid,sep="/"),
   encode = "xml"
 );
 
@@ -20,7 +20,7 @@ noauth
 
 # WITH authentication
 sp <- GET(
-  paste(site,"dh-project-feature",hydroid,sep="/"), 
+  paste(site,"dh-project-feature",hydroid,sep="/"),
   add_headers(HTTP_X_CSRF_TOKEN = token),
   encode = "xml"
 );
