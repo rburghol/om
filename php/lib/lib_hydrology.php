@@ -4832,6 +4832,18 @@ class dataMatrix extends modelSubObject {
        parent::setProp($propname, $propvalue, $view);
      }
    }
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+    switch ($propname) {
+      case 'matrix':
+        error_log("Matrix Array located, handling " . print_r($propvalue,1));
+        $this->matrix = $propvalue;
+      break;
+      default:
+        parent::setClassProp($propname, $propvalue, $view);
+      break;
+    }
+  }
    
   function twoDimArrayToMatrix($thisarray = array()) {
     // sets this objects matric to a flattened version of the input matrix
