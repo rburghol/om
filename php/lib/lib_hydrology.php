@@ -4805,33 +4805,33 @@ class dataMatrix extends modelSubObject {
    
    }
    
-   function setProp($propname, $propvalue, $view = '') {
-     
-     if ( ($propname == 'matrix') ) {
-       // handle calls to set the matrix on this object
-       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
-       //$this->matrix = array('storage','stage','surface_area',0,0,0);
-       // check for a valid json object, transform to array
-       switch ($view) {
-         case 'json-1d':
-         $raw_json = $propvalue;
-         $propvalue = json_decode($propvalue, TRUE);
-         if (is_array($propvalue)) {
-           error_log("Array located, handling " . print_r($propvalue,1));
-           $this->matrix = $propvalue;
-         } else {
-           error_log("JSON decode failed wih $propvalue for $raw_json");
-         }
-         break;
-         
-         default:
-         parent::setProp($propname, $propvalue, $view);
-         break;
-       }
-     } else {
-       parent::setProp($propname, $propvalue, $view);
-     }
-   }
+  function setProp($propname, $propvalue, $view = '') {
+   
+    if ( ($propname == 'matrix') ) {
+      // handle calls to set the matrix on this object
+      // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
+      //$this->matrix = array('storage','stage','surface_area',0,0,0);
+      // check for a valid json object, transform to array
+      switch ($view) {
+        case 'json-1d':
+          $raw_json = $propvalue;
+          $propvalue = json_decode($propvalue, TRUE);
+          if (is_array($propvalue)) {
+            error_log("Array located, handling " . print_r($propvalue,1));
+            $this->matrix = $propvalue;
+          } else {
+            error_log("JSON decode failed wih $propvalue for $raw_json");
+          }
+        break;
+
+        default:
+          parent::setProp($propname, $propvalue, $view);
+        break;
+      }
+    } else {
+      parent::setProp($propname, $propvalue, $view);
+    }
+  }
   
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
