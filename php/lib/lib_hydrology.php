@@ -4850,15 +4850,9 @@ class dataMatrix extends modelSubObject {
   }
    
   function twoDimArrayToMatrix($thisarray = array()) {
-    // sets this objects matric to a flattened version of the input matrix
-    $this->matrix = array();
-    if (count($thisarray) > 0) {
-      foreach($thisarray as $thisline) {
-        foreach ($thisline as $key => $value) {
-          $this->matrix[] = $value;
-        }
-      }
-    }
+    $return = array();
+    array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+    return $return;
   }
    
    function assocArrayToMatrix($thisarray = array()) {
