@@ -60,6 +60,7 @@ if (is_object($thisobject)) {
        error_log("This is a component type change requested");
      }
      $syobj = new $comp_class;
+     $syobj->debug = 1;
      $thisobject->addOperator($comp_name, $syobj);
      $res = saveObjectSubComponents($listobject, $thisobject, $recid, 1, 0);
     } else {
@@ -81,8 +82,10 @@ if (is_object($thisobject)) {
     //   * These should also omit the object_class since they should fail if they do not exist, rather than adding
     //error_log("Calling thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode); on object of class " . get_class($thisobject->processors[$comp_name]));
     error_log("Calling setProp() on $subprop_name");
+    $thisobject->processors[$comp_name]->debug = 1;
     $thisobject->processors[$comp_name]->setProp($subprop_name, $subprop_value, $setprop_mode);
     $thisobject->processors[$comp_name]->objectclass = $comp_class;
+    $thisobject->processors[$comp_name]->debug = o;
   }
   $result_html = saveObjectSubComponents($listobject, $thisobject, $elid );
   //error_log("Save result: $result_html");
