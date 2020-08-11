@@ -1039,7 +1039,7 @@ class modelObject {
         }
       } else {
         // this is not a property on the base class, look for processors
-        error_log("Warning: Skipping $pname not found on class -- setProp cannot yet add processors with json-2d ");
+        error_log("Warning: Skipping $pname not found on class ");
         
       }
     }
@@ -4237,7 +4237,7 @@ class dataMatrix extends modelSubObject {
    var $delimiter = 0; // 0|Comma,1|Tab,2|pipe,3|Space
    var $autosetvars = 0; // 1 = will create automatic wvars on parent based on column headers
    var $autovars = null; // 1 = will create automatic wvars on parent based on column headers
-   //var $json2d = TRUE;
+   var $json2d = TRUE;
 
 
    function subState() {
