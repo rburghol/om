@@ -2079,7 +2079,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   var $object_class = 'DataMatrix';
   var $default_bundle = 'om_data_matrix';
   var $matrix_field = 'field_dh_matrix';
-  //var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
+  var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
@@ -2176,7 +2176,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
   
-  public function setAllRemotePropertiesNew($entity, $elid, $path) {
+  public function setAllRemoteProperties($entity, $elid, $path) {
     // this replaces parent method in favor of full object json transfer
     // @todo: make this work for all at base class 
     // Old Code:
@@ -2195,7 +2195,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
-  public function setAllRemoteProperties($entity, $elid, $path) {
+  public function setAllRemotePropertiesOld($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
     //dpm($entity, 'before loadProp()');
