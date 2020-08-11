@@ -4836,7 +4836,7 @@ class dataMatrix extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
       case 'matrix':
-        error_log("Matrix Array located, handling " . print_r($propvalue,1));
+        //error_log("Matrix Array located, handling " . print_r($propvalue,1));
         $this->matrix = $propvalue;
       break;
       default:
