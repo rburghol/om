@@ -4861,12 +4861,13 @@ class dataMatrix extends modelSubObject {
       if (count($thisarray) > 0) {
          if (count($thisarray[0]) > 0) {
             $this->numcols = count($thisarray[0]);
-            // add a row for the header line
-            $this->numrows = count($thisarray) + 1;
             // since these are stored as a single dimensioned array, regardless of their lookup type 
             // (for compatibility with single dimensional HTML form variables)
             // we set alternating values representing the 2 columns (luname - acreage)
+            $this->numrows = count($thisarray);
             if ($header) {
+              // add a row for the header line
+              $this->numrows++;
               foreach (array_keys($thisarray[0]) as $colname) {
                  $this->matrix[] = $colname;
               }
