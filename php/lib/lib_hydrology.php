@@ -4840,7 +4840,7 @@ class dataMatrix extends modelSubObject {
         if ($this->debug) {
           error_log("Matrix Array located, handling " . print_r($propvalue,1));
         }
-        $this->matrix = $propvalue;
+        $this->matrix = $this->twoDimArrayToMatrix($propvalue);
       break;
       default:
         parent::setClassProp($propname, $propvalue, $view);
@@ -4852,7 +4852,6 @@ class dataMatrix extends modelSubObject {
     // sets this objects matric to a flattened version of the input matrix
     $this->matrix = array();
     if (count($thisarray) > 0) {
-      $this->matrix = $propvalue;
       foreach($thisarray as $thisline) {
         foreach ($thisline as $key => $value) {
           $this->matrix[] = $value;
