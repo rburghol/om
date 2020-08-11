@@ -2186,7 +2186,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     // rewrite matrix as 1-d list because OM setProp import breaks otherwise
     $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
