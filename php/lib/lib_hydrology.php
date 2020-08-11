@@ -4837,10 +4837,11 @@ class dataMatrix extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
       case 'matrix':
+        $this->matrix = $this->twoDimArrayToMatrix($propvalue);
         if ($this->debug) {
           error_log("Matrix Array located, handling " . print_r($propvalue,1));
+          error_log("set to = " . print_r($this->matrix,1));
         }
-        $this->matrix = $this->twoDimArrayToMatrix($propvalue);
       break;
       default:
         parent::setClassProp($propname, $propvalue, $view);
