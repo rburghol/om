@@ -2288,6 +2288,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     error_log("getCSVTableField() data: " . print_r($tabledata,1));
     $csv = array();
     foreach ($tabledata as $rowix => $rowvals) {
+      unset($rowvals['weight']);
       $csv[] = array_values($rowvals);
     }
     return $csv;
