@@ -4837,7 +4837,7 @@ class dataMatrix extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
       case 'matrix':
-        $this->matrix = $this->twoDimArrayToMatrix($propvalue);
+        $this->matrix = $this->assocArrayToMatrix($thisarray = array(), FALSE);
         if ($this->debug) {
           error_log("Matrix Array located, handling " . print_r($propvalue,1));
           error_log("set to = " . print_r($this->matrix,1));
@@ -4855,7 +4855,7 @@ class dataMatrix extends modelSubObject {
     return $return;
   }
    
-   function assocArrayToMatrix($thisarray = array()) {
+   function assocArrayToMatrix($thisarray = array(), $header = TRUE) {
       // sets this objects matric to the input matrix
       $this->matrix = array();
       if (count($thisarray) > 0) {
@@ -4866,8 +4866,10 @@ class dataMatrix extends modelSubObject {
             // since these are stored as a single dimensioned array, regardless of their lookup type 
             // (for compatibility with single dimensional HTML form variables)
             // we set alternating values representing the 2 columns (luname - acreage)
-            foreach (array_keys($thisarray[0]) as $colname) {
-               $this->matrix[] = $colname;
+            if ($header) {
+              foreach (array_keys($thisarray[0]) as $colname) {
+                 $this->matrix[] = $colname;
+              }
             }
             foreach($thisarray as $thisline) {
                foreach ($thisline as $key => $value) {
