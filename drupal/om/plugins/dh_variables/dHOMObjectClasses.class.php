@@ -2186,7 +2186,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
     
     parent::loadProperties($entity, $overwrite, $propname, $force_embed);
-    dpm($entity->valuetype,'valuetype');
+    //dpm($entity->valuetype,'valuetype');
     if ($entity->valuetype->propvalue === NULL){
       $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
       $rows = $om_matrix['rows'];
