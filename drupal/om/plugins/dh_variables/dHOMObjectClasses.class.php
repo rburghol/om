@@ -2286,7 +2286,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   function getCSVTableField(&$entity) {
     $tabledata = $this->getMatrixFieldTable($entity);
     $csv = array();
-    foreach ($tabledata as $rowix => $rowvals) 
+    foreach ($tabledata as $rowix => $rowvals) {
       unset($rowvals['weight']);
       $csv[] = array_values($rowvals);
     }
@@ -2343,15 +2343,9 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = parent::exportOpenMIBase($entity);
-    $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
-    $rows = $om_matrix['rows'];
-    $cols = $om_matrix['cols'];
-    $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
     $export[$entity->propname]['matrix'] = array(
       'name' => 'matrix',
       'object_class' => 'array',
-      'numrows' => $rows,
-      'valuetype' => $valuetype,
       'value' => $this->getCSVTableField($entity)
     );
     unset($export[$entity->propname]['code']);
