@@ -4837,7 +4837,7 @@ class dataMatrix extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     $dbt = debug_backtrace();
     foreach ($dbt as $key => $val) {
-      error_log("backtrace setClassProp() Matrix (class: " $val['class'] . " :: ". print_r($val['function'],1));
+      error_log("backtrace setClassProp() Matrix (class: " . $val['class'] . " :: ". print_r($val['function'],1));
     }
     switch ($propname) {
       case 'matrix':
