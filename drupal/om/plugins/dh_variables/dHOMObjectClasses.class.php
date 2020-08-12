@@ -546,7 +546,6 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
-    dpm($entity,'prop');
     switch ($entity->datatype) {
       // @todo: datatype does not actually get copied from vardef to props by the base class, it only grabs varid, varunits and varname, so we need to add datatype to make this work.
       case 'percent':
@@ -1842,7 +1841,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
-    if (property_exists($varinfo, 'datatype')) {
+    dpm($entity,'prop');
+    if (property_exists($entity, 'datatype')) {
       switch ($varinfo->datatype) {
         case 'percent':
         $opts = $this->pct_list($this->pct_range);
