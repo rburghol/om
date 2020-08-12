@@ -4804,21 +4804,34 @@ class dataMatrix extends modelSubObject {
    
    
    }
-  
-  function setClassProp($propname, $propvalue, $view = '') { 
-    switch ($propname) {
-      case 'matrix':
-        $this->assocArrayToMatrix($propvalue, FALSE);
-        if ($this->debug) {
-          error_log("Matrix Array located, handling " . print_r($propvalue,1));
-          error_log("set to = " . print_r($this->matrix,1));
-        }
-      break;
-      default:
-        parent::setClassProp($propname, $propvalue, $view);
-      break;
-    }
-  }
+   
+   function setProp($propname, $propvalue, $view = '') {
+     
+     if ( ($propname == 'matrix') ) {
+       // handle calls to set the matrix on this object
+       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
+       //$this->matrix = array('storage','stage','surface_area',0,0,0);
+       // check for a valid json object, transform to array
+       switch ($view) {
+         case 'json-1d':
+         $raw_json = $propvalue;
+         $propvalue = json_decode($propvalue, TRUE);
+         if (is_array($propvalue)) {
+           error_log("Array located, handling " . print_r($propvalue,1));
+           $this->matrix = $propvalue;
+         } else {
+           error_log("JSON decode failed wih $propvalue for $raw_json");
+         }
+         break;
+         
+         default:
+         parent::setProp($propname, $propvalue, $view);
+         break;
+       }
+     } else {
+       parent::setProp($propname, $propvalue, $view);
+     }
+   }
    
   function twoDimArrayToMatrix($thisarray = array()) {
     // sets this objects matric to a flattened version of the input matrix
