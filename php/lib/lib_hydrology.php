@@ -4826,22 +4826,19 @@ class dataMatrix extends modelSubObject {
     return $return;
   }
    
-   function assocArrayToMatrix($thisarray = array(), $header = TRUE) {
+   function assocArrayToMatrix($thisarray = array()) {
       // sets this objects matric to the input matrix
       $this->matrix = array();
       if (count($thisarray) > 0) {
          if (count($thisarray[0]) > 0) {
             $this->numcols = count($thisarray[0]);
+            // add a row for the header line
+            $this->numrows = count($thisarray) + 1;
             // since these are stored as a single dimensioned array, regardless of their lookup type 
             // (for compatibility with single dimensional HTML form variables)
             // we set alternating values representing the 2 columns (luname - acreage)
-            $this->numrows = count($thisarray);
-            if ($header) {
-              // add a row for the header line
-              $this->numrows++;
-              foreach (array_keys($thisarray[0]) as $colname) {
-                 $this->matrix[] = $colname;
-              }
+            foreach (array_keys($thisarray[0]) as $colname) {
+               $this->matrix[] = $colname;
             }
             foreach($thisarray as $thisline) {
                foreach ($thisline as $key => $value) {
