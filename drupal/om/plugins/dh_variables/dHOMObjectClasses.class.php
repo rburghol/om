@@ -2362,7 +2362,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       3 => "CSV"
     );
     $form['valuetype']['#type'] = 'select';
-    $form['valuetype']['#options'] = $lutypes;
+    $form['valuetype']['#options'] = $valuetypes;
     $form['valuetype']['#size'] = 1;
     $form['valuetype']["#empty_value"] = "";
     $form['valuetype']["#empty_option"] = "Not Set";
