@@ -1841,7 +1841,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
-    //dpm($entity,'prop');
+    dpm($entity,'prop');
     if (property_exists($entity, 'datatype')) {
       switch ($varinfo->datatype) {
         case 'percent':
