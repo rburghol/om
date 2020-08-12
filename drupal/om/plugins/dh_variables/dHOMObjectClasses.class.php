@@ -1845,15 +1845,15 @@ class dHOMConstant extends dHOMBaseObjectClass {
       switch ($entity->datatype) {
         case 'percent_select':
         $opts = $this->pct_list($this->pct_range);
-        $rowform['propvalue']['#type'] = 'select';
-        $rowform['propvalue']['#options'] = $opts;
-        $rowform['propvalue']['#empty_option'] = 'n/a';
+        $form['propvalue']['#type'] = 'select';
+        $form['propvalue']['#options'] = $opts;
+        $form['propvalue']['#empty_option'] = 'n/a';
         break;
         case 'boolean':
         $opts = array(0 => 'False', 1 => 'True');
-        $rowform['propvalue']['#type'] = 'select';
-        $rowform['propvalue']['#options'] = $opts;
-        $rowform['propvalue']['#default_value'] = !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default";
+        $form['propvalue']['#type'] = 'select';
+        $form['propvalue']['#options'] = $opts;
+        $form['propvalue']['#default_value'] = !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default";
         break;
       }
     }
