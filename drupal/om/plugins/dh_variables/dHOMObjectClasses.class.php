@@ -541,12 +541,12 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   public function hiddenFields() {
     return array('startdate','featureid','enddate','entity_type','propcode');
   }
-  public function formRowEdit(&$rowform, $row) {
-    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+  public function formRowEdit(&$rowform, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
     }
-    switch ($varinfo->datatype) {
+    switch ($entity->datatype) {
       // @todo: datatype does not actually get copied from vardef to props by the base class, it only grabs varid, varunits and varname, so we need to add datatype to make this work.
       case 'percent':
       $opts = $this->pct_list($this->pct_range);
@@ -556,7 +556,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#options' => $opts,
         '#empty_option' => 'n/a',
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : $this->default_value,
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : $this->default_value,
       );
       break;
       case 'boolean':
@@ -566,7 +566,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#type' => 'select',
         '#options' => $opts,
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : "$this->pct_default",
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default",
       );
       break;
       
@@ -575,7 +575,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#title' => t($varinfo->varname),
         '#type' => 'textfield',
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : NULL,
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : NULL,
       );
       break;
     }
