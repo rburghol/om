@@ -541,12 +541,12 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
   public function hiddenFields() {
     return array('startdate','featureid','enddate','entity_type','propcode');
   }
-  public function formRowEdit(&$rowform, $row) {
-    $varinfo = $row->varid ? dh_vardef_info($row->varid) : FALSE;
+  public function formRowEdit(&$rowform, $entity) {
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
     if (!$varinfo) {
       return FALSE;
     }
-    switch ($varinfo->datatype) {
+    switch ($entity->datatype) {
       // @todo: datatype does not actually get copied from vardef to props by the base class, it only grabs varid, varunits and varname, so we need to add datatype to make this work.
       case 'percent':
       $opts = $this->pct_list($this->pct_range);
@@ -556,7 +556,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#options' => $opts,
         '#empty_option' => 'n/a',
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : $this->default_value,
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : $this->default_value,
       );
       break;
       case 'boolean':
@@ -566,7 +566,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#type' => 'select',
         '#options' => $opts,
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : "$this->pct_default",
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default",
       );
       break;
       
@@ -575,7 +575,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
         '#title' => t($varinfo->varname),
         '#type' => 'textfield',
         '#description' => $varinfo->vardesc,
-        '#default_value' => !empty($row->propvalue) ? $row->propvalue : NULL,
+        '#default_value' => !empty($entity->propvalue) ? $entity->propvalue : NULL,
       );
       break;
     }
@@ -974,7 +974,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
       //dpm( $path, "Exec Path ");
-      //dpm( $cmd, "Executing ");
+      dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
@@ -1841,19 +1841,19 @@ class dHOMConstant extends dHOMBaseObjectClass {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
-    if (property_exists($varinfo, 'datatype')) {
-      switch ($varinfo->datatype) {
-        case 'percent':
+    if (property_exists($entity, 'datatype')) {
+      switch ($entity->datatype) {
+        case 'percent_select':
         $opts = $this->pct_list($this->pct_range);
-        $rowform['propvalue']['#type'] = 'select';
-        $rowform['propvalue']['#options'] = $opts;
-        $rowform['propvalue']['#empty_option'] = 'n/a';
+        $form['propvalue']['#type'] = 'select';
+        $form['propvalue']['#options'] = $opts;
+        $form['propvalue']['#empty_option'] = 'n/a';
         break;
         case 'boolean':
         $opts = array(0 => 'False', 1 => 'True');
-        $rowform['propvalue']['#type'] = 'select';
-        $rowform['propvalue']['#options'] = $opts;
-        $rowform['propvalue']['#default_value'] = !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default";
+        $form['propvalue']['#type'] = 'select';
+        $form['propvalue']['#options'] = $opts;
+        $form['propvalue']['#default_value'] = !empty($entity->propvalue) ? $entity->propvalue : "$this->pct_default";
         break;
       }
     }
@@ -2079,7 +2079,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   var $object_class = 'DataMatrix';
   var $default_bundle = 'om_data_matrix';
   var $matrix_field = 'field_dh_matrix';
-  //var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
+  var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');
@@ -2118,6 +2118,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
+      'valuetype' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'valuetype',
+        'vardesc' => 'Value Type.',
+        'title' => 'Return Value Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
       'lutype1' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -2138,16 +2148,6 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
-      'autosetvars' => array(
-        'entity_type' => $entity->entityType(),
-        'propcode_default' => NULL,
-        'propname' => 'autosetvars',
-        'vardesc' => 'Create Column Vars on parent in form: [propname]_[colname] (0 or 1).',
-        'title' => 'Auto-Set Parent Vars',
-        'singularity' => 'name_singular',
-        'featureid' => $entity->identifier(),
-        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
-      ),
       'defaultval' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -2157,6 +2157,18 @@ class dHOMDataMatrix extends dHOMSubComp {
         'featureid' => $entity->identifier(),
         'vardesc' => 'Default value.',
         'title' => 'Default Value',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'autosetvars' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0,
+        'propname' => 'autosetvars',
+        'datatype' => 'boolean',
+        'vardesc' => 'Create Column Vars on parent in form: [propname]_[colname] (0 or 1).',
+        'title' => 'Auto-Set Parent Vars',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
     );
@@ -2173,10 +2185,23 @@ class dHOMDataMatrix extends dHOMSubComp {
     }
   }
   
+  public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
+    
+    parent::loadProperties($entity, $overwrite, $propname, $force_embed);
+    //dpm($entity->valuetype,'valuetype');
+    if ($entity->valuetype->propvalue === NULL){
+      $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
+      $rows = $om_matrix['rows'];
+      $cols = $om_matrix['cols'];
+      // Guess if needed 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $entity->valuetype->propvalue = ($cols > 2) ? 2 : 1; 
+    }
+  }
+  
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
   
-  public function setAllRemotePropertiesNew($entity, $elid, $path) {
+  public function setAllRemoteProperties($entity, $elid, $path) {
     // this replaces parent method in favor of full object json transfer
     // @todo: make this work for all at base class 
     // Old Code:
@@ -2186,7 +2211,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     // rewrite matrix as 1-d list because OM setProp import breaks otherwise
     $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
@@ -2195,7 +2220,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }
   
-  public function setAllRemoteProperties($entity, $elid, $path) {
+  public function setAllRemotePropertiesOld($entity, $elid, $path) {
     parent::setAllRemoteProperties($entity, $elid, $path);
     // @todo: move this to the base class if it checks out as OK
     //dpm($entity, 'before loadProp()');
@@ -2287,6 +2312,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     $tabledata = $this->getMatrixFieldTable($entity);
     $csv = array();
     foreach ($tabledata as $rowix => $rowvals) {
+      unset($rowvals['weight']);
       $csv[] = array_values($rowvals);
     }
     return $csv;
@@ -2337,6 +2363,18 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['lutype2']["#empty_value"] = "";
     $form['lutype2']["#empty_option"] = "Not Set";
     $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+    $valuetypes = array(
+      0 => "Return Whole Array",
+      1 => "1-D lookup",
+      2 => "2-D Lookup",
+      3 => "CSV"
+    );
+    $form['valuetype']['#type'] = 'select';
+    $form['valuetype']['#options'] = $valuetypes;
+    $form['valuetype']['#size'] = 1;
+    $form['valuetype']["#empty_value"] = "";
+    $form['valuetype']["#empty_option"] = "Not Set";
+    $form['valuetype']["#description"] = "Note: only types 1-D and 2-D are fully supported.";
   }
   
   public function exportOpenMIBase($entity) {

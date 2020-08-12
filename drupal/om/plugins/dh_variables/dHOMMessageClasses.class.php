@@ -86,9 +86,9 @@ class dHOMbroadCastObject extends dHOMSubComp {
     // experimental code to use json 
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
-    dpm($exp,"Using JSON export mode");
+    //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
     $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
   }

@@ -1024,8 +1024,9 @@ class modelObject {
             break;
             case 'table':
             case 'array':
+            case 'matrix':
             if (is_array($pvalue['value'])) {
-              $this->setClassProp($pvalue['name'], $pvalue['value'], "");
+              $this->setClassProp($pvalue['name'], $pvalue['value'], "array");
             } else {
               error_log("Error: Property $pvalue[name] is object_class $pvalue[object_class] but is not valid array");
             }
@@ -3308,14 +3309,22 @@ class broadCastObject extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
       case 'broadcast_params':
-      error_log("setClassProp called with $propname = " . print_r($propvalue,1));
-        // this is a special array variable that we split into local_varname and broadcast_varname 
-        $this->local_varname = array();
-        $this->broadcast_varname = array();
-        foreach ($propvalue as $pair) {
-          //error_log("Trying to write array: " . print_r($pair,1));
-          $this->local_varname[] = $pair[0];
-          $this->broadcast_varname[] = $pair[1];
+        switch ($view) {
+          case 'array':
+          // we know that broadcast_params
+          error_log("setClassProp called with $propname = " . print_r($propvalue,1));
+            // this is a special array variable that we split into local_varname and broadcast_varname 
+            $this->local_varname = array();
+            $this->broadcast_varname = array();
+            foreach ($propvalue as $pair) {
+              //error_log("Trying to write array: " . print_r($pair,1));
+              $this->local_varname[] = $pair[0];
+              $this->broadcast_varname[] = $pair[1];
+            }
+          break;
+          default:
+            parent::setClassProp($propname, $propvalue, $view);
+          break;
         }
       break;
       default:
@@ -4237,7 +4246,7 @@ class dataMatrix extends modelSubObject {
    var $delimiter = 0; // 0|Comma,1|Tab,2|pipe,3|Space
    var $autosetvars = 0; // 1 = will create automatic wvars on parent based on column headers
    var $autovars = null; // 1 = will create automatic wvars on parent based on column headers
-   //var $json2d = TRUE;
+   var $json2d = TRUE;
 
 
    function subState() {
@@ -4805,33 +4814,57 @@ class dataMatrix extends modelSubObject {
    
    }
    
-   function setProp($propname, $propvalue, $view = '') {
-     
-     if ( ($propname == 'matrix') ) {
-       // handle calls to set the matrix on this object
-       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
-       //$this->matrix = array('storage','stage','surface_area',0,0,0);
-       // check for a valid json object, transform to array
-       switch ($view) {
-         case 'json-1d':
-         $raw_json = $propvalue;
-         $propvalue = json_decode($propvalue, TRUE);
-         if (is_array($propvalue)) {
-           error_log("Array located, handling " . print_r($propvalue,1));
-           $this->matrix = $propvalue;
-         } else {
-           error_log("JSON decode failed wih $propvalue for $raw_json");
-         }
-         break;
-         
-         default:
-         parent::setProp($propname, $propvalue, $view);
-         break;
-       }
-     } else {
-       parent::setProp($propname, $propvalue, $view);
-     }
-   }
+  function setProp($propname, $propvalue, $view = '') {
+   
+    if ( ($propname == 'matrix') ) {
+      // handle calls to set the matrix on this object
+      // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
+      //$this->matrix = array('storage','stage','surface_area',0,0,0);
+      // check for a valid json object, transform to array
+      switch ($view) {
+        case 'json-1d':
+          $raw_json = $propvalue;
+          $propvalue = json_decode($propvalue, TRUE);
+          if (is_array($propvalue)) {
+            error_log("Array located, handling " . print_r($propvalue,1));
+            $this->matrix = $propvalue;
+          } else {
+            error_log("JSON decode failed wih $propvalue for $raw_json");
+          }
+        break;
+
+        default:
+          parent::setProp($propname, $propvalue, $view);
+        break;
+      }
+    } else {
+      parent::setProp($propname, $propvalue, $view);
+    }
+  }
+  
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+    switch ($view) {
+      case 'array':
+        switch ($propname) {
+          case 'matrix':
+            $this->assocArrayToMatrix($propvalue, FALSE);
+            if ($this->name == 'base_demand_mgd') {
+              error_log("Matrix Array located, handling " . print_r($propvalue,1));
+              error_log("set to = " . print_r($this->matrix,1));
+            }
+          break;
+          default:
+            parent::setClassProp($propname, $propvalue, $view);
+          break;
+        }
+      break;
+      
+      default:
+        parent::setClassProp($propname, $propvalue, $view);
+      break;
+    }
+  }
    
   function twoDimArrayToMatrix($thisarray = array()) {
     // sets this objects matric to a flattened version of the input matrix
@@ -4846,19 +4879,22 @@ class dataMatrix extends modelSubObject {
     }
   }
    
-   function assocArrayToMatrix($thisarray = array()) {
+   function assocArrayToMatrix($thisarray = array(), $header = TRUE) {
       // sets this objects matric to the input matrix
       $this->matrix = array();
       if (count($thisarray) > 0) {
          if (count($thisarray[0]) > 0) {
             $this->numcols = count($thisarray[0]);
             // add a row for the header line
-            $this->numrows = count($thisarray) + 1;
-            // since these are stored as a single dimensioned array, regardless of their lookup type 
-            // (for compatibility with single dimensional HTML form variables)
-            // we set alternating values representing the 2 columns (luname - acreage)
-            foreach (array_keys($thisarray[0]) as $colname) {
-               $this->matrix[] = $colname;
+            $this->numrows = count($thisarray);
+            if ($header) {
+              $this->numrows++;
+              // since these are stored as a single dimensioned array, regardless of their lookup type 
+              // (for compatibility with single dimensional HTML form variables)
+              // we set alternating values representing the 2 columns (luname - acreage)
+              foreach (array_keys($thisarray[0]) as $colname) {
+                 $this->matrix[] = $colname;
+              }
             }
             foreach($thisarray as $thisline) {
                foreach ($thisline as $key => $value) {
