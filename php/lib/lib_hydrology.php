@@ -1024,8 +1024,9 @@ class modelObject {
             break;
             case 'table':
             case 'array':
+            case 'matrix':
             if (is_array($pvalue['value'])) {
-              $this->setClassProp($pvalue['name'], $pvalue['value'], "");
+              $this->setClassProp($pvalue['name'], $pvalue['value'], "assoc");
             } else {
               error_log("Error: Property $pvalue[name] is object_class $pvalue[object_class] but is not valid array");
             }
@@ -4841,14 +4842,22 @@ class dataMatrix extends modelSubObject {
       error_log("backtrace setClassProp() Matrix (class: " . $val['class'] . " :: ". print_r($val['function'],1));
     }
   }
-    switch ($propname) {
-      case 'matrix':
-        $this->assocArrayToMatrix($propvalue, FALSE);
-        if ($this->debug) {
-          error_log("Matrix Array located, handling " . print_r($propvalue,1));
-          error_log("set to = " . print_r($this->matrix,1));
+    switch ($view) {
+      case 'assoc':
+        switch ($propname) {
+          case 'matrix':
+            $this->assocArrayToMatrix($propvalue, FALSE);
+            if ($this->debug) {
+              error_log("Matrix Array located, handling " . print_r($propvalue,1));
+              error_log("set to = " . print_r($this->matrix,1));
+            }
+          break;
+          default:
+            parent::setClassProp($propname, $propvalue, $view);
+          break;
         }
       break;
+      
       default:
         parent::setClassProp($propname, $propvalue, $view);
       break;
