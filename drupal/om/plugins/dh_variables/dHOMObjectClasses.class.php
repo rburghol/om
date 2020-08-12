@@ -2183,7 +2183,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     }
   }
   
-  public function loadProperties(&entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
+  public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
     
     dpm($entity->valuetype,'valuetype');
     if ($entity->valuetype->propvalue === NULL){
