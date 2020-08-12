@@ -4849,7 +4849,7 @@ class dataMatrix extends modelSubObject {
         switch ($propname) {
           case 'matrix':
             $this->assocArrayToMatrix($propvalue, FALSE);
-            if ($this->debug) {
+            if ($this->name == 'base_demand_mgd') {
               error_log("Matrix Array located, handling " . print_r($propvalue,1));
               error_log("set to = " . print_r($this->matrix,1));
             }
