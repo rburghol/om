@@ -2118,6 +2118,16 @@ class dHOMDataMatrix extends dHOMSubComp {
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
+      'valuetype' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propname' => 'valuetype',
+        'vardesc' => 'Value Type.',
+        'title' => 'Return Value Type',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
       'lutype1' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
@@ -2338,6 +2348,18 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['lutype2']["#empty_value"] = "";
     $form['lutype2']["#empty_option"] = "Not Set";
     $form['lutype2']["#description"] = "How to handle matching.  If this is 'Not Set' unexpected behavior may occur.";
+    $valuetypes = array(
+      0 => "Return Whole Array",
+      1 => "1-D lookup",
+      2 => "2-D Lookup",
+      3 => "CSV"
+    );
+    $form['valuetype']['#type'] = 'select';
+    $form['valuetype']['#options'] = $lutypes;
+    $form['valuetype']['#size'] = 1;
+    $form['valuetype']["#empty_value"] = "";
+    $form['valuetype']["#empty_option"] = "Not Set";
+    $form['valuetype']["#description"] = "Note: only types 1-D and 2-D are fully supported.";
   }
   
   public function exportOpenMIBase($entity) {
