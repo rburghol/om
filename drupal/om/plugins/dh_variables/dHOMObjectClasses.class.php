@@ -974,7 +974,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
       $cmd = "cd $this->path \n";
       $cmd .= $setstr;
       //dpm( $path, "Exec Path ");
-      //dpm( $cmd, "Executing ");
+      dpm( $cmd, "Executing ");
       shell_exec($cmd);
     }
     if ($test_only) {
@@ -2186,7 +2186,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     // rewrite matrix as 1-d list because OM setProp import breaks otherwise
     $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
@@ -2286,7 +2286,8 @@ class dHOMDataMatrix extends dHOMSubComp {
   function getCSVTableField(&$entity) {
     $tabledata = $this->getMatrixFieldTable($entity);
     $csv = array();
-    foreach ($tabledata as $rowix => $rowvals) {
+    foreach ($tabledata as $rowix => $rowvals) 
+      unset($rowvals['weight']);
       $csv[] = array_values($rowvals);
     }
     return $csv;
@@ -2342,9 +2343,15 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function exportOpenMIBase($entity) {
     // creates the base properties for this class
     $export = parent::exportOpenMIBase($entity);
+    $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
+    $rows = $om_matrix['rows'];
+    $cols = $om_matrix['cols'];
+    $valuetype = ($cols > 2) ? 2 : 1; // 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
     $export[$entity->propname]['matrix'] = array(
       'name' => 'matrix',
       'object_class' => 'array',
+      'numrows' => $rows,
+      'valuetype' => $valuetype,
       'value' => $this->getCSVTableField($entity)
     );
     unset($export[$entity->propname]['code']);
