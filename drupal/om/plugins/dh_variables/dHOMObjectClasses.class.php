@@ -1841,7 +1841,7 @@ class dHOMConstant extends dHOMBaseObjectClass {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
-    dpm($entity,'prop');
+    //dpm($entity,'prop');
     if (property_exists($entity, 'datatype')) {
       switch ($varinfo->datatype) {
         case 'percent':
@@ -2165,7 +2165,7 @@ class dHOMDataMatrix extends dHOMSubComp {
         'propcode_default' => NULL,
         'propvalue_default' => 0,
         'propname' => 'autosetvars',
-        'datatypwe' => 'boolean',
+        'datatype' => 'boolean',
         'vardesc' => 'Create Column Vars on parent in form: [propname]_[colname] (0 or 1).',
         'title' => 'Auto-Set Parent Vars',
         'singularity' => 'name_singular',
