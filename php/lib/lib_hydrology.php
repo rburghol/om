@@ -4804,61 +4804,44 @@ class dataMatrix extends modelSubObject {
    
    
    }
-   
-   function setProp($propname, $propvalue, $view = '') {
-     
-     if ( ($propname == 'matrix') ) {
-       // handle calls to set the matrix on this object
-       // Default behavior is to expect this to be an array that is 1-d, and the object uses numcols to decode it
-       //$this->matrix = array('storage','stage','surface_area',0,0,0);
-       // check for a valid json object, transform to array
-       switch ($view) {
-         case 'json-1d':
-         $raw_json = $propvalue;
-         $propvalue = json_decode($propvalue, TRUE);
-         if (is_array($propvalue)) {
-           error_log("Array located, handling " . print_r($propvalue,1));
-           $this->matrix = $propvalue;
-         } else {
-           error_log("JSON decode failed wih $propvalue for $raw_json");
-         }
-         break;
-         
-         default:
-         parent::setProp($propname, $propvalue, $view);
-         break;
-       }
-     } else {
-       parent::setProp($propname, $propvalue, $view);
-     }
-   }
-   
-  function twoDimArrayToMatrix($thisarray = array()) {
-    // sets this objects matric to a flattened version of the input matrix
-    $this->matrix = array();
-    if (count($thisarray) > 0) {
-      $this->matrix = $propvalue;
-      foreach($thisarray as $thisline) {
-        foreach ($thisline as $key => $value) {
-          $this->matrix[] = $value;
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+    switch ($propname) {
+      case 'matrix':
+        $this->assocArrayToMatrix($propvalue, FALSE);
+        if ($this->debug) {
+          error_log("Matrix Array located, handling " . print_r($propvalue,1));
+          error_log("set to = " . print_r($this->matrix,1));
         }
-      }
+      break;
+      default:
+        parent::setClassProp($propname, $propvalue, $view);
+      break;
     }
   }
    
-   function assocArrayToMatrix($thisarray = array()) {
+  function twoDimArrayToMatrix($thisarray = array()) {
+    $return = array();
+    array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+    return $return;
+  }
+   
+   function assocArrayToMatrix($thisarray = array(), $header = TRUE) {
       // sets this objects matric to the input matrix
       $this->matrix = array();
       if (count($thisarray) > 0) {
          if (count($thisarray[0]) > 0) {
             $this->numcols = count($thisarray[0]);
-            // add a row for the header line
-            $this->numrows = count($thisarray) + 1;
             // since these are stored as a single dimensioned array, regardless of their lookup type 
             // (for compatibility with single dimensional HTML form variables)
             // we set alternating values representing the 2 columns (luname - acreage)
-            foreach (array_keys($thisarray[0]) as $colname) {
-               $this->matrix[] = $colname;
+            $this->numrows = count($thisarray);
+            if ($header) {
+              // add a row for the header line
+              $this->numrows++;
+              foreach (array_keys($thisarray[0]) as $colname) {
+                 $this->matrix[] = $colname;
+              }
             }
             foreach($thisarray as $thisline) {
                foreach ($thisline as $key => $value) {
