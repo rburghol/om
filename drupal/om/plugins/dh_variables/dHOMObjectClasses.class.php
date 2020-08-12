@@ -2181,6 +2181,13 @@ class dHOMDataMatrix extends dHOMSubComp {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
     }
+    if ($entity->valuetype->propvalue === NULL){
+      $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
+      $rows = $om_matrix['rows'];
+      $cols = $om_matrix['cols'];
+      // Guess if needed 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $entity->valuetype->propvalue = ($cols > 2) ? 2 : 1; 
+    }
   }
   
   // this class has a name, and a description, an exec_hierarchy and other atributes
