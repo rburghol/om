@@ -2181,6 +2181,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
     }
+    dpm($entity->valuetype,'valuetype');
     if ($entity->valuetype->propvalue === NULL){
       $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
       $rows = $om_matrix['rows'];
