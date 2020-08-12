@@ -4835,6 +4835,7 @@ class dataMatrix extends modelSubObject {
   
   
   function setClassProp($propname, $propvalue, $view = '') { 
+    error_log("backtrace setClassProp:: Matrix " . print_r(debug_backtrace(),1));
     switch ($propname) {
       case 'matrix':
         $this->assocArrayToMatrix($propvalue, FALSE);
