@@ -546,6 +546,7 @@ class dHVariablePluginNumericAttribute extends dHVariablePluginDefault {
     if (!$varinfo) {
       return FALSE;
     }
+    dpm($entity,'prop');
     switch ($entity->datatype) {
       // @todo: datatype does not actually get copied from vardef to props by the base class, it only grabs varid, varunits and varname, so we need to add datatype to make this work.
       case 'percent':
