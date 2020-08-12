@@ -1841,10 +1841,9 @@ class dHOMConstant extends dHOMBaseObjectClass {
       '#description' => $entity->vardesc,
       '#default_value' => $entity->propvalue,
     );
-    dpm($entity,'prop');
     if (property_exists($entity, 'datatype')) {
-      switch ($varinfo->datatype) {
-        case 'percent':
+      switch ($entity->datatype) {
+        case 'percent_select':
         $opts = $this->pct_list($this->pct_range);
         $rowform['propvalue']['#type'] = 'select';
         $rowform['propvalue']['#options'] = $opts;
