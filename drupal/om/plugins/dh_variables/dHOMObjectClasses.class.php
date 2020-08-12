@@ -2194,6 +2194,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       $entity->valuetype->propvalue = ($cols > 2) ? 2 : 1; 
     }
     parent::loadProperties($entity, $overwrite, $propname, $force_embed);
+  }
   
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
