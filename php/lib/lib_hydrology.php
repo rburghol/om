@@ -1026,7 +1026,7 @@ class modelObject {
             case 'array':
             case 'matrix':
             if (is_array($pvalue['value'])) {
-              $this->setClassProp($pvalue['name'], $pvalue['value'], "assoc");
+              $this->setClassProp($pvalue['name'], $pvalue['value'], "array");
             } else {
               error_log("Error: Property $pvalue[name] is object_class $pvalue[object_class] but is not valid array");
             }
@@ -3309,14 +3309,22 @@ class broadCastObject extends modelSubObject {
   function setClassProp($propname, $propvalue, $view = '') { 
     switch ($propname) {
       case 'broadcast_params':
-      error_log("setClassProp called with $propname = " . print_r($propvalue,1));
-        // this is a special array variable that we split into local_varname and broadcast_varname 
-        $this->local_varname = array();
-        $this->broadcast_varname = array();
-        foreach ($propvalue as $pair) {
-          //error_log("Trying to write array: " . print_r($pair,1));
-          $this->local_varname[] = $pair[0];
-          $this->broadcast_varname[] = $pair[1];
+        switch ($view) {
+          case 'array':
+          // we know that broadcast_params
+          error_log("setClassProp called with $propname = " . print_r($propvalue,1));
+            // this is a special array variable that we split into local_varname and broadcast_varname 
+            $this->local_varname = array();
+            $this->broadcast_varname = array();
+            foreach ($propvalue as $pair) {
+              //error_log("Trying to write array: " . print_r($pair,1));
+              $this->local_varname[] = $pair[0];
+              $this->broadcast_varname[] = $pair[1];
+            }
+          break;
+          default:
+            parent::setClassProp($propname, $propvalue, $view);
+          break;
         }
       break;
       default:
@@ -4836,14 +4844,8 @@ class dataMatrix extends modelSubObject {
   
   
   function setClassProp($propname, $propvalue, $view = '') { 
-  if ($propname == 'base_demand_mgd') {
-    $dbt = debug_backtrace();
-    foreach ($dbt as $key => $val) {
-      error_log("backtrace setClassProp() Matrix (class: " . $val['class'] . " :: ". print_r($val['function'],1));
-    }
-  }
     switch ($view) {
-      case 'assoc':
+      case 'array':
         switch ($propname) {
           case 'matrix':
             $this->assocArrayToMatrix($propvalue, FALSE);
