@@ -262,6 +262,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
             entity_save('dh_properties', $prop);
           } else {
             $prop = $entity->{$thisvar['propname']};
+            error_log("saving sub-comp $thisvar[propname] of class " . get_class($prop));
             // already a loaded form object, so just let it rip.
             //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
