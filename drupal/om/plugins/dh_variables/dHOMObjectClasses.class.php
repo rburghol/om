@@ -2136,7 +2136,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       'valuetype' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
-        'propvalu_default' => 1,
+        'propvalue_default' => 1,
         'propname' => 'valuetype',
         'vardesc' => 'Value Type.',
         'title' => 'Return Value Type',
