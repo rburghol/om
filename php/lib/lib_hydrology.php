@@ -1020,7 +1020,7 @@ class modelObject {
             case NULL:
             case 'textField':
               $this->setClassProp($pvalue['name'], $pvalue['value'], "");
-              //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+              error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
             break;
             case 'table':
             case 'array':
