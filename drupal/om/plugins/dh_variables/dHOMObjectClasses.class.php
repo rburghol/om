@@ -262,7 +262,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
             entity_save('dh_properties', $prop);
           } else {
             $prop = $entity->{$thisvar['propname']};
-            error_log("saving sub-comp $thisvar[propname] of class " . get_class($prop) . " entity pid: $entity->pid");
+            //error_log("saving sub-comp $thisvar[propname] of class " . get_class($prop) . " entity pid: $entity->pid");
             // already a loaded form object, so just let it rip.
             //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
@@ -2204,8 +2204,8 @@ class dHOMDataMatrix extends dHOMSubComp {
   public function loadProperties(&$entity, $overwrite = FALSE, $propname = FALSE, $force_embed = FALSE) {
     
     parent::loadProperties($entity, $overwrite, $propname, $force_embed);
-    //dpm($entity->valuetype,'valuetype');
-    return;
+    /*
+    // causes an error if we do this when editing via drush. nowhere else?
     if (!(property_exists($entity, 'valuetype'))){
       $vars = $this->getDefaults($entity);
       $thisvar = $vars['valuetype'];
@@ -2216,6 +2216,7 @@ class dHOMDataMatrix extends dHOMSubComp {
       // Guess if needed 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
       $entity->valuetype->propvalue = ($cols > 2) ? 2 : 1; 
     }
+    */
   }
   
   // this class has a name, and a description, an exec_hierarchy and other atributes
@@ -2231,6 +2232,13 @@ class dHOMDataMatrix extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
+    if ($entity->valuetype->propvalue === NULL){
+      $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
+      $rows = $om_matrix['rows'];
+      $cols = $om_matrix['cols'];
+      // Guess if needed 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $entity->valuetype->propvalue = ($cols > 2) ? 2 : 1; 
+    }
     //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     // rewrite matrix as 1-d list because OM setProp import breaks otherwise
@@ -2362,7 +2370,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
-    dpm($entity,'entity');
+    //dpm($entity,'entity');
     //dpm($form,'form');
     // now, format the lookup type fields 
     $lutypes = array(
@@ -2396,6 +2404,13 @@ class dHOMDataMatrix extends dHOMSubComp {
     $form['valuetype']["#empty_value"] = "";
     $form['valuetype']["#empty_option"] = "Not Set";
     $form['valuetype']["#description"] = "Note: only types 1-D and 2-D are fully supported.";
+    if ($entity->valuetype->propvalue === NULL){
+      $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
+      $rows = $om_matrix['rows'];
+      $cols = $om_matrix['cols'];
+      // Guess if needed 0 - array (normal), 1 - 1-col lookup, 2 - 2-col lookup
+      $form['valuetype']["#default_value"] = ($cols > 2) ? 2 : 1; 
+    }
   }
   
   public function exportOpenMIBase($entity) {
