@@ -88,10 +88,13 @@ foreach ($data as $element) {
     error_log("Self-copy not allowed (src_entity and dest_entity are the same)");
     continue;
   } else {
+    error_log("Loading Source entity $src_entity_type : $src_id");
     $src_entity = entity_load_single($src_entity_type, $src_id);
+    error_log("Loading Dest entity $dest_entity_type : $dest_id");
     $dest_entity = entity_load_single($dest_entity_type, $dest_id);
     // cache and disable object synch if it exists
     $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
+    error_log("Calling om_copy_properties ");
     $copy = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
     // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
     error_log("Property $copy->propname created with pid = $copy->pid");
