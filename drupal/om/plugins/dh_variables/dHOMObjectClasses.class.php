@@ -2205,6 +2205,7 @@ class dHOMDataMatrix extends dHOMSubComp {
     
     parent::loadProperties($entity, $overwrite, $propname, $force_embed);
     //dpm($entity->valuetype,'valuetype');
+    return;
     if (!(property_exists($entity, 'valuetype'))){
       $vars = $this->getDefaults($entity);
       $thisvar = $vars['valuetype'];
