@@ -1508,11 +1508,11 @@ class dHOMSubComp extends dHOMBaseObjectClass {
         'name' => $entity->propname, 
         'object_class' => $this->object_class, 
         'value' => $entity->propvalue, 
-      );
-      if (property_exists($entity, 'proptext')) {
-        $export[$entity->propname]['description'] = $entity->proptext['und'][0]['value'];
-      }
+      )
     );
+    if (property_exists($entity, 'proptext')) {
+      $export[$entity->propname]['description'] = $entity->proptext['und'][0]['value'];
+    }
     return $export;
   }
 }
