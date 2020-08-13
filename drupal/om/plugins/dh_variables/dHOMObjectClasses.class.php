@@ -1506,10 +1506,12 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       $entity->propname => array(
         'id' => $entity->pid, 
         'name' => $entity->propname, 
+        'object_class' => $this->object_class, 
         'value' => $entity->propvalue, 
-        'code' => $entity->propcode, 
-        'description' => $entity->proptext['und'][0]['value']
-      )
+      );
+      if (property_exists($entity, 'proptext')) {
+        $export[$entity->propname]['description'] = $entity->proptext['und'][0]['value'];
+      }
     );
     return $export;
   }
@@ -1956,12 +1958,7 @@ class dHOMtextField extends dHOMSubComp {
     // could add a check for that to not call getDefaults, but for now, just put it here
     return $defaults;
   }
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMtextField");
-    array_unshift($path, 'value');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  }
+  
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
     if (!$entity->varid) {
@@ -2009,6 +2006,7 @@ class dHOMtextField extends dHOMSubComp {
       $entity->propname => array(
         'id' => $entity->pid, 
         'name' => $entity->propname, 
+        'object_class' => $this->object_class, 
         'value' => $entity->propcode, 
       )
     );
