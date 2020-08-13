@@ -2361,6 +2361,7 @@ class dHOMDataMatrix extends dHOMSubComp {
   
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
+    dpm($entity,'entity');
     //dpm($form,'form');
     // now, format the lookup type fields 
     $lutypes = array(
