@@ -1415,20 +1415,6 @@ class dHOMModelContainer extends dHOMModelElement {
 class dHOMSubComp extends dHOMBaseObjectClass {
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    //dpm($path, 'original path to setAllRemoteProperties()');
-    //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
-    // create the base property if needed.
-    $ppath = $path;
-    array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
-    if (property_exists($entity, 'proptext')) {
-      array_unshift($path, 'description');
-      $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
-      //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
-    }
-  }
   
   public function setAllRemoteProperties($entity, $elid, $path) {
     // this toggles parent method with full object json transfer
@@ -1442,6 +1428,17 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
     } else {
       parent::setAllRemoteProperties($entity, $elid, $path);
+      //dpm($path, 'original path to setAllRemoteProperties()');
+      //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+      // create the base property if needed.
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      if (property_exists($entity, 'proptext')) {
+        array_unshift($path, 'description');
+        $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
+        //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+      }
     }
   }
   
@@ -1511,6 +1508,7 @@ class dHOMSubComp extends dHOMBaseObjectClass {
         'name' => $entity->propname, 
         'value' => $entity->propvalue, 
         'code' => $entity->propcode, 
+        'description' => $entity->proptext['und'][0]['value']
       )
     );
     return $export;
@@ -1948,7 +1946,7 @@ class dHOMtextField extends dHOMSubComp {
   // special subcomp for alpha info
   var $object_class = 'textField';
   var $json2d = TRUE;
-  
+
   public function hiddenFields() {
     return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propvalue','dh_link_admin_pr_condition');
   }
