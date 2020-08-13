@@ -1649,6 +1649,7 @@ class dHOMEquation extends dHOMSubComp {
 class dHOMStatistic extends dHOMSubComp {
   var $object_class = 'Statistic';
   var $default_bundle = 'dh_properties';
+  var $json2d = TRUE;
   
   public function hiddenFields() {
     return array('pid', 'propcode', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle','dh_link_admin_pr_condition');

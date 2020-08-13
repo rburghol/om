@@ -238,6 +238,7 @@ class Statistic extends Equation {
    var $stack_last = ''; // last value of the stack
    var $value_dbcolumntype = 'float8'; 
    var $loggable = 1; // can log the value in a data table
+   var $json2d = TRUE;
    
    function init() {
       $initvars = explode(',',$this->operands);
