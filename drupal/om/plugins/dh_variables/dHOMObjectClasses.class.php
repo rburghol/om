@@ -2205,7 +2205,10 @@ class dHOMDataMatrix extends dHOMSubComp {
     
     parent::loadProperties($entity, $overwrite, $propname, $force_embed);
     //dpm($entity->valuetype,'valuetype');
-    if ($entity->valuetype->propvalue === NULL){
+    if (!(property_exists($entity, 'valuetype'))){
+      $vars = $this->getDefaults($entity);
+      $thisvar = $vars['valuetype'];
+      $this->insureProperty($entity, $thisvar);
       $om_matrix = $this->tablefieldToOMMatrix($entity->field_dh_matrix);
       $rows = $om_matrix['rows'];
       $cols = $om_matrix['cols'];
