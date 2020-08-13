@@ -1430,6 +1430,21 @@ class dHOMSubComp extends dHOMBaseObjectClass {
     }
   }
   
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    // this toggles parent method with full object json transfer
+    if ($this->json2d) {
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      $exp = $this->exportOpenMI($entity);
+      //dpm($exp,"Using JSON export mode");
+      $exp_json = addslashes(json_encode($exp[$entity->propname]));
+      $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
+    } else {
+      parent::setAllRemoteProperties($entity, $elid, $path);
+    }
+  }
+  
   public function delete(&$entity) {
     dpm($entity,'plugin delete() method called');
     $comp_path = array(); // initialize the path var. 
@@ -1932,6 +1947,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
 class dHOMtextField extends dHOMSubComp {
   // special subcomp for alpha info
   var $object_class = 'textField';
+  var $json2d = TRUE;
+  
   public function hiddenFields() {
     return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propvalue','dh_link_admin_pr_condition');
   }

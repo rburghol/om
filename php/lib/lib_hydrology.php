@@ -16616,6 +16616,7 @@ class textField extends modelSubObject {
    var $value_dbcolumntype = 'varchar(64)';
    var $value = '';
    var $loggable = 1;
+   var $json2d = TRUE;
    
    
   function wake() {
