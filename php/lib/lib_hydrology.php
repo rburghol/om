@@ -1012,7 +1012,8 @@ class modelObject {
       if (property_exists($this, $pname)) {
         if (!is_array($pvalue)) {
           // handle normal attributes
-          $this->setClassProp($name, $pvalue, "");
+          $this->setClassProp($pname, $pvalue, "");
+          error_log("Exec: this->setClassProp($pname, $pvalue)");
         } else {
           // handle openmi structured attribute
           switch ($pvalue['object_class']) {
@@ -1020,7 +1021,7 @@ class modelObject {
             case NULL:
             case 'textField':
               $this->setClassProp($pvalue['name'], $pvalue['value'], "");
-              //error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
+              error_log("Exec: this->setClassProp($pvalue[name], $pvalue[value], \"\")");
             break;
             case 'table':
             case 'array':
@@ -16616,6 +16617,7 @@ class textField extends modelSubObject {
    var $value_dbcolumntype = 'varchar(64)';
    var $value = '';
    var $loggable = 1;
+   var $json2d = TRUE;
    
    
   function wake() {

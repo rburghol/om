@@ -1415,18 +1415,30 @@ class dHOMModelContainer extends dHOMModelElement {
 class dHOMSubComp extends dHOMBaseObjectClass {
   // this class has a name, and a description, an exec_hierarchy and other atributes
   // @todo: add basic handling of things other than descriptions
+  
   public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    //dpm($path, 'original path to setAllRemoteProperties()');
-    //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
-    // create the base property if needed.
-    $ppath = $path;
-    array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
-    if (property_exists($entity, 'proptext')) {
-      array_unshift($path, 'description');
-      $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
-      //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+    // this toggles parent method with full object json transfer
+    if ($this->json2d) {
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      $exp = $this->exportOpenMI($entity);
+      //dpm($exp,"Using JSON export mode");
+      $exp_json = addslashes(json_encode($exp[$entity->propname]));
+      $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
+    } else {
+      parent::setAllRemoteProperties($entity, $elid, $path);
+      //dpm($path, 'original path to setAllRemoteProperties()');
+      //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+      // create the base property if needed.
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      if (property_exists($entity, 'proptext')) {
+        array_unshift($path, 'description');
+        $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
+        //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+      }
     }
   }
   
@@ -1494,10 +1506,13 @@ class dHOMSubComp extends dHOMBaseObjectClass {
       $entity->propname => array(
         'id' => $entity->pid, 
         'name' => $entity->propname, 
+        'object_class' => $this->object_class, 
         'value' => $entity->propvalue, 
-        'code' => $entity->propcode, 
       )
     );
+    if (property_exists($entity, 'proptext')) {
+      $export[$entity->propname]['description'] = $entity->proptext['und'][0]['value'];
+    }
     return $export;
   }
 }
@@ -1932,6 +1947,8 @@ class dHOMConstant extends dHOMBaseObjectClass {
 class dHOMtextField extends dHOMSubComp {
   // special subcomp for alpha info
   var $object_class = 'textField';
+  var $json2d = TRUE;
+
   public function hiddenFields() {
     return array('varname', 'startdate', 'enddate','featureid','entity_type', 'propvalue','dh_link_admin_pr_condition');
   }
@@ -1941,12 +1958,7 @@ class dHOMtextField extends dHOMSubComp {
     // could add a check for that to not call getDefaults, but for now, just put it here
     return $defaults;
   }
-  public function setAllRemoteProperties($entity, $elid, $path) {
-    parent::setAllRemoteProperties($entity, $elid, $path);
-    //dsm("setAllRemoteProperties from dHOMtextField");
-    array_unshift($path, 'value');
-    $this->setRemoteProp($entity, $elid, $path, $entity->propcode, $this->object_class);
-  }
+  
   public function formRowEdit(&$form, $entity) {
     parent::formRowEdit($form, $entity);
     if (!$entity->varid) {
@@ -1994,6 +2006,7 @@ class dHOMtextField extends dHOMSubComp {
       $entity->propname => array(
         'id' => $entity->pid, 
         'name' => $entity->propname, 
+        'object_class' => $this->object_class, 
         'value' => $entity->propcode, 
       )
     );
