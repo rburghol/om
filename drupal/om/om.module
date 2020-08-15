@@ -476,6 +476,32 @@ function om_element_validate_alpha_string($element, &$form_state) {
     form_error($element, t('%name must be an contain only letters, underscores, hyphens and numbers.', array('%name' => $element['#title'])));
   }
 }
+
+function om_token_replace_all(&$replacements, $data, $options) {
+  $replacements = $data;
+}
+
+function om_tokenize($base, $indata, &$outdata, $delim = ':', $allowed = array(), $enc = array('[', ']')) {
+  if (!is_array($indata)) {
+    return $indata;
+  }
+  foreach ($indata as $key => $value) {
+    $newbase = empty($base) ? $key : $base . $delim . $key;
+    if (is_array($value) ) {
+      $toke = om_tokenize($newbase, $value, $outdata, $delim, $allowed);
+    } else {
+      // we reached the end
+      if (!empty($allowed )) {
+        // we only allow some specific ending props
+        if (in_array($key, $allowed )) {
+          $outdata[$enc[0] . "$newbase" . $enc[1]] = $value;
+        }
+      } else {
+        $outdata[$enc[0] . "$newbase" . $enc[1]] = $value;
+      }
+    }
+  }
+}
 // ***********************************************************
 // ***            Object Declarations                      ***
 // no declarations here, all classes handled as CTools plugins
