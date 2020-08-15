@@ -1835,6 +1835,10 @@ class dHOMConstant extends dHOMBaseObjectClass {
     if (!$entity->varid) {
       return FALSE;
     }
+    $varinfo = $entity->varid ? dh_vardef_info($entity->varid) : FALSE;
+    if (!$varinfo) {
+      return FALSE;
+    }
     $form['propvalue'] = array(
       '#title' => t($entity->varname),
       '#type' => 'textfield',
