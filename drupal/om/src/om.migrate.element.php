@@ -62,7 +62,7 @@ if (count($args) >= 2) {
   die;
 }
 
-error_log("elementid = $elementid, hydrocode = $hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype");
+error_log("elementid = $elementid, hydrocode = $hydrocode, procname = $one_proc, bundle=$bundle, ftype=$ftype, classes=" . implode(',', $classes) . "]");
 
 
 // read csv of elementid / hydrocode pairs

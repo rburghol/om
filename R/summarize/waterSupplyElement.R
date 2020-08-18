@@ -38,7 +38,7 @@ if (syear != eyear) {
   edate <- as.Date(paste0(eyear,"-12-31"))
 }
 # yrdat will be used for generating the heatmap with calendar years
-yrdat <- dat 
+yrdat <- dat
 
 yr_sdate <- as.Date(paste0((as.numeric(syear) + 1),"-01-01"))
 yr_edate <- as.Date(paste0(eyear,"-12-31"))
@@ -141,6 +141,13 @@ if (sum(datdf$unmet_demand_mgd)==0) {
 # Define year at which highest 30 Day Max occurs (Lal's code, line 405)
 u30_year2 = loflows[ndx1,]$"year";
 
+# Metrics that need Zoo (IHA)
+flows <- zoo(as.numeric(as.character( dat$Qintake )), order.by = index(dat));
+loflows <- group2(flows);
+l90 <- loflows["90 Day Min"];
+ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
+l90_year = loflows[ndx,]$"year";
 
 ##### Define fname before graphing
 # hydroImpoundment lines 144-151
@@ -177,29 +184,29 @@ map2$date <- rownames(map2)
 map2$base_demand_mgd<-ddat2$base_demand_mgd * 1.547
 map2$unmetdemand<-ddat2$unmet_demand_mgd * 1.547
 
-df <- data.frame(as.Date(map2$date), map2$flow, map2$base_demand_mgd,map2$unmetdemand); 
+df <- data.frame(as.Date(map2$date), map2$flow, map2$base_demand_mgd,map2$unmetdemand);
 
 colnames(df)<-c("date","flow","base_demand_mgd","unmetdemand")
 
 #options(scipen=5, width = 1400, height = 950)
-ggplot(df, aes(x=date)) + 
+ggplot(df, aes(x=date)) +
   geom_line(aes(y=flow, color="Flow"), size=0.5) +
   geom_line(aes(y=base_demand_mgd, colour="Base demand"), size=0.5)+
   geom_line(aes(y=unmetdemand, colour="Unmet demand"), size=0.5)+
-  theme_bw()+ 
-  theme(legend.position="top", 
+  theme_bw()+
+  theme(legend.position="top",
         legend.title=element_blank(),
-        legend.box = "horizontal", 
+        legend.box = "horizontal",
         legend.background = element_rect(fill="white",
-                                         size=0.5, linetype="solid", 
+                                         size=0.5, linetype="solid",
                                          colour ="white"),
         legend.text=element_text(size=12),
         axis.text=element_text(size=12, color = "black"),
         axis.title=element_text(size=14, color="black"),
-        axis.line = element_line(color = "black", 
+        axis.line = element_line(color = "black",
                                  size = 0.5, linetype = "solid"),
         axis.ticks = element_line(color="black"),
-        panel.grid.major=element_line(color = "light grey"), 
+        panel.grid.major=element_line(color = "light grey"),
         panel.grid.minor=element_blank())+
   scale_colour_manual(values=c("purple","black","blue"))+
   guides(colour = guide_legend(override.aes = list(size=5)))+
@@ -208,7 +215,7 @@ ggplot(df, aes(x=date)) +
 print(fname)
 ggsave(fname,width=7,height=4.75)
 
-##### Naming for saving and posting to VAHydro 
+##### Naming for saving and posting to VAHydro
 
 print(paste("Saved file: ", fname, "with URL", furl))
 
@@ -220,7 +227,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.30daym
 
 # Uses dat2 for heatmap calendar years
 # make numeric versions of syear and eyear
-num_syear <- as.numeric(syear) + 1 
+num_syear <- as.numeric(syear) + 1
 num_eyear <- as.numeric(eyear)
 
 mode(yrdat) <- 'numeric'
@@ -248,7 +255,7 @@ mosum$year <- rep(num_eyear+1,12)
 yesum <-  sqldf("SELECT year, sum(count_unmet_days) count_unmet_days FROM yrmodat GROUP BY year")
 yesum$month <- rep(13,length(yesum$year))
 
-# create monthly averages 
+# create monthly averages
 moavg<- sqldf('SELECT * FROM mosum')
 moavg$year <- moavg$year + 1
 moavg$avg <- round(moavg$count_unmet_days/((num_eyear-num_syear)+1),1)
@@ -273,16 +280,16 @@ if (sum(mosum$count_unmet_days) == 0) {
   count_grid <- ggplot() +
     geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
     geom_text(aes(label=yrmodat$count_unmet_days, x=yrmodat$month, y= yrmodat$year), size = 3.5, colour = "black") +
-    scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar", 
+    scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar",
                          name= 'Unmet Days') +
     theme(panel.background = element_rect(fill = "transparent"))+
     theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
-    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') +
     scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
     theme(axis.ticks= element_blank()) +
     theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
-    theme(legend.title.align = 0.5) 
-  
+    theme(legend.title.align = 0.5)
+
   unmet <- count_grid + new_scale_fill() +
     geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
     geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
@@ -290,8 +297,8 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
     scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid="#63D1F4",
                          midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
-  
-  
+
+
   unmet_avg <- unmet + new_scale_fill()+
     geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
     geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
@@ -304,16 +311,16 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
     geom_text(aes(label=yrmodat$count_unmet_days, x=yrmodat$month, y= yrmodat$year), size = 3.5, colour = "black") +
     scale_fill_gradient2(low = "#00cc00", high = "red",mid ='yellow',
-                         midpoint = 15, guide = "colourbar", 
+                         midpoint = 15, guide = "colourbar",
                          name= 'Unmet Days') +
     theme(panel.background = element_rect(fill = "transparent"))+
     theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
-    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') +
     scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
     theme(axis.ticks= element_blank()) +
     theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
-    theme(legend.title.align = 0.5) 
-  
+    theme(legend.title.align = 0.5)
+
   unmet <- count_grid + new_scale_fill() +
     geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
     geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
@@ -321,8 +328,8 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
     scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid='#CAB8FF',
                          midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
-  
-  
+
+
   unmet_avg <- unmet + new_scale_fill()+
     geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
     geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
@@ -330,7 +337,7 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = moavg, size = 3.5, color='black', aes(x = month, y = year, label = avg))+
     scale_fill_gradient2(low = "#FFF8DC", mid = "#FFDEAD", high ="#DEB887",
                          name= 'Average Unmet Days', midpoint = mean(yeavg$avg))
-  
+
 }
 
 
@@ -349,18 +356,18 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl2, 'fig.unmet
 if (sum(mosum$count_unmet_days) == 0) {
   count_grid <- ggplot() +
     geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
-    geom_text(aes(label=paste(yrmodat$count_unmet_days,' / ',round(yrmodat$avg_unmet,1), sep=''), 
+    geom_text(aes(label=paste(yrmodat$count_unmet_days,' / ',round(yrmodat$avg_unmet,1), sep=''),
                   x=yrmodat$month, y= yrmodat$year), size = 3.5, colour = "black") +
-    scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar", 
+    scale_fill_gradient2(low = "#00cc00", mid= "#00cc00", high = "#00cc00", guide = "colourbar",
                          name= 'Unmet Days') +
     theme(panel.background = element_rect(fill = "transparent"))+
     theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
-    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') +
     scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
     theme(axis.ticks= element_blank()) +
     theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
-    theme(legend.title.align = 0.5) 
-  
+    theme(legend.title.align = 0.5)
+
   unmet <- count_grid + new_scale_fill() +
     geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
     geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
@@ -368,8 +375,8 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
     scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid="#63D1F4",
                          midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
-  
-  
+
+
   unmet_avg <- unmet + new_scale_fill()+
     geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
     geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
@@ -380,19 +387,19 @@ if (sum(mosum$count_unmet_days) == 0) {
 } else{
   count_grid <- ggplot() +
     geom_tile(data=yrmodat, color='black',aes(x = month, y = year, fill = count_unmet_days)) +
-    geom_text(aes(label=paste(yrmodat$count_unmet_days,' / ',round(yrmodat$avg_unmet,1), sep=''), 
+    geom_text(aes(label=paste(yrmodat$count_unmet_days,' / ',round(yrmodat$avg_unmet,1), sep=''),
                   x=yrmodat$month, y= yrmodat$year), size = 3, colour = "black") +
     scale_fill_gradient2(low = "#00cc00", high = "red",mid ='yellow',
-                         midpoint = 15, guide = "colourbar", 
+                         midpoint = 15, guide = "colourbar",
                          name= 'Unmet Days') +
     theme(panel.background = element_rect(fill = "transparent"))+
     theme() + labs(title = 'Unmet Demand Heatmap', y=NULL, x=NULL) +
-    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') + 
+    scale_x_continuous(expand=c(0,0), breaks= x_breaks, labels=x_labs, position='top') +
     scale_y_reverse(expand=c(0,0), breaks=y_breaks, labels= y_labs) +
     theme(axis.ticks= element_blank()) +
     theme(plot.title = element_text(size = 12, face = "bold",  hjust = 0.5)) +
-    theme(legend.title.align = 0.5) 
-  
+    theme(legend.title.align = 0.5)
+
   unmet <- count_grid + new_scale_fill() +
     geom_tile(data = yesum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
     geom_tile(data = mosum, color='black', aes(x = month, y = year, fill = count_unmet_days)) +
@@ -400,8 +407,8 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = mosum, size = 3.5, color='black', aes(x = month, y = year, label = count_unmet_days)) +
     scale_fill_gradient2(low = "#63D1F4", high = "#8A2BE2", mid='#CAB8FF',
                          midpoint = mean(mosum$count_unmet_days), name= 'Total Unmet Days')
-  
-  
+
+
   unmet_avg <- unmet + new_scale_fill()+
     geom_tile(data = yeavg, color='black', aes(x = month, y = year, fill = avg)) +
     geom_tile(data = moavg, color='black', aes(x = month, y = year, fill = avg)) +
@@ -409,7 +416,7 @@ if (sum(mosum$count_unmet_days) == 0) {
     geom_text(data = moavg, size = 3.5, color='black', aes(x = month, y = year, label = avg))+
     scale_fill_gradient2(low = "#FFF8DC", mid = "#FFDEAD", high ="#DEB887",
                          name= 'Average Unmet Days', midpoint = mean(yeavg$avg))
-  
+
 }
 
 fname3 <- paste(save_directory,paste0('fig.unmet_heatmap_amt.',elid,'.',runid ,'.png'),sep = '/')
@@ -422,3 +429,220 @@ print('File saved to save_directory')
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl3, 'fig.unmet_heatmap_amt', 0.0, site, token)
 
+# does this have an impoundment sub-comp and is imp_off = 0?
+cols <- names(dat)
+if("impoundment" %in% cols) {
+  # Plot and analyze impoundment sub-comps
+  dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+  #
+  storage_pct <- mean(as.numeric(dat$storage_pct) )
+  if (is.na(storage_pct)) {
+    usable_pct_p0 <- 0
+    usable_pct_p10 <- 0
+    usable_pct_p50 <- 0
+  } else {
+    usable_pcts = quantile(as.numeric(dat$storage_pct), c(0,0.1,0.5) )
+    usable_pct_p0 <- usable_pcts["0%"]
+    usable_pct_p10 <- usable_pcts["10%"]
+    usable_pct_p50 <- usable_pcts["50%"]
+  }
+
+  # post em up
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p0', usable_pct_p0, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p10', usable_pct_p10, site, token)
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p50', usable_pct_p50, site, token)
+
+
+  # this has an impoundment.  Plot it up.
+  # Now zoom in on critical drought period
+  pdstart = as.Date(paste0(l90_year,"-06-01") )
+  pdend = as.Date(paste0(l90_year, "-11-15") )
+  datpd <- window(
+    dat,
+    start = pdstart,
+    end = pdend
+  );
+  fname <- paste(
+    save_directory,
+    paste0(
+      'l90_imp_storage.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'l90_imp_storage.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$storage_pct * 100.0,
+    ylim=c(ymn,ymx),
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+  )
+  par(new = TRUE)
+  ymx2 <- max(
+    datpd$impoundment_demand * 1.547,
+    datpd$impoundment_Qout,
+    datpd$ps_refill_pump_mgd,
+    datpd$impoundment_Qin
+    )
+  plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="",
+       ylim=c(0,ymx2))
+  lines(datpd$impoundment_Qout,col='darkblue')
+  lines(datpd$ps_refill_pump_mgd * 1.547,col='green')
+  lines(datpd$impoundment_demand * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
+
+  # l90 2 year
+  # this has an impoundment.  Plot it up.
+  # Now zoom in on critical drought period
+  pdstart = as.Date(paste0( (as.integer(l90_year) - 1),"-01-01") )
+  pdend = as.Date(paste0(l90_year, "-12-31") )
+  datpd <- window(
+    dat,
+    start = pdstart,
+    end = pdend
+  );
+  fname <- paste(
+    save_directory,
+    paste0(
+      'l90_imp_storage.2yr.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'l90_imp_storage.2yr.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$storage_pct * 100.0,
+    ylim=c(ymn,ymx),
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+  )
+  par(new = TRUE)
+  plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$impoundment_Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage.2yr', 0.0, site, token)
+
+  # All Periods
+  # this has an impoundment.  Plot it up.
+  # Now zoom in on critical drought period
+  datpd <- dat
+  fname <- paste(
+    save_directory,
+    paste0(
+      'fig.imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'fig.imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$storage_pct * 100.0,
+    ylim=c(ymn,ymx),
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Storage and Flows",sdate,"to",edate)
+  )
+  par(new = TRUE)
+  plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$impoundment_Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+
+  # Low Elevation Period
+  # Dat for Critical Period
+  elevs <- zoo(dat$storage_pct, order.by = index(dat));
+  loelevs <- group2(elevs);
+  l90 <- loelevs["90 Day Min"];
+  ndx = which.min(as.numeric(l90[,"90 Day Min"]));
+  l90_elev = round(loelevs[ndx,]$"90 Day Min",6);
+  l90_elevyear = loelevs[ndx,]$"year";
+  l90_elev_start = as.Date(paste0(l90_elevyear - 2,"-01-01"))
+  l90_elev_end = as.Date(paste0(l90_elevyear,"-12-31"))
+  elevdatpd <- window(
+    dat,
+    start = l90_elev_start,
+    end = l90_elev_end
+  );
+  datpd <- elevdatpd
+  fname <- paste(
+    save_directory,
+    paste0(
+      'elev90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'elev90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$storage_pct * 100.0,
+    ylim=c(ymn,ymx),
+    main="Minimum Modeled Reservoir Storage Period",
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
+  )
+  par(new = TRUE)
+  plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'elev90_imp_storage.all', 0.0, site, token)
+
+}
