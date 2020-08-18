@@ -11,6 +11,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
   var $default_bundle = 'om_data_matrix'; // by declaring this we automatically inherit the tablefield data, but need to supply our own code to make it work
   var $matrix_field = 'field_dh_matrix';
   var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
+ 
   
   public function formRowEdit(&$form, $entity) {
     //dpm($form,'form');
@@ -116,6 +117,9 @@ class dHOMbroadCastObject extends dHOMSubComp {
     if ($entity->is_new or $entity->reset_defaults) {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
+    }
+    if ($entity->bundle <> $this->default_bundle) {
+      $entity->bundle = $this->default_bundle;
     }
   }
   
