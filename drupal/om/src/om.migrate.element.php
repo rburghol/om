@@ -113,6 +113,7 @@ foreach ($data as $element) {
   //}
   $elid = $element['elementid'];
   $hydrocode = $element['hydrocode'];
+  $classes = isset($element['classes']) ? explode(',', $element['classes']) : $classes;
   // if hydrocode is numeric, we are passing a pid for the target model element in
   if (!isset($element['om_fid']) and is_numeric($hydrocode)) {
     $element['om_fid'] = $hydrocode;
