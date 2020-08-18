@@ -113,6 +113,9 @@ class dHOMbroadCastObject extends dHOMSubComp {
     // get field default basics
     //dpm($entity, 'load()');
     parent::load($entity);
+    if ($entity->bundle <> $this->default_bundle) {
+      $entity->bundle = $this->default_bundle;
+    }
     if ($entity->is_new or $entity->reset_defaults) {
       $datatable = $this->tableDefault($entity);
       $this->setCSVTableField($entity, $datatable);
