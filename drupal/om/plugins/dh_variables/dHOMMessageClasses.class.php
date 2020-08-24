@@ -21,7 +21,6 @@ class dHOMbroadCastObject extends dHOMSubComp {
       'cast' => "Send",
     );
     $form['field_dh_matrix']['und'][0]['tablefield']['#weight'] = 10;
-    $form['broadcast_mode']['#title'] = t('Broadcast Mode');
     $form['broadcast_mode']['#type'] = 'select';
     $form['broadcast_mode']['#options'] = $modes;
     $form['broadcast_mode']['#size'] = 1;
@@ -33,7 +32,6 @@ class dHOMbroadCastObject extends dHOMSubComp {
       'global' => "Global (not yet functional)",
     );
     $form['broadcast_hub']['#type'] = 'select';
-    $form['broadcast_hub']['#title'] = t('Broadcast Hub Location');
     $form['broadcast_hub']['#options'] = $hubs;
     $form['broadcast_hub']['#size'] = 1;
     $form['broadcast_hub']["#empty_value"] = "parent";
@@ -51,7 +49,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'vardesc' => 'Name of the broadcast class for these variables.',
-        'title' => 'Row Key',
+        'title' => t('Broadcast Channel Name'),
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'broadcast_hub' => array(
@@ -59,7 +57,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
         'propcode_default' => NULL,
         'propname' => 'broadcast_hub',
         'vardesc' => 'Select the entity scope (hub) of this broadcast channel.',
-        'title' => 'Column Key',
+        'title' => t('Broadcast Hub Location'),
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         //'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
@@ -70,7 +68,7 @@ class dHOMbroadCastObject extends dHOMSubComp {
         'propcode_default' => NULL,
         'propname' => 'broadcast_mode',
         'vardesc' => 'Read or send to broadcast channel.',
-        'title' => 'Row Lookup Type',
+        'title' => t('Broadcast Mode'),
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
