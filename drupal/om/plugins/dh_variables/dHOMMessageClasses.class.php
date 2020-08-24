@@ -12,6 +12,11 @@ class dHOMbroadCastObject extends dHOMSubComp {
   var $matrix_field = 'field_dh_matrix';
   var $json2d = TRUE; // use JSON 2d for all remote syncs, much faster
   
+  public function hiddenFields() {
+    $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
+    return $hidden;
+  }
+  
   public function formRowEdit(&$form, $entity) {
     //dpm($form,'form');
     parent::formRowEdit($form, $entity);
