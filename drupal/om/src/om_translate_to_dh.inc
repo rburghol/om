@@ -324,6 +324,7 @@ function om_object2dh($elid, &$om_object, &$dh_model, $classes = array(), $one_p
   $link_set_remote = $om_link->propcode;
   $om_link->propcode = '0';
   $om_link->save();
+  // allow data override of link 
   // comment.
   $props = dh_get_dh_propnames('dh_properties', $dh_model->pid);
   error_log("Prop names for this entity: " . print_r($props,1));
