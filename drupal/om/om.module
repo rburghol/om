@@ -85,6 +85,7 @@ function om_run_id_options() {
       '4' => t('tbd: Safe Yield (All at Max) (#4)'),
       '5' => t('tbd: Custom Admin Run (#5)'),
       '6' => t('Permit Term Max w/Proposed (#6)'),
+      '601' => t('Permit Term Max w/Proposed - 2000-2002 (#601)'),
       '7' => t('tbd: (#7)'),
       '8' => t('tbd: (#8)'),
       '9' => t('Custom Admin Run (#9)'),
@@ -104,7 +105,9 @@ function om_run_id_options() {
     );
   }
   for ($i = 100; $i <= 1000; $i++) {
-    $options[$i] = "Custom User Run #$i";
+    if (!isset($options[$i])) {
+      $options[$i] = "Custom User Run #$i";
+    }
   }
   //error_log("runid options " . print_r($options,1));
   return $options;
