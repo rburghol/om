@@ -381,6 +381,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     }
     $modate = date("Y-m-d h:m a", dh_handletimestamp($entity->modified) );
     switch ($view_mode) {
+      case 'openmi_json':
+        parent::buildContent($content, $entity, $view_mode);
+      break;
       case 'plugin':
       case 'teaser':
       default:
