@@ -170,6 +170,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
       $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      $varinfo = ($prop->varkey and !$prop->varid) ? dh_vardef_info($prop->varkey) : FALSE;
       if ($varinfo === FALSE) {
         watchdog("loadProperty called without varid", 'error');
         //return;
@@ -198,7 +199,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
-      $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
+      $varinfo = $prop->varid ? dh_vardef_info($prop->varkey) : FALSE;
       if ($varinfo === FALSE) {
         watchdog("loadProperty called without varid", 'error');
         return;
