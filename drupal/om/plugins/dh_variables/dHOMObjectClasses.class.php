@@ -172,9 +172,9 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
       $varinfo = ($prop->varkey and !$prop->varid) ? dh_vardef_info($prop->varkey) : FALSE;
       if ($varinfo === FALSE) {
-        watchdog("loadProperty called without varid");
-        //watchdog("loadProperty called without varid", 'error');
-        //return;
+        //watchdog("loadProperty called without varid");
+        watchdog("loadProperty called without varid", 'error');
+        return;
       }
       if (!$prop) {
         watchdog('om', 'Could not Add Properties in plugin loadProperties');
