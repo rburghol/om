@@ -173,7 +173,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $varinfo = (!empty($prop->varkey) and !$prop->varid) ? dh_vardef_info($prop->varkey) : FALSE;
       if ($varinfo === FALSE) {
         //watchdog("loadProperty called without varid");
-        watchdog('om', "loadProperty called without varid", 'error');
+        watchdog('om', "loadProperty called without varid", array(), 'error');
         return;
       }
       if (!$prop) {
@@ -202,7 +202,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $prop = $this->insureProperty($entity, $thisvar);
       $varinfo = $prop->varid ? dh_vardef_info($prop->varkey) : FALSE;
       if ($varinfo === FALSE) {
-        watchdog('om', "loadProperty called without varid", 'error');
+        watchdog('om', "loadProperty called without varid", array(), 'error');
         return;
       }
       //dpm($thisvar, "Insuring ");
