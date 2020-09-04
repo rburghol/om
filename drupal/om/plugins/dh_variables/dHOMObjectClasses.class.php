@@ -139,7 +139,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
       $props = array($propname => $props[$propname]);
     }
     //error_log("Props:" . print_r($props,1));
-    foreach ($props as $thisvar) {
+    foreach ($props as $propname => $thisvar) {
 	    // propname is arbitrary by definition
       // also, propname can be non-compliant with form API, which requires underscores in place of spaces.
       // user can also rename properties, but that shouldn't be allowed with these kinds of defined by DefaultSettings
@@ -169,11 +169,13 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     ) {
       $thisvar['featureid'] = $entity->{$this->row_map['id']};
       $prop = $this->insureProperty($entity, $thisvar);
+      //dpm($prop,"insured $propname");
       $varinfo = $prop->varid ? dh_vardef_info($prop->varid) : FALSE;
-      $varinfo = (!empty($prop->varkey) and !$prop->varid) ? dh_vardef_info($prop->varkey) : FALSE;
-      if ($varinfo === FALSE) {
+      $varinfo = (!empty($prop->varkey) and !$prop->varid) ? dh_vardef_info($prop->varkey) : $varinfo;
+      //dpm($varinfo,"varinfo");
+      if (!$varinfo) {
         //watchdog("loadProperty called without varid");
-        watchdog('om', "loadProperty called without varid", array(), 'error');
+        watchdog('om', "loadProperty called without varid");
         return;
       }
       if (!$prop) {
