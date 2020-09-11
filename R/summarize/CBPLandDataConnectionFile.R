@@ -117,7 +117,7 @@ furl <- paste(
   sep='/'
 )
 png(fpath)
-boxplot(as.numeric(dat$Runit) ~ dat$month, ylim=c(0,3))
+boxplot(as.numeric(dat$Runit) ~ as.integer(dat$month), ylim=c(0,3))
 dev.off()
 print(paste("Saved file: ", fname, "with URL", furl))
 vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'Runit_boxplot_month', 0.0, site, token)
