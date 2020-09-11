@@ -101,3 +101,24 @@ dev.off()
 print(paste("Saved file: ", fname, "with URL", furl))
 vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'Runit_boxplot_year', 0.0, site, token)
 
+# Runoff boxplot
+fname <- paste0(
+  'Runit_boxplot_month',
+  elid, '.', runid, '.png'
+)
+fpath <-  paste(
+  save_directory,
+  fname,
+  sep='/'
+)
+furl <- paste(
+  save_url,
+  fname,
+  sep='/'
+)
+png(fpath)
+boxplot(as.numeric(dat$Runit) ~ dat$month, ylim=c(0,3))
+dev.off()
+print(paste("Saved file: ", fname, "with URL", furl))
+vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'Runit_boxplot_month', 0.0, site, token)
+
