@@ -1,17 +1,27 @@
 # SETTING UP BASEPATH AND SOURCING FUNCTIONS
-basepath <- '/var/www/R'
-setwd(basepath)
-source(paste(basepath,"config.local.private", sep = "/"))
-source(paste0(cbp6_location,"/code/cbp6_functions.R"))
-source(paste0(github_location, "/auth.private"));
-source(paste(cbp6_location, "/code/fn_vahydro-1.0.R", sep = ''))
+#----------------------------------------------
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
+#----------------------------------------------
+# Load Libraries
+basepath='/var/www/R';
+source(paste(basepath,'config.R',sep='/'))
+library(dataRetrieval)
+
+save_directory <-  "/var/www/html/data/proj3/out"
+
+# Read Args
+argst <- commandArgs(trailingOnly=T)
+pid <- as.integer(argst[1])
+elid <- as.integer(argst[2])
+runid <- as.integer(argst[3])
+gage_number <- as.integer(argst[4])
+riv.seg <- as.character(argst[5])
 
 # ESSENTIAL INPUTS
-riv.seg <- 'PS5_4380_4370'
 dat.source1 <- 'gage' # cbp_model
 dat.source2 <- 'vahydro'
 site <- "http://deq2.bse.vt.edu/d.dh"
-token <- rest_token(site, token, rest_uname, rest_pw)
 # If a gage is used -- all data is trimmed to gage timeframe.  Otherwise, start/end date defaults
 # can be found in the gage.timespan.trimmed loop.
 
@@ -21,32 +31,64 @@ mod.scenario1 <- 'CFBASE30Y20180615' #or 'CBASE1808L55CY55R45P50R45P50Y' (climat
 mod.scenario2 <- mod.scenario1
 site.or.server <- 'site'
 
-# Inputs if using VA Hydro -- otherwise, can ignore
-run.id1 <- '11'
-run.id2 <- run.id1
+# Load the VAHydro watershed entity via a riversegment based hydrocode (useful in testing)
+hydrocode = paste0("vahydrosw_wshed_", riv.seg);
+feature = om_get_feature(hydrocode)
+hydroid = feature$hydroid
+mm <- om_get_model(hydroid)
+elid <- om_get_model_elementid(mm$pid)
 
 # Inputs if using USGS gage -- otherwise, can ignore
-gage_number <- '01636500'
 gage_timespan <- get.gage.timespan(gage_number)
-gage.title <- 'USGS 01636500 SHENANDOAH RIVER AT MILLVILLE, WV'
 
-if (dat.source1 == 'gage' || dat.source2 == 'gage') {
-  gage.timespan.trimmed <- TRUE #or FALSE
-  post.gage.scen.prop(riv.seg, gage.title, site, token)
-  
+gage <- try(readNWISsite(gage_number))
+gage.title <- paste("USGS", gage_number, gage$station_nm, '- Weighted')
+
+# load the model scenario, if the gage timespan does not span the entire modeling 
+# timespan, we need to tim the modeled timespan, and create a new runid
+# "runid_[run id]_gage_timespan"
+rawdat <- fn_get_runfile(elid, run.id, site = omsite,  cached = FALSE);
+model_data <- vahydro_format_flow_cfs(rawdat)
+gage_data <- gage_import_data_cfs(gage_number, start.date, end.date)
+start.date <- min(model_data$date)
+end.date <- max(model_data$date)
+# try model timeseries local_channel_area and area_sqmi
+da = NULL
+if (!is.na(mean(as.numeric(rawdat$area_sqmi)))) {
+  da <- mean(as.numeric(rawdat$area_sqmi))
+} else if (!is.na(mean(as.numeric(rawdat$local_channel_area)))) {
+  da <- mean(as.numeric(rawdat$local_channel_area))
 }
 
-if (gage.timespan.trimmed == TRUE) {
-  start.date <- as.character(gage_timespan[[1]]) #1984-01-01
-  end.date <- as.character(gage_timespan[[2]]) #1984-12-31
-} else {
-  start.date <- '1991-01-01' #1984-01-01
-  end.date <- '2000-12-31' #1984-12-31
+# now, if da is not NULL we scale, otherwise assume gage area and watershed area are the same
+if (!is.null(da)) {
+  wscale <- as.numeric(as.numeric(da) / as.numeric(gage$drain_area_va))
+  gage_data$flow <- as.numeric(gage_data$flow) * wscale
+}
+# dfd
+
+gage.timespan.trimmed <- FALSE
+if (min(gage_data$date) > min(model_data$date)) {
+  gage.timespan.trimmed <- TRUE #or FALSE
+  start.date <- min(gage_data$date)
+}
+if (max(model_data$date) > max(gage_data$date)) {
+  gage.timespan.trimmed <- TRUE #or FALSE
+  end.date <- max(gage_data$date)
+}
+
+# Now trim the series
+gage_data_formatted <- vahydro_trim_for_iha(gage_data, start.date, end.date)
+model_data_formatted  <- vahydro_trim_for_iha(model_data, start.date, end.date)
+
+if (dat.source1 == 'gage' || dat.source2 == 'gage') {
+  post.gage.scen.prop(riv.seg, gage.title, site, token)
+  # should store gage weighting factor as property
 }
 
 # Changes graph labels automatically
 if (dat.source1 == 'vahydro') {
-  cn1 <- paste('VAhydro_runid_', run.id1, sep = '')
+  cn1 <- paste('VAhydro_runid_', runid, sep = '')
 } else if (dat.source1 == 'gage') {
   cn1 <- paste('USGS_', gage_number, sep = '')
 } else if (dat.source1 == 'cbp_model') {
@@ -54,25 +96,33 @@ if (dat.source1 == 'vahydro') {
 }
 
 if (dat.source2 == 'vahydro') {
-  cn2 <- paste('VAhydro_runid_', run.id2, sep = '')
+  cn2 <- paste('VAhydro_runid_', runid, sep = '')
 } else if (dat.source2 == 'gage') {
   cn2 <- paste('USGS_', gage_number, sep = '')
 } else if (dat.source2 == 'cbp_model') {
   cn2 <- paste('CBP_scen_ ', mod.scenario2, sep = '')
 }
 
-# POSTING METRICS
-automated_metric_2_vahydro(dat.source = dat.source1, riv.seg = riv.seg, gage_number = gage_number, run.id = run.id1, gage.timespan.trimmed = gage.timespan.trimmed, mod.phase = mod.phase, mod.scenario = mod.scenario1, start.date = start.date, end.date = end.date, github_link = github_location, site = site, site.or.server = 'site', token = token)
-automated_metric_2_vahydro(dat.source = dat.source2, riv.seg = riv.seg, gage_number = gage_number, run.id = run.id2, gage.timespan.trimmed = gage.timespan.trimmed, mod.phase = mod.phase, mod.scenario = mod.scenario2, start.date = start.date, end.date = end.date, github_link = github_location, site = site, site.or.server = 'site', token = token)
 
+if (gage.timespan.trimmed == TRUE) {
+  model.scenprop.pid <- get.gage.timespan.scen.prop(riv.seg, run.id, site, token)
+} else {
+  model.scenprop.pid <- get.scen.prop(riv.seg, 'vahydro-1.0', 'vahydro', run.id, start.date, end.date, site, token)
+}
+gage.scenprop.pid <- get.scen.prop(riv.seg, 'usgs-1.0', 'gage', run.id, start.date, end.date, site, token)
+
+# POSTING METRICS
+all_flow_metrics_2_vahydro(gage.scenprop.pid, gage_data_formatted, token)
+all_flow_metrics_2_vahydro(model.scenprop.pid, model_data_formatted, token)
+  
 # CREATING DASHBOARD (outputted in /var/www/R)
 rmarkdown::render(paste0(cbp6_location, '/code/Modularized_Dashboard_VAHydro.Rmd'), 
                   output_dir = basepath, output_file = paste0(riv.seg, '.pdf'), 
                   params = list(riv.seg = riv.seg, dat.source1 = dat.source1, 
                                 dat.source2 = dat.source2, start.date = start.date, 
                                 end.date = end.date, github_location = github_location, site = site, 
-                                site.or.server = site.or.server, run.id1 = run.id1, 
-                                run.id2 = run.id2, gage_number = gage_number, 
+                                site.or.server = site.or.server, run.id1 = runid, 
+                                run.id2 = runid, gage_number = gage_number, 
                                 mod.phase1 = mod.phase, mod.scenario1 = mod.scenario1, 
                                 mod.phase2 = mod.phase, mod.scenario2 = mod.scenario2, 
                                 gage.timespan.trimmed = gage.timespan.trimmed, 
