@@ -8,6 +8,7 @@ save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
+save_directory <-  "/var/www/html/data/proj3/out"
 
 # Now do the stuff
 #pid = 4823212
