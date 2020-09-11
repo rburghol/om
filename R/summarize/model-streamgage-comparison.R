@@ -1,3 +1,4 @@
+library(stringr)
 # SETTING UP BASEPATH AND SOURCING FUNCTIONS
 #----------------------------------------------
 site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
