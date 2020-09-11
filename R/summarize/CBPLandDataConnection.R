@@ -85,8 +85,7 @@ if (is.na(Runit)) {
 }
 Runitprop <- vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Runit', Runit, site, token)
 
-# Runof boxplot
-
+# Runoff boxplot
 fname <- paste0(
   'Runit_boxplot_year',
   elid, '.', runid, '.png'
