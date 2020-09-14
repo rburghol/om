@@ -42,7 +42,7 @@ elid <- om_get_model_elementid(mm$pid)
 # Inputs if using USGS gage -- otherwise, can ignore
 message(paste("Retrieving timespan for usgs", gage_number))
 gage_timespan <- get.gage.timespan(gage_number)
-
+message(paste("Retrieving Gage Info for usgs", gage_number))
 gage <- try(readNWISsite(gage_number))
 gage.title <- paste("USGS", gage_number, gage$station_nm, '- Weighted')
 
