@@ -49,7 +49,7 @@ gage.title <- paste("USGS", gage_number, gage$station_nm, '- Weighted')
 # load the model scenario, if the gage timespan does not span the entire modeling 
 # timespan, we need to tim the modeled timespan, and create a new runid
 # "runid_[run id]_gage_timespan"
-rawdat <- fn_get_runfile(elid, run.id, site = omsite,  cached = FALSE);
+rawdat <- fn_get_runfile(elid, runid, site = omsite,  cached = FALSE);
 model_data <- vahydro_format_flow_cfs(rawdat)
 gage_data <- gage_import_data_cfs(gage_number, start.date, end.date)
 start.date <- min(model_data$date)
@@ -107,11 +107,11 @@ if (dat.source2 == 'vahydro') {
 
 
 if (gage.timespan.trimmed == TRUE) {
-  model.scenprop.pid <- get.gage.timespan.scen.prop(riv.seg, run.id, site, token)
+  model.scenprop.pid <- get.gage.timespan.scen.prop(riv.seg, runid, site, token)
 } else {
-  model.scenprop.pid <- get.scen.prop(riv.seg, 'vahydro-1.0', 'vahydro', run.id, start.date, end.date, site, token)
+  model.scenprop.pid <- get.scen.prop(riv.seg, 'vahydro-1.0', 'vahydro', runid, start.date, end.date, site, token)
 }
-gage.scenprop.pid <- get.scen.prop(riv.seg, 'usgs-1.0', 'gage', run.id, start.date, end.date, site, token)
+gage.scenprop.pid <- get.scen.prop(riv.seg, 'usgs-1.0', 'gage', runid, start.date, end.date, site, token)
 
 # POSTING METRICS
 all_flow_metrics_2_vahydro(gage.scenprop.pid, gage_data_formatted, token)
