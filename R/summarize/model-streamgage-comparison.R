@@ -51,9 +51,9 @@ gage.title <- paste("USGS", gage_number, gage$station_nm, '- Weighted')
 # "runid_[run id]_gage_timespan"
 rawdat <- fn_get_runfile(elid, runid, site = omsite,  cached = FALSE);
 model_data <- vahydro_format_flow_cfs(rawdat)
-gage_data <- gage_import_data_cfs(gage_number, start.date, end.date)
 start.date <- min(model_data$date)
 end.date <- max(model_data$date)
+gage_data <- gage_import_data_cfs(gage_number, start.date, end.date)
 # try model timeseries local_channel_area and area_sqmi
 da = NULL
 if (!is.na(mean(as.numeric(rawdat$area_sqmi)))) {
