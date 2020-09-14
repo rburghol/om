@@ -16,7 +16,7 @@ argst <- commandArgs(trailingOnly=T)
 pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
 runid <- as.integer(argst[3])
-gage_number <- as.integer(argst[4])
+gage_number <- as.character(argst[4])
 riv.seg <- as.character(argst[5])
 
 # ESSENTIAL INPUTS
