@@ -34,10 +34,10 @@ site.or.server <- 'site'
 
 # Load the VAHydro watershed entity via a riversegment based hydrocode (useful in testing)
 hydrocode = paste0("vahydrosw_wshed_", riv.seg);
-feature = om_get_feature(hydrocode, 'watershed', 'vahydro')
+feature = om_get_feature(site, hydrocode, 'watershed', 'vahydro')
 hydroid = feature$hydroid
-mm <- om_get_model(hydroid)
-elid <- om_get_model_elementid(mm$pid)
+mm <- om_get_model(site, hydroid)
+elid <- om_get_model_elementid(site, mm$pid)
 
 # Inputs if using USGS gage -- otherwise, can ignore
 message(paste("Retrieving timespan for usgs", gage_number))
