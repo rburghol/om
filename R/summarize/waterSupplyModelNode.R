@@ -151,10 +151,8 @@ alf_data$thisdate <- index(dat)
 alf_data$year <- year(ymd(alf_data$thisdate))
 alf_data$month <- month(ymd(alf_data$thisdate))
 alf_data$day <- day(ymd(alf_data$thisdate))
-monthly_mins <- zoo(alf_data$Qout, order.by = alf_data$thisdate)
-modat <- group1(monthly_mins,'water','min')
-g1vec <- as.vector(as.matrix(modat[,7]))
-alf <- round(quantile(g1vec, 0.5, na.rm = TRUE),6)
+zoo.alf_data <- zoo(alf_data$Qout, order.by = alf_data$thisdate)
+alf <- fn_iha_mlf(zoo.alf_data,'August')
 
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ml8', alf, site, token)
 
