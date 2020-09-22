@@ -121,6 +121,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function save(&$entity) {
+    //dpm($entity,'save()');
+    $this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
   }
   
@@ -795,21 +797,26 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function update(&$entity) {
     //$entity->propname = 'blankShell';
+    //dsm("update() " . $entity->propname);
     $this->saveObjectClass($entity);
     parent::update($entity);
     // should we do this here?
-    //$this->synchronize($entity);
+    $this->synchronize($entity);
   }
   
   public function save(&$entity) {
     //$entity->propname = 'blankShell';
+    //dsm("save() " . $entity->propname);
     parent::save($entity);
     // now, find out if we are suppose to sync to a remote server
     // 1. $elid = findRemoteOMElement($entity, $path) ; this returns $elid and increments $path
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
-    $this->synchronize($entity);
+    //if ($entity->is_new) {
+      // otherwise, we wait till the update() routine is called.
+      $this->synchronize($entity);
+    //}
   }
   
   public function synchronize(&$entity, $force = FALSE) {
@@ -1548,7 +1555,7 @@ class dHOMEquation extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
