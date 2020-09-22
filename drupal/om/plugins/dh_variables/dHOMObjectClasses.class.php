@@ -813,10 +813,10 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
-    if ($entity->is_new) {
+    //if ($entity->is_new) {
       // otherwise, we wait till the update() routine is called.
       $this->synchronize($entity);
-    }
+    //}
   }
   
   public function synchronize(&$entity, $force = FALSE) {
@@ -1555,7 +1555,7 @@ class dHOMEquation extends dHOMSubComp {
     */
     $ppath = $path;
     array_unshift($ppath, $entity->propname);
-    $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+    //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
     $exp = $this->exportOpenMI($entity);
     //dpm($exp,"Using JSON export mode");
     $exp_json = addslashes(json_encode($exp[$entity->propname]));
