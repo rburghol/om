@@ -797,7 +797,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function update(&$entity) {
     //$entity->propname = 'blankShell';
-    dsm("update() " . $entity->propname);
+    //dsm("update() " . $entity->propname);
     $this->saveObjectClass($entity);
     parent::update($entity);
     // should we do this here?
@@ -806,7 +806,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function save(&$entity) {
     //$entity->propname = 'blankShell';
-    dsm("save() " . $entity->propname);
+    //dsm("save() " . $entity->propname);
     parent::save($entity);
     // now, find out if we are suppose to sync to a remote server
     // 1. $elid = findRemoteOMElement($entity, $path) ; this returns $elid and increments $path
