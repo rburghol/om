@@ -122,7 +122,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function save(&$entity) {
     //dpm($entity,'save()');
-    $this->convert_attributes_to_dh_props($entity);
+    //$this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
   }
   
