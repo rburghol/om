@@ -798,6 +798,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     //$entity->propname = 'blankShell';
     $this->saveObjectClass($entity);
     parent::insert($entity);
+    $this->synchronize($entity);
   }
   
   public function update(&$entity) {
@@ -820,7 +821,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
     //if ($entity->is_new) {
       // otherwise, we wait till the update() routine is called.
-      $this->synchronize($entity);
+      //$this->synchronize($entity);
     //}
   }
   
