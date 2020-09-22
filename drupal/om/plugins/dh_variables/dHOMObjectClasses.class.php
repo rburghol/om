@@ -811,7 +811,9 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
-    //$this->synchronize($entity);
+    if ($entity->is_new) {
+      $this->synchronize($entity);
+    }
   }
   
   public function synchronize(&$entity, $force = FALSE) {
