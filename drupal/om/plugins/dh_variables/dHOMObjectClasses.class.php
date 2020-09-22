@@ -122,6 +122,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function save(&$entity) {
     dpm($entity,'save()');
+    $this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
   }
   
@@ -799,7 +800,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     $this->saveObjectClass($entity);
     parent::update($entity);
     // should we do this here?
-    //$this->synchronize($entity);
+    $this->synchronize($entity);
   }
   
   public function save(&$entity) {
@@ -810,7 +811,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 2. if $elid = 0 then no remote sync
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
-    $this->synchronize($entity);
+    //$this->synchronize($entity);
   }
   
   public function synchronize(&$entity, $force = FALSE) {
