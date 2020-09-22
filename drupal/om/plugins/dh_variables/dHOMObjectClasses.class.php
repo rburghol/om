@@ -113,7 +113,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function update(&$entity) {
-    //dpm($entity,'update()');
+    dpm($entity,'update()');
     // check for transition from for value to prop
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
@@ -121,6 +121,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function save(&$entity) {
+    dpm($entity,'save()');
     parent::save($entity);
   }
   
