@@ -121,7 +121,6 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function save(&$entity) {
-    //dpm($entity,'save()');
     // We comment out the below call to convert... because it 
     // somehow prevents the saving of this components attached properties.
     // This makes sense since, the children props need this prop to already be saved so that they 
@@ -129,6 +128,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // props pushed.  Maybe do this *after* the parent::save() call?
     //$this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
+    dpm($entity,'save()');
   }
   
   public function delete(&$entity) {
