@@ -406,9 +406,9 @@ class Statistic extends Equation {
                   $this->logDebug($this->stack);
                }
             }
-            error_log("$this->name Current Stack Depth = " . count($this->stack) . ", max depth = $this->stack_depth <br>");
+            //error_log("$this->name Current Stack Depth = " . count($this->stack) . ", max depth = $this->stack_depth <br>");
             $res = $this->evalStat($this->stack_stat, $this->stack);
-            error_log(" = $res ");
+            //error_log(" = $res ");
          break;
          
          default:
