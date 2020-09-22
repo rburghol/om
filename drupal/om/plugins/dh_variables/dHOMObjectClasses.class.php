@@ -122,6 +122,11 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   
   public function save(&$entity) {
     //dpm($entity,'save()');
+    // We comment out the below call to convert... because it 
+    // somehow prevents the saving of this components attached properties.
+    // This makes sense since, the children props need this prop to already be saved so that they 
+    // can point to a featureid, but, because update() does not get called, the children don't have their
+    // props pushed.  Maybe do this *after* the parent::save() call?
     //$this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
   }
@@ -797,7 +802,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function update(&$entity) {
     //$entity->propname = 'blankShell';
-    //dsm("update() " . $entity->propname);
+    dsm("update() " . $entity->propname);
     $this->saveObjectClass($entity);
     parent::update($entity);
     // should we do this here?
