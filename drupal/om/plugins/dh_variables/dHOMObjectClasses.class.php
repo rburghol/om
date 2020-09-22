@@ -813,7 +813,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function synchronize(&$entity, $force = FALSE) {
-    //dpm($entity, "New synchronize method used");
+    dpm($entity, "New synchronize method used");
     // Skip if this is a child of an object that uses json2d for synch,unless $force == TRUE
     $json2d = $this->checkParentJSON($entity);
     // we DO want to force if this element has been edited solo, and skip loading the parent.
