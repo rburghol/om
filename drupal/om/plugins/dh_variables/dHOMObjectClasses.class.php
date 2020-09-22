@@ -113,7 +113,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function update(&$entity) {
-    dpm($entity,'update()');
+    //dpm($entity,'update()');
     // check for transition from for value to prop
     $this->convert_attributes_to_dh_props($entity);
     $this->updateProperties($entity);
@@ -121,7 +121,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   }
   
   public function save(&$entity) {
-    dpm($entity,'save()');
+    //dpm($entity,'save()');
     $this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
   }
@@ -815,7 +815,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   }
   
   public function synchronize(&$entity, $force = FALSE) {
-    dpm($entity, "New synchronize method used");
+    //dpm($entity, "New synchronize method used");
     // Skip if this is a child of an object that uses json2d for synch,unless $force == TRUE
     $json2d = $this->checkParentJSON($entity);
     // we DO want to force if this element has been edited solo, and skip loading the parent.
