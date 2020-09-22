@@ -812,6 +812,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
     // 3. Determine how to save
     $path = array(); // we init here, since save() shouldn't be called in this chain on any upstream objects
     if ($entity->is_new) {
+      // otherwise, we wait till the update() routine is called.
       $this->synchronize($entity);
     }
   }
