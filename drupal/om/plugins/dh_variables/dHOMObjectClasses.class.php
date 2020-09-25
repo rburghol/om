@@ -803,7 +803,7 @@ class dHOMBaseObjectClass extends dHVariablePluginDefaultOM {
   
   public function update(&$entity) {
     //$entity->propname = 'blankShell';
-    dsm("update() " . $entity->propname);
+    //dsm("update() " . $entity->propname);
     $this->saveObjectClass($entity);
     parent::update($entity);
     // should we do this here?
