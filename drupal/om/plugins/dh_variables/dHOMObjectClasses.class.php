@@ -128,7 +128,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     // props pushed.  Maybe do this *after* the parent::save() call?
     //$this->convert_attributes_to_dh_props($entity);
     parent::save($entity);
-    dpm($entity,'save()');
+    //dpm($entity,'save()');
   }
   
   public function delete(&$entity) {
