@@ -29,6 +29,15 @@ site <- "http://deq2.bse.vt.edu/d.dh"
 mod.phase <- 'p6/p6_gb604' #or "p532c-sova" (phase 5)
 site.or.server <- 'site'
 
+mrun_name <- paste0('runid_', runid)
+# run name for gage
+grun_name <- mrun_name 
+# Inputs if using USGS gage -- otherwise, can ignore
+message(paste("Retrieving timespan for usgs", gage_number))
+gage_timespan <- get.gage.timespan(gage_number)
+message(paste("Retrieving Gage Info for usgs", gage_number))
+gage <- try(readNWISsite(gage_number))
+
 # Load the VAHydro watershed entity via a riversegment based hydrocode (useful in testing)
 hydrocode = paste0("vahydrosw_wshed_", riv.seg);
 message(paste("searching for watershed", riv.seg,"with hydrocode", hydrocode))
@@ -51,15 +60,6 @@ gage.scenprop.pid <- gm$pid
 
 elid <- om_get_model_elementid(site, mm$pid)
 # run name for model
-mrun_name <- paste0('runid_', runid)
-# run name for gage
-grun_name <- mrun_name 
-# Inputs if using USGS gage -- otherwise, can ignore
-message(paste("Retrieving timespan for usgs", gage_number))
-gage_timespan <- get.gage.timespan(gage_number)
-message(paste("Retrieving Gage Info for usgs", gage_number))
-gage <- try(readNWISsite(gage_number))
-
 # load the model data
 if (substr(mod.scenario,1,7) == 'vahydro') {
   rawdat <- fn_get_runfile(elid, runid, site = omsite,  cached = FALSE);
