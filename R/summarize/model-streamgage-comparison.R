@@ -75,7 +75,7 @@ if (substr(mod.scenario,1,7) == 'vahydro') {
 } else {
   # this is cbp model, different import procedure
   message("Grabbing CBP model data")
-  model_data <- model_import_data_cfs(riv.seg, mod.phase, mod.scenario, start.date, end.date)
+  model_data <- model_import_data_cfs(riv.seg, mod.phase, mod.scenario, NULL, NULL)
   # try to get da from the feature
   da = NULL
   inputs <- list (
