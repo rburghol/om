@@ -62,6 +62,7 @@ elid <- om_get_model_elementid(site, mm$pid)
 # run name for model
 # load the model data
 if (substr(mod.scenario,1,7) == 'vahydro') {
+  message("Grabbing vahyro model data")
   rawdat <- fn_get_runfile(elid, runid, site = omsite,  cached = FALSE);
   model_data <- vahydro_format_flow_cfs(rawdat)
   # try model timeseries local_channel_area and area_sqmi
@@ -73,6 +74,7 @@ if (substr(mod.scenario,1,7) == 'vahydro') {
   }
 } else {
   # this is cbp model, different import procedure
+  message("Grabbing CBP model data")
   model_data <- model_import_data_cfs(riv.seg, mod.phase, mod.scenario, start.date, end.date)
   # try to get da from the feature
   da = NULL
