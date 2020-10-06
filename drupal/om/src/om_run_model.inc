@@ -421,6 +421,18 @@ function om_run_stash_modes($model, $model_config) {
   $run_mode = om_model_getSetProperty($values, 'name');
   $run_mode->save();
   
+  // set model timestep dt here
+  $dt = $model_config['dt'];
+  $values = array(
+    'entity_type' => 'dh_properties',
+    'featureid' => $model->pid,
+    'varkey' => 'om_class_Constant',
+    'propname' => 'dt',
+    'propvalue' => $dt,
+  );
+  $dt = om_model_getSetProperty($values, 'name');
+  $dt->save();
+  
   // set the model flow_mode property here
   $flow_mode = $model_config['flow_mode'];
   $values = array(
