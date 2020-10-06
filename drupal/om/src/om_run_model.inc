@@ -253,7 +253,6 @@ function om_run_model($config) {
     // @todo: this does not do anything.  The run_model.php script and the forkRun() routines are not able to handle this
     //        so for now this is a placeholder.
     $setstr .= "normal flow_mode=$flow_mode $debug $dt";
-    $setstr .= " $dt";
     //$test_only = TRUE;
     break;
 	
