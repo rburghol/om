@@ -96,6 +96,13 @@ if (isset($argv[13])) {
    $debug = 0;
 }
 
+if (isset($argv[14])) {
+   $dt = $argv[14];
+   $url_params['dt'] = $dt;
+} else {
+   $dt = 0;
+}
+
 // set up the sleep factor
 $start_year = intval(date('Y', strtotime($startdate)));
 $end_year = intval(date('Y', strtotime($enddate)));
