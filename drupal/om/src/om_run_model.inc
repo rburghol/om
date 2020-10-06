@@ -252,7 +252,7 @@ function om_run_model($config) {
     $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $startdate $enddate $cache_date $force_overwrite $scid $strict $run_mode ";
     // @todo: this does not do anything.  The run_model.php script and the forkRun() routines are not able to handle this
     //        so for now this is a placeholder.
-    $setstr .= "normal flow_mode=$flow_mode debug=$debug dt=$dt";
+    $setstr .= "normal flow_mode=$flow_mode $debug $dt";
     $setstr .= " $dt";
     //$test_only = TRUE;
     break;
