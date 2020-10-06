@@ -228,6 +228,7 @@ function om_run_model($config) {
   $startdate = $config['startdate'];
   $enddate = $config['enddate'];
   $flow_mode = isset($config['flow_mode']) ? $config['flow_mode']: FALSE;
+  $dt = $config['dt'];
   //error_log("Config" . print_r($config,1));
   switch ($config['runtype']) {
     case 'shake_tree':
@@ -250,9 +251,7 @@ function om_run_model($config) {
     $setstr = "/usr/bin/php -f /var/www/html/om/run_shakeTree.php $operation $elementid $run_id $startdate $enddate $cache_date $force_overwrite $scid $strict $run_mode ";
     // @todo: this does not do anything.  The run_model.php script and the forkRun() routines are not able to handle this
     //        so for now this is a placeholder.
-    if ($flow_mode) {
-      $setstr .= "normal flow_mode=$flow_mode";
-    }
+    $setstr .= "normal flow_mode=$flow_mode&dt=$dt";
     //$test_only = TRUE;
     break;
 	

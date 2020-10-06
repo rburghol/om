@@ -979,6 +979,9 @@ function shakeTree($listobject, $sip, $num_sim, $recid, $run_id, $startdate, $en
       if (isset($run_params['flow_mode'])) {
         $prop_array['flow_mode'] = $run_params['flow_mode'];
       }
+      if (isset($run_params['dt'])) {
+        $prop_array['dt'] = $run_params['dt'];
+      }
       updateObjectProps($projectid, $recid, $prop_array);
       // check status one last time just in case another thread has called this one in the interim
       $status_update = verifyRunStatus($listobject, $recid);
