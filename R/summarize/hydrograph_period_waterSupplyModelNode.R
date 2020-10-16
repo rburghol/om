@@ -1,9 +1,9 @@
-elid = 230533 # cootes: , mount j: 229937, strasburg: 230667
+elid = 277538 # cootes: , mount j: 229937, strasburg: 230667
 # sf shen at front royal: 229799
 # shenandoah river at Potomac Confluence, Millville WV: 230533
-gage_number = '01636500' # cootes: 01632000, mount j: 01633000, strasburg: 01634000
+gage_number = '03168000' # cootes: 01632000, mount j: 01633000, strasburg: 01634000
 # Shen at Millville WV: 01636500
-startdate <- "2002-10-01"
+startdate <- "2001-10-01"
 enddate <- "2002-11-15"
 
 # Get and format gage data
@@ -11,7 +11,7 @@ gage_data <- gage_import_data_cfs(gage_number, startdate, enddate)
 gage_data <- as.zoo(gage_data, as.POSIXct(gage_data$date,tz="EST"))
 mode(gage_data) <- 'numeric'
 
-runid = 11
+runid = 1
 finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 mode(dat) <- 'numeric'

@@ -24,3 +24,20 @@ dd <- as.data.frame(rodaily[1,c("thisdate", "Runit")])
 hrd <- as.data.frame(rohourly[1:24,c("thisdate", "Runit")])
 mean(dd$Runit)
 mean(hrd$Runit)
+
+# try a 1 hour offset
+
+for (j in 1:10) {
+  offdd <- as.data.frame(rodaily[j,c("thisdate", "Runit")])
+  offdd$thisdate <- as.Date(index(rodaily[j]))
+  ddmean <- mean(offdd$Runit)
+  dddate <- offdd$thisdate
+  for (i in 1:4) {
+    offhrd <- as.data.frame(rohourly[((j-1)*24 + 10):(i+((j-1)*24 + 24)),c("thisdate", "Runit")])
+    offmean <- mean(offhrd$Runit)
+    offmed <- median(offhrd$Runit)
+    offhrd$thisdate <- as.Date.POSIXct(index(rohourly[i:(i+23)]))
+    print(paste(i, round(offmean - ddmean, 4),"Daily", round(ddmean,5), '@', dddate, 'vs', round(offmean,5), '/', round(offmed,4), '@', min(offhrd$thisdate), 'to', max(offhrd$thisdate)))
+  }
+  
+}
