@@ -115,7 +115,7 @@ if (gage.timespan.trimmed == TRUE) {
   # timespan, we need to tim the modeled timespan, and create a new name
   # "[run_name]_gage_timespan"
   # creates a separate scenario specifically to hold this trimmed time span
-  mrun_name <- paste0(run_name, '_gage_timespan')
+  mrun_name <- paste0(mrun_name, '_gage_timespan')
 }
 mmodel_run <- om_get_set_model_run(mm$pid, mrun_name, site, token)
 gmodel_run <- om_get_set_model_run(gm$pid, grun_name, site, token)
