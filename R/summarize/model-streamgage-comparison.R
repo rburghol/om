@@ -124,4 +124,8 @@ gmodel_run <- om_get_set_model_run(gm$pid, grun_name, site, token)
 all_flow_metrics_2_vahydro(gmodel_run$pid, gage_data_formatted, token)
 # do we need to do this if the model has already been summarized
 all_flow_metrics_2_vahydro(mmodel_run$pid, model_data_formatted, token)
- 
+
+message("Stream gage comparison complete.")
+if (gage.timespan.trimmed == TRUE) {
+  message(paste("Timespans do not overlap, scenario saved as", mrun_name, "with timespan", start.date, "to", end.date))
+}
