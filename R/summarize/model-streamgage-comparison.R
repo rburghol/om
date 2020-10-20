@@ -116,6 +116,7 @@ if (gage.timespan.trimmed == TRUE) {
   # "[run_name]_gage_timespan"
   # creates a separate scenario specifically to hold this trimmed time span
   mrun_name <- paste0(mrun_name, '_gage_timespan')
+  message(paste("Timespans do not overlap, scenario saved as", mrun_name, "with timespan", start.date, "to", end.date))
 }
 mmodel_run <- om_get_set_model_run(mm$pid, mrun_name, site, token)
 gmodel_run <- om_get_set_model_run(gm$pid, grun_name, site, token)
