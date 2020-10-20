@@ -96,7 +96,6 @@ if (!is.null(da)) {
   wscale <- as.numeric(as.numeric(da) / as.numeric(gage$drain_area_va))
   gage_data$flow <- as.numeric(gage_data$flow) * wscale
 }
-# dfd
 
 gage.timespan.trimmed <- FALSE
 if (min(gage_data$date) > min(model_data$date)) {
@@ -121,6 +120,15 @@ if (gage.timespan.trimmed == TRUE) {
 }
 mmodel_run <- om_get_set_model_run(mm$pid, mrun_name, site, token)
 gmodel_run <- om_get_set_model_run(gm$pid, grun_name, site, token)
+# stash scaling factor
+scale_info = list(
+  featureid = gmodel_run$pid, 
+  varkey='om_class_Constant', 
+  propname = 'scale_factor', 
+  propvalue = wscale,
+  entity_type = 'dh_properties'
+)
+scaleprop <- postProperty(scale_info, site, scaleprop)
   
 all_flow_metrics_2_vahydro(gmodel_run$pid, gage_data_formatted, token)
 # do we need to do this if the model has already been summarized
