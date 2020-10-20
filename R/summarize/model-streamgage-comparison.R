@@ -90,6 +90,7 @@ start.date <- min(model_data$date)
 end.date <- max(model_data$date)
 gage_data <- gage_import_data_cfs(gage_number, start.date, end.date)
 
+wscale = 1.0
 # now, if da is not NULL we scale, otherwise assume gage area and watershed area are the same
 if (!is.null(da)) {
   wscale <- as.numeric(as.numeric(da) / as.numeric(gage$drain_area_va))
@@ -126,6 +127,7 @@ all_flow_metrics_2_vahydro(gmodel_run$pid, gage_data_formatted, token)
 all_flow_metrics_2_vahydro(mmodel_run$pid, model_data_formatted, token)
 
 message("Stream gage comparison complete.")
+message(paste("Scale adjustment for gage record:", wscale))
 if (gage.timespan.trimmed == TRUE) {
   message(paste("Timespans do not overlap, scenario saved as", mrun_name, "with timespan", start.date, "to", end.date))
 }
