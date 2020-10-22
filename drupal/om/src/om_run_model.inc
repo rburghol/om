@@ -67,6 +67,7 @@ function om_run_model_form($form, &$form_state, $model = null, $op = 'run') {
       '600' => t('10 Minutes'),
       '3600' => t('1 Hour'),
       '7200' => t('2 Hours'),
+      '10800' => t('3 Hours'),
       '14400' => t('4 Hours'),
       '21600' => t('6 Hours'),
       '28800' => t('8 Hours'),
