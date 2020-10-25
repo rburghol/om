@@ -9,6 +9,8 @@ function om_views_default_views() {
    $views[$view->name] = $view;
    $view = om_model_nav();
    $views[$view->name] = $view;
+   $view = om_model_components();
+   $views[$view->name] = $view;
    return $views;
 }
 
@@ -397,6 +399,675 @@ function om_model_nav() {
   $handler->display->display_options['arguments']['pid']['comparator'] = 'eq';
   $handler->display->display_options['arguments']['pid']['op_location'] = 'where';
   $handler->display->display_options['path'] = 'om-model-nav-to-parent';
+
+  return $view;
+}
+
+function om_model_components() {
+  $view = new view();
+  $view->name = 'watershed_model_properties';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'dh_properties';
+  $view->human_name = 'OM Model Properties';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Model Properties';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'none';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['style_plugin'] = 'table';
+  /* Header: Global: View (Views field view) */
+  $handler->display->display_options['header']['view_field']['id'] = 'view_field';
+  $handler->display->display_options['header']['view_field']['table'] = 'views';
+  $handler->display->display_options['header']['view_field']['field'] = 'view_field';
+  $handler->display->display_options['header']['view_field']['label'] = '';
+  $handler->display->display_options['header']['view_field']['element_label_colon'] = FALSE;
+  $handler->display->display_options['header']['view_field']['view'] = 'add_dh_properties_jump_list';
+  $handler->display->display_options['header']['view_field']['display'] = 'page_3';
+  $handler->display->display_options['header']['view_field']['arguments'] = '!1';
+  /* Header: Global: View (Views field view) */
+  $handler->display->display_options['header']['view_field_1']['id'] = 'view_field_1';
+  $handler->display->display_options['header']['view_field_1']['table'] = 'views';
+  $handler->display->display_options['header']['view_field_1']['field'] = 'view_field';
+  $handler->display->display_options['header']['view_field_1']['view'] = 'dh_variabledefinition_vocabularies';
+  $handler->display->display_options['header']['view_field_1']['display'] = 'page_1';
+  $handler->display->display_options['header']['view_field_1']['arguments'] = '!1/!2/dh_properties/dh_properties';
+  /* Footer: Global: View (Views field view) */
+  $handler->display->display_options['footer']['view_field']['id'] = 'view_field';
+  $handler->display->display_options['footer']['view_field']['table'] = 'views';
+  $handler->display->display_options['footer']['view_field']['field'] = 'view_field';
+  $handler->display->display_options['footer']['view_field']['label'] = '';
+  $handler->display->display_options['footer']['view_field']['element_label_colon'] = FALSE;
+  $handler->display->display_options['footer']['view_field']['hide_alter_empty'] = FALSE;
+  $handler->display->display_options['footer']['view_field']['view'] = 'add_dh_properties_jump_list';
+  $handler->display->display_options['footer']['view_field']['display'] = 'page';
+  $handler->display->display_options['footer']['view_field']['arguments'] = '!1/om_object_classes';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = 'dpm($view,\'view\');';
+  $handler->display->display_options['empty']['area']['format'] = 'php_code';
+  $handler->display->display_options['empty']['area']['tokenize'] = TRUE;
+  /* Field: DH Properties: Label */
+  $handler->display->display_options['fields']['pid']['id'] = 'pid';
+  $handler->display->display_options['fields']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['pid']['field'] = 'pid';
+  $handler->display->display_options['fields']['pid']['label'] = 'Pid';
+  $handler->display->display_options['fields']['pid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['path'] = 'admin/content/dh_properties/manage/[pid]';
+  $handler->display->display_options['fields']['pid']['alter']['path_query_parameters'] = 'destination=admin/content/dh_features/manage/!1/dh_properties';
+  $handler->display->display_options['fields']['pid']['separator'] = '';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname']['id'] = 'propname';
+  $handler->display->display_options['fields']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname']['field'] = 'propname';
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode']['field'] = 'propcode';
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue']['id'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['precision'] = '0';
+  /* Field: DH Properties: Startdate */
+  $handler->display->display_options['fields']['startdate']['id'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['startdate']['field'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['startdate']['second_date_format'] = 'long';
+  /* Field: DH Properties: Enddate */
+  $handler->display->display_options['fields']['enddate']['id'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['enddate']['field'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['enddate']['second_date_format'] = 'long';
+  /* Field: DH VariableDefinition: Variable Key (may be short name or = varname) */
+  $handler->display->display_options['fields']['varkey']['id'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varkey']['field'] = 'varkey';
+  /* Field: DH VariableDefinition: Variable Name */
+  $handler->display->display_options['fields']['varname']['id'] = 'varname';
+  $handler->display->display_options['fields']['varname']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varname']['field'] = 'varname';
+  /* Sort criterion: DH Properties: Property Name */
+  $handler->display->display_options['sorts']['propname']['id'] = 'propname';
+  $handler->display->display_options['sorts']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['sorts']['propname']['field'] = 'propname';
+  /* Contextual filter: DH Properties: featureid */
+  $handler->display->display_options['arguments']['featureid']['id'] = 'featureid';
+  $handler->display->display_options['arguments']['featureid']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['featureid']['field'] = 'featureid';
+  $handler->display->display_options['arguments']['featureid']['default_action'] = 'empty';
+  $handler->display->display_options['arguments']['featureid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['featureid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['featureid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['featureid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['featureid']['comparator'] = 'eq';
+  $handler->display->display_options['arguments']['featureid']['op_location'] = 'where';
+  /* Filter criterion: DH Properties: entity_type */
+  $handler->display->display_options['filters']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['table'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['value'] = 'dh_adminreg_feature';
+  $handler->display->display_options['filters']['entity_type']['op_location'] = 'where';
+
+  /* Display: Properties Properties */
+  $handler = $view->new_display('page', 'Properties Properties', 'page_2');
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: View (Views field view) */
+  $handler->display->display_options['header']['view_field']['id'] = 'view_field';
+  $handler->display->display_options['header']['view_field']['table'] = 'views';
+  $handler->display->display_options['header']['view_field']['field'] = 'view_field';
+  $handler->display->display_options['header']['view_field']['label'] = '';
+  $handler->display->display_options['header']['view_field']['element_label_colon'] = FALSE;
+  $handler->display->display_options['header']['view_field']['view'] = 'add_dh_properties_jump_list';
+  $handler->display->display_options['header']['view_field']['display'] = 'page_5';
+  $handler->display->display_options['header']['view_field']['arguments'] = '!1/om_object_classes+om/all/dh_properties';
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  $handler->display->display_options['defaults']['empty'] = FALSE;
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = 'NO PROPERTIES TO DISPLAY
+  <?php
+  dpm($view,\'view\');
+  ?>';
+  $handler->display->display_options['empty']['area']['format'] = 'php_code';
+  $handler->display->display_options['empty']['area']['tokenize'] = TRUE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: DH Properties: Label */
+  $handler->display->display_options['fields']['pid_1']['id'] = 'pid_1';
+  $handler->display->display_options['fields']['pid_1']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['pid_1']['field'] = 'pid';
+  $handler->display->display_options['fields']['pid_1']['label'] = '';
+  $handler->display->display_options['fields']['pid_1']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['pid_1']['alter']['link_class'] = 'editlink';
+  $handler->display->display_options['fields']['pid_1']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['pid_1']['separator'] = '';
+  /* Field: DH Properties: Rendered dH Properties */
+  $handler->display->display_options['fields']['rendered_entity']['id'] = 'rendered_entity';
+  $handler->display->display_options['fields']['rendered_entity']['table'] = 'views_entity_dh_properties';
+  $handler->display->display_options['fields']['rendered_entity']['field'] = 'rendered_entity';
+  $handler->display->display_options['fields']['rendered_entity']['label'] = '';
+  $handler->display->display_options['fields']['rendered_entity']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['rendered_entity']['alter']['text'] = '[varname]
+  [rendered_entity]';
+  $handler->display->display_options['fields']['rendered_entity']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['rendered_entity']['link_to_entity'] = 1;
+  $handler->display->display_options['fields']['rendered_entity']['display'] = 'view';
+  $handler->display->display_options['fields']['rendered_entity']['view_mode'] = 'teaser';
+  $handler->display->display_options['fields']['rendered_entity']['bypass_access'] = 0;
+  /* Field: DH Properties: featureid */
+  $handler->display->display_options['fields']['featureid']['id'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['featureid']['field'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['featureid']['separator'] = '';
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode']['field'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['propcode']['alter']['max_length'] = '48';
+  $handler->display->display_options['fields']['propcode']['alter']['trim'] = TRUE;
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname']['id'] = 'propname';
+  $handler->display->display_options['fields']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname']['field'] = 'propname';
+  $handler->display->display_options['fields']['propname']['label'] = 'Name';
+  $handler->display->display_options['fields']['propname']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['path'] = 'om-model-info/[pid_1]';
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue']['id'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['label'] = 'Value / Code';
+  $handler->display->display_options['fields']['propvalue']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['propvalue']['alter']['text'] = '[propvalue] / [propcode]';
+  $handler->display->display_options['fields']['propvalue']['alter']['alt'] = '[rendered_entity]';
+  $handler->display->display_options['fields']['propvalue']['precision'] = '0';
+  $handler->display->display_options['fields']['propvalue']['separator'] = '';
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
+  $handler->display->display_options['fields']['nothing_1']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing_1']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing_1']['label'] = '';
+  $handler->display->display_options['fields']['nothing_1']['alter']['text'] = '&nbsp;';
+  $handler->display->display_options['fields']['nothing_1']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['nothing_1']['alter']['path'] = 'admin/content/dh_properties/manage/[pid_1]';
+  $handler->display->display_options['fields']['nothing_1']['alter']['path_query_parameters'] = 'destination=om-model-info/[featureid]';
+  $handler->display->display_options['fields']['nothing_1']['alter']['link_class'] = 'editlink';
+  $handler->display->display_options['fields']['nothing_1']['element_label_colon'] = FALSE;
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['alter']['text'] = '&nbsp;';
+  $handler->display->display_options['fields']['nothing']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['nothing']['alter']['path'] = 'admin/content/dh_properties/manage/[pid_1]/delete';
+  $handler->display->display_options['fields']['nothing']['alter']['path_query_parameters'] = 'destination=om-model-info/[featureid]';
+  $handler->display->display_options['fields']['nothing']['alter']['link_class'] = 'subtractlink';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: DH Properties: entity_type */
+  $handler->display->display_options['filters']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['table'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['value'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['op_location'] = 'where';
+  $handler->display->display_options['path'] = 'om-model-properties';
+  $handler->display->display_options['menu']['title'] = 'dH Properties';
+  $handler->display->display_options['menu']['weight'] = '10';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: Label */
+  $handler = $view->new_display('page', 'Label', 'page_1');
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['content'] = '<h2>Component: [varname]</h2>';
+  $handler->display->display_options['header']['area']['format'] = 'full_html';
+  $handler->display->display_options['header']['area']['tokenize'] = TRUE;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: DH Properties: Label */
+  $handler->display->display_options['fields']['pid']['id'] = 'pid';
+  $handler->display->display_options['fields']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['pid']['field'] = 'pid';
+  $handler->display->display_options['fields']['pid']['label'] = 'Pid';
+  $handler->display->display_options['fields']['pid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['path'] = 'admin/content/dh_properties/manage/[pid]';
+  $handler->display->display_options['fields']['pid']['alter']['path_query_parameters'] = 'destination=admin/content/dh_properties/manage/!1/dh_properties';
+  $handler->display->display_options['fields']['pid']['separator'] = '';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname']['id'] = 'propname';
+  $handler->display->display_options['fields']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname']['field'] = 'propname';
+  $handler->display->display_options['fields']['propname']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['path'] = 'ows-model-components/[pid]';
+  /* Field: DH VariableDefinition: Variable Name */
+  $handler->display->display_options['fields']['varname']['id'] = 'varname';
+  $handler->display->display_options['fields']['varname']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varname']['field'] = 'varname';
+  $handler->display->display_options['fields']['varname']['exclude'] = TRUE;
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode']['field'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['exclude'] = TRUE;
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue']['id'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['propvalue']['precision'] = '0';
+  $handler->display->display_options['fields']['propvalue']['separator'] = '';
+  /* Field: DH Properties: Startdate */
+  $handler->display->display_options['fields']['startdate']['id'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['startdate']['field'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['startdate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['startdate']['second_date_format'] = 'long';
+  /* Field: DH Properties: Enddate */
+  $handler->display->display_options['fields']['enddate']['id'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['enddate']['field'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['enddate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['enddate']['second_date_format'] = 'long';
+  /* Field: DH VariableDefinition: Variable Key (may be short name or = varname) */
+  $handler->display->display_options['fields']['varkey']['id'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varkey']['field'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['exclude'] = TRUE;
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: DH Properties: Label */
+  $handler->display->display_options['arguments']['pid']['id'] = 'pid';
+  $handler->display->display_options['arguments']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['pid']['field'] = 'pid';
+  $handler->display->display_options['arguments']['pid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['pid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['pid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['pid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['pid']['comparator'] = 'eq';
+  $handler->display->display_options['arguments']['pid']['op_location'] = 'where';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: DH Properties: entity_type */
+  $handler->display->display_options['filters']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['table'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['value'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['op_location'] = 'where';
+  $handler->display->display_options['path'] = 'watershed-model-properties-label';
+  $handler->display->display_options['menu']['type'] = 'tab';
+  $handler->display->display_options['menu']['title'] = 'dH Properties';
+  $handler->display->display_options['menu']['weight'] = '10';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: To Parent */
+  $handler = $view->new_display('page', 'To Parent', 'page_3');
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'default';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: DH Properties: Label */
+  $handler->display->display_options['fields']['pid']['id'] = 'pid';
+  $handler->display->display_options['fields']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['pid']['field'] = 'pid';
+  $handler->display->display_options['fields']['pid']['label'] = 'Pid';
+  $handler->display->display_options['fields']['pid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['path'] = 'admin/content/dh_properties/manage/[pid]';
+  $handler->display->display_options['fields']['pid']['alter']['path_query_parameters'] = 'destination=admin/content/dh_properties/manage/!1/dh_properties';
+  $handler->display->display_options['fields']['pid']['separator'] = '';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname']['id'] = 'propname';
+  $handler->display->display_options['fields']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname']['field'] = 'propname';
+  $handler->display->display_options['fields']['propname']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['propname']['alter']['path'] = 'ows-model-components/[pid]';
+  /* Field: DH VariableDefinition: Variable Name */
+  $handler->display->display_options['fields']['varname']['id'] = 'varname';
+  $handler->display->display_options['fields']['varname']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varname']['field'] = 'varname';
+  $handler->display->display_options['fields']['varname']['exclude'] = TRUE;
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode']['field'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['exclude'] = TRUE;
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue']['id'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['propvalue']['precision'] = '0';
+  $handler->display->display_options['fields']['propvalue']['separator'] = '';
+  /* Field: DH Properties: Startdate */
+  $handler->display->display_options['fields']['startdate']['id'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['startdate']['field'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['startdate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['startdate']['second_date_format'] = 'long';
+  /* Field: DH Properties: Enddate */
+  $handler->display->display_options['fields']['enddate']['id'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['enddate']['field'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['enddate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['enddate']['second_date_format'] = 'long';
+  /* Field: DH VariableDefinition: Variable Key (may be short name or = varname) */
+  $handler->display->display_options['fields']['varkey']['id'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varkey']['field'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['exclude'] = TRUE;
+  /* Field: Global: Custom text */
+  $handler->display->display_options['fields']['nothing']['id'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['table'] = 'views';
+  $handler->display->display_options['fields']['nothing']['field'] = 'nothing';
+  $handler->display->display_options['fields']['nothing']['label'] = '';
+  $handler->display->display_options['fields']['nothing']['element_label_colon'] = FALSE;
+  /* Field: DH Properties: featureid */
+  $handler->display->display_options['fields']['featureid']['id'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['featureid']['field'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['label'] = '';
+  $handler->display->display_options['fields']['featureid']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['featureid']['alter']['text'] = '<ul type="circle">
+  <li>Up a Level</li>
+  </ul>';
+  $handler->display->display_options['fields']['featureid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['featureid']['alter']['path'] = 'ows-model-components/[featureid]';
+  $handler->display->display_options['fields']['featureid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['featureid']['separator'] = '';
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: DH Properties: Label */
+  $handler->display->display_options['arguments']['pid']['id'] = 'pid';
+  $handler->display->display_options['arguments']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['pid']['field'] = 'pid';
+  $handler->display->display_options['arguments']['pid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['pid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['pid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['pid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['pid']['comparator'] = 'eq';
+  $handler->display->display_options['arguments']['pid']['op_location'] = 'where';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: DH Properties: entity_type */
+  $handler->display->display_options['filters']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['table'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['filters']['entity_type']['value'] = 'dh_properties';
+  $handler->display->display_options['filters']['entity_type']['op_location'] = 'where';
+  $handler->display->display_options['path'] = 'watershed-model-properties-uplevel';
+  $handler->display->display_options['menu']['type'] = 'tab';
+  $handler->display->display_options['menu']['title'] = 'dH Properties';
+  $handler->display->display_options['menu']['weight'] = '10';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  /* Display: Entity Model 2nd level Properties */
+  $handler = $view->new_display('page', 'Entity Model 2nd level Properties', 'page_4');
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  $handler->display->display_options['defaults']['empty'] = FALSE;
+  $handler->display->display_options['defaults']['relationships'] = FALSE;
+  /* Relationship: Feature */
+  $handler->display->display_options['relationships']['crosstab_dh_feature']['id'] = 'crosstab_dh_feature';
+  $handler->display->display_options['relationships']['crosstab_dh_feature']['table'] = 'dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_feature']['field'] = 'crosstab_dh_feature';
+  $handler->display->display_options['relationships']['crosstab_dh_feature']['ui_name'] = 'Feature';
+  $handler->display->display_options['relationships']['crosstab_dh_feature']['label'] = 'Feature';
+  /* Relationship: prop_level1 */
+  $handler->display->display_options['relationships']['crosstab_dh_properties']['id'] = 'crosstab_dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties']['table'] = 'dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties']['field'] = 'crosstab_dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties']['ui_name'] = 'prop_level1';
+  $handler->display->display_options['relationships']['crosstab_dh_properties']['label'] = 'prop_level1';
+  /* Relationship: attribute */
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['id'] = 'crosstab_dh_properties_1';
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['table'] = 'dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['field'] = 'crosstab_dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['relationship'] = 'crosstab_dh_properties';
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['ui_name'] = 'attribute';
+  $handler->display->display_options['relationships']['crosstab_dh_properties_1']['label'] = 'attribute';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: DH Properties: Label */
+  $handler->display->display_options['fields']['pid']['id'] = 'pid';
+  $handler->display->display_options['fields']['pid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['pid']['field'] = 'pid';
+  $handler->display->display_options['fields']['pid']['label'] = 'Pid';
+  $handler->display->display_options['fields']['pid']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['pid']['alter']['path'] = 'admin/content/dh_properties/manage/[pid]';
+  $handler->display->display_options['fields']['pid']['alter']['path_query_parameters'] = 'destination=admin/content/dh_features/manage/!1/dh_properties';
+  $handler->display->display_options['fields']['pid']['separator'] = '';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname']['id'] = 'propname';
+  $handler->display->display_options['fields']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname']['field'] = 'propname';
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['fields']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode']['field'] = 'propcode';
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue']['id'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue']['precision'] = '0';
+  /* Field: DH Properties: Startdate */
+  $handler->display->display_options['fields']['startdate']['id'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['startdate']['field'] = 'startdate';
+  $handler->display->display_options['fields']['startdate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['startdate']['second_date_format'] = 'long';
+  /* Field: DH Properties: Enddate */
+  $handler->display->display_options['fields']['enddate']['id'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['enddate']['field'] = 'enddate';
+  $handler->display->display_options['fields']['enddate']['date_format'] = 'short';
+  $handler->display->display_options['fields']['enddate']['second_date_format'] = 'long';
+  /* Field: DH VariableDefinition: Variable Key (may be short name or = varname) */
+  $handler->display->display_options['fields']['varkey']['id'] = 'varkey';
+  $handler->display->display_options['fields']['varkey']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varkey']['field'] = 'varkey';
+  /* Field: DH VariableDefinition: Variable Name */
+  $handler->display->display_options['fields']['varname']['id'] = 'varname';
+  $handler->display->display_options['fields']['varname']['table'] = 'dh_variabledefinition';
+  $handler->display->display_options['fields']['varname']['field'] = 'varname';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname_1']['id'] = 'propname_1';
+  $handler->display->display_options['fields']['propname_1']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname_1']['field'] = 'propname';
+  $handler->display->display_options['fields']['propname_1']['relationship'] = 'crosstab_dh_properties';
+  $handler->display->display_options['fields']['propname_1']['label'] = 'run_name';
+  /* Field: DH Properties: Property Name */
+  $handler->display->display_options['fields']['propname_2']['id'] = 'propname_2';
+  $handler->display->display_options['fields']['propname_2']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propname_2']['field'] = 'propname';
+  $handler->display->display_options['fields']['propname_2']['relationship'] = 'crosstab_dh_properties_1';
+  $handler->display->display_options['fields']['propname_2']['label'] = 'attribute_name';
+  /* Field: DH Properties: propvalue */
+  $handler->display->display_options['fields']['propvalue_1']['id'] = 'propvalue_1';
+  $handler->display->display_options['fields']['propvalue_1']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propvalue_1']['field'] = 'propvalue';
+  $handler->display->display_options['fields']['propvalue_1']['relationship'] = 'crosstab_dh_properties_1';
+  $handler->display->display_options['fields']['propvalue_1']['label'] = 'attribute_value';
+  $handler->display->display_options['fields']['propvalue_1']['precision'] = '0';
+  /* Field: DH Properties: propcode */
+  $handler->display->display_options['fields']['propcode_1']['id'] = 'propcode_1';
+  $handler->display->display_options['fields']['propcode_1']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['propcode_1']['field'] = 'propcode';
+  $handler->display->display_options['fields']['propcode_1']['relationship'] = 'crosstab_dh_properties_1';
+  $handler->display->display_options['fields']['propcode_1']['label'] = 'attribute_code';
+  /* Field: DH Properties: featureid */
+  $handler->display->display_options['fields']['featureid']['id'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['table'] = 'dh_properties';
+  $handler->display->display_options['fields']['featureid']['field'] = 'featureid';
+  $handler->display->display_options['fields']['featureid']['separator'] = '';
+  /* Field: DH Feature: hydrocode */
+  $handler->display->display_options['fields']['hydrocode']['id'] = 'hydrocode';
+  $handler->display->display_options['fields']['hydrocode']['table'] = 'dh_feature';
+  $handler->display->display_options['fields']['hydrocode']['field'] = 'hydrocode';
+  $handler->display->display_options['fields']['hydrocode']['relationship'] = 'crosstab_dh_feature';
+  $handler->display->display_options['defaults']['arguments'] = FALSE;
+  /* Contextual filter: featureid */
+  $handler->display->display_options['arguments']['featureid']['id'] = 'featureid';
+  $handler->display->display_options['arguments']['featureid']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['featureid']['field'] = 'featureid';
+  $handler->display->display_options['arguments']['featureid']['ui_name'] = 'featureid';
+  $handler->display->display_options['arguments']['featureid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['featureid']['default_argument_options']['argument'] = 'all';
+  $handler->display->display_options['arguments']['featureid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['featureid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['featureid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['featureid']['specify_validation'] = TRUE;
+  $handler->display->display_options['arguments']['featureid']['validate']['type'] = 'php';
+  $handler->display->display_options['arguments']['featureid']['validate_options']['code'] = '// NOTE: Validation for all filters is performed on the 2nd filter, entity_type
+  return TRUE;';
+  $handler->display->display_options['arguments']['featureid']['comparator'] = 'eq';
+  $handler->display->display_options['arguments']['featureid']['op_location'] = 'where';
+  /* Contextual filter: entity_type */
+  $handler->display->display_options['arguments']['entity_type']['id'] = 'entity_type';
+  $handler->display->display_options['arguments']['entity_type']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['entity_type']['field'] = 'entity_type';
+  $handler->display->display_options['arguments']['entity_type']['ui_name'] = 'entity_type';
+  $handler->display->display_options['arguments']['entity_type']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['entity_type']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['entity_type']['default_argument_options']['argument'] = 'dh_feature';
+  $handler->display->display_options['arguments']['entity_type']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['entity_type']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['entity_type']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['entity_type']['specify_validation'] = TRUE;
+  $handler->display->display_options['arguments']['entity_type']['validate']['type'] = 'php';
+  $handler->display->display_options['arguments']['entity_type']['validate_options']['code'] = '$fid = $view->args[0];
+  $fid_status = is_numeric($fid);
+  $version = $view->args[4];
+  $version_status = !(($version == \'all\') or empty($version)); // is version set?
+  $prop_level2 = $view->args[6];
+  $prop_level2_status = !(($prop_level2 == \'all\') or empty($prop_level2)); // is prop_level2 set?
+  dsm("$fid_status and $version_status and $prop_level2_status");
+  if (!$fid_status and !($version_status and $prop_level2_status) ) {
+    dsm(\'You must filter on featureid or version + prop_level2\', \'error\');
+    return FALSE;
+  }
+  return TRUE;';
+  $handler->display->display_options['arguments']['entity_type']['limit'] = '0';
+  /* Contextual filter: DH Feature: Bundle */
+  $handler->display->display_options['arguments']['bundle']['id'] = 'bundle';
+  $handler->display->display_options['arguments']['bundle']['table'] = 'dh_feature';
+  $handler->display->display_options['arguments']['bundle']['field'] = 'bundle';
+  $handler->display->display_options['arguments']['bundle']['relationship'] = 'crosstab_dh_feature';
+  $handler->display->display_options['arguments']['bundle']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['bundle']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['bundle']['default_argument_options']['argument'] = 'facility';
+  $handler->display->display_options['arguments']['bundle']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['bundle']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['bundle']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['bundle']['limit'] = '0';
+  /* Contextual filter: DH Feature: ftype */
+  $handler->display->display_options['arguments']['ftype']['id'] = 'ftype';
+  $handler->display->display_options['arguments']['ftype']['table'] = 'dh_feature';
+  $handler->display->display_options['arguments']['ftype']['field'] = 'ftype';
+  $handler->display->display_options['arguments']['ftype']['relationship'] = 'crosstab_dh_feature';
+  $handler->display->display_options['arguments']['ftype']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['ftype']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['ftype']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['ftype']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['ftype']['limit'] = '0';
+  /* Contextual filter: model_version */
+  $handler->display->display_options['arguments']['propcode']['id'] = 'propcode';
+  $handler->display->display_options['arguments']['propcode']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['propcode']['field'] = 'propcode';
+  $handler->display->display_options['arguments']['propcode']['ui_name'] = 'model_version';
+  $handler->display->display_options['arguments']['propcode']['default_action'] = 'empty';
+  $handler->display->display_options['arguments']['propcode']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['propcode']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['propcode']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['propcode']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['propcode']['limit'] = '0';
+  /* Contextual filter: prop_level2 */
+  $handler->display->display_options['arguments']['propname_1']['id'] = 'propname_1';
+  $handler->display->display_options['arguments']['propname_1']['table'] = 'dh_properties_revision';
+  $handler->display->display_options['arguments']['propname_1']['field'] = 'propname';
+  $handler->display->display_options['arguments']['propname_1']['relationship'] = 'crosstab_dh_properties';
+  $handler->display->display_options['arguments']['propname_1']['ui_name'] = 'prop_level2';
+  $handler->display->display_options['arguments']['propname_1']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['propname_1']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['propname_1']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['propname_1']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['propname_1']['limit'] = '0';
+  /* Contextual filter: prop_level3 */
+  $handler->display->display_options['arguments']['propname']['id'] = 'propname';
+  $handler->display->display_options['arguments']['propname']['table'] = 'dh_properties';
+  $handler->display->display_options['arguments']['propname']['field'] = 'propname';
+  $handler->display->display_options['arguments']['propname']['relationship'] = 'crosstab_dh_properties_1';
+  $handler->display->display_options['arguments']['propname']['ui_name'] = 'prop_level3';
+  $handler->display->display_options['arguments']['propname']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['propname']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['propname']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['propname']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['propname']['limit'] = '0';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  $handler->display->display_options['path'] = 'om-model-props';
+
+  /* Display: Data export */
+  $handler = $view->new_display('views_data_export', 'Data export', 'views_data_export_1');
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
+  $handler->display->display_options['path'] = 'om-model-props-export';
+  $handler->display->display_options['displays'] = array(
+    'page_4' => 'page_4',
+    'default' => 0,
+    'page_2' => 0,
+    'page_1' => 0,
+    'page_3' => 0,
+  );
 
   return $view;
 }
