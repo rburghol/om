@@ -9,7 +9,7 @@ dependencies[] = field
 dependencies[] = dh
 
 files[] = om.admin.inc
-files[] = lib/om_misc_functions.php
+files[] = lib/om_misc_functions.inc
 ;files[] = views/om.views_default.inc
 files[] = views/handlers/views_handler_relationship_attributable.inc
 
