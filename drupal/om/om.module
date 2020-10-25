@@ -522,6 +522,18 @@ function om_tokenize($base, $indata, &$outdata, $delim = ':', $allowed = array()
 // no declarations here, all classes handled as CTools plugins
 // ***********************************************************
 
+
+
+/**
+  * Implements hook_views_api().
+  */
+function om_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'om') . '/views',
+  );
+}
+
 /**
  * Implements hook_ctools_plugin_directory().
  */
