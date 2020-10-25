@@ -125,4 +125,3 @@ function om_interpValue($thistime, $ts, $tv, $nts, $ntv, $intmethod=1) {
    }
    return $retval;
 }
-?>
