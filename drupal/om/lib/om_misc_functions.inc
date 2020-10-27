@@ -128,7 +128,7 @@ function om_interpValue($thistime, $ts, $tv, $nts, $ntv, $intmethod=1) {
 
 
    
-function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
+function om_formatMatrix($matrix, $valuetype, $numrows, $defaultval = 0, $force_refresh=0, $debug = 0) {
   $refreshed = 0;
 
   if (!$refreshed or $force_refresh) {
@@ -144,14 +144,14 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
         for ($j = 0; $j < $numcols; $j++) {
            // old - did not consider if a value was a variable or not
            //$matrix_rowcol[$i][$j] = $matrix[$mindex];
-           $matrix_rowcol[$i][$j] = $this->evalMatrixVar(trim($matrix[$mindex]));
+           $matrix_rowcol[$i][$j] = trim($matrix[$mindex]);
            $mindex++;
         }
      }
      if ($debug) {
         error_log("Row-Col Matrix Assembled: " . print_r($matrix_rowcol,2) );
      }
-     switch ($this->valuetype) {
+     switch ($valuetype) {
         case 0:
            // keep in row-col format, so do no further transformation
            $matrix_formatted = $matrix_rowcol;
@@ -163,7 +163,7 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
               $key = $matrix_rowcol[$i][0];
               
               if ($numcols == 1) {
-                 $values = $this->defaultval;
+                 $values = $defaultval;
               } else {
                  $values = array();
                  for ($j = 1; $j < $numcols; $j++) {
@@ -186,7 +186,7 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
               $key = $matrix_rowcol[$i][0];
               
               if ($numcols == 1) {
-                 $values = $this->defaultval;
+                 $values = $defaultval;
               } else {
                  $values = array();
                  for ($j = 1; $j < $numcols; $j++) {
@@ -197,8 +197,8 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
               }
               $matrix_formatted[$key] = $values;
            }
-           $this->colnames = array_keys($matrix_formatted[$key]);
-           $this->rownames = array_keys($matrix_formatted);
+           $colnames = array_keys($matrix_formatted[$key]);
+           $rownames = array_keys($matrix_formatted);
         break;
         
         case 3:
@@ -208,7 +208,7 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
               $key = $matrix_rowcol[$i][0];
               
               if ($numcols == 1) {
-                 $values = $this->defaultval;
+                 $values = $defaultval;
               } else {
                  $values = array();
                  for ($j = 0; $j < $numcols; $j++) {
