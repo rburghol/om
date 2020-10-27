@@ -226,10 +226,12 @@ function om_formatMatrix($matrix, $valuetype, $numrows, $defaultval = 0, $force_
 }
 
 
-function om_formatCSVMatrix($matrix_rowcol, $valuetype, $defaultval = 0, $force_refresh=0, $debug = 0) {
+function om_formatCSVMatrix($matrix_rowcol, $valuetype, $defaultval = 0, $debug = 0) {
   // already in csv format instead of janky om flat list format
   $refreshed = 0;
   $matrix_formatted = array();
+  $numrows = count($matrix_rowcol);
+  $numcols = count($matrix_rowcol[0]);
 
   switch ($valuetype) {
     case 0:
