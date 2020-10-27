@@ -223,6 +223,6 @@ function om_formatMatrix($matrix, $numrows, $force_refresh=0, $denug = 0) {
      }
      $matrix_formatted = $matrix_formatted;
      $matrix_rowcol = $matrix_rowcol;
-     return list($matrix_formatted, $matrix_rowcol);
+     return array($matrix_formatted, $matrix_rowcol);
   }
 }
