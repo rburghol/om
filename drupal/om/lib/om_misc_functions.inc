@@ -128,7 +128,7 @@ function om_interpValue($thistime, $ts, $tv, $nts, $ntv, $intmethod=1) {
 
 
    
-function om_formatMatrix($matrix, $numrows, $force_refresh=0, $denug = 0) {
+function om_formatMatrix($matrix, $numrows, $force_refresh=0, $debug = 0) {
   $refreshed = 0;
 
   if (!$refreshed or $force_refresh) {
