@@ -125,3 +125,104 @@ function om_interpValue($thistime, $ts, $tv, $nts, $ntv, $intmethod=1) {
    }
    return $retval;
 }
+
+
+   
+function om_formatMatrix($matrix, $numrows, $force_refresh=0, $denug = 0) {
+  $refreshed = 0;
+
+  if (!$refreshed or $force_refresh) {
+     $matrix_formatted = array();
+     $matrix_rowcol = array();
+     $mindex = 0;
+     $numcols = intval(count($matrix) / $numrows);
+     if ($debug) {
+        error_log("Formatting matrix, with " . count($matrix) . " cells, and $numrows rows ($numcols columns) ");
+     }
+     for ($i = 0; $i < $numrows; $i++) {
+       $matrix_rowcol[$i] = array();
+        for ($j = 0; $j < $numcols; $j++) {
+           // old - did not consider if a value was a variable or not
+           //$matrix_rowcol[$i][$j] = $matrix[$mindex];
+           $matrix_rowcol[$i][$j] = $this->evalMatrixVar(trim($matrix[$mindex]));
+           $mindex++;
+        }
+     }
+     if ($debug) {
+        error_log("Row-Col Matrix Assembled: " . print_r($matrix_rowcol,2) );
+     }
+     switch ($this->valuetype) {
+        case 0:
+           // keep in row-col format, so do no further transformation
+           $matrix_formatted = $matrix_rowcol;
+        break;
+        
+        case 1:
+           // put it in a single dimensional key-value relationship, with the first column being the keys
+           for ($i = 0; $i < $numrows; $i++) {
+              $key = $matrix_rowcol[$i][0];
+              
+              if ($numcols == 1) {
+                 $values = $this->defaultval;
+              } else {
+                 $values = array();
+                 for ($j = 1; $j < $numcols; $j++) {
+                    $values[$j-1] = $matrix_rowcol[$i][$j];
+                 }
+                 // make it scalar if there is only one entry
+                 if (count($values) == 1) {
+                    $values = $values[0];
+                 }
+              }
+              $matrix_formatted[$key] = $values;
+           }
+        break;
+        
+        case 2:
+           // put it in a multi-dimensional key-value relationship, with the first column being the keys
+           // the first column first row, however, will be a throw-away, 
+           for ($i = 1; $i < $numrows; $i++) {
+           //for ($i = 1; $i < count($matrix_rowcol); $i++) {
+              $key = $matrix_rowcol[$i][0];
+              
+              if ($numcols == 1) {
+                 $values = $this->defaultval;
+              } else {
+                 $values = array();
+                 for ($j = 1; $j < $numcols; $j++) {
+                    // set the key to be the first (0th) row entry for this column, the value to be the 
+                    // value of this column in the current row
+                    $values[$matrix_rowcol[0][$j]] = $matrix_rowcol[$i][$j];
+                 }
+              }
+              $matrix_formatted[$key] = $values;
+           }
+           $this->colnames = array_keys($matrix_formatted[$key]);
+           $this->rownames = array_keys($matrix_formatted);
+        break;
+        
+        case 3:
+           // csv format
+           // put it in a multi-dimensional key-value relationship, with the first row values as keys
+           for ($i = 1; $i < count($matrix_rowcol); $i++) {
+              $key = $matrix_rowcol[$i][0];
+              
+              if ($numcols == 1) {
+                 $values = $this->defaultval;
+              } else {
+                 $values = array();
+                 for ($j = 0; $j < $numcols; $j++) {
+                    // set the key to be the first (0th) row entry for this column, the value to be the 
+                    // value of this column in the current row
+                    $values[$matrix_rowcol[0][$j]] = $matrix_rowcol[$i][$j];
+                 }
+              }
+              $matrix_formatted[] = $values;
+           }
+        break;
+     }
+     $matrix_formatted = $matrix_formatted;
+     $matrix_rowcol = $matrix_rowcol;
+     return list($matrix_formatted, $matrix_rowcol);
+  }
+}
