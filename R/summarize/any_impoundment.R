@@ -108,7 +108,7 @@ l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
 l90_year = loflows[ndx,]$"year";
 
 # Plot and analyze impoundment sub-comps
-dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
+dat$storage_pct <- dat[,remvar] * 3.07 / dat[,maxvar]
 #
 storage_pct <- mean(as.numeric(dat$storage_pct) )
 if (is.na(storage_pct)) {
@@ -165,7 +165,7 @@ plot(
 )
 par(new = TRUE)
 ymx2 <- max(
-  datpd$impoundment_demand * 1.547,
+  datpd[,demvar] * 1.547,
   datpd[,outvar],
   datpd$ps_refill_pump_mgd,
   datpd[,qvar]
@@ -176,7 +176,7 @@ lines(datpd[,outvar],col='darkblue')
 if (plot_refill) {
   lines(datpd[,refvar] * 1.547,col='green')
 }
-lines(datpd$impoundment_demand * 1.547,col='red')
+lines(datpd[,demvar] * 1.547,col='red')
 axis(side = 4)
 mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
 dev.off()
@@ -222,7 +222,7 @@ plot(
 par(new = TRUE)
 plot(datpd[,qvar],col='blue', axes=FALSE, xlab="", ylab="")
 lines(datpd[,outvar],col='green')
-lines(datpd$wd_mgd * 1.547,col='red')
+lines(datpd[,demvar] * 1.547,col='red')
 axis(side = 4)
 mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
 dev.off()
@@ -262,7 +262,7 @@ plot(
 par(new = TRUE)
 plot(datpd[,qvar],col='blue', axes=FALSE, xlab="", ylab="")
 lines(datpd[,outvar],col='green')
-lines(datpd$wd_mgd * 1.547,col='red')
+lines(datpd[,demvar] * 1.547,col='red')
 axis(side = 4)
 mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
 dev.off()
@@ -315,7 +315,7 @@ plot(
 par(new = TRUE)
 plot(datpd[,qvar],col='blue', axes=FALSE, xlab="", ylab="")
 lines(datpd[,qvar],col='green')
-lines(datpd$wd_mgd * 1.547,col='red')
+lines(datpd[,demvar] * 1.547,col='red')
 axis(side = 4)
 mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
 dev.off()
