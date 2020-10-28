@@ -100,6 +100,7 @@ if (refvar %in% cols) {
 # Metrics that need Zoo (IHA)
 message(paste("Looking for", qvar, "to create zoo timeseries"))
 flows <- zoo(as.numeric(as.character( dat[,qvar] )), order.by = index(dat));
+message("Calculating Low Flows")
 loflows <- group2(flows);
 l90 <- loflows["90 Day Min"];
 ndx = which.min(as.numeric(l90[,"90 Day Min"]));
