@@ -20,6 +20,9 @@ source(paste(basepath,'config.R',sep='/'))
 save_directory <-  "/var/www/html/data/proj3/out"
 
 # Read Args
+# @todo: be able to detect if this is called via a R source call,
+#        in which case it could be redundant to add these and retrieve data?
+#       Alternatively call these as a function, passing in dat
 argst <- commandArgs(trailingOnly=T)
 pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
