@@ -27,7 +27,7 @@ argst <- commandArgs(trailingOnly=T)
 pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
 runid <- as.integer(argst[3])
-comp_name <- as.integer(argst[4])
+comp_name <- as.character(argst[4])
 
 if (pid == '--help') {
   message("Usage: Rscript any_impoundment.R pid elid runid comp_name")
