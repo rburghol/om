@@ -219,7 +219,7 @@ if (syear <= 1990 && eyear >= 2000) {
 
 # does this have an impoundment sub-comp and is imp_off = 0?
 cols <- names(dat)
-if("imp_off" %in% cols) {
+if( ("imp_off" %in% cols) || ("impoundment" %in% cols) ) {
   imp_off <- as.integer(median(dat$imp_off))
   if (!is.null(imp_off)) {
     if (imp_off == 0) {
