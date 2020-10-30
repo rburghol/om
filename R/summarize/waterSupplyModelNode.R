@@ -284,7 +284,8 @@ if( ("imp_off" %in% cols) || ("impoundment" %in% cols) ) {
         datpd$storage_pct * 100.0, 
         ylim=c(ymn,ymx), 
         ylab="Reservoir Storage (%)",
-        xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend)
+        xlab=paste("Lowest 90 Day Flow Period",pdstart,"to",pdend), 
+        legend=c('Storage', 'Qin', 'Qout', 'Demand (mgd)')
       )
       par(new = TRUE)
       plot(datpd$impoundment_Qin,col='blue', axes=FALSE, xlab="", ylab="")
