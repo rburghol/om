@@ -104,7 +104,7 @@ if (is.na(ps_mgd)) {
 }
 
 # Analyze unmet demands
-flows <- zoo(as.numeric(dat$unmet_demand_mgd*1.547), order.by = index(dat));
+flows <- zoo(as.numeric(dat$unmet_demand_mgd), order.by = index(dat));
 loflows <- group2(flows);
 
 unmet90 <- loflows["90 Day Max"];
