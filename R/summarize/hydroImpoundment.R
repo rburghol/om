@@ -138,129 +138,137 @@ elevdatpd <- window(
 
 # Lake Plots
 # is imp_off = 0?
-imp_off <- as.integer(median(dat$imp_off))
-if (!is.null(imp_off)) {
-  if (imp_off == 0) {
-    fname <- paste(
-      save_directory,
-      paste0(
-        'l90_imp_storage.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    furl <- paste(
-      save_url,
-      paste0(
-        'l90_imp_storage.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    png(fname)
-    ymn <- 1
-    ymx <- 100
-    par(mar = c(5,5,2,5))
-    plot(
-      datpd$pct_use_remain * 100.0, 
-      ylim=c(ymn,ymx), 
-      ylab="Reservoir Storage (%)",
-      xlab=paste("Model Flow Period",l90_start,"to",l90_end)
-    )
-    par(new = TRUE)
-    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
-    lines(datpd$Qout,col='green')
-    lines(datpd$wd_mgd * 1.547,col='red')
-    axis(side = 4)
-    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
-    dev.off()
-    print(paste("Saved file: ", fname, "with URL", furl))
-    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
-    
-    
-    # All Periods
-    # this has an impoundment.  Plot it up.
-    # Now zoom in on critical drought period
-    datpd <- dat
-    fname <- paste(
-      save_directory,
-      paste0(
-        'l90_imp_storage.all.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    furl <- paste(
-      save_url,
-      paste0(
-        'l90_imp_storage.all.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    png(fname)
-    plot(datpd$Qin, ylim=c(-0.1,15))
-    lines(datpd$Qout,col='blue')
-    ymn <- 1
-    ymx <- 100
-    par(mar = c(5,5,2,5))
-    plot(
-      datpd$pct_use_remain * 100.0, 
-      ylim=c(ymn,ymx), 
-      ylab="Reservoir Storage (%)",
-      xlab=paste("Full Period",sdate,"to",edate)
-    )
-    par(new = TRUE)
-    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
-    lines(datpd$Qout,col='green')
-    lines(datpd$wd_mgd * 1.547,col='red')
-    axis(side = 4)
-    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
-    dev.off()
-    print(paste("Saved file: ", fname, "with URL", furl))
-    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
-    
-    
-    # Low Elevation Period
-    datpd <- elevdatpd
-    fname <- paste(
-      save_directory,
-      paste0(
-        'elev90_imp_storage.all.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    furl <- paste(
-      save_url,
-      paste0(
-        'elev90_imp_storage.all.',
-        elid, '.', runid, '.png'
-      ),
-      sep = '/'
-    )
-    png(fname)
-    plot(datpd$Qin, ylim=c(-0.1,15))
-    lines(datpd$Qout,col='blue')
-    ymn <- 1
-    ymx <- 100
-    par(mar = c(5,5,2,5))
-    plot(
-      datpd$pct_use_remain * 100.0, 
-      ylim=c(ymn,ymx), 
-      main="Minimum Modeled Reservoir Storage Period",
-      ylab="Reservoir Storage (%)",
-      xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
-    )
-    par(new = TRUE)
-    plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
-    lines(datpd$Qout,col='green')
-    lines(datpd$wd_mgd * 1.547,col='red')
-    axis(side = 4)
-    mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
-    dev.off()
-    print(paste("Saved file: ", fname, "with URL", furl))
-    vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'elev90_imp_storage', 0.0, site, token)
-    
-  }
+cols <- names(dat)
+
+if ("imp_off" %in% cols) {
+  imp_off <- as.integer(median(dat$imp_off))
+} else {
+  # imp_off is NOT in the coks, so impoundment must be active
+  # therefore, we assume that the impoundment is active by intention
+  # and that it is a legacy that lacked the imp_off convention
+  imp_off = 0
+}
+
+if (imp_off == 0) {
+  fname <- paste(
+    save_directory,
+    paste0(
+      'l90_imp_storage.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'l90_imp_storage.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$pct_use_remain * 100.0, 
+    ylim=c(ymn,ymx), 
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Model Flow Period",l90_start,"to",l90_end)
+  )
+  par(new = TRUE)
+  plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
+  
+  
+  # All Periods
+  # this has an impoundment.  Plot it up.
+  # Now zoom in on critical drought period
+  datpd <- dat
+  fname <- paste(
+    save_directory,
+    paste0(
+      'l90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'l90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  plot(datpd$Qin, ylim=c(-0.1,15))
+  lines(datpd$Qout,col='blue')
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$pct_use_remain * 100.0, 
+    ylim=c(ymn,ymx), 
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Full Period",sdate,"to",edate)
+  )
+  par(new = TRUE)
+  plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
+  
+  
+  # Low Elevation Period
+  datpd <- elevdatpd
+  fname <- paste(
+    save_directory,
+    paste0(
+      'elev90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  furl <- paste(
+    save_url,
+    paste0(
+      'elev90_imp_storage.all.',
+      elid, '.', runid, '.png'
+    ),
+    sep = '/'
+  )
+  png(fname)
+  plot(datpd$Qin, ylim=c(-0.1,15))
+  lines(datpd$Qout,col='blue')
+  ymn <- 1
+  ymx <- 100
+  par(mar = c(5,5,2,5))
+  plot(
+    datpd$pct_use_remain * 100.0, 
+    ylim=c(ymn,ymx), 
+    main="Minimum Modeled Reservoir Storage Period",
+    ylab="Reservoir Storage (%)",
+    xlab=paste("Model Time Period",l90_elev_start,"to",l90_elev_end)
+  )
+  par(new = TRUE)
+  plot(datpd$Qin,col='blue', axes=FALSE, xlab="", ylab="")
+  lines(datpd$Qout,col='green')
+  lines(datpd$wd_mgd * 1.547,col='red')
+  axis(side = 4)
+  mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+  dev.off()
+  print(paste("Saved file: ", fname, "with URL", furl))
+  vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'elev90_imp_storage', 0.0, site, token)
+  
 }
