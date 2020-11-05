@@ -35,7 +35,7 @@ inputs<-list(pid=pid)
 property<-getProperty(inputs, site)
 hydroid<-property$featureid
 
-elfgen_confidence <- function(elf){
+elfgen_confidence <- function(elf,outlet_flow){
   #Confidence Interval information
   uq <- elf$plot$plot_env$upper.quant
   
@@ -203,7 +203,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
                 "ylabel" = "Fish Species Richness")
   
   
-  confidence <- elfgen_confidence(elf)
+  confidence <- elfgen_confidence(elf,outlet_flow)
   
   #Scenario Property posts
   
