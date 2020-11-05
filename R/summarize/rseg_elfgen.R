@@ -35,7 +35,7 @@ inputs<-list(pid=pid)
 property<-getProperty(inputs, site)
 hydroid<-property$featureid
 
-elfgen_confidence <- function(elf,outlet_flow){
+elfgen_confidence <- function(elf,outlet_flow,yaxis_thresh){
   #Confidence Interval information
   uq <- elf$plot$plot_env$upper.quant
   
@@ -68,11 +68,11 @@ elfgen_confidence <- function(elf,outlet_flow){
   b2 <- ymax2 - (m2*log(xmax))
   
   # Calculating y max value based on greatest point value or intake y val
-  if (int > max(watershed.df$NT.TOTAL.UNIQUE)) {
-    ymax <- int + 2
-  } else {
-    ymax <- as.numeric(max(watershed.df$NT.TOTAL.UNIQUE)) + 2
-  }
+  #if (int > max(watershed.df$NT.TOTAL.UNIQUE)) {
+  #  ymax <- int + 2
+  #} else {
+  #  ymax <- as.numeric(max(watershed.df$NT.TOTAL.UNIQUE)) + 2
+  #}
   
   #Calculating median percent/absolute richness change
   pct_change <- round(richness_change(elf$stats, "pctchg" = cuf*100, "xval" = outlet_flow),2)
@@ -108,7 +108,7 @@ elfgen_confidence <- function(elf,outlet_flow){
     labs(fill = 'Outlet Legend', 
          x=paste(elf$plot$labels$x, '  Breakpt:',elf$stats$breakpt,sep=' ')) + 
     theme(plot.title = element_text(face = 'bold', vjust = -5)) +
-    ylim(0,ymax)
+    ylim(0,yaxis_thresh)
   
   confidence<-list(plot = plt, df = data.frame(pct_change,pct_d1,pct_d2, abs_change,abs_d1,abs_d2))
   return(confidence)
@@ -121,6 +121,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   y.metric <- 'aqbio_nt_total'
   y.sampres <- 'species'
   quantile <- 0.8
+  yaxis_thresh <- 53
   
   scen.propname<-paste0('runid_', runid)
     
@@ -198,12 +199,12 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   elf <- elfgen("watershed.df" = watershed.df,
                 "quantile" = quantile,
                 "breakpt" = breakpt,
-                "yaxis_thresh" = 53, 
+                "yaxis_thresh" = yaxis_thresh, 
                 "xlabel" = "Mean Annual Flow (ft3/s)",
                 "ylabel" = "Fish Species Richness")
   
   
-  confidence <- elfgen_confidence(elf,outlet_flow)
+  confidence <- elfgen_confidence(elf,outlet_flow,yaxis_thresh)
   
   #Scenario Property posts
   
