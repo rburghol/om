@@ -14,12 +14,12 @@ library(stringr)
 #### Load in directories and repositories
 site <- "http://deq2.bse.vt.edu/d.dh"
 save_directory <- "/var/www/html/data/proj3/out"
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
+#save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 basepath ='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 source(paste(om_location,'R/summarize/model_2_intake.R',sep='/'))
-site <- "http://deq2.bse.vt.edu/d.dh"
+#site <- "http://deq2.bse.vt.edu/d.dh"
 
 #### Input arguments
 
@@ -33,10 +33,11 @@ runid <- 18
 # flow_number <- as.integer(argst[5])   #1-13, 13 is mean annual and the other correspond to the months
 # flow_reduction_pct <- as.integer(argst[6])
 
-pid <- 4827139 #WILDERNESS SERVICE AREA:Rapidan River
+# pid <- 4827139 #WILDERNESS SERVICE AREA:Rapidan River
 # pid <- 4829015 #BLACKSBURG COUNTRY CLUB:North and South Fork (Confluence) Roanoke River
 # elid <- ''
 # runid <- ''
+
 
 huc_level <- 'huc8'
 
@@ -54,8 +55,10 @@ flow_reduction_pct <- 10
 flow_metric <-as.character(flow_metric_df[flow_number])
 ##########################################################
 #Retrieve intake hydroid from facility:riverseg model pid
-intake.df <- model_2_intake(pid,site)
-hydroid <- intake.df$intake.hydroid
+# intake.df <- model_2_intake(pid,site)
+# hydroid <- intake.df$intake.hydroid
+
+hydroid <- 65056 #directly supplying intake hydroid
 ##########################################################
 
 #### Take in watershed and mean intake data
@@ -83,7 +86,7 @@ inputs <- list(
 dataframe <- getProperty(inputs, site)
 
 mean_intake <- dataframe$propvalue
-
+print(paste("Mean Annual Flow at Intake = ",mean_intake,sep=""))
 #### Input parameters for retrieving data from VAHydro
 
 watershed.code <- as.character(nhd_code)
@@ -147,9 +150,11 @@ int <- round((m*log(mean_intake) + b),2)      # solving for mean_intake y-value
 
 m1 <- (ymax1-ymin1)/(log(xmax)-log(xmin)) # line 1
 b1 <- ymax1-(m1*log(xmax))
+int1 <- round((m1*log(mean_intake) + b1),2) 
 
 m2 <- (ymax2-ymin2)/(log(xmax)-log(xmin)) # line 2
 b2 <- ymax2 - (m2*log(xmax))
+int2 <- round((m2*log(mean_intake) + b2),2) 
 
 # Calculating y max value based on greatest point value or intake y val
 if (int > max(watershed.df$NT.TOTAL.UNIQUE)) {
@@ -239,7 +244,7 @@ fname <- paste(
 )
 
 furl <- paste(
-  save_url,
+  save_directory,
   paste0(
     'fig.elfgen.',
     watershed.code, '.', x.metric, '.', y.metric, '.png'
@@ -247,10 +252,10 @@ furl <- paste(
   sep = '/'
 )
 
-print(fname)
-ggsave(fname, width = 7, height = 5.5)
+print(furl)
+ggsave(furl, width = 7, height = 5.5)
 
-print(paste("Saved file: ", fname, "with URL", furl))
+print(paste("Saved file: ", furl, "with URL", furl))
 
 
 ########## Posting to VAHydro
