@@ -8,6 +8,7 @@ source(paste(basepath,'config.R', sep='/'))
 library(stringr)
 library(sqldf)
 library(elfgen)
+library(ggplot2)
 
 # dirs/URLs
 save_directory <- "/var/www/html/data/proj3/out"
@@ -31,11 +32,17 @@ runid <- as.integer(argst[2])
 huc_level <- as.character(argst[3])
 dataset <- as.character(argst[4])
 
+# #MANUAL TEST
+# pid <- as.integer(4711908)
+# runid <- as.integer(11)
+# huc_level <- as.character("huc8")
+# dataset <- as.character("VAHydro-EDAS")
+
 inputs<-list(pid=pid)
 property<-getProperty(inputs, site)
 hydroid<-property$featureid
 
-elfgen_confidence <- function(elf,outlet_flow,yaxis_thresh,cuf){
+elfgen_confidence <- function(elf,rseg.name,outlet_flow,yaxis_thresh,cuf){
   #Confidence Interval information
   uq <- elf$plot$plot_env$upper.quant
   
@@ -100,15 +107,27 @@ elfgen_confidence <- function(elf,outlet_flow,yaxis_thresh,cuf){
   abs_d2 <- round((abs_change - abs_richness_change_bound2),2)
   
   plt <- elf$plot +
-    geom_segment(aes(x = outlet_flow, y = -Inf, xend = outlet_flow, yend = int), color = 'red', linetype = 'dashed') +
-    geom_segment(aes(x = 0, xend = outlet_flow, y = int, yend = int), color = 'red', linetype = 'dashed') +
-    geom_point(aes(x = outlet_flow, y = int, fill = 'Outlet Flow'), color = 'red', shape = 'triangle', size = 2) +
-    geom_segment(aes(x = xmin, y = (m1 * log(xmin) + b1), xend = xmax, yend = (m1 * log(xmax) + b1)), color = 'blue', linetype = 'dashed') +
-    geom_segment(aes(x = xmin, y = (m2 * log(xmin) + b2), xend = xmax, yend = (m2 * log(xmax) + b2)), color = 'blue', linetype = 'dashed') +
-    labs(fill = 'Outlet Legend', 
-         x=paste(elf$plot$labels$x, '  Breakpt:',elf$stats$breakpt,sep=' ')) + 
-    theme(plot.title = element_text(face = 'bold', vjust = -5)) +
+    geom_segment(aes(x = outlet_flow, y = -Inf, xend = outlet_flow, yend = int), color = 'red', linetype = 'dashed', show.legend = FALSE) +
+    geom_segment(aes(x = 0, xend = outlet_flow, y = int, yend = int), color = 'red', linetype = 'dashed', show.legend = FALSE) +
+    geom_point(aes(x = outlet_flow, y = int, fill = paste("River Segment Outlet\n(MAF = ",outlet_flow," cfs)",sep="")), color = 'red', shape = 'triangle', size = 2) +
+    geom_segment(aes(x = xmin, y = (m1 * log(xmin) + b1), xend = xmax, yend = (m1 * log(xmax) + b1)), color = 'blue', linetype = 'dashed', show.legend = FALSE) +
+    geom_segment(aes(x = xmin, y = (m2 * log(xmin) + b2), xend = xmax, yend = (m2 * log(xmax) + b2)), color = 'blue', linetype = 'dashed', show.legend = FALSE) +
+    
+    #Modify River Segment Outlet legend
+    guides(fill = guide_legend(override.aes = list(color="red")))+
+
+    labs(fill = '',
+         #x=paste(elf$plot$labels$x, '  Breakpt:',elf$stats$breakpt,sep=' '),
+         x=paste(elf$plot$labels$x, '\nBreakpoint: ',elf$stats$breakpt,' cfs',sep=''),
+         #caption = paste('Breakpoint: ',elf$stats$breakpt,sep=' '),
+         title = paste('Containing Hydrologic Unit: ',elf$stats$watershed,'\n',sep=' '),
+         subtitle = paste('River Segment: ',rseg.name,sep=' ')
+         ) +
+    theme(plot.title = element_text(face = 'bold', vjust = -5))
+    # theme(plot.title = element_text(face = 'bold', vjust = -5),
+    #       legend.key = element_rect(fill = "grey")) +
     ylim(0,yaxis_thresh)
+  
   
   confidence<-list(plot = plt, df = data.frame(pct_change,pct_d1,pct_d2, abs_change,abs_d1,abs_d2))
   return(confidence)
@@ -123,9 +142,11 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   quantile <- 0.8
   yaxis_thresh <- 53
   
+  post_props <- 'YES' #HELPFUL TO SET TO 'NO' DURING TESTING
+  
   scen.propname<-paste0('runid_', runid)
     
-  # GETTING SCENARIO PROPERTY FROM VA HYDRO
+  # GETTING SCENARIO PROPERTY FROM VAHYDRO
   sceninfo <- list(
     varkey = 'om_scenario',
     propname = scen.propname,
@@ -146,9 +167,15 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   #Determines watershed outlet nhd+ segment and hydroid
   nhdplus_views <- paste(site,'dh-feature-containing-export', hydroid, 'watershed/nhdplus/nhdp_drainage_sqmi',  sep = '/')
   nhdplus_df <- read.csv(file=nhdplus_views, header=TRUE, sep=",")
+  #hydroid_out <-sqldf("select hydroid from nhdplus_df where propvalue in (select max(propvalue) from nhdplus_df)")
   
-  hydroid_out <-sqldf("select hydroid from nhdplus_df where propvalue in (select max(propvalue) from nhdplus_df)")
-
+  #MORE EFFICIENT SQL
+  outlet_nhdplus_segment <-sqldf("select * from nhdplus_df ORDER BY propvalue DESC LIMIT 1")
+  hydroid_out <- outlet_nhdplus_segment$hydroid
+  code_out <- outlet_nhdplus_segment$hydrocode
+  rseg.name <- outlet_nhdplus_segment$Containing_Feature_Name
+  
+  
   #Determines cumulative consumptive use fraction for the river segment
   inputs <- list(
     varkey = 'om_class_Constant',
@@ -162,21 +189,22 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   #Pulls mean annual outlet flow
   inputs <- list(
     varkey = x.metric,
-    featureid = as.numeric(hydroid_out$hydroid),
+    featureid = as.numeric(hydroid_out),
     entity_type = "dh_feature"
   )
   
   prop_flow <- getProperty(inputs, site)
   outlet_flow <- prop_flow$propvalue #outlet flow as erom_q0001e_mean of nhdplus segment
-  
+
   #Determines huc of interest for outlet nhd+ segment
-  site_comparison <- paste(site,'dh-feature-contained-within-export', hydroid_out$hydroid, 'watershed', sep = '/')
+  site_comparison <- paste(site,'dh-feature-contained-within-export', hydroid_out, 'watershed', sep = '/')
   containing_watersheds <- read.csv(file=site_comparison, header=TRUE, sep=",")
   
   nhd_code <- sqldf(paste("SELECT hydrocode 
              FROM containing_watersheds 
              WHERE ftype = 'nhd_", huc_level,"'", sep = "" ))
 
+  
   #HUC Section---------------------------------------------------------------------------
   watershed.code <- as.character(nhd_code$hydrocode)
   watershed.bundle <- 'watershed'
@@ -203,10 +231,8 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
                 "xlabel" = "Mean Annual Flow (ft3/s)",
                 "ylabel" = "Fish Species Richness")
   
-  
-  confidence <- elfgen_confidence(elf,outlet_flow,yaxis_thresh,cuf)
-  
-  #Scenario Property posts
+
+  confidence <- elfgen_confidence(elf,rseg.name,outlet_flow,yaxis_thresh,cuf)
   
   if (dataset == 'IchthyMaps'){  
     dataname='Ichthy'
@@ -219,66 +245,88 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
     propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
     entity_type = 'dh_properties',
     propcode = nhd_code$hydrocode,
-    featureid = scenprop$pid,
-    proptext = dataset, #figure out how to make this part changeable
-    propvalue = NULL)
-  
-  postProperty(inputs, site)
-  
-  #Absolute change branch - posted underneath elfgen_richness_change_huc_level scenario property
-  inputs <- list(
-    varkey = 'om_class_Constant',
-    propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
-    entity_type = 'dh_properties',
-    propcode = nhd_code$hydrocode,
     featureid = scenprop$pid)
-  
   prop_huc<-getProperty(inputs, site)
   
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'om_class_Constant', NULL, 'richness_change_abs', confidence$df$abs_change, site, token)
+  #Scenario Property posts
+  if (post_props == 'YES'){    
+    print("POSTING PROPERTIES TO VAHYDRO...")
+    
+    # if (dataset == 'IchthyMaps'){  
+    #   dataname='Ichthy'
+    # }else{
+    #   dataname='EDAS'
+    # }
+    
+    inputs <- list(
+      varkey = 'om_class_Constant',
+      propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
+      entity_type = 'dh_properties',
+      propcode = nhd_code$hydrocode,
+      featureid = scenprop$pid,
+      proptext = dataset, #figure out how to make this part changeable
+      propvalue = NULL)
+    
+    postProperty(inputs, site)
+    
+    #Absolute change branch - posted underneath elfgen_richness_change_huc_level scenario property
+    # inputs <- list(
+    #   varkey = 'om_class_Constant',
+    #   propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
+    #   entity_type = 'dh_properties',
+    #   propcode = nhd_code$hydrocode,
+    #   featureid = scenprop$pid)
+    # 
+    # prop_huc<-getProperty(inputs, site)
+    
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'om_class_Constant', NULL, 'richness_change_abs', confidence$df$abs_change, site, token)
+    
+    #Absolute change confidence interval bounds - posted underneath richness_change_abs property 
+    inputs <- list(
+      varkey = 'om_class_Constant',
+      propname = 'richness_change_abs',
+      entity_type = 'dh_properties',
+      featureid = prop_huc$pid)
+    
+    prop_abs<-getProperty(inputs, site)
+    
+    vahydro_post_metric_to_scenprop(prop_abs$pid, 'om_class_Constant', NULL, 'upper_confidence', confidence$df$abs_d1, site, token) #flipped and negated to match negative richness change value
+    vahydro_post_metric_to_scenprop(prop_abs$pid, 'om_class_Constant', NULL, 'lower_confidence', confidence$df$abs_d2, site, token)
+    
+    #Percent change branch - posted underneath elfgen_richness_change_huc_level scenario property
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'om_class_Constant', NULL, 'richness_change_pct', confidence$df$pct_change, site, token)
+    
+    #Percent change confidence interval bounds - posted underneath richness_change_pct property 
+    inputs <- list(
+      varkey = 'om_class_Constant',
+      propname = 'richness_change_pct',
+      entity_type = 'dh_properties',
+      featureid = prop_huc$pid)
+    
+    prop_pct<-getProperty(inputs, site)
+    
+    vahydro_post_metric_to_scenprop(prop_pct$pid, 'om_class_Constant', NULL, 'upper_confidence', confidence$df$pct_d1, site, token) #flipped similar to vahydro
+    vahydro_post_metric_to_scenprop(prop_pct$pid, 'om_class_Constant', NULL, 'lower_confidence', confidence$df$pct_d2, site, token)
+    
+    #Elf$stats posts - posted underneath elfgen_richness_change_huc_level scenario property-----------------------
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_bkpt', NULL, 'breakpt', elf$stats$breakpt, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_qu', NULL, 'quantile', elf$stats$quantile, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_m', NULL, 'm', elf$stats$m, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_b', NULL, 'b', elf$stats$b, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_rsq', NULL, 'rsquared', elf$stats$rsquared, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_adj_rsq', NULL, 'rsquared_adj', elf$stats$rsquared_adj, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_p', NULL, 'p', elf$stats$p, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n_tot', NULL, 'n_total', elf$stats$n_total, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n_sub', NULL, 'n_subset', elf$stats$n_subset, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n', NULL, 'n_subset_upper', elf$stats$n_subset_upper, site, token)
+    vahydro_post_metric_to_scenprop(prop_huc$pid, 'erom_q0001e_mean', code_out, 'erom_q0001e_mean', outlet_flow, site, token)
+    
+    #Elf$plot post - posted underneath elfgen_richness_change_huc_level scenario property------------
+ 
+  } else {
+    print("NOT POSTING PROPERTIES TO VAHYDRO")
+  }  
   
-  #Absolute change confidence interval bounds - posted underneath richness_change_abs property 
-  inputs <- list(
-    varkey = 'om_class_Constant',
-    propname = 'richness_change_abs',
-    entity_type = 'dh_properties',
-    featureid = prop_huc$pid)
-  
-  prop_abs<-getProperty(inputs, site)
-  
-  vahydro_post_metric_to_scenprop(prop_abs$pid, 'om_class_Constant', NULL, 'upper_confidence', confidence$df$abs_d1, site, token) #flipped and negated to match negative richness change value
-  vahydro_post_metric_to_scenprop(prop_abs$pid, 'om_class_Constant', NULL, 'lower_confidence', confidence$df$abs_d2, site, token)
-  
-  #Percent change branch - posted underneath elfgen_richness_change_huc_level scenario property
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'om_class_Constant', NULL, 'richness_change_pct', confidence$df$pct_change, site, token)
-  
-  #Percent change confidence interval bounds - posted underneath richness_change_pct property 
-  inputs <- list(
-    varkey = 'om_class_Constant',
-    propname = 'richness_change_pct',
-    entity_type = 'dh_properties',
-    featureid = prop_huc$pid)
-  
-  prop_pct<-getProperty(inputs, site)
-  
-  vahydro_post_metric_to_scenprop(prop_pct$pid, 'om_class_Constant', NULL, 'upper_confidence', confidence$df$pct_d1, site, token) #flipped similar to vahydro
-  vahydro_post_metric_to_scenprop(prop_pct$pid, 'om_class_Constant', NULL, 'lower_confidence', confidence$df$pct_d2, site, token)
-  
-  #Elf$stats posts - posted underneath elfgen_richness_change_huc_level scenario property-----------------------
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_bkpt', NULL, 'breakpt', elf$stats$breakpt, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_qu', NULL, 'quantile', elf$stats$quantile, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_m', NULL, 'm', elf$stats$m, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_b', NULL, 'b', elf$stats$b, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_rsq', NULL, 'rsquared', elf$stats$rsquared, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_adj_rsq', NULL, 'rsquared_adj', elf$stats$rsquared_adj, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_p', NULL, 'p', elf$stats$p, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n_tot', NULL, 'n_total', elf$stats$n_total, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n_sub', NULL, 'n_subset', elf$stats$n_subset, site, token)
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'stat_quantreg_n', NULL, 'n_subset_upper', elf$stats$n_subset_upper, site, token)
-  
-  #Elf$plot post - posted underneath elfgen_richness_change_huc_level scenario property------------
-  
-
   #Elf$plot saving functions
   
 
@@ -304,10 +352,11 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   print(fname)
   ggsave(fname, plot = confidence$plot, width = 7, height = 5.5)
   
-  print(paste("Saved file: ", fname, "with URL", furl))
-  
-  vahydro_post_metric_to_scenprop(prop_huc$pid, 'dh_image_file', furl, 'fig.elfgen', 0.0, site, token) 
-  
+  if (post_props == 'YES'){ 
+      print(paste("Saved file: ", fname, "with URL", furl))
+      vahydro_post_metric_to_scenprop(prop_huc$pid, 'dh_image_file', furl, 'fig.elfgen', 0.0, site, token)
+  }
+      
   print('DONE')
 }
 
