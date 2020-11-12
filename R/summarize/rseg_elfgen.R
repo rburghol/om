@@ -142,7 +142,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   quantile <- 0.8
   yaxis_thresh <- 53
   
-  post_props <- 'NO' #HELPFUL TO SET TO 'NO' DURING TESTING
+  post_props <- 'YES' #HELPFUL TO SET TO 'NO' DURING TESTING
   
   scen.propname<-paste0('runid_', runid)
     
