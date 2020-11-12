@@ -33,7 +33,7 @@ huc_level <- as.character(argst[3])
 dataset <- as.character(argst[4])
 
 # #MANUAL TEST
-# pid <- as.integer(4711908)
+# pid <- as.integer(4705716)
 # runid <- as.integer(11)
 # huc_level <- as.character("huc8")
 # dataset <- as.character("VAHydro-EDAS")
@@ -244,7 +244,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
     varkey = 'om_class_Constant',
     propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
     entity_type = 'dh_properties',
-    propcode = nhd_code$hydrocode,
+    propcode = watershed.code,
     featureid = scenprop$pid)
   prop_huc<-getProperty(inputs, site)
   
@@ -262,7 +262,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
       varkey = 'om_class_Constant',
       propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
       entity_type = 'dh_properties',
-      propcode = nhd_code$hydrocode,
+      propcode = watershed.code,
       featureid = scenprop$pid,
       proptext = dataset, #figure out how to make this part changeable
       propvalue = NULL)
