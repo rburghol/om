@@ -34,7 +34,7 @@ dataset <- as.character(argst[4])
 
 # #MANUAL TEST
 # pid <- as.integer(4705716)
-# runid <- as.integer(11)
+# runid <- as.integer(18)
 # huc_level <- as.character("huc8")
 # dataset <- as.character("VAHydro-EDAS")
 
@@ -142,7 +142,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   quantile <- 0.8
   yaxis_thresh <- 53
   
-  post_props <- 'YES' #HELPFUL TO SET TO 'NO' DURING TESTING
+  post_props <- 'NO' #HELPFUL TO SET TO 'NO' DURING TESTING
   
   scen.propname<-paste0('runid_', runid)
     
@@ -234,11 +234,36 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
 
   confidence <- elfgen_confidence(elf,rseg.name,outlet_flow,yaxis_thresh,cuf)
   
-  if (dataset == 'IchthyMaps'){  
+  # if (dataset == 'IchthyMaps'){  
+  #   dataname='Ichthy'
+  # }else{
+  #   dataname='EDAS'
+  # }
+  
+  # inputs <- list(
+  #   varkey = 'om_class_Constant',
+  #   propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
+  #   entity_type = 'dh_properties',
+  #   propcode = watershed.code,
+  #   featureid = scenprop$pid)
+  # prop_huc<-getProperty(inputs, site)
+  
+  if (dataset == 'IchthyMaps'){
     dataname='Ichthy'
   }else{
     dataname='EDAS'
   }
+  
+  inputs <- list(
+    varkey = 'om_class_Constant',
+    propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
+    entity_type = 'dh_properties',
+    propcode = watershed.code,
+    featureid = scenprop$pid,
+    proptext = dataset, #figure out how to make this part changeable
+    propvalue = NULL)
+  
+  prop_huc <- postProperty(inputs, site)
   
   inputs <- list(
     varkey = 'om_class_Constant',
@@ -252,22 +277,22 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   if (post_props == 'YES'){    
     print("POSTING PROPERTIES TO VAHYDRO...")
     
-    # if (dataset == 'IchthyMaps'){  
+    # if (dataset == 'IchthyMaps'){
     #   dataname='Ichthy'
     # }else{
     #   dataname='EDAS'
     # }
-    
-    inputs <- list(
-      varkey = 'om_class_Constant',
-      propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
-      entity_type = 'dh_properties',
-      propcode = watershed.code,
-      featureid = scenprop$pid,
-      proptext = dataset, #figure out how to make this part changeable
-      propvalue = NULL)
-    
-    postProperty(inputs, site)
+    # 
+    # inputs <- list(
+    #   varkey = 'om_class_Constant',
+    #   propname = paste('elfgen_', dataname,'_', huc_level, sep=''),
+    #   entity_type = 'dh_properties',
+    #   propcode = watershed.code,
+    #   featureid = scenprop$pid,
+    #   proptext = dataset, #figure out how to make this part changeable
+    #   propvalue = NULL)
+    # 
+    # prop_huc <- postProperty(inputs, site)
     
     #Absolute change branch - posted underneath elfgen_richness_change_huc_level scenario property
     # inputs <- list(
@@ -328,6 +353,7 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   }  
   
   #Elf$plot saving functions
+
   
 
 #Image saving & naming
