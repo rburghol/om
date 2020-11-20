@@ -21,9 +21,11 @@ eyear = as.integer(max(dat$year))
 if (syear < (eyear - 2)) {
   sdate <- as.Date(paste0(syear,"-10-01"))
   edate <- as.Date(paste0(eyear,"-09-30"))
+  flow_year_type <- 'water'
 } else {
   sdate <- as.Date(paste0(syear,"-02-01"))
   edate <- as.Date(paste0(eyear,"-12-31"))
+  flow_year_type <- 'calendar'
 }
 dat <- window(dat, start = sdate, end = edate);
 mode(dat) <- 'numeric'
@@ -119,7 +121,7 @@ flows <- aggregate(
   ),
   'mean'
 )
-loflows <- group2(flows);
+loflows <- group2(flows, flow_year_type);
 l90 <- loflows["90 Day Min"];
 ndx = which.min(as.numeric(l90[,"90 Day Min"]));
 l90_Qout = round(loflows[ndx,]$"90 Day Min",6);
@@ -386,7 +388,7 @@ if( ("imp_off" %in% cols) || ("impoundment" %in% cols) ) {
       # Low Elevation Period
       # Dat for Critical Period
       elevs <- zoo(dat$storage_pct, order.by = index(dat));
-      loelevs <- group2(elevs);
+      loelevs <- group2(elevs, flow_year_type);
       l90 <- loelevs["90 Day Min"];
       ndx = which.min(as.numeric(l90[,"90 Day Min"]));
       l90_elev = round(loelevs[ndx,]$"90 Day Min",6);

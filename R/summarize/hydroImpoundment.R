@@ -27,7 +27,16 @@ if (syear < (eyear - 2)) {
 }
 dat <- window(dat, start = sdate, end = edate);
 mode(dat) <- 'numeric'
+# is imp_off = 0?
 cols <- names(dat)
+if ("imp_off" %in% cols) {
+  imp_off <- as.integer(median(dat$imp_off))
+} else {
+  # imp_off is NOT in the coks, so impoundment must be active
+  # therefore, we assume that the impoundment is active by intention
+  # and that it is a legacy that lacked the imp_off convention
+  imp_off = 0
+}
 if ("pct_use_remain" %in% cols) {
   # nothing
 } else {
@@ -137,18 +146,6 @@ elevdatpd <- window(
 );
 
 # Lake Plots
-# is imp_off = 0?
-cols <- names(dat)
-
-if ("imp_off" %in% cols) {
-  imp_off <- as.integer(median(dat$imp_off))
-} else {
-  # imp_off is NOT in the coks, so impoundment must be active
-  # therefore, we assume that the impoundment is active by intention
-  # and that it is a legacy that lacked the imp_off convention
-  imp_off = 0
-}
-
 if (imp_off == 0) {
   fname <- paste(
     save_directory,
