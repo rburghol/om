@@ -1,7 +1,7 @@
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
-elid = 230533 # cootes: , mount j: 229937, strasburg: 230667
+elid = 210731 # cootes: , mount j: 229937, strasburg: 230667
 # sf shen at front royal: 229799
 # sf shen lynwood: 234585 PS4_6360_5840
 # shenandoah river at Potomac Confluence, Millville WV: 230533
@@ -9,15 +9,17 @@ elid = 230533 # cootes: , mount j: 229937, strasburg: 230667
 # Point of Rocks 233997 
 # James at Richmond
 # Opequpon creek 236975 
-gage_number = '01636500' 
+# James Cartersville 210731 
+gage_number = '02035000' 
 # cootes: 01632000, mount j: 01633000, strasburg: 01634000
 # Shen at Millville WV: 01636500
 # sf lynwood: 01628500
 # New River above claytor: 03168000
 # Potomac River @ PoR 01638500
 # Opequon creek: 01615000
-startdate <- "2002-05-01"
-enddate <- "2002-11-30"
+# James Cartersville 02035000 
+startdate <- "1999-01-01"
+enddate <- "1999-12-31"
 
 # Get and format gage data
 gage_data <- gage_import_data_cfs(gage_number, startdate, enddate)
