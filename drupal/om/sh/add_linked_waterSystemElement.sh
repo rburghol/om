@@ -21,5 +21,13 @@ drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equ
 drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation wsp2020_2020_mgy wsp2020_2020_mgy $entity_type 
 drush scr modules/om/src/om.model.wsp.props.php cmd $pid $entity_id om_class_Equation wsp2020_2040_mgy wsp2020_2040_mgy $entity_type 
 monpid=`drush scr modules/om/src/om_getpid.php $entity_type $entity_id "wd_current_mon_factors"`
-drush scr modules/om/src/om.model.historic_monthly_pct.php cmd $pid $monpid om_class_DataMatrix historic_monthly_pct field_dh_matrix dh_properties 
+if [ -z "$monpid" ];
+  then  
+  echo "Not set on parent. Using default from $template model"; 
+  drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid historic_monthly_pct
+else
+  drush scr modules/om/src/om.model.historic_monthly_pct.php cmd $pid $monpid om_class_DataMatrix historic_monthly_pct field_dh_matrix dh_properties 
+fi
+
+
 # Calculate the riverseg frac ... this could be tough = sum(fac:mp) in riverseg, divided by fac_current_mgy 
