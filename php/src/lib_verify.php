@@ -728,7 +728,7 @@ function getCOVARunDetail($listobject, $elid, $runid, $host = '') {
 }
 
 function summarizeRun($listobject, $recid, $run_id, $startdate, $enddate, $force=0, $strict=1) {
-   error_log("Summarizing run $runid for element $recid");
+   error_log("Summarizing run $run_id for element $recid");
    $output = array();
    $run_mesg = '';
    $node_types = array('cova_ws_container', 'cova_ws_subnodal', 'vahydro_lite_container');

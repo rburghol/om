@@ -1554,7 +1554,7 @@ function testCiaWatershed ($prop_elid, $runid, $cache_runid, $startdate='', $end
       }
       runCached($parentid, $runid, $cache_runid, $startdate, $enddate, $cache_list, 1, $dynamics, $input_props, $test_only);
       if (!$test_only) {
-         summarizeRun($listobject, $parentid, $runid, $startdate, $enddate, 0, 0);
+        summarizeRun($listobject, $parentid, $runid, $startdate, $enddate, 0, 0);
       }
    } else {
       error_log("Failed to instantiate the base object.\n");
@@ -1804,7 +1804,8 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
     if (!$test_only) {
        // cache only the object of interest and the parent object
        // @todo: this was disabled for some reason?
-       createModelRunSummaryFiles($listobject, $summarize, $runid);
+      createModelRunSummaryFiles($listobject, $summarize, $runid);
+      summarizeRun($listobject, $elementid, $runid, $startdate, $enddate, 0, 0);
     }
     return;
   }
