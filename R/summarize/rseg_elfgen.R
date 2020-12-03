@@ -33,8 +33,8 @@ huc_level <- as.character(argst[3])
 dataset <- as.character(argst[4])
 
 # #MANUAL TEST
-# pid <- as.integer(4705716)
-# runid <- as.integer(18)
+# pid <- as.integer(4713658)
+# runid <- as.integer(11)
 # huc_level <- as.character("huc8")
 # dataset <- as.character("VAHydro-EDAS")
 
@@ -171,10 +171,40 @@ elfgen_huc <- function(runid, hydroid, huc_level, dataset){
   
   #MORE EFFICIENT SQL
   outlet_nhdplus_segment <-sqldf("select * from nhdplus_df ORDER BY propvalue DESC LIMIT 1")
+  # print(outlet_nhdplus_segment)
   hydroid_out <- outlet_nhdplus_segment$hydroid
   code_out <- outlet_nhdplus_segment$hydrocode
   rseg.name <- outlet_nhdplus_segment$Containing_Feature_Name
   
+  
+
+  # DEBUG --------------------------------------------------------------------------------------
+  # print(hydroid)
+  
+  # vector of rseg hydroids where the approach "the nhdplus seg with the greatest DA" fails 
+  # because nhdplus feature overlaps at the outlet of the rseg
+  mis_assigned_hydroid_out <- c(68096,67769,67842,68005,68264)
+  #loop through and re-assign these rsegs with an appropriate outlet nhdplus segment 
+  if (hydroid %in% mis_assigned_hydroid_out) {
+  
+      hydroid_out <- case_when(hydroid == 68096 ~ 304639,
+                               hydroid == 67769 ~ 335097,
+                               hydroid == 67842 ~ 298104,
+                               hydroid == 68005 ~ 331521,
+                               hydroid == 68264 ~ 314256
+                               )
+    
+      code_out <-    case_when(hydroid == 68096 ~ 8616505,
+                               hydroid == 67769 ~ 5908205,
+                               hydroid == 67842 ~ 8572971,
+                               hydroid == 68005 ~ 434106,
+                               hydroid == 68264 ~ 8545673
+                               )
+
+  }
+
+  # print(hydroid_out)
+  # --------------------------------------------------------------------------------------------
   
   #Determines cumulative consumptive use fraction for the river segment
   inputs <- list(
