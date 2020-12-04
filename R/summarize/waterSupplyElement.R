@@ -104,21 +104,21 @@ if (is.na(ps_mgd)) {
 }
 
 # Analyze unmet demands
-flows <- zoo(as.numeric(dat$unmet_demand_mgd), order.by = index(dat));
-loflows <- group2(flows);
+uds <- zoo(as.numeric(dat$unmet_demand_mgd), order.by = index(dat));
+udflows <- group2(uds, 'calendar');
 
-unmet90 <- loflows["90 Day Max"];
+unmet90 <- udflows["90 Day Max"];
 ndx = which.max(as.numeric(unmet90[,"90 Day Max"]));
-unmet90 = round(loflows[ndx,]$"90 Day Max",6);
-unmet30 <- loflows["30 Day Max"];
+unmet90 = round(udflows[ndx,]$"90 Day Max",6);
+unmet30 <- udflows["30 Day Max"];
 ndx1 = which.max(as.numeric(unmet30[,"30 Day Max"]));
-unmet30 = round(loflows[ndx,]$"30 Day Max",6);
-unmet7 <- loflows["7 Day Max"];
+unmet30 = round(udflows[ndx,]$"30 Day Max",6);
+unmet7 <- udflows["7 Day Max"];
 ndx = which.max(as.numeric(unmet7[,"7 Day Max"]));
-unmet7 = round(loflows[ndx,]$"7 Day Max",6);
-unmet1 <- loflows["1 Day Max"];
+unmet7 = round(udflows[ndx,]$"7 Day Max",6);
+unmet1 <- udflows["1 Day Max"];
 ndx = which.max(as.numeric(unmet1[,"1 Day Max"]));
-unmet1 = round(loflows[ndx,]$"1 Day Max",6);
+unmet1 = round(udflows[ndx,]$"1 Day Max",6);
 
 
 # post em up
@@ -134,12 +134,12 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet1
 #defines critical period based on Qintake if there is no unmet demand
 if (sum(datdf$unmet_demand_mgd)==0) {
   flows <- zoo(as.numeric(dat$Qintake*1.547), order.by = index(dat));
-  loflows <- group2(flows)
-  Qin30 <- loflows["30 Day Min"];
+  udflows <- group2(flows, 'calendar')
+  Qin30 <- udflows["30 Day Min"];
   ndx1 = which.min(as.numeric(Qin30[,"30 Day Min"]))
 }
 # Define year at which highest 30 Day Max occurs (Lal's code, line 405)
-u30_year2 = loflows[ndx1,]$"year";
+u30_year2 = udflows[ndx1,]$"year";
 
 # Metrics that need Zoo (IHA)
 flows <- zoo(as.numeric(as.character( dat$Qintake )), order.by = index(dat));
@@ -174,8 +174,31 @@ furl <- paste(
 
 ##### Define data for graph, just within that defined year, and graph it
 # Lal's code, lines 410-446 (412 commented out)
-
-ddat2 <- window(dat, start = as.Date(paste0(u30_year2, "-06-01")), end = as.Date(paste0(u30_year2,"-09-15") ));
+drange <- sqldf(
+  paste(
+    "select min(month) as dsmo, max(month) as demo from datdf where unmet_demand_mgd > 0 and year = ",
+    u30_year2
+  )
+)
+dsy <- u30_year2
+dey <- u30_year2
+dsmo <- as.integer(drange$dsmo) - 1
+demo <- as.integer(drange$demo) + 1
+if (dsmo < 1) {
+  dsmo <- 12 + dsmo
+  dsy <- dsy - 1
+}
+if (demo > 12) {
+  demo <- demo - 12
+  dey <- dey + 1
+}
+dsmo <- sprintf('%02i',dsmo)
+demo <- sprintf('%02i',demo)
+ddat2 <- window(
+  dat, 
+  start = as.Date(paste0(dsy, "-", dsmo, "-01")), 
+  end = as.Date(paste0(dey,"-", demo, "-28") )
+);
 
 #dmx2 = max(ddat2$Qintake)
 map2<-as.data.frame(ddat2$Qintake + (ddat2$discharge_mgd - ddat2$wd_mgd) * 1.547)
