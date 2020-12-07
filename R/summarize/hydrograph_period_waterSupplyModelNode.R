@@ -1,7 +1,7 @@
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
-elid = 210731 # cootes: , mount j: 229937, strasburg: 230667
+elid = 230533 # cootes: , mount j: 229937, strasburg: 230667
 # sf shen at front royal: 229799
 # sf shen lynwood: 234585 PS4_6360_5840
 # shenandoah river at Potomac Confluence, Millville WV: 230533
@@ -10,7 +10,7 @@ elid = 210731 # cootes: , mount j: 229937, strasburg: 230667
 # James at Richmond
 # Opequpon creek 236975 
 # James Cartersville 210731 
-gage_number = '02035000' 
+gage_number = '01636500' 
 # cootes: 01632000, mount j: 01633000, strasburg: 01634000
 # Shen at Millville WV: 01636500
 # sf lynwood: 01628500
