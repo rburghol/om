@@ -219,6 +219,7 @@ if (syear <= 1990 && eyear >= 2000) {
   vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_cc_year', l30_year_trim, site, token)
 }
 
+message("Plotting critical flow periods")
 # does this have an impoundment sub-comp and is imp_off = 0?
 cols <- names(dat)
 imp_off <- NULL
