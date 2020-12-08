@@ -145,7 +145,7 @@ function om_run_id_options() {
   //dpm($allkeys);
   for ($i = 100; $i <= 2000; $i++) {
     if (!isset($allkeys[$i])) {
-      $options[$i] = "Custom User Run #$i";
+      $options['Custom Runs'][$i] = "Custom User Run #$i";
     }
   }
   //error_log("runid options " . print_r($options,1));
