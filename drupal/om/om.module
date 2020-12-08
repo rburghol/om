@@ -142,6 +142,7 @@ function om_run_id_options() {
   foreach(array_keys($options) as $ogroup => $oopts) {
     $allkeys = array_merge($allkeys, $oopts);
   }
+  dpm($allkeys);
   for ($i = 100; $i <= 2000; $i++) {
     if (!isset($allkeys[$i])) {
       $options[$i] = "Custom User Run #$i";
