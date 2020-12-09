@@ -203,7 +203,7 @@ if (syear <= 1990 && eyear >= 2000) {
   dat_trim <- window(dat, start = sdate_trim, end = edate_trim);
   # convert to daily
   dat_trim <- aggregate(
-    flows,
+    dat_trim,
     as.POSIXct(
       format(
         time(dat_trim), 
