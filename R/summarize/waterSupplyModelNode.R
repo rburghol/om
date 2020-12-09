@@ -19,16 +19,16 @@ dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 mode(dat) <- 'numeric'
 
 # Hourly to Daily flow timeseries
-dat = aggregate(
-  dat,
-  as.POSIXct(
-    format(
-      time(dat), 
-      format='%Y/%m/%d'),
-    tz='UTC'
-  ),
-  'mean'
-)
+#dat = aggregate(
+#  dat,
+#  as.POSIXct(
+#    format(
+#      time(dat), 
+#      format='%Y/%m/%d'),
+#    tz='UTC'
+#  ),
+#  'mean'
+#)
 syear = as.integer(min(dat$year))
 eyear = as.integer(max(dat$year))
 if (syear < (eyear - 2)) {
@@ -201,6 +201,17 @@ if (syear <= 1990 && eyear >= 2000) {
   edate_trim <- as.Date(paste0(2000,"-09-30"))
   
   dat_trim <- window(dat, start = sdate_trim, end = edate_trim);
+  # convert to daily
+  dat_trim <- aggregate(
+    flows,
+    as.POSIXct(
+      format(
+        time(dat_trim), 
+        format='%Y/%m/%d'),
+      tz='UTC'
+    ),
+    'mean'
+  )
   mode(dat_trim) <- 'numeric'
   
   flows_trim <- zoo(as.numeric(as.character( dat_trim$Qout )), order.by = index(dat_trim));
