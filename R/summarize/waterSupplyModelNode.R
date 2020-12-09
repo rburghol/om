@@ -18,16 +18,16 @@ runid <- as.integer(argst[3])
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 
 # Hourly to Daily flow timeseries
-dat = aggregate(
-  dat,
-  as.POSIXct(
-    format(
-      time(dat), 
-      format='%Y/%m/%d'),
-    tz='UTC'
-  ),
-  'mean'
-)
+#dat = aggregate(
+#  dat,
+#  as.POSIXct(
+#    format(
+#      time(dat), 
+#      format='%Y/%m/%d'),
+ #   tz='UTC'
+#  ),
+#  'mean'
+#)
 syear = as.integer(min(dat$year))
 eyear = as.integer(max(dat$year))
 if (syear < (eyear - 2)) {
