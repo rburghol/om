@@ -138,12 +138,15 @@ Qin30 <- uiflows["30 Day Min"];
 l30_Qintake <- min(Qin30["30 Day Min"]);
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'l30_Qintake', l30_Qintake, site, token)
 
+# Define year at which highest 30 Day Max occurs (Lal's code, line 405)
 #defines critical period based on Qintake if there is no unmet demand
 if (sum(datdf$unmet_demand_mgd)==0) {
+  # base it on flow since we have no unmet demand.
   ndx1 = which.min(as.numeric(Qin30[,"30 Day Min"]))
+  u30_year2 = uiflows[ndx1,]$"year";
+} else {
+  u30_year2 = udflows[ndx1,]$"year";
 }
-# Define year at which highest 30 Day Max occurs (Lal's code, line 405)
-u30_year2 = udflows[ndx1,]$"year";
 
 # Metrics that need Zoo (IHA)
 flows <- zoo(as.numeric(as.character( dat$Qintake )), order.by = index(dat));
