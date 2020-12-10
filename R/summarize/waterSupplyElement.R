@@ -126,7 +126,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet7
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'unmet1_mgd', unmet1, site, token)
 
 # Intake Flows 
-iflows <- zoo(as.numeric(dat$Qintake*1.547), order.by = index(dat));
+iflows <- zoo(as.numeric(dat$Qintake), order.by = index(dat));
 uiflows <- group2(iflows, 'calendar')
 Qin30 <- uiflows["30 Day Min"];
 l30_Qintake <- min(Qin30["30 Day Min"]);
