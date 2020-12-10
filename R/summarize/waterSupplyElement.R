@@ -187,6 +187,7 @@ drange <- sqldf(
     u30_year2
   )
 )
+# Drought range dates
 dsy <- u30_year2
 dey <- u30_year2
 dsmo <- as.integer(drange$dsmo) - 1
