@@ -67,12 +67,6 @@ if (identical(scenprop, FALSE)) {
 }
 scenprop = postProperty(inputs=sceninfo,base_url=base_url,prop)
 scenprop <- getProperty(sceninfo, site, scenprop)
-sceninfo <- list(
-  varkey = 'om_scenario',
-  propname = scen.propname,
-  featureid = pid,
-  entity_type = "dh_properties"
-)
 
 #omsite = site <- "http://deq2.bse.vt.edu"
 #dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
@@ -181,12 +175,25 @@ furl <- paste(
 
 ##### Define data for graph, just within that defined year, and graph it
 # Lal's code, lines 410-446 (412 commented out)
-drange <- sqldf(
-  paste(
-    "select min(month) as dsmo, max(month) as demo from datdf where unmet_demand_mgd > 0 and year = ",
+if (sum(datdf$unmet_demand_mgd)==0) {
+  # base it on flow since we have no unmet demand.
+  dsql <- paste(
+    "select min(month) as dsmo, max(month) as demo 
+     from datdf 
+     where Qintake <= ", l30_Qintake,
+     " and year = ",
     u30_year2
   )
-)
+} else {
+  dsql <- paste(
+    "select min(month) as dsmo, max(month) as demo 
+     from datdf 
+     where unmet_demand_mgd > 0 
+     and year = ",
+    u30_year2
+  )
+}
+drange <- sqldf(dsql)
 # Drought range dates
 dsy <- u30_year2
 dey <- u30_year2
