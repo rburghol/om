@@ -1,7 +1,7 @@
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
-elid = 233551 # cootes: , mount j: 229937, strasburg: 230667
+elid = 230533 # cootes: , mount j: 229937, strasburg: 230667
 # Little Falls: 233551
 # sf shen at front royal: 229799
 # sf shen lynwood: 234585 PS4_6360_5840
@@ -11,7 +11,7 @@ elid = 233551 # cootes: , mount j: 229937, strasburg: 230667
 # James at Richmond
 # Opequpon creek 236975 
 # James Cartersville 210731 
-gage_number = '01646500' 
+gage_number = '01636500' 
 # little falls: 01646500 
 # cootes: 01632000, mount j: 01633000, strasburg: 01634000
 # Shen at Millville WV: 01636500
@@ -55,7 +55,7 @@ plot(
 )
 lines(gage_data$flow, col='blue')
 # runid: 
-  # 1131 = hourly, 1998-2002
+# 1131 = hourly, 1998-2002
 runid = 1131
 finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
