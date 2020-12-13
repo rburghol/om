@@ -1,25 +1,8 @@
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
 
-elid = 233551 # cootes: , mount j: 229937, strasburg: 230667
-# Little Falls: 233551
-# sf shen at front royal: 229799
-# sf shen lynwood: 234585 PS4_6360_5840
-# shenandoah river at Potomac Confluence, Millville WV: 230533
-# New river above Claytor 277538
-# Point of Rocks 233997 
-# James at Richmond
-# Opequpon creek 236975 
-# James Cartersville 210731 
-gage_number = '01646500' 
-# little falls: 01646500 
-# cootes: 01632000, mount j: 01633000, strasburg: 01634000
-# Shen at Millville WV: 01636500
-# sf lynwood: 01628500
-# New River above claytor: 03168000
-# Potomac River @ PoR 01638500
-# Opequon creek: 01615000
-# James Cartersville 02035000 
+elid = 241969 # PU1_4300_4440
+gage_number = '01597500' # USGS SAVAGE RIV BL SAVAGE RIV DAM NEAR BLOOMINGTON, MD
 startdate <- "1999-04-01"
 enddate <- "1999-11-30"
 
@@ -55,7 +38,7 @@ plot(
 )
 lines(gage_data$flow, col='blue')
 # runid: 
-  # 1131 = hourly, 1998-2002
+# 1131 = hourly, 1998-2002
 runid = 1131
 finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
