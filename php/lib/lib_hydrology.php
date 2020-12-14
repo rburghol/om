@@ -617,7 +617,7 @@ class modelObject {
   if (is_object($this->timer)) {
      
      $this->meanexectime = $this->exectime / $this->timer->steps;
-     $this->reportstring .= "<br>/n Final mean Execution time for $this->name = $this->meanexectime ";
+     $this->reportstring .= "<br>\n Final mean Execution time for $this->name = $this->meanexectime <br>\n";
   }
 
   }
