@@ -9418,33 +9418,34 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
     };
     $listobject->performQuery();
     if ( ($runid <> -1) and !in_array($thiscomp, $cachedlist)) {
-        error_log("Element $thiscomp is not cached - saving runid specific file");
-        // we want to store this output as a specific run, in addition to the default "last run" code 
-        $rfilename = $outdir . "/runlog$runid" . "." . $thiscomp . ".log";
-        copy($cfilename, $rfilename);
-        $listobject->querystring = "  delete from scen_model_run_elements ";
-        $listobject->querystring .= " where elementid = $thiscomp ";
-        $listobject->querystring .= " and runid = $runid ";
-        if ($debug) { 
-         error_log($listobject->querystring);
-        };
-        $listobject->performQuery();
-        // custom to be run on this install - 
-        $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $thiscomp . ".log";
-        $listobject->querystring = "  insert into scen_model_run_elements ";
-        $listobject->querystring .= "( runid,starttime, endtime, ";
-        $listobject->querystring .= " elem_xml, elementid, output_file, remote_url, ";
-        $listobject->querystring .= " run_date, host, elemoperators )";
-        $listobject->querystring .= " select $runid, '$startdate', ";
-        $listobject->querystring .= "'$enddate', a.elem_xml, ";
-        $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', ";
-        $listobject->querystring .= " '$run_date', '$serverip', a.elemoperators ";
-        $listobject->querystring .= " from scen_model_element as a ";
-        $listobject->querystring .= " where elementid = $thiscomp ";
-        if ($debug) { 
-          error_log($listobject->querystring);
-        };
-        $listobject->performQuery();
+      $meanexectime = $thiscomp->meanexectime;
+      error_log("Element $thiscomp is not cached - saving runid specific file");
+      // we want to store this output as a specific run, in addition to the default "last run" code 
+      $rfilename = $outdir . "/runlog$runid" . "." . $thiscomp . ".log";
+      copy($cfilename, $rfilename);
+      $listobject->querystring = "  delete from scen_model_run_elements ";
+      $listobject->querystring .= " where elementid = $thiscomp ";
+      $listobject->querystring .= " and runid = $runid ";
+      if ($debug) { 
+       error_log($listobject->querystring);
+      };
+      $listobject->performQuery();
+      // custom to be run on this install - 
+      $rfileurl = "http://$serverip" . $outurl . "/runlog$runid" . "." . $thiscomp . ".log";
+      $listobject->querystring = "  insert into scen_model_run_elements ";
+      $listobject->querystring .= "( runid,starttime, endtime, ";
+      $listobject->querystring .= " elem_xml, elementid, output_file, remote_url, exec_time_mean, ";
+      $listobject->querystring .= " run_date, host, elemoperators )";
+      $listobject->querystring .= " select $runid, '$startdate', ";
+      $listobject->querystring .= "'$enddate', a.elem_xml, ";
+      $listobject->querystring .= " a.elementid, '$rfilename', '$rfileurl', $meanexectime, ";
+      $listobject->querystring .= " '$run_date', '$serverip', a.elemoperators ";
+      $listobject->querystring .= " from scen_model_element as a ";
+      $listobject->querystring .= " where elementid = $thiscomp ";
+      if ($debug) { 
+        error_log($listobject->querystring);
+      };
+      $listobject->performQuery();
     } else {
       error_log("Element $thiscomp IS cached - no run file saved");
     }
