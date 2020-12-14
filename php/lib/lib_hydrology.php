@@ -615,7 +615,9 @@ class modelObject {
      $this->debugstring = "<b>Debug File for $this->name:</b> <a href=" . $this->outurl . '/' . $this->debugfile . ">Click Here</a><br>";
   }
   if (is_object($this->timer)) {
+     
      $this->meanexectime = $this->exectime / $this->timer->steps;
+     $this->reportstring .= "<br>/n Final mean Execution time for $this->name = $this->meanexectime ";
   }
 
   }
