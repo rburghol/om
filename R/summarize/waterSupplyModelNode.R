@@ -4,6 +4,7 @@ site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
+source(paste(om_location,'R/summarize','rseg_elfgen.R',sep='/'))
 library(stringr)
 # dirs/URLs
 save_directory <- "/var/www/html/data/proj3/out"
@@ -554,3 +555,27 @@ if (imp_off == 0) {
   vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.flows.all', 0.0, site, token)
   
 }
+
+
+
+###############################################
+# RSEG ELFGEN
+###############################################
+#GET RSEG HYDROID FROM RSEG MODEL PID
+rseg <-getProperty(list(pid=pid), site)
+rseg_hydroid<-rseg$featureid
+
+huc_level <- 'huc8'
+dataset <- 'VAHydro-EDAS'
+
+elfgen_huc(runid, rseg_hydroid, huc_level, dataset)
+###############################################
+###############################################
+
+
+
+
+
+
+
+
