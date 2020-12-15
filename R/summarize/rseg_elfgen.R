@@ -1,3 +1,5 @@
+source(paste(elfgen_location,'R','elfgen.R',sep='/'))
+
 elfgen_confidence <- function(elf,rseg.name,outlet_flow,yaxis_thresh,cuf){
   #Confidence Interval information
   uq <- elf$plot$plot_env$upper.quant
