@@ -97,6 +97,7 @@ class Equation extends modelSubObject {
    function finish() {
       if ($this->numnull > 0) {
          $this->logError("Equation $this->name = $this->equation resolved to NULL $this->numnull times.");
+         $this->reportstring .= "Equation $this->name = $this->equation resolved to NULL $this->numnull times.";
       }
       parent::finish();
    }
