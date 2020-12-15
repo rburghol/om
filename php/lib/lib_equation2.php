@@ -96,7 +96,8 @@ class Equation extends modelSubObject {
    
    function finish() {
       if ($this->numnull > 0) {
-         $this->logError("Equation resolved to NULL $this->numnull times.");
+         $this->logError("Equation $this->name = $this->equation resolved to NULL $this->numnull times.");
+         $this->reportstring .= "Equation $this->name = $this->equation resolved to NULL $this->numnull times.";
       }
       parent::finish();
    }
@@ -200,6 +201,10 @@ class Equation extends modelSubObject {
          $this->numnull++;
          if ($this->debug) {
             $this->logDebug("NULL result in equation $this->name on object <br>");
+         }
+         if ($this->numnull == 30) {
+           // arbitrary reporting threshold
+           error_log("NULL result in equation $this->equation, from $this->name ($this->componentid) on object " . $this->parentobject->name);
          }
       }
       if (is_nan($this->result) or is_infinite($this->result)) {
