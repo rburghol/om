@@ -573,52 +573,52 @@ class modelObject {
   }
 
   function finish() {
-  // add post-processing functions here
+    // add post-processing functions here
 
-  // iterate through each sub-processor stored in this object
-  if (is_array($this->processors)) {
-    foreach ($this->processors as $thisproc) {
-      if ($this->debug) {
-         $this->logDebug("Finishing $thisproc->name<br>\n");
+    // iterate through each sub-processor stored in this object
+    if (is_array($this->processors)) {
+      foreach ($this->processors as $thisproc) {
+        if ($this->debug) {
+           $this->logDebug("Finishing $thisproc->name<br>\n");
+        }
+        if (is_object($thisproc)) {
+           if (method_exists($thisproc, 'finish')) {
+              $thisproc->finish();
+           }
+        }
+        // show component output reports
+        $this->reportstring .= "<b>Reports for: </b>" . $thisproc->name . " <br>\n";
+        $avgexec = $thisproc->meanexectime;
+        $this->reportstring .= "Avg. exec time: $avgexec \n";
+        if (strlen($thisproc->reportstring) > 0) {
+           $this->reportstring .= $thisproc->description . "<br>" . $thisproc->reportstring . "<br>";
+           $thisproc->reportstring = '';
+        }
+        // show component error reports
+        if (strlen($thisproc->errorstring) > 0) {
+           $this->errorstring .= "<b>Errors for: </b>" . $thisproc->name . '<br>';
+           $this->errorstring .= $thisproc->description . "<br>" . $thisproc->errorstring . "<br>";
+           $thisproc->errorstring = '';
+        }
       }
-      if (is_object($thisproc)) {
-         if (method_exists($thisproc, 'finish')) {
-            $thisproc->finish();
-         }
-      }
-      // show component output reports
-      $this->reportstring .= "<b>Reports for: </b>" . $thisproc->name . " <br>\n";
-      $avgexec = $thisproc->meanexectime;
-      $this->reportstring .= "Avg. exec time: $avgexec \n";
-      if (strlen($thisproc->reportstring) > 0) {
-         $this->reportstring .= $thisproc->description . "<br>" . $thisproc->reportstring . "<br>";
-         $thisproc->reportstring = '';
-      }
-      // show component error reports
-      if (strlen($thisproc->errorstring) > 0) {
-         $this->errorstring .= "<b>Errors for: </b>" . $thisproc->name . '<br>';
-         $this->errorstring .= $thisproc->description . "<br>" . $thisproc->errorstring . "<br>";
-         $thisproc->errorstring = '';
-      }
+      unset($thisproc);
     }
-    unset($thisproc);
-  }
 
-  if ($this->cache_log) {
-    // error_log("Ouputting log values to file for $this->name");
-     $this->log2file();
-  }
-  $this->logDebug("Finished $this->name");
-  if ($this->debugmode == 3) {
-     $this->debugstring .= "</body></html>";
-     $this->flushDebugToFile();
-     $this->debugstring = "<b>Debug File for $this->name:</b> <a href=" . $this->outurl . '/' . $this->debugfile . ">Click Here</a><br>";
-  }
-  if (is_object($this->timer)) {
-     
-     $this->meanexectime = $this->exectime / $this->timer->steps;
-     $this->reportstring .= "<br>\n Final mean Execution time for $this->name = $this->meanexectime <br>\n";
-  }
+    if ($this->cache_log) {
+      // error_log("Ouputting log values to file for $this->name");
+       $this->log2file();
+    }
+    $this->logDebug("Finished $this->name");
+    if ($this->debugmode == 3) {
+       $this->debugstring .= "</body></html>";
+       $this->flushDebugToFile();
+       $this->debugstring = "<b>Debug File for $this->name:</b> <a href=" . $this->outurl . '/' . $this->debugfile . ">Click Here</a><br>";
+    }
+    if (is_object($this->timer)) {
+       
+       $this->meanexectime = $this->exectime / $this->timer->steps;
+       $this->reportstring .= "<br>\n Final mean Execution time for $this->name = $this->meanexectime <br>\n";
+    }
 
   }
 
@@ -3616,39 +3616,10 @@ class modelContainer extends modelObject {
       $outmesg = "Calling finish() Method on contained model components.";
       //error_log($outmesg);
       $this->systemLog($outmesg);
-      parent::finish();
+      parent::finish(); // this calls the finish routine on any sub-components/aka processors 
       $outmesg = "Gathering info and error reports for model components.";
       //error_log($outmesg);
       $this->systemLog($outmesg);
-      /*
-      // is this OK to comment out?  Done in parent class
-      # iterate through each sub-processor stored in this object
-      if (is_array($this->processors)) {
-         foreach ($this->processors as $thisproc) {
-            if ($this->debug) {
-               $this->logDebug("Finishing $thisproc->name<br>\n");
-            }
-            if (is_object($thisproc)) {
-               if (method_exists($thisproc, 'finish')) {
-                  $thisproc->finish();
-               }
-            }
-            # show component output reports
-            if (strlen($thisproc->reportstring) > 0) {
-               $this->reportstring .= "<b>Reports for: </b>" . $thisproc->name . '<br>';
-               $this->reportstring .= $thisproc->description . "<br>" . $thisproc->reportstring . "<br>";
-               $thisproc->reportstring = '';
-            }
-            # show component error reports
-            if (strlen($thisproc->errorstring) > 0) {
-               $this->errorstring .= "<b>Errors for: </b>" . $thisproc->name . '<br>';
-               $this->errorstring .= $thisproc->description . "<br>" . $thisproc->errorstring . "<br>";
-               $thisproc->errorstring = '';
-            }
-         }
-         unset($thisproc);
-      }
-      */
 
       # iterate through each contained object in this model run
       foreach ($this->compexeclist as $thiscomp) {
