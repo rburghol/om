@@ -39,9 +39,9 @@ dataset <- as.character(argst[4])
 # huc_level <- as.character("huc8")
 # dataset <- as.character("VAHydro-EDAS")
 # 
-# inputs<-list(pid=pid)
-# property<-getProperty(inputs, site)
-# hydroid<-property$featureid
+inputs<-list(pid=pid)
+property<-getProperty(inputs, site)
+hydroid<-property$featureid
 
 
 elfgen_huc(runid, hydroid, huc_level, dataset)
