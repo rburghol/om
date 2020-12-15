@@ -568,6 +568,11 @@ rseg_hydroid<-rseg$featureid
 huc_level <- 'huc8'
 dataset <- 'VAHydro-EDAS'
 
+print(runid)
+print(rseg_hydroid)
+print(huc_level)
+print(dataset)
+
 elfgen_huc(runid, rseg_hydroid, huc_level, dataset)
 ###############################################
 ###############################################
