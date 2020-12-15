@@ -9343,6 +9343,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
   if ($debug) { 
     error_log($listobject->querystring);
   };
+  error_log($listobject->querystring);
   $listobject->performQuery();
   $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
   $manifest_elements = array();
@@ -9383,6 +9384,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
     if ($debug) { 
       error_log($listobject->querystring);
     };
+    error_log($listobject->querystring);
     $listobject->performQuery();
   }
 
@@ -9445,6 +9447,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       if ($debug) { 
         error_log($listobject->querystring);
       };
+      error_log($listobject->querystring);
       $listobject->performQuery();
     } else {
       error_log("Element $thiscomp IS cached - no run file saved");
