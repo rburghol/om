@@ -4,7 +4,6 @@ site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
-#source.all(paste(elfgen_location,'R',sep='/'), ".R" )
 source(paste(om_location,'R/summarize','rseg_elfgen.R',sep='/'))
 library(stringr)
 # dirs/URLs
