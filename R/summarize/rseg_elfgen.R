@@ -1,3 +1,5 @@
+library(testit) #USED FOR has_warning())
+
 #LOAD ELFGEN FUNCTIONS
 source(paste(elfgen_location,'R/elfdata-vahydro.R',sep='/'))
 source(paste(elfgen_location,'R/clean-vahydro.R',sep='/'))
