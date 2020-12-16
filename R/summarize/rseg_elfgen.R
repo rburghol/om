@@ -1,4 +1,8 @@
+#LOAD ELFGEN FUNCTIONS
 source(paste(elfgen_location,'R/elfdata-vahydro.R',sep='/'))
+source(paste(elfgen_location,'R/clean-vahydro.R',sep='/'))
+source(paste(elfgen_location,'R/elfgen.R',sep='/'))
+source(paste(elfgen_location,'R/richness-change.R',sep='/'))
 
 elfgen_confidence <- function(elf,rseg.name,outlet_flow,yaxis_thresh,cuf){
   #Confidence Interval information
