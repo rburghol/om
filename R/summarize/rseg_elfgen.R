@@ -1,4 +1,5 @@
 library(testit) #USED FOR has_warning())
+library(quantreg) #USED FOR rq())
 
 #LOAD ELFGEN FUNCTIONS
 source(paste(elfgen_location,'R/elfdata-vahydro.R',sep='/'))
