@@ -8,7 +8,7 @@ fi
 elid=$1
 cachedate='2019-12-01'
 startdate='1984-01-01'
-enddate='2014-01-01'
+enddate='2014-12-31'
 ccstart='1984-01-01'
 ccend='2000-12-31'
 runids="11 13 18 17 12 19 20"
