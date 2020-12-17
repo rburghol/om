@@ -24,7 +24,7 @@ cd /var/www/html/om
 for runid in $runids; do
   echo "Starting Run $runid "
   cmd="no match"
-  case runid in 
+  case $runid in 
     11)
       run_mode=10 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
