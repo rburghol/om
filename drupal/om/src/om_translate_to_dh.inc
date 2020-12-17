@@ -20,9 +20,9 @@ function om_get_om_model($elid) {
 function om_load_dh_model($query_type, $fid, $model_name, $model_varkey = 'om_model_element', $object_class = 'modelContainer', $model_scenario = 'vahydro-1.0') {
   if ($model_varkey == 'varcode') {
     // 
-    $model_varkey = dh_varcode2varid($om_object->object_class, TRUE);
+    $model_varkey = dh_varcode2varid($object_class, TRUE);
     $model_varkey = !$model_varkey ? 'om_model_element' : $model_varkey;
-    error_log("Object class: " . $om_object->object_class . " Using variable key from Varcode query: $model_varkey ");
+    error_log("Object class: " . $object_class . " Using variable key from Varcode query: $model_varkey ");
   }
   $dh_model = FALSE;
   switch($query_type) {
