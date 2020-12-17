@@ -105,10 +105,14 @@ if (is.na(Qbaseline)) {
     (wd_cumulative_mgd - ps_cumulative_mgd ) * 1.547
 }
 
+# The total flow method of CU calculation
+consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
 dat$consumptive_use_frac <- 1.0 - (dat$Qout / dat$Qbaseline)
-consumptive_use_frac <-  mean(as.numeric(dat$consumptive_use_frac) )
+# This method is more appropriate for impoundments that have long 
+# periods of zero outflow... but the math is not consistent with elfgen
+daily_consumptive_use_frac <-  mean(as.numeric(dat$consumptive_use_frac) )
 if (is.na(consumptive_use_frac)) {
-  consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
+  daily_consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
 }
 
 # post em up
@@ -121,6 +125,7 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qout',
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'Qbaseline', Qbaseline, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'ps_nextdown_mgd', ps_nextdown_mgd, site, token)
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'consumptive_use_frac', consumptive_use_frac, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'daily_consumptive_use_frac', daily_consumptive_use_frac, site, token)
 
 # Metrics that need Zoo (IHA)
 flows <- zoo(as.numeric(as.character( dat$Qout )), order.by = index(dat));
