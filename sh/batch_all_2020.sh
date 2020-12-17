@@ -12,14 +12,14 @@ enddate='2014-12-31'
 ccstart='1984-01-01'
 ccend='2000-12-31'
 
-runids="11 13 18 17 12 19 20"
+force=2 # 0=none, 1=all elements, 2=model outlet only, 3=all of type watershed model node
 if [ $# -gt 1 ]; then
-  runids=$2
+  force=$2
 fi 
 
-force=2 # 0=none, 1=all elements, 2=model outlet only, 3=all of type watershed model node
+runids="11 13 18 17 12 19 20"
 if [ $# -gt 2 ]; then
-  force=$3
+  runids=$3
 fi 
 
 # This is run with nohup so no need to background the individual processes, in fact, that would cause them to run over each other 
