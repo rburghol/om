@@ -25,7 +25,7 @@ for runid in $runids; do
   echo "Starting Run $runid "
   cmd="no match"
   case runid in 
-    11)
+    "11")
       run_mode=10 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode"
