@@ -29,45 +29,45 @@ for runid in $runids; do
       run_mode=10 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode"
-    ;;
+      ;;
 
     13)
       run_mode=12 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
 
     18)
       run_mode=9
       flow_mode=4
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
 
     17)
       run_mode=12
       flow_mode=6
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $ccstart $ccend $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
 
     12)
       run_mode=11 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $startdate $enddate $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
 
     19)
       run_mode=12
       flow_mode=5
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $ccstart $ccend $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
 
     20)
       run_mode=12
       flow_mode=7
       cmd="/usr/bin/php run_shakeTree.php 1 $elid $runid $ccstart $ccend $cachedate $force 37 -1 $run_mode normal flow_mode=$flow_mode" 
-    ;;
+      ;;
   esac
 
-  echo $cmd
+  echo "cmd: $cmd"
 
 done
