@@ -19,8 +19,8 @@ force=2 # 0=none, 1=all elements, 2=model outlet only, 3=all of type watershed m
 cd /var/www/html/om
 for runid in $1; do
   echo "Starting Run $runid "
-
-  case runid 
+  cmd="no match"
+  case runid in 
     11)
       run_mode=10 # 9=VWP Exempt, 10=2020 Demand, 11=2030 Demand, 12=2040 Demand
       flow_mode=4 # 3=VAHydro 1.0/CBP5.3, 4=CBP Phase 6, 5=CBP Phase 6 CC1 50/50,6=CBP Phase 6 CC2 10/10, 7=CBP Phase 6 CC3 90/90
