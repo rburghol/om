@@ -1,7 +1,7 @@
 #!/bin/bash
-# Usage: batch_all_2020.sh elementid [force=2] [startdate] [enddate] [ccstartdate] [ccenddate]
+# Usage: batch_all_2020.sh elementid [force=2] [run_ids inside double quotes space delimited]
 if [ $# -lt 1 ]; then
-  echo 1>&2 "Usage: Usage: batch_all_2020.sh elementid [run_ids inside double quotes space delimited]"
+  echo 1>&2 "Usage: Usage: batch_all_2020.sh elementid [force=2] [run_ids inside double quotes space delimited]"
   echo 1>&2 "run_ids is a double quotes space delimited list]"
   exit 2
 fi
