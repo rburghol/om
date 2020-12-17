@@ -111,7 +111,7 @@ dat$consumptive_use_frac <- 1.0 - (dat$Qout / dat$Qbaseline)
 # This method is more appropriate for impoundments that have long 
 # periods of zero outflow... but the math is not consistent with elfgen
 daily_consumptive_use_frac <-  mean(as.numeric(dat$consumptive_use_frac) )
-if (is.na(consumptive_use_frac)) {
+if (is.na(daily_consumptive_use_frac)) {
   daily_consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
 }
 
