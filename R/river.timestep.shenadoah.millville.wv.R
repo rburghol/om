@@ -156,7 +156,7 @@ plot(
 lines(gage_data$flow, col='blue')
 
 # 1153 - 3-hour, 1998-2002
-runid = 1163
+runid = 1363
 finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 mode(dat) <- 'numeric'
