@@ -49,8 +49,6 @@ uiflows <- group2(iflows, 'water')
 myear <- as.integer(min(uiflows$year))
 uiflows$yindex <- uiflows$year - myear
 s90 <- lm(uiflows$`90 Day Min` ~ uiflows$yindex)
-abline(s90)
-summary(s90)
 l90_m <- s90$coef[[2]]
 l90_b <- s90$coef[[1]]
 l90_p <- signif(summary(s90)$coef[2,4], 5)
