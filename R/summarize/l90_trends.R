@@ -19,8 +19,21 @@ run_name <- paste0('runid_', runid)
 scenprop <- om_get_set_model_run(pid, run_name, site, token)
 om_model <- getProperty(list(pid=pid), site, scenprop)
 
-finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
+dat <- om_get_rundata(elid, runid)
+mode(dat) <- 'numeric'
+syear = as.integer(min(dat$year))
+eyear = as.integer(max(dat$year))
+if (syear < (eyear - 2)) {
+  sdate <- as.Date(paste0(syear,"-10-01"))
+  edate <- as.Date(paste0(eyear,"-09-30"))
+  flow_year_type <- 'water'
+} else {
+  sdate <- as.Date(paste0(syear,"-02-01"))
+  edate <- as.Date(paste0(eyear,"-12-31"))
+  flow_year_type <- 'calendar'
+}
+dat <- window(dat, start = sdate, end = edate);
 mode(dat) <- 'numeric'
 qm <- mean(dat$Qout)
 datdf <- as.data.frame(dat)
