@@ -20,7 +20,6 @@ scenprop <- om_get_set_model_run(pid, run_name, site, token)
 om_model <- getProperty(list(pid=pid), site, scenprop)
 
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
-dat <- om_get_rundata(elid, runid)
 mode(dat) <- 'numeric'
 syear = as.integer(min(dat$year))
 eyear = as.integer(max(dat$year))
