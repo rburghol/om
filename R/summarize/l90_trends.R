@@ -45,12 +45,7 @@ yflows <- sqldf(
 # Low Flows 
 iflows <- zoo(as.numeric(dat$Qout), order.by = index(dat));
 uiflows <- group2(iflows, 'water')
-barplot(
-  uiflows$`90 Day Min` ~ uiflows$year, 
-  ylab = '90 Day Low Flow (cfs)',
-  xlab = 'Year',
-  main = "Low Flows by Year, James River Cartersville"
-)
+
 myear <- as.integer(min(uiflows$year))
 uiflows$yindex <- uiflows$year - myear
 s90 <- lm(uiflows$`90 Day Min` ~ uiflows$yindex)
