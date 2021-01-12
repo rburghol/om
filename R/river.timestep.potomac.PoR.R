@@ -3,6 +3,18 @@ source(paste(basepath,'config.R',sep='/'))
 
 elid = 233997  # PM7_4290_4200
 gage_number = '01638500' #USGS  POTOMAC RIVER AT POINT OF ROCKS, MD 
+gage_data <- gage_import_data_cfs(gage_number, '1895-10-01', '2020-09-30')
+gage_data <- as.zoo(gage_data, as.POSIXct(gage_data$date,tz="EST"))
+iflows <- zoo(as.numeric(gage_data$flow), order.by = index(gage_data));
+uiflows <- group2(iflows, 'calendar')
+barplot(uiflows$`90 Day Min` ~ uiflows$year)
+myear <- as.integer(min(uiflows$year))
+uiflows$yindex <- uiflows$year - myear
+s90 <- lm(uiflows$`90 Day Min` ~ uiflows$yindex)
+abline(s90)
+summary(s90)
+
+# now just the event in questio
 startdate <- "1999-04-01" # this gage was out of commission from 1986-2002
 enddate <- "1999-11-30"
 
@@ -15,11 +27,28 @@ iflows <- zoo(as.numeric(gage_data$flow), order.by = index(gage_data));
 uiflows <- group2(iflows, 'calendar')
 Qin30 <- uiflows["30 Day Min"];
 l30_usgs <- round(min(Qin30["30 Day Min"]));
+Qin90 <- uiflows["90 Day Min"];
+l90_usgs <- round(min(Qin90["90 Day Min"]));
+
 
 runid = 11
 finfo = fn_get_runfile_info(elid, runid, 37, site= omsite)
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 mode(dat) <- 'numeric'
+# *******************************************************************
+# Full Period Low Flows 
+# *******************************************************************
+iflows <- zoo(as.numeric(dat$Qout), order.by = index(dat));
+uiflows <- group2(iflows, 'calendar')
+barplot(uiflows$`90 Day Min` ~ uiflows$year)
+myear <- as.integer(min(uiflows$year))
+uiflows$yindex <- uiflows$year - myear
+s90 <- lm(uiflows$`90 Day Min` ~ uiflows$yindex)
+abline(s90)
+summary(s90)
+# *******************************************************************
+# END - Full Period Low Flows 
+# *******************************************************************
 #limit to period
 datpd <- window(dat, start = startdate, end = enddate)
 # Low Flows 
