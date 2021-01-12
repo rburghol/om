@@ -69,6 +69,18 @@ sceninfo <- list(
   entity_type = "dh_properties"
 )
 
+# does this have an impoundment sub-comp and is imp_off = 0?
+cols <- names(dat)
+imp_off <- NULL
+if ("imp_off" %in% cols) {
+  imp_off <- as.integer(median(dat$imp_off))
+}
+if( (is.null(imp_off)) && ("impoundment" %in% cols) ) {
+  # imp_off is NOT in the cols but impoundment IS
+  # therefore, we assume that the impoundment is active by intention
+  # and that it is a legacy that lacked the imp_off convention
+  imp_off = 0
+}
 wd_mgd <- mean(as.numeric(dat$wd_mgd) )
 if (is.na(wd_mgd)) {
   wd_mgd = 0.0
@@ -99,12 +111,22 @@ if (is.na(net_consumption_mgd)) {
 }
 dat$Qbaseline <- dat$Qout + 
   (dat$wd_cumulative_mgd - dat$ps_cumulative_mgd ) * 1.547
+# alter calculation to account for pump store
+if (imp_off == 0) {
+  if("impoundment_Qin" %in% cols) {
+    if (!("ps_cumulative_mgd" %in% cols)) {
+      dat$ps_cumulative_mgd <- 0.0
+    }
+    dat$Qbaseline <- dat$impoundment_Qin + 
+      (dat$wd_cumulative_mgd - dat$ps_cumulative_mgd) * 1.547
+  }
+}
+
 Qbaseline <- mean(as.numeric(dat$Qbaseline) )
 if (is.na(Qbaseline)) {
   Qbaseline = Qout + 
     (wd_cumulative_mgd - ps_cumulative_mgd ) * 1.547
 }
-
 # The total flow method of CU calculation
 consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
 dat$consumptive_use_frac <- 1.0 - (dat$Qout / dat$Qbaseline)
@@ -114,6 +136,9 @@ daily_consumptive_use_frac <-  mean(as.numeric(dat$consumptive_use_frac) )
 if (is.na(daily_consumptive_use_frac)) {
   daily_consumptive_use_frac <- 1.0 - (Qout / Qbaseline)
 }
+datdf <- as.data.frame(dat)
+modat <- sqldf("select month, avg(wd_cumulative_mgd) as wd_mgd, avg(ps_cumulative_mgd) as ps_mgd from datdf group by month")
+#barplot(wd_mgd ~ month, data=modat)
 
 # post em up
 vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'net_consumption_mgd', net_consumption_mgd, site, token)
@@ -250,18 +275,7 @@ if (syear <= 1990 && eyear >= 2000) {
 }
 
 message("Plotting critical flow periods")
-# does this have an impoundment sub-comp and is imp_off = 0?
-cols <- names(dat)
-imp_off <- NULL
-if ("imp_off" %in% cols) {
-  imp_off <- as.integer(median(dat$imp_off))
-}
-if( (is.null(imp_off)) && ("impoundment" %in% cols) ) {
-  # imp_off is NOT in the cols but impoundment IS
-  # therefore, we assume that the impoundment is active by intention
-  # and that it is a legacy that lacked the imp_off convention
-  imp_off = 0
-}
+# does this have an active impoundment sub-comp
 if (imp_off == 0) {
   if("impoundment" %in% cols) {
     # Plot and analyze impoundment sub-comps
