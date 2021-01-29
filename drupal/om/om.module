@@ -287,11 +287,22 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       }
     }
   }
+  $plugin = dh_variables_getPlugins($copy);
+  if (get_class($plugin) == 'dHOMElementConnect') {
+    $copy->propcode = 0;
+    $copy->save();
+  }
   $copy->save();
   //entity_save('dh_properties', $copy);
   // @todo: handle allprops if requested
   if ($allprops) {
     // nothing yet - need to exclude om_element_connection properties, or at least nullify settings to prevent redundant updates.
+    $propnames = dh_get_dh_propnames($src_prop->entityType(), $src_prop->identifier());
+    //dpm($propnames, "Propnames ");
+    foreach ($propnames as $propname) {
+      $sub_copy = om_copy_properties($src_prop, $copy, $propname, TRUE, TRUE, TRUE);
+      //dpm($copy,'copy');
+    }
   }
   // Copy default properties defined in getDefaults()?
   if ($defprops) {

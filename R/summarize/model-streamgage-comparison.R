@@ -27,6 +27,9 @@ site <- "http://deq2.bse.vt.edu/d.dh"
 
 # Inputs if using CBP Model -- otherwise, can ignore
 mod.phase <- 'p6/p6_gb604' #or "p532c-sova" (phase 5)
+if (mod.scenario == 'p532cal_062211') {
+  mod.phase <- "p532c-sova"# (phase 5)
+}
 site.or.server <- 'site'
 
 mrun_name <- paste0('runid_', runid)
