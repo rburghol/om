@@ -2,6 +2,8 @@
 # Set up scripts
 # All
 sudo chown www-data:allmodelers www/om/cache
+# set up cbp to www link
+ln -s /opt/model/p53/p532c-sova/out /opt/model/p53/p532c-sova/tmp/out       
 
 # dev
 # We used to do dev separate from live, because the path is /opt/model/om-dev,  but now we have a 
