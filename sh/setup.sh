@@ -9,6 +9,12 @@ ln -s /opt/model/p53/p532c-sova/out /opt/model/p53/p532c-sova/tmp/out
 # We used to do dev separate from live, because the path is /opt/model/om-dev,  but now we have a 
 # soft-link for opt/model/om to opt/model/om-dev so all is one. we can regenerate if need be later
 # live
+rm /var/www/html/om/who_xmlobjects.frisk.php
+ln -s  /opt/model/om/php/src/who_xmlobjects.frisk.php /var/www/html/om/who_xmlobjects.frisk.php
+rm /var/www/html/om/who_xmlobjects.usgs.php
+ln -s  /opt/model/om/php/src/who_xmlobjects.usgs.php /var/www/html/om/who_xmlobjects.usgs.php
+rm /var/www/html/om/who_xmlobjects.wsp.php
+ln -s  /opt/model/om/php/src/who_xmlobjects.wsp.php /var/www/html/om/who_xmlobjects.wsp.php
 rm /var/www/html/om/who_xmlobjects.php
 ln -s  /opt/model/om/php/src/who_xmlobjects.php /var/www/html/om/who_xmlobjects.php
 rm /var/www/html/om/remote/get_modelData.php
