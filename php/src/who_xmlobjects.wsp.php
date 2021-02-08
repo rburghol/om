@@ -87,7 +87,7 @@ if($result === true)
    $who_xmlobjects['wsp_flowby']['type'] = '2'; 
    $who_xmlobjects['wsp_flowby']['toolgroup'] = 9;
    $who_xmlobjects['wsp_flowby']['name'] = 'wsp_flowby';
-   $who_xmlobjects['wsp_flowby']['parent'] = array('hydroImpoundment','wsp_vpdesvwuds','wsp_VWUDSData','wsp_waterUser');
+   $who_xmlobjects['wsp_flowby']['parent'] = array('hydroImpoundment','wsp_vpdesvwuds','wsp_VWUDSData','wsp_waterUser', 'waterSupplyModelNode');
    $who_xmlobjects['wsp_flowby']['parentprops'] = array('cfb_var'=>'publicvars','custom_cons_var'=>'publicvars');
    $who_xmlobjects['wsp_flowby']['description'] = 'Defines Flow-By for this object.';
 }
