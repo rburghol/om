@@ -14957,6 +14957,7 @@ class hydroImpSmall extends hydroImpoundment {
    var $outlet_plugin = FALSE;
    var $log_solution_problems = FALSE;
    var $tmpfile = '';
+   var $json2d = TRUE;
    
    function writeToParent($vars = array(), $verbose = 0) {
      // @todo: eliminate this after debugging is finished
@@ -15143,10 +15144,15 @@ class hydroImpSmall extends hydroImpoundment {
          $this->storage_matrix->matrix[] = 0.0; // put a basic sample table - conic
       } else {
          if ($text2table <> '') {
-            error_log("Calling matrix create with $text2table");
-            $this->storage_matrix->text2table = $text2table;
+            if (is_array($text2table)) {
+              $this->storage_matrix->twoDimArrayToMatrix($text2table);
+              $this->matrix = $this->storage_matrix->matrix;
+            } else {
+              error_log("Calling matrix create with $text2table");
+              $this->storage_matrix->text2table = $text2table;
+              $this->matrix = explode(',', $text2table);
+            }
             $this->storage_matrix->create();
-            $this->matrix = explode(',', $text2table);
          } else {
             $this->storage_matrix->matrix = $this->matrix;// map the text mo to a numerical description
             $this->storage_matrix->numrows = count($this->storage_matrix->matrix) / 3.0;
@@ -15498,6 +15504,28 @@ class hydroImpSmall extends hydroImpoundment {
       $this->setupMatrix($text2table);
     }
     parent::setProp($propname, $propvalue, $view);
+  }
+  
+  
+  function setClassProp($propname, $propvalue, $view = '') { 
+  // arrays have already been parsed by json2d handler that calls this 
+  // so we rearrange as 1-d, implode, and call setupMatrix
+    switch ($view) {
+      case 'array':
+        switch ($propname) {
+          case 'matrix':
+            $this->setupMatrix($propvalue);
+          break;
+          default:
+            parent::setClassProp($propname, $propvalue, $view);
+          break;
+        }
+      break;
+      
+      default:
+        parent::setClassProp($propname, $propvalue, $view);
+      break;
+    }
   }
    
 }
