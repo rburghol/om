@@ -252,8 +252,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
   // @todo: if this is successful we should migrate to the base model class dHOMModelElement
   function exportOpenMI($entity) {
     $export = parent::exportOpenMI($entity);
-    $export[$entity->propname]['matrix'] = $export[$entity->propname]['stage_storage_area']['matrix'];
-    unset($export[$entity->propname]['stage_storage_area']);
+    $export[$entity->propname]['matrix'] = $export[$entity->propname]['storage_stage_area']['matrix'];
+    unset($export[$entity->propname]['storage_stage_area']);
     return $export;
   }
 }
