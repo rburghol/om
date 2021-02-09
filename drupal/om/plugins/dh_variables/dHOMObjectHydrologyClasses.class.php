@@ -38,14 +38,6 @@ class dHOMHydroObject extends dHOMModelElement {
     );
     return $defaults;
   }
-   
-  // @todo: if this is successful we should migrate to the base model class dHOMModelElement
-  public function exportOpenMIBase($entity) {
-    // creates the base properties for this class
-    $export = parent::exportOpenMIBase($entity);
-    dpm($export,'export');
-    return $export;
-  }
 }
 
 class dHOMHydroObjectOtherProps extends dHOMHydroObject {
@@ -255,6 +247,14 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
     array_push($publix, 'days_remaining');
 
     return $publix;
+  }
+   
+  // @todo: if this is successful we should migrate to the base model class dHOMModelElement
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = parent::exportOpenMIBase($entity);
+    dpm($export,'export');
+    return $export;
   }
 }
 
