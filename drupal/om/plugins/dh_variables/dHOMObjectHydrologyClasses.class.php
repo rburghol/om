@@ -234,39 +234,27 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
   // 3. create a 
   // 4. pass the form to prop->plugin->formRowEdit
 
-   function getPublicProps($entity) {
-      # gets only properties that are visible (must be manually defined)
-      $publix = parent::getPublicProps($entity);
-      // @todo: Many of these are subcomps, so not needed. Storage is though. Sort out extras just to be tidy.
-      array_push($publix, 'Storage');
-      array_push($publix, 'depth');
-      array_push($publix, 'maxcapacity');
-      array_push($publix, 'max_usable');
-      array_push($publix, 'initstorage');
-      array_push($publix, 'Qout');
-      array_push($publix, 'Qin');
-      array_push($publix, 'unusable_storage');
-      array_push($publix, 'evap_acfts');
-      array_push($publix, 'refill_full_mgd');
-      array_push($publix, 'refill');
-      array_push($publix, 'lake_elev');
-      array_push($publix, 'pct_use_remain');
-      array_push($publix, 'evap_mgd');
-      array_push($publix, 'days_remaining');
+  function getPublicProps($entity) {
+    # gets only properties that are visible (must be manually defined)
+    $publix = parent::getPublicProps($entity);
+    // @todo: Many of these are subcomps, so not needed. Storage is though. Sort out extras just to be tidy.
+    array_push($publix, 'Storage');
+    array_push($publix, 'depth');
+    array_push($publix, 'maxcapacity');
+    array_push($publix, 'max_usable');
+    array_push($publix, 'initstorage');
+    array_push($publix, 'Qout');
+    array_push($publix, 'Qin');
+    array_push($publix, 'unusable_storage');
+    array_push($publix, 'evap_acfts');
+    array_push($publix, 'refill_full_mgd');
+    array_push($publix, 'refill');
+    array_push($publix, 'lake_elev');
+    array_push($publix, 'pct_use_remain');
+    array_push($publix, 'evap_mgd');
+    array_push($publix, 'days_remaining');
 
-      return $publix;
-   }
-   
-  
-  public function exportOpenMIBase($entity) {
-    // creates the base properties for this class
-    $export = parent::exportOpenMIBase($entity);
-    $export[$entity->propname]['matrix'] = array(
-      'name' => 'matrix',
-      'object_class' => 'array',
-      'value' => $this->getCSVTableField($entity)
-    );
-    return $export;
+    return $publix;
   }
 }
 
