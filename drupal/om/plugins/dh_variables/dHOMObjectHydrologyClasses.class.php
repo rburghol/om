@@ -441,6 +441,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
         //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
       }
     }
+  }
 
 }
 
