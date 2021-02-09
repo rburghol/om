@@ -132,6 +132,7 @@ class dHOMHydroObjectOtherProps extends dHOMHydroObject {
 class dHOMHydroImpoundment extends dHOMHydroObject {
   var $object_class = 'hydroImpoundment';
   var $attach_method = 'contained';
+  var $json2d = TRUE;
   
   public function hiddenFields() {
     $hidden = array_merge(array('propcode', 'propvalue'), parent::hiddenFields());
