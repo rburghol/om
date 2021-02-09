@@ -1244,9 +1244,9 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function pushAllToRemote($entity) {
     global $base_url;  
-    $src_prop = $this->getParentEntity();
+    $parent = $this->getParentEntity($entity);
     // nothing yet - need to exclude om_element_connection properties, or at least nullify settings to prevent redundant updates.
-    $propnames = dh_get_dh_propnames($src_prop->entityType(), $src_prop->identifier());
+    $propnames = dh_get_dh_propnames($parent->entityType(), $parent->identifier());
     //dpm($propnames, "Propnames ");
     foreach ($propnames as $propname) {
       // get property by name
@@ -1260,7 +1260,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function cloneRemoteElement($entity) {
     global $base_url;
-    $parent = $this->getParentEntity();
+    $parent = $this->getParentEntity($entity);
     $cmd = "cd $this->path \n";
     $cmd .= "php fn_copy_element.php 37 $entity->om_template_id $entity->remote_parentid -1 \"$parent->propname\" ";
     dpm( $cmd, "Executing ");
