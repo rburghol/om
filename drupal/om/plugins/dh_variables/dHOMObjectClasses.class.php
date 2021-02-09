@@ -1178,7 +1178,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     $form['propcode'] = array(
       '#title' => t('Remote Synch Option'),
       '#type' => 'select',
-      '#options' => array('0'=>'Never push changes', '1'=>'Always push change', 'pull_once' => 'One-Time Pull Remote Properties on Save()', 'clone' => 'One-Time Clone Remote Element and Link'),
+      '#options' => array('0'=>'Never push changes', '1'=>'Always push change', 'pull_once' => 'One-Time Pull Remote Properties on Save()', 'clone' => 'One-Time Clone Remote Element and Link', 'push_once' => 'One Time Push all Properties'),
       '#description' => '',
       '#default_value' => !empty($entity->propcode) ? $entity->propcode : "",
     );
@@ -1220,6 +1220,12 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
       // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
       $entity->propcode = '1';
     }
+    if ($entity->propcode == 'push_once') {
+      // pull from remote, then set this back to previous entity value 
+      $this->pushAllToRemote($entity);
+      // @todo: because the entity is already updatred by the time we get here, we can't retrieve the previous synch setting, so we assume that it is OK to push remote changes after this save and poull is complete.  Why?  Can't we intercept before entity is updated?
+      $entity->propcode = '1';
+    }
     if ($entity->propcode == 'clone') {
       // pull from remote, then set this back to previous entity value 
       $this->cloneRemoteElement($entity);
@@ -1230,6 +1236,27 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
   
   public function pullFromRemote($entity) {
     global $base_url;
+    $cmd = "cd " . DRUPAL_ROOT . '/' . drupal_get_path('module', 'om') . "/src/ \n";
+    $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
+    dpm( $cmd, "Executing ");
+    shell_exec($cmd);
+  }
+  
+  public function pushAllToRemote($entity) {
+    global $base_url;  
+    $src_prop = $this->getParentEntity();
+    // nothing yet - need to exclude om_element_connection properties, or at least nullify settings to prevent redundant updates.
+    $propnames = dh_get_dh_propnames($src_prop->entityType(), $src_prop->identifier());
+    //dpm($propnames, "Propnames ");
+    foreach ($propnames as $propname) {
+      // get property by name
+      // save the property
+      $prop = om_load_dh_property($entity, $propname);
+      if (is_object($prop)) {
+        $prop->save();
+      }
+    }
+  }
     $cmd = "cd " . DRUPAL_ROOT . '/' . drupal_get_path('module', 'om') . "/src/ \n";
     $cmd .= "drush om.migrate.element.php pid $entity->propvalue $entity->featureid ";
     dpm( $cmd, "Executing ");
