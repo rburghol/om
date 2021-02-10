@@ -205,7 +205,7 @@ class Equation extends modelSubObject {
          }
          if ($this->numnull == 30) {
            // arbitrary reporting threshold
-           error_log("NULL result in equation $this->equation, from $this->name ($this->componentid) on object " . $this->parentobject->name);
+           error_log("NULL result in equation (>= 30x) $this->equation, from $this->name ($this->componentid) on object " . $this->parentobject->name);
          }
       }
       if (is_nan($this->result) or is_infinite($this->result)) {
