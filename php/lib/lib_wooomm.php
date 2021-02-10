@@ -9337,7 +9337,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
   };
   $listobject->performQuery();
   $listobject->querystring = "  insert into scen_model_run_elements (runid,starttime, endtime, elem_xml, elementid, output_file, remote_url, run_date, host, report, exec_time_mean, elemoperators)";
-  $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', $pfileurl, $meanexectime, a.elemoperators ";
+  $listobject->querystring .= " select -1, '$startdate', '$enddate', a.elem_xml, a.elementid, '$cfilename', '$cfileurl', '$run_date', '$serverip', '$pfileurl', $meanexectime, a.elemoperators ";
   $listobject->querystring .= " from scen_model_element as a ";
   $listobject->querystring .= " where elementid = $elementid ";
   if ($debug) { 
