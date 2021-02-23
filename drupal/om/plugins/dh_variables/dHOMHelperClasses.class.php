@@ -47,7 +47,7 @@ class dHVariablePluginVarGroup extends dHVariablePluginDefault {
     $propcodes = array();
     // Get and Render Related Variables
     foreach (array_keys($this->feature->prop_varkey_map[$entity->propcode]) as $pname) {
-      error_log("Checking $pname " . $this->feature->dh_properties[$pname]->pid);
+      //error_log("Checking $pname " . $this->feature->dh_properties[$pname]->pid);
       $propcodes[] = $this->feature->dh_properties[$pname]->propcode;
     }
     //$propcodes = array_filter($propcodes);
