@@ -105,10 +105,13 @@ function om_run_id_options() {
       ),
       'Draft Full Runs' => array(
         '200' => t('Draft Current Conditions, full time period (#200)'),
-        '201' => t('Draft Current Conditions, 2000-2002 (#201)'),
-        '231' => t('Draft Current Conditions, hourly, 2000-2002 (#231)'),
+        '300' => t('Draft Permit Term Max, full time period (#300)'),
         '600' => t('Draft Permit Term Max w/Proposed, full time period (#600)'),
-        '601' => t('Permit Term Max w/Proposed - 2000-2002 (#601)'),
+      ),
+      'Draft 3-5 Year Runs' => array(
+        '201' => t('Draft Current Conditions, 2000-2002 (#201)'),
+        '301' => t('Draft Permit Term Maxs, 2000-2002 (#301)'),
+        '601' => t('Draft Permit Term Max w/Proposed - 2000-2002 (#601)'),
       ),
       '3-Hour Timestep, Short Runs' => array(
         '1153' => t('2020 Demand 2020, 3-hour, 1998-2002 (#1153)'),
@@ -125,6 +128,7 @@ function om_run_id_options() {
         '1863' => t('2020 Exempt User Runs, 3-hour, full time period (#1863)'),
       ),
       '1-Hour Timestep Runs' => array(
+        '231' => t('Draft Current Conditions, hourly, 2000-2002 (#231)'),
         '1131' => t('2020 Current 2020, hourly, 1998-2002 (#1131)'),
         '1141' => t('2020 Current 2020, hourly, full time period (#1141)'),
       ),
