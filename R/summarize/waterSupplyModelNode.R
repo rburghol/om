@@ -327,7 +327,7 @@ if (imp_off == 0) {
     png(fname)
     ymn <- 1
     ymx <- 100
-    par(mar = c(5,5,2,5))
+    par(mar = c(8.8,5,0.5,5))
     plot(
       datpd$storage_pct * 100.0, 
       ylim=c(ymn,ymx), 
@@ -341,6 +341,10 @@ if (imp_off == 0) {
     lines(datpd$impoundment_demand * 1.547,col='red')
     axis(side = 4)
     mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    legend("bottom",inset=-0.36, xpd=TRUE, c("Reservoir Storage","Inflow","Outflow","Demand"),
+           col = c("black", "blue", "green","red"), 
+           lty = c(1,1,1,1), 
+           bg='white',cex=0.8) #ADD LEGEND
     dev.off()
     print(paste("Saved file: ", fname, "with URL", furl))
     vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage', 0.0, site, token)
@@ -374,7 +378,7 @@ if (imp_off == 0) {
     png(fname)
     ymn <- 1
     ymx <- 100
-    par(mar = c(5,5,2,5))
+    par(mar = c(8.8,5,0.5,5))
     plot(
       datpd$storage_pct * 100.0, 
       ylim=c(ymn,ymx), 
@@ -387,6 +391,10 @@ if (imp_off == 0) {
     lines(datpd$wd_mgd * 1.547,col='red')
     axis(side = 4)
     mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    legend("bottom",inset=-0.36, xpd=TRUE, c("Reservoir Storage","Inflow","Outflow","Demand"),
+           col = c("black", "blue", "green","red"), 
+           lty = c(1,1,1,1), 
+           bg='white',cex=0.8) #ADD LEGEND
     dev.off()
     print(paste("Saved file: ", fname, "with URL", furl))
     vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.l90_imp_storage.2yr', 0.0, site, token)
@@ -414,7 +422,7 @@ if (imp_off == 0) {
     png(fname)
     ymn <- 1
     ymx <- 100
-    par(mar = c(5,5,2,5))
+    par(mar = c(8.8,5,0.5,5))
     plot(
       datpd$storage_pct * 100.0, 
       ylim=c(ymn,ymx), 
@@ -427,6 +435,10 @@ if (imp_off == 0) {
     lines(datpd$wd_mgd * 1.547,col='red')
     axis(side = 4)
     mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    legend("bottom",inset=-0.36, xpd=TRUE, c("Reservoir Storage","Inflow","Outflow","Demand"),
+           col = c("black", "blue", "green","red"), 
+           lty = c(1,1,1,1), 
+           bg='white',cex=0.8) #ADD LEGEND
     dev.off()
     print(paste("Saved file: ", fname, "with URL", furl))
     vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'fig.imp_storage.all', 0.0, site, token)
@@ -466,9 +478,9 @@ if (imp_off == 0) {
     png(fname)
     ymn <- 1
     ymx <- 100
-    par(mar = c(5,5,2,5))
+    par(mar = c(8.8,5,01,5))
     plot(
-      datpd$storage_pct * 100.0, 
+      datpd$storage_pct * 100.0,cex.main=1, 
       ylim=c(ymn,ymx), 
       main="Minimum Modeled Reservoir Storage Period",
       ylab="Reservoir Storage (%)",
@@ -480,6 +492,10 @@ if (imp_off == 0) {
     lines(datpd$wd_mgd * 1.547,col='red')
     axis(side = 4)
     mtext(side = 4, line = 3, 'Flow/Demand (cfs)')
+    legend("bottom",inset=-0.36, xpd=TRUE, c("Reservoir Storage","Inflow","Outflow","Demand"),
+           col = c("black", "blue", "green","red"), 
+           lty = c(1,1,1,1), 
+           bg='white',cex=0.8) #ADD LEGEND
     dev.off()
     print(paste("Saved file: ", fname, "with URL", furl))
     vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl, 'elev90_imp_storage.all', 0.0, site, token)
@@ -590,7 +606,6 @@ dataset <- 'VAHydro-EDAS'
 elfgen_huc(runid, rseg_hydroid, huc_level, dataset)
 ###############################################
 ###############################################
-
 
 
 
