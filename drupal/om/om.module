@@ -110,7 +110,8 @@ function om_run_id_options() {
       ),
       'Draft 3-5 Year Runs' => array(
         '201' => t('Draft Current Conditions, 2000-2002 (#201)'),
-        '301' => t('Draft Permit Term Maxs, 2000-2002 (#301)'),
+        '301' => t('Draft Permit Term Max w/Prop + Exempt Max, 2000-2002 (#301)'),
+        '401' => t('Draft Permit Term Maxs, 2000-2002 (#401)'),
         '601' => t('Draft Permit Term Max w/Proposed - 2000-2002 (#601)'),
       ),
       '3-Hour Timestep, Short Runs' => array(
@@ -165,8 +166,8 @@ function om_run_mode_options() {
     '0' => t('Baseline Hydrology (#0)'),
     '1' => t('Historical Conditions (#1)'),
     '2' => t('Current Conditions (#2)'),
-    '3' => t('Permit Term Maximum (#3)'),
-    '4' => t('Safe Yield (All at Max) (#4)'),
+    '3' => t('Permit Max + Proposed + Exempt (#3)'),
+    '4' => t('Permit Term Max + Current (#4)'),
     '5' => t('Custom Admin Run (#5)'),
     '6' => t('Permit Dev: Permit Max + Proposed + Current (#6)'),
     '7' => t('Custom Admin Run (#7)'),
