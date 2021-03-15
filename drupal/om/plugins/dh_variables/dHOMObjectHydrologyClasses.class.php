@@ -153,7 +153,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Initial Storage (ac-ft)',
-        'vardesc' => 'Reservoir storage at model simulation timestep 0.',
+        'vardesc' => 'Reservoir storage at model simulation timestep 0 in ac-ft.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'maxcapacity' => array(
@@ -164,7 +164,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Maximum Storage (ac-ft)',
-        'vardesc' => 'Reservoir maximum storage, includes unusable storage.',
+        'vardesc' => 'Reservoir maximum storage, includes unusable storage in ac-ft.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'unusable_storage' => array(
@@ -175,7 +175,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Unusable Storage (ac-ft)',
-        'vardesc' => 'Storage that is unusable based on water quality or intake depth limitations.',
+        'vardesc' => 'Storage that is unusable based on water quality or intake depth limitations in ac-ft.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'riser_diameter' => array(
@@ -306,7 +306,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Release (cfs)',
-        'vardesc' => 'Reservoir release variable name.',
+        'vardesc' => 'Reservoir release variable name (in cfs).',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'demand' => array(
@@ -317,7 +317,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Demand (MGD)',
-        'vardesc' => 'Reservoir demand variable name.',
+        'vardesc' => 'Reservoir demand variable name (in MGD).',
         'varid' => dh_varkey2varid('om_class_AlphanumericConstant', TRUE),
       ),
       'refill' => array(
