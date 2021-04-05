@@ -292,11 +292,26 @@ if (imp_off == 0) {
       usable_pct_p10 <- usable_pcts["10%"]
       usable_pct_p50 <- usable_pcts["50%"]
     }
+    impoundment_days_remaining <- mean(as.numeric(dat$impoundment_days_remaining) )
+    if (is.na(impoundment_days_remaining)) {
+      remaining_days_p0 <- 0
+      remaining_days_p10 <- 0
+      remaining_days_p50 <- 0
+    } else {
+      remaining_days = quantile(as.numeric(dat$impoundment_days_remaining), c(0,0.1,0.5) )
+      remaining_days_p0 <- remaining_days["0%"]
+      remaining_days_p10 <- remaining_days["10%"]
+      remaining_days_p50 <- remaining_days["50%"]
+    }
     
     # post em up
     vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p0', usable_pct_p0, site, token)
     vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p10', usable_pct_p10, site, token)
     vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'usable_pct_p50', usable_pct_p50, site, token)
+    
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'remaining_days_p0', remaining_days_p0, site, token)
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'remaining_days_p10', remaining_days_p10, site, token)
+    vahydro_post_metric_to_scenprop(scenprop$pid, 'om_class_Constant', NULL, 'remaining_days_p50', remaining_days_p50, site, token)
     
     
     # this has an impoundment.  Plot it up.
