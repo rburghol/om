@@ -348,7 +348,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Enable Conditional Variable',
-        'vardesc' => 'Select TRUE to utilize riser structure alorithm to solve for outflow.',
+        'vardesc' => 'Select TRUE enable over-ride condition for calculated flowby.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'cfb_var' => array(
@@ -358,7 +358,7 @@ class dHOMWaterSystemFlowBy extends dHOMSubComp {
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
         'varname' => 'Set Flowby/Release to:',
-        'vardesc' => 'Variable to compare to select alternate for flowby/release.',
+        'vardesc' => 'Variable to compare to select over-ride for flowby/release.',
         'varid' => dh_varkey2varid('om_class_PublicVars', TRUE),
       ),
       'cfb_condition' => array(
