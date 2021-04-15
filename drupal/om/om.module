@@ -79,7 +79,7 @@ function om_run_id_options() {
   ) {
     $options += array(
       'Permit Term Max + Current(run_mode = 4)' => array(
-        '4' => t('Permit Term Max w/Proposed (#4)'),
+        '4' => t('Permit Term Max + Current (#4)'),
         '400' => t('Draft Permit Term Max + Current, full time period (#400)'),
         '401' => t('Draft Permit Term Max + Current, 2000-2002 (#401)'),
         '4011' => t('Draft Permit Term Max + Current, 2000-2002, alt. 1 (#4011)'),
