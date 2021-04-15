@@ -78,6 +78,13 @@ function om_run_id_options() {
     or in_array('analyst', $user->roles)
   ) {
     $options += array(
+      'Current Conditions + Current(run_mode = 4)' => array(
+        '2' => t('Current Conditions (#2)'),
+        '400' => t('Current Conditions, full time period (#200)'),
+        '401' => t('Current Conditions, 2000-2002 (#201)'),
+        '4011' => t('Current Conditions, 2000-2002, alt. 1 (#2011)'),
+        '4012' => t('Current Conditions, 2000-2002, alt. 2 (#2012)'),
+      ),
       'Permit Term Max + Current(run_mode = 4)' => array(
         '4' => t('Permit Term Max + Current (#4)'),
         '400' => t('Draft Permit Term Max + Current, full time period (#400)'),
@@ -95,7 +102,6 @@ function om_run_id_options() {
       'Full Runs' => array(
         '0' => t('Pre-Condition (#0)'),
         '1' => t('Historical Conditions (#1)'),
-        '2' => t('Current Conditions (#2)'),
         '3' => t('Permit Term Max (#3)'),
         '5' => t('tbd: Custom Admin Run (#5)'),
         '7' => t('tbd: (#7)'),
@@ -116,11 +122,9 @@ function om_run_id_options() {
         '22' => t('2015 Demand 2040 (#22)'),
       ),
       'Draft Full Runs' => array(
-        '200' => t('Draft Current Conditions, full time period (#200)'),
         '300' => t('Draft Permit Term Max, full time period (#300)'),
       ),
       'Draft 3-5 Year Runs' => array(
-        '201' => t('Draft Current Conditions, 2000-2002 (#201)'),
         '301' => t('Draft Permit Term Max w/Prop + Exempt Max, 2000-2002 (#301)'),
       ),
       '3-Hour Timestep, Short Runs' => array(
