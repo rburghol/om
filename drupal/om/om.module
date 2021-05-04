@@ -80,10 +80,10 @@ function om_run_id_options() {
     $options += array(
       'Current Conditions + Current(run_mode = 4)' => array(
         '2' => t('Current Conditions (#2)'),
-        '400' => t('Current Conditions, full time period (#200)'),
-        '401' => t('Current Conditions, 1998-2002 (#201)'),
-        '4011' => t('Current Conditions, 1998-2002, alt. 1 (#2011)'),
-        '4012' => t('Current Conditions, 1998-2002, alt. 2 (#2012)'),
+        '200' => t('Current Conditions, full time period (#200)'),
+        '201' => t('Current Conditions, 1998-2002 (#201)'),
+        '2011' => t('Current Conditions, 1998-2002, alt. 1 (#2011)'),
+        '2012' => t('Current Conditions, 1998-2002, alt. 2 (#2012)'),
       ),
       'Permit Term Max + Current(run_mode = 4)' => array(
         '4' => t('Permit Term Max + Current (#4)'),
