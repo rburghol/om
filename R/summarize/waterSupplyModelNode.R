@@ -74,14 +74,15 @@ cols <- names(dat)
 imp_off <- NULL# default to no impouhd
 if ("imp_off" %in% cols) {
   imp_off <- as.integer(median(dat$imp_off))
-}
-if( (is.null(imp_off)) && ("impoundment" %in% cols) ) {
-  # imp_off is NOT in the cols but impoundment IS
-  # therefore, we assume that the impoundment is active by intention
-  # and that it is a legacy that lacked the imp_off convention
-  imp_off = 0
 } else {
-  imp_off <- 1 # default to no impoundment
+  if( (is.null(imp_off)) && ("impoundment" %in% cols) ) {
+    # imp_off is NOT in the cols but impoundment IS
+    # therefore, we assume that the impoundment is active by intention
+    # and that it is a legacy that lacked the imp_off convention
+    imp_off = 0
+  } else {
+    imp_off <- 1 # default to no impoundment
+  }
 }
 wd_mgd <- mean(as.numeric(dat$wd_mgd) )
 if (is.na(wd_mgd)) {
