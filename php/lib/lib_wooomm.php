@@ -1951,6 +1951,41 @@ function createModelRunSummaryFiles($listobject, $elementlist, $runid = -1) {
    }
 }
 
+function saveRunMessageFiles($listobject, $thisobject, $elementid, $runid = -1) {
+   global $outdir, $outurl;
+   if (is_object($thisobject)) {
+      $debugstring = '';
+      error_log("Assembling Panels.");
+      $report = $thisobject->outstring . " <br>";
+      $errorlog .= '<b>Model Execution Errors:</b>' . $thisobresult['error'] . " <br>";
+      if (strlen($thisobject->errorstring) <= 4096) {
+         $errorlog .= $thisobject->errorstring . " <br>";
+      } else {
+         //error_log("Writing errors to file.");
+         # stash the debugstring in a file, give a link to download it
+         $fname = 'error' . $thisobject->componentid . ".html";
+         $floc = $outdir . '/' . $fname;
+         $furl = $outurl . '/' . $fname;
+         $fp = fopen ($floc, 'w');
+         fwrite($fp, "Component Logging Info: <br>");
+         fwrite($fp, $thisobject->errorstring . " <br>");
+         $errorlog .= "<a href='$furl' target=_new>Click Here to Download Model Error Info</a>";
+      }
+      $report .= "Component Logging Info: <br>";
+      $report .= $thisobject->reportstring . " <br>";
+      # stash the debugstring in a file, give a link to download it
+      $report .= "Finished.";
+      $fname = 'report' . $thisobject->componentid . "-$runid" . ".log";
+      $floc = $outdir . '/' . $fname;
+      error_log("Writing reports to file $floc ");
+      $furl = $outurl . '/' . $fname;
+      $fp = fopen ($floc, 'w');
+      fwrite($fp, "Component Logging Info:\n");
+      fwrite($fp, $report . "\n");
+      
+   }
+}
+
 function createSingleModelRunSummaryFile($listobject, $thisobject, $elementid, $runid = -1) {
    global $outdir, $outurl;
    if (is_object($thisobject)) {
@@ -9449,6 +9484,7 @@ function storeElementRunData($listobject, $elementid, $components, $runid, $run_
       };
       error_log($listobject->querystring);
       $listobject->performQuery();
+      saveRunMessageFiles($listobject, $unserobjects[$thiscomp], $thiscomp, $runid);
     } else {
       error_log("Element $thiscomp IS cached - no run file saved");
     }
