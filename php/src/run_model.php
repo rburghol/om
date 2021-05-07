@@ -124,6 +124,7 @@ switch ($runtype) {
    
 }
 
+pg_close($modeldb); boot the model db to prevent temp name collisions?
 // handle post-processing
 //if ($runtype == 'cached2') {
   $runid = intval(trim($runVars['runid']));
