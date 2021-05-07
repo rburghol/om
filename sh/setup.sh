@@ -5,6 +5,27 @@ sudo chown www-data:allmodelers www/om/cache
 # set up cbp to www link
 ln -s /opt/model/p53/p532c-sova/out /opt/model/p53/p532c-sova/tmp/out       
 
+// Libraries
+
+rm /var/www/html/lib/lib_hydrology.php
+ln -s /opt/model/om/php/lib/lib_hydrology.php /var/www/html/lib/lib_hydrology.php
+rm /var/www/html/lib/lib_wooomm.php
+ln -s /opt/model/om/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
+rm /var/www/html/lib/lib_wooomm.USGS.php
+ln -s /opt/model/om/php/lib/lib_wooomm.USGS.php /var/www/html/lib/lib_wooomm.USGS.php
+rm /var/www/html/lib/lib_usgs.php
+ln -s /opt/model/om/php/lib/lib_usgs.php /var/www/html/lib/lib_usgs.php
+rm /var/www/html/lib/lib_wooomm.cbp.php
+ln -s /opt/model/om/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
+rm /var/www/html/lib/misc_functions.php
+ln -s /opt/model/om/php/lib/misc_functions.php /var/www/html/lib/misc_functions.php
+rm /var/www/html/lib/lib_wooomm.wsp.php
+ln -s /opt/model/om/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
+rm /var/www/html/lib/lib_equation2.php
+ln -s /opt/model/om/php/lib/lib_equation2.php /var/www/html/lib/lib_equation2.php
+rm /var/www/html/lib/psql_functions.php
+ln -s /opt/model/om/php/lib/psql_functions.php /var/www/html/lib/psql_functions.php
+
 # dev
 # We used to do dev separate from live, because the path is /opt/model/om-dev,  but now we have a 
 # soft-link for opt/model/om to opt/model/om-dev so all is one. we can regenerate if need be later
@@ -47,22 +68,6 @@ rm /var/www/html/om/fn_checkTreeRunDate.php
 ln -s /opt/model/om/php/src/fn_checkTreeRunDate.php /var/www/html/om/fn_checkTreeRunDate.php
 rm /var/www/html/om/fn_batchedit_broadcast_matrix.php
 ln -s /opt/model/om/php/src/fn_batchedit_broadcast_matrix.php /var/www/html/om/fn_batchedit_broadcast_matrix.php
-rm /var/www/html/lib/lib_hydrology.php
-ln -s /opt/model/om/php/lib/lib_hydrology.php /var/www/html/lib/lib_hydrology.php
-rm /var/www/html/lib/lib_wooomm.php
-ln -s /opt/model/om/php/lib/lib_wooomm.php /var/www/html/lib/lib_wooomm.php
-rm /var/www/html/lib/lib_wooomm.USGS.php
-ln -s /opt/model/om/php/lib/lib_wooomm.USGS.php /var/www/html/lib/lib_wooomm.USGS.php
-rm /var/www/html/lib/lib_usgs.php
-ln -s /opt/model/om/php/lib/lib_usgs.php /var/www/html/lib/lib_usgs.php
-rm /var/www/html/lib/lib_wooomm.cbp.php
-ln -s /opt/model/om/php/lib/lib_wooomm.cbp.php /var/www/html/lib/lib_wooomm.cbp.php
-rm /var/www/html/lib/misc_functions.php
-ln -s /opt/model/om/php/lib/misc_functions.php /var/www/html/lib/misc_functions.php
-rm /var/www/html/lib/lib_wooomm.wsp.php
-ln -s /opt/model/om/php/lib/lib_wooomm.wsp.php /var/www/html/lib/lib_wooomm.wsp.php
-rm /var/www/html/lib/lib_equation2.php
-ln -s /opt/model/om/php/lib/lib_equation2.php /var/www/html/lib/lib_equation2.php
 rm /var/www/html/om/adminsetup.php
 ln -s /opt/model/om/php/src/adminsetup.php /var/www/html/om/adminsetup.php
 rm /var/www/html/om/set_subprop.php
