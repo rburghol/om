@@ -75,7 +75,7 @@ class pgsql_QueryObject {
         $this->dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
         $stat = pg_connection_status($this->dbconn);
         if ($stat === PGSQL_CONNECTION_OK) {
-          //error_log( 'Connection status ok');
+          error_log( 'Connection status ok');
         } else {
           error_log( 'Connection status bad');
           error_log(' Error: ' . pg_last_error($this->dbconn));
