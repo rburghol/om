@@ -73,6 +73,7 @@ class pgsql_QueryObject {
         }
       }
       if (!empty($connstring)) {
+        error_log($connstring);
         $this->dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
         $stat = pg_connection_status($this->dbconn);
         if ($stat === PGSQL_CONNECTION_OK) {
