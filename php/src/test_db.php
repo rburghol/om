@@ -1,7 +1,3 @@
-<html>
-<body>
-<h3>Test DB Connection</h3>
-
 <?php
 
 
@@ -23,7 +19,12 @@ $listobject->querystring = "  select * from project";
 print(" $listobject->querystring ; <br>");
 
 $listobject->performQuery();
-$listobject->showList();
+$listobject->adminsetup = 'raw';
+//$listobject->showList();
+
+$modeldb->querystring = " select 1 as i_see_you";
+print(" $modeldb->querystring ; <br>");
+
+$modeldb->performQuery();
+$modeldb->showList();
 ?>
-</body>
-</html>
