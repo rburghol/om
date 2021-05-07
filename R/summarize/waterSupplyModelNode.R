@@ -16,6 +16,8 @@ pid <- as.integer(argst[1])
 elid <- as.integer(argst[2])
 runid <- as.integer(argst[3])
 
+finfo <- fn_get_runfile_info(elid, runid)
+remote_url <- finfo$remote_url
 dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE)
 mode(dat) <- 'numeric'
 
@@ -68,6 +70,9 @@ sceninfo <- list(
   featureid = pid,
   entity_type = "dh_properties"
 )
+# Post link to run file
+vahydro_post_metric_to_scenprop(scenprop$pid, 'external_file', NULL, 'logfile', remote_url, site, token)
+
 
 # does this have an impoundment sub-comp and is imp_off = 0?
 cols <- names(dat)
