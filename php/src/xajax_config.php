@@ -204,6 +204,9 @@ $session_db->adminsetuparray = $adminsetuparray;
 
 // set up the model runtime database
 if ( ($dbip <> $runtime_dbip) or ($dbname <> $runtime_dbname) ) {
+  // try the new school method 
+  $modeldb = new pgsql_QueryObject(FALSE, FALSE, $runtime_dbip, $runtime_dbname, $runtime_dbuser, $runtime_dbpass);
+  /*
    $connstring = "host=$runtime_dbip dbname=$runtime_dbname user=$runtime_dbuser password=$runtime_dbpass port=$runtime_dbport";
    //error_log("Setting runtime DB host=$runtime_dbip dbname=$runtime_dbname user=$runtime_dbuser password=$runtime_dbpass port=$runtime_dbport\n");
    $dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
@@ -211,6 +214,8 @@ if ( ($dbip <> $runtime_dbip) or ($dbname <> $runtime_dbname) ) {
    $modeldb->connstring = $connstring;
    $modeldb->ogis_compliant = 1;
    $modeldb->dbconn = $dbconn;
+   */
+   // add the admin array for formatting options 
    $modeldb->adminsetuparray = $adminsetuparray;
 } else {
    $modeldb = $listobject;
