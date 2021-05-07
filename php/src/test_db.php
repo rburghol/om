@@ -19,6 +19,7 @@ $listobject->querystring = "  select * from project";
 print(" $listobject->querystring ; <br>");
 
 $listobject->performQuery();
+$listobject->adminsetup = 'raw';
 $listobject->showList();
 
 $modeldb->querystring = "  select 1 as i_see_you";

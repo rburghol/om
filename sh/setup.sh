@@ -85,3 +85,5 @@ rm /var/www/html/om/fn_addObjectLink.php
 ln -s /opt/model/om/php/src/fn_addObjectLink.php /var/www/html/om/fn_addObjectLink.php
 rm /var/www/html/om/test_order.php
 ln -s /opt/model/om/php/src/test_order.php /var/www/html/om/test_order.php
+rm /var/www/html/om/test_db.php
+ln -s /opt/model/om/php/src/test_db.php /var/www/html/om/test_db.php
