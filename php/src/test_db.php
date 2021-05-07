@@ -1,7 +1,3 @@
-<html>
-<body>
-<h3>Test DB Connection</h3>
-
 <?php
 
 
@@ -24,6 +20,10 @@ print(" $listobject->querystring ; <br>");
 
 $listobject->performQuery();
 $listobject->showList();
+
+$modeldb->querystring = "  select 1 as i_see_you";
+print(" $modeldb->querystring ; <br>");
+
+$modeldb->performQuery();
+$modeldb->showList();
 ?>
-</body>
-</html>
