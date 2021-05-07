@@ -71,7 +71,7 @@ sceninfo <- list(
   entity_type = "dh_properties"
 )
 # Post link to run file
-vahydro_post_metric_to_scenprop(scenprop$pid, 'external_file', NULL, 'logfile', remote_url, site, token)
+vahydro_post_metric_to_scenprop(scenprop$pid, 'external_file', remote_url, 'logfile', NULL, site, token)
 
 
 # does this have an impoundment sub-comp and is imp_off = 0?
