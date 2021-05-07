@@ -69,7 +69,7 @@ class pgsql_QueryObject {
       } else {
         if (!empty($dbip)) {
           // assume we want to create a connection here 
-          $connstring = "host=$dbip dbname=$dbname user=$user password=$password port=$dbport";
+          $connstring = "host=$dbip dbname=$dbname user=$user password=$password port=$port";
         }
       }
       if (!empty($connstring)) {
