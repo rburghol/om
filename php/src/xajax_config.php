@@ -205,7 +205,7 @@ $session_db->adminsetuparray = $adminsetuparray;
 // set up the model runtime database
 if ( ($dbip <> $runtime_dbip) or ($dbname <> $runtime_dbname) ) {
   // try the new school method 
-  $modeldb = new pgsql_QueryObject(FALSE, FALSE, $runtime_dbip, $runtime_dbname, $runtime_dbuser, $runtime_dbpass);
+  $modeldb = new pgsql_QueryObject(FALSE, FALSE, $runtime_dbip, $runtime_dbname, $runtime_dbuser, $runtime_dbpass, $runtime_dbport);
   /*
    $connstring = "host=$runtime_dbip dbname=$runtime_dbname user=$runtime_dbuser password=$runtime_dbpass port=$runtime_dbport";
    //error_log("Setting runtime DB host=$runtime_dbip dbname=$runtime_dbname user=$runtime_dbuser password=$runtime_dbpass port=$runtime_dbport\n");
