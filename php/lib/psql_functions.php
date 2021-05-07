@@ -35,6 +35,7 @@ class pgsql_QueryObject {
    var $dbsystem = 'postgresql';
    var $ogc_compliant = 0;
    var $whereclause;
+   var $connstring;
    var $dbconn;
    var $maxrecords = -1;
    var $result;
@@ -61,6 +62,30 @@ class pgsql_QueryObject {
    var $buffersql = '';
    var $max_buffer = 8096; # max number of bytes to store in a buffered query - buffer will automatically flush before this is exceeded, or when the flushQueryBuffer() method is called
    
+  function __construct($dbconn = FALSE, $connstring = '', $dbip = '', $dbname = '', $user = '', $password = '') {
+    if ($dbconn === FALSE) {
+      if (!empty($connstring)) {
+        // use a conn string if given 
+      } else {
+        if (!empty($dbip)) {
+          // assume we want to create a connection here 
+        }
+      }
+      if (!empty($connstring)) {
+        $this->dbconn = pg_connect($connstring, PGSQL_CONNECT_FORCE_NEW);
+        $stat = pg_connection_status($this->dbconn);
+        if ($stat === PGSQL_CONNECTION_OK) {
+          //error_log( 'Connection status ok');
+        } else {
+          error_log( 'Connection status bad');
+          error_log(' Error: ' . pg_last_error($this->dbconn));
+        }
+      }
+    } else {
+      $this->dbconn = $dbconn;
+    }
+  }
+  
    function init() {
       $this->temptables = array();
    }
