@@ -294,6 +294,10 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       }
     }
   }
+  // insure these are set to the destination type.
+  $values['entity_type'] = $dest_entity->entityType();
+  $values['featureid'] = $dest_entity->identifier();
+  
   // add or replace new property with copy values 
   error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
