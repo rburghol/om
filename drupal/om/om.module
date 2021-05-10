@@ -299,7 +299,7 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
   $values['featureid'] = $dest_entity->identifier();
   
   // add or replace new property with copy values 
-  error_log("values " . print_r($values,1));
+  //error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
   // Now copy fields
   if ($fields) {
