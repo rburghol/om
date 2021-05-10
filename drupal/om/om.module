@@ -320,8 +320,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     // nothing yet - need to exclude om_element_connection properties, or at least nullify settings to prevent redundant updates.
     $propnames = dh_get_dh_propnames($src_prop->entityType(), $src_prop->identifier());
     //dpm($propnames, "Propnames ");
-    foreach ($propnames as $propname) {
-      $sub_copy = om_copy_properties($src_prop, $copy, $propname, TRUE, TRUE, TRUE);
+    foreach ($propnames as $subpropname) {
+      $sub_copy = om_copy_properties($src_prop, $copy, $subpropname, TRUE, TRUE, TRUE);
       //dpm($copy,'copy');
     }
   }
