@@ -15,6 +15,7 @@ if (count($args) >= 2) {
   $dest_entity_type = $args[3];
   $dest_id = $args[4];
   $propname = $args[5];
+  $cascade = $args[6];
 } else {
   error_log("Usage: php copy_subcomps.php query_type src_entity_type src_id dest_entity_type dest_id [all/propname[|newname],sub2,...] [cascade=0/1]");
   error_log("Note: If you supply propname|newname they must be quoted to suppress piping ");
@@ -64,6 +65,7 @@ if ($query_type == 'file') {
     'src_id' => $src_id, 
     'dest_id' => $dest_id,
     'propname' => $propname,
+    'cascade' => $cascade,
   );
 }
 
@@ -95,7 +97,7 @@ foreach ($data as $element) {
     // cache and disable object synch if it exists
     $dcc = om_dh_stashlink($dest_entity, 'om_element_connection');  
     error_log("Calling om_copy_properties ");
-    $copy = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE);
+    $copy = om_copy_properties($src_entity, $dest_entity, $propname, TRUE, TRUE, $cascade);
     // om_copy_properties($src_entity, $dest_entity, $propname, $fields = FALSE, $defprops = FALSE, $allprops = FALSE)
     error_log("Property $copy->propname created with pid = $copy->pid");
     // restore original object synch if it exists

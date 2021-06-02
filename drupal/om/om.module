@@ -294,6 +294,10 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
       }
     }
   }
+  // insure these are set to the destination type.
+  $values['entity_type'] = $dest_entity->entityType();
+  $values['featureid'] = $dest_entity->identifier();
+  
   // add or replace new property with copy values 
   //error_log("values " . print_r($values,1));
   $copy = om_model_getSetProperty($values, 'name', FALSE);
@@ -320,8 +324,8 @@ function om_copy_properties($src_entity, $dest_entity, $propname, $fields = TRUE
     // nothing yet - need to exclude om_element_connection properties, or at least nullify settings to prevent redundant updates.
     $propnames = dh_get_dh_propnames($src_prop->entityType(), $src_prop->identifier());
     //dpm($propnames, "Propnames ");
-    foreach ($propnames as $propname) {
-      $sub_copy = om_copy_properties($src_prop, $copy, $propname, TRUE, TRUE, TRUE);
+    foreach ($propnames as $subpropname) {
+      $sub_copy = om_copy_properties($src_prop, $copy, $subpropname, TRUE, TRUE, TRUE);
       //dpm($copy,'copy');
     }
   }
