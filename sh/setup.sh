@@ -32,6 +32,8 @@ rm /var/www/html/lib/lib_equation2.php
 ln -s /opt/model/om/php/lib/lib_equation2.php /var/www/html/lib/lib_equation2.php
 rm /var/www/html/lib/psql_functions.php
 ln -s /opt/model/om/php/lib/psql_functions.php /var/www/html/lib/psql_functions.php
+rm /var/www/html/lib/PEAR -Rf
+ln -s /opt/model/om/php/lib/PEAR /var/www/html/lib/PEAR
 
 # dev
 # We used to do dev separate from live, because the path is /opt/model/om-dev,  but now we have a 

@@ -4203,7 +4203,7 @@ $debug = 0;
    return $innerHTML;
 }
 
-function showElementPropertyList($elementid, $index, $selectedcol, $disabled=0, $fieldname='input', $onChange) {
+function showElementPropertyList($elementid, $index, $selectedcol, $disabled=0, $fieldname='input', $onChange='') {
    global $listobject, $projectid, $scenarioid, $debug, $adminsetuparray, $obj_cache;
    if (!isset($obj_cache)) {
       $obj_cache = array();
