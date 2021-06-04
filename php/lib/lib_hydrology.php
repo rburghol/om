@@ -2949,6 +2949,9 @@ class modelSubObject extends modelObject {
              }
           }
        }
+       if (! is_array($this->vars)) {
+         $this->vars = array();
+       }
        $this->vars[] = $this->name . "_" . $thisvar;
     }
   }
