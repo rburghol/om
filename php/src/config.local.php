@@ -1,6 +1,6 @@
 <?php
 // db passwords stored here
-include ("./private.info");
+include ("./config.private");
 $adminemail = 'rburghol@vt.edu';
 // database connection info
 // main modeling database
