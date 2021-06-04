@@ -1,7 +1,15 @@
 #!/bin/sh
 # shell
-pgpath="/data/postgres/9.5"
-bindir="/usr/lib/postgresql/9.5/bin"
+if [ $# -lt 1 ]; then
+  echo 1>&2 "Usage: setup.model_scratch.sh PG_VERSION"
+  echo 1>&2 "Example: setup.model_scratch.sh 9.5"
+  exit 2
+fi
+pgv=$1
+echo "PostgreSQL version: $pgv"
+
+pgpath="/data/postgres/$pgv"
+bindir="/usr/lib/postgresql/$pgv/bin"
 db_port=5444
 
 mkdir $pgpath/scratch
