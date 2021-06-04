@@ -4,7 +4,8 @@
 // New Generic Surface Water User: 340402
 module_load_include('module', 'dh_wsp');
 global $om, $php_path;
-$om = 'http://deq2.bse.vt.edu/om/get_model.php';
+//$om = 'http://deq2.bse.vt.edu/om/get_model.php';
+$om = 'http://localhost/om/get_model.php';
 $php_path = "/var/www/html/om/";
 
 function om_get_om_model($elid) {
