@@ -1688,10 +1688,10 @@ class modelObject {
           }
 
           // create a serial file
-          $serialfile = $this->outdir . '/' . $this->logfile . ".serial";
-          $open = fopen($serialfile, 'w');
-          fwrite($open, serialize($this->logtable));
-          fclose($open);
+          //$serialfile = $this->outdir . '/' . $this->logfile . ".serial";
+          //$open = fopen($serialfile, 'w');
+          //fwrite($open, serialize($this->logtable));
+          //fclose($open);
        }
     }
     
