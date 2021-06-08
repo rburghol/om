@@ -778,6 +778,7 @@ function verifyRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $ti
       // 0 - finished, or 3 - queued but waiting, are considered to be zombied
       if ( ($interval >= $timeout) and !(in_array($status_flag,array( 0, 3)) ) ) {
          // this indicates that run is zombied/failed
+         error_log("Marking as Zombied/Status=-1: Last Update = $last_updated (ts=$last_secs), Current Time = $thistime (ts=$current_secs) for interval = $interval and timeout = $timeout, status flag = $status_flag ");
          $status_flag = -1;
       }
       // this checks to see if a model on another remote machine is running a DIFFERENT runid, which is OK
