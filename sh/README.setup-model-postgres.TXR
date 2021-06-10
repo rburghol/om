@@ -1,0 +1,6 @@
+# Set up postgresql session and scratch databases
+
+sudo su - postgres
+PG_VERSION=12 # or whatever it is 
+/opt/model/om/sh/setup.model_scratch.sh $PG_VERSION
+/opt/model/om/sh/setup.model_sessiondata.sh $PG_VERSION
