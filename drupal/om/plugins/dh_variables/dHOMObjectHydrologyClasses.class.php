@@ -442,7 +442,6 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
   var $drainage_area; // in square miles
   var $Z; // side slope Z
   var $n; // Manning's n
-  var $json2d = TRUE;
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
@@ -680,6 +679,36 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
 
 class dHOMUSGSChannelGeomObject_sub extends dHOMUSGSChannelGeomObject {
   var $object_class = 'USGSChannelGeomObject_sub';
+  var $json2d = TRUE;
+  
+  public function setAllRemoteProperties($entity, $elid, $path) {
+    // this hysroImpSmall is a sub-comp, so we use the plumbing from the subomponent class
+    // to handle setting all of these props at once.
+    // this is TEST!
+    if ($this->json2d) {
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      //$this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      $exp = $this->exportOpenMI($entity);
+      //dpm($exp,"Using JSON export mode");
+      $exp_json = addslashes(json_encode($exp[$entity->propname]));
+      $this->setRemoteProp($entity, $elid, $ppath, $exp_json, $this->object_class, 'json-2d');
+    } else {
+      parent::setAllRemoteProperties($entity, $elid, $path);
+      //dpm($path, 'original path to setAllRemoteProperties()');
+      //dpm($entity, 'subcomp entity to setAllRemoteProperties()');
+      // create the base property if needed.
+      // this seems to only be used by sub-comps, why?
+      $ppath = $path;
+      array_unshift($ppath, $entity->propname);
+      $this->setRemoteProp($entity, $elid, $ppath, "", $this->object_class);
+      if (property_exists($entity, 'proptext')) {
+        array_unshift($path, 'description');
+        $this->setRemoteProp($entity, $elid, $path, $entity->proptext['und'][0]['value'], $this->object_class);
+        //$this->setRemoteProp($entity, $elid, $path, 'description', $this->proptext);
+      }
+    }
+  }
   
 }
 class dHOMUSGSRecharge extends dHOMSubComp {
