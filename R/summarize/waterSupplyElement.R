@@ -1,23 +1,21 @@
 ################################
 #### *** Water Supply Element
 ################################
+# dirs/URLs
+
+#----------------------------------------------
+site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
+#----------------------------------------------
+# Load Libraries
+basepath='/var/www/R';
+source(paste(basepath,'config.R',sep='/'))
+save_directory <-  "/var/www/html/data/proj3/out"
+# Load Local libs
 library(stringr)
 library(ggplot2)
 library(sqldf)
 library(ggnewscale)
 library(dplyr)
-
-# dirs/URLs
-
-#----------------------------------------------
-site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
-#----------------------------------------------
-# Load Libraries
-basepath='/var/www/R';
-source(paste(basepath,'config.R',sep='/'))
-
-save_directory <-  "/var/www/html/data/proj3/out"
 
 # Read Args
 argst <- commandArgs(trailingOnly=T)

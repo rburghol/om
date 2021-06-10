@@ -7,7 +7,6 @@ source(paste(basepath,'config.R',sep='/'))
 library(stringr)
 # dirs/URLs
 save_directory <- "/var/www/html/data/proj3/out"
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 # Read Args
 argst <- commandArgs(trailingOnly=T)
