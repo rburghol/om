@@ -231,7 +231,7 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
   public function insureProperty($entity, $thisvar) {
     // make sure all standard props are here
     $thisvar['featureid'] = $entity->{$this->row_map['id']};
-    //dpm($thisvar, "Checking for property default");
+    //dpm($thisvar, "insuring $thisvar[propname]");
     $thisvar = $thisvar + array('singularity' => 'name');
     $prop = om_model_getSetProperty($thisvar, $thisvar['singularity'], FALSE);
     return $prop;
@@ -244,7 +244,8 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
     //dpm($props, "Iterating over attached properties");
     //error_log("Props for $entity->propname " . print_r(array_keys($props),1));
     foreach ($props as $thisvar) {
-      $this->insureProperty($entity, $thisvar);
+      $iprop = $this->insureProperty($entity, $thisvar);
+      //$this->insureProperty($entity, $thisvar);
       if (!isset($thisvar['embed']) or ($thisvar['embed'] === TRUE)) {
         //error_log("Saving " . $thisvar['propname']);
         // load the property 
@@ -278,6 +279,12 @@ class dHVariablePluginDefaultOM extends dHVariablePluginDefault {
             //dsm("Saving preloaded object " . $thisvar['propname']);
             entity_save('dh_properties', $prop);
           }
+        }
+      } else {
+        // just check here that we need to save properties that are not embedded, but have never been created
+        if (empty($iprop->pid)) {
+          //dpm($iprop,"saving non-embedded prop for first time");
+          entity_save('dh_properties', $iprop);
         }
       }
     }

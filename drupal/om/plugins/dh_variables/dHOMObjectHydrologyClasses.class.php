@@ -256,6 +256,20 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
     unset($export[$entity->propname]['storage_stage_area']);
     return $export;
   }
+
+  function insureProperty($entity, $thisvar) {
+    $iprop = parent::insureProperty($entity, $thisvar);
+    if ($iprop->propname == 'storage_stage_area' and empty($iprop->pid)) {
+      // need to set up the default storage table here
+      $table = array();
+      $table[] = array('storage', 'stage', 'surface_area');
+      $table[] = array(0,0,0);
+      $table[] = array(100,10,20);
+      $tplug = dh_variables_getPlugins($iprop);
+      $tplug->setCSVTableField($iprop, $table);
+    }
+    return $iprop;
+  }
 }
 
 class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
@@ -399,6 +413,7 @@ class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
     ) + $defaults;
+//dpm($defaults,'defs');
     return $defaults;
   }
   

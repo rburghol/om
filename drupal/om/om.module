@@ -233,14 +233,14 @@ function om_model_getSetProperty($values, $singularity = 'name', $save = TRUE) {
       $values['propcode'] = $values['propcode_default'];
     }
     // create a model element
-    //error_log("$values[varkey] does not exist...creating");
+    //dsm("$values[varkey] does not exist...creating");
     $om_model = entity_create('dh_properties', $values);
     if ($save) {
       $om_model->save();
     }
-    //error_log("Created $om_model->propname");
+    //dsm("Created $om_model->propname (pid: $om_model->pid, save? $save)");
   } else {
-    //error_log("Found $om_model->propname");
+    //dsm("Found $om_model->propname");
   }
   return $om_model;
 }
@@ -478,7 +478,7 @@ function om_get_model_tree($model, &$tree = array(), $scenario = NULL, $children
     $feature_tree = dh_hydro_findTribs($feature->hydroid);
     // search these for models, and add them, including spatial 
   }
-  dpm($feature_tree);
+  //dpm($feature_tree);
   // get parent feature if $spatial or $upstream is true 
   if ($spatial) {
     // get features that are contained
