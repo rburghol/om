@@ -20,9 +20,12 @@ template=6528239
 
 # make sure it is using the new discharge_mgd variable 
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid available_mgd
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid local_area_sqmi
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid local_impoundment
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid refill_available_mgd
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid refill_max_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid refill_plus_demand
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid "Send - Local Catchment to Parent"
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid wd_local_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid wd_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid zero
