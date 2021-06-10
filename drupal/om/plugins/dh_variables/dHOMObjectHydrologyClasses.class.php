@@ -457,6 +457,7 @@ class dHOMUSGSChannelGeomObject extends dHOMHydroObject {
   var $drainage_area; // in square miles
   var $Z; // side slope Z
   var $n; // Manning's n
+  var $json2d = TRUE;
   
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
