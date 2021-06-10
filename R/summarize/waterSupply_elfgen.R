@@ -14,7 +14,6 @@ library(stringr)
 #### Load in directories and repositories
 site <- "http://deq2.bse.vt.edu/d.dh"
 save_directory <- "/var/www/html/data/proj3/out"
-#save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 basepath ='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))

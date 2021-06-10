@@ -13,7 +13,6 @@ library(ggplot2)
 
 # dirs/URLs
 save_directory <- "/var/www/html/data/proj3/out"
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 #------------------------------------------------
 #Inputs

@@ -1,14 +1,14 @@
-#----------------------------------------------
-site <- "http://deq2.bse.vt.edu/d.dh"    #Specify the site of interest, either d.bet OR d.dh
-#----------------------------------------------
 # Load Libraries
 basepath='/var/www/R';
 source(paste(basepath,'config.R',sep='/'))
+#----------------------------------------------
+#site <- base_url    #Specify the site of interest, either d.bet OR d.dh, taken from the config.R
+# this is now set in config.local.R
+#----------------------------------------------
 source(paste(om_location,'R/summarize','rseg_elfgen.R',sep='/'))
 library(stringr)
 # dirs/URLs
 save_directory <- "/var/www/html/data/proj3/out"
-save_url <- paste(str_remove(site, 'd.dh'), "data/proj3/out", sep='');
 
 # Read Args
 argst <- commandArgs(trailingOnly=T)
