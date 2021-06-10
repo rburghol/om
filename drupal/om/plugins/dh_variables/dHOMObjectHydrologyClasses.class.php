@@ -260,6 +260,7 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
 
 class dHOMHydroImpoundmentSmall extends dHOMHydroImpoundment {
   var $object_class = 'hydroImpSmall'; 
+  var $json2d = TRUE;
   public function getDefaults($entity, &$defaults = array()) {
     $defaults = parent::getDefaults($entity, $defaults);
     // must account for these which are handled specially from local variables on the subcomp version
