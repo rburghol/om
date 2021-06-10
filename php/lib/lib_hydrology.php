@@ -6811,6 +6811,7 @@ class channelObject extends hydroObject {
    var $channeltype = 2; # only trapezoidal channels (type 2) are currently supported
    var $totalwithdrawn = 0.0;
    var $Rin = 0.0;
+   var $json2d = TRUE;
    var $storageinitialized = 0; # is storage initialized at beginning of run? If 0, this will cause the storage estimation to run
                                 # this should only occur once per simulation, as the flag wil be set to 1 after running
    var $tol = 0.01;
