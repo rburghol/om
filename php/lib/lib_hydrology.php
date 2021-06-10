@@ -2511,7 +2511,7 @@ class modelObject {
     $this->lookups[$thisinput]['debug'] = 0;
   }
 
-  function addOperator($statevar, $operator, $initval) {
+  function addOperator($statevar, $operator, $initval = NULL) {
     if (!in_array($statevar, array_keys($this->state))) {
        if ($this->debug) {
           $this->errorstring .= "Adding state variable $statevar <br>\n";
