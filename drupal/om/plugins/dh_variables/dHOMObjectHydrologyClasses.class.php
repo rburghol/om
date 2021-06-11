@@ -35,6 +35,17 @@ class dHOMHydroObject extends dHOMModelElement {
         'vardesc' => 'riverseg.',
         'varid' => dh_varkey2varid('om_class_textField', TRUE),
       ), 
+      'area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'area',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Surface Area (ac)',
+        'vardesc' => 'Physical surface area of this component (not including any tributary drainage area).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
     );
     return $defaults;
   }
@@ -145,6 +156,17 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
   public function getDefaults($entity, &$defaults = array()) {
     parent::getDefaults($entity, $defaults);
     $defaults = array(
+      'area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'area',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Noermal Pool Area (ac)',
+        'vardesc' => 'Used for area calculations as needed (ustabe full_surface_area).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
       'initstorage' => array(
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
