@@ -7156,7 +7156,7 @@ class hydroImpoundment extends hydroObject {
    var $initstorage = 100.0;
    var $Qout = 0.0;
    var $Qin = 0.0;
-   var $full_surface_area = 0.0;
+   var $full_surface_area = 0.0; // this should be deprecated in favor of the parent class "area"
    
    function wake() {
       parent::wake();
