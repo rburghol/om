@@ -23,7 +23,7 @@ dat <- fn_get_runfile(elid, runid, site= omsite,  cached = FALSE);
 
 dat <- window(dat, start = as.Date("1984-10-01"), end = as.Date("2014-09-30"));
 dat$Runit <- as.numeric(dat$Qout) / as.numeric(dat$area_sqmi)
-Runits <- zoo(as.numeric(as.character( dat$Runit )), order.by = dat$thisdate);
+Runits <- zoo(as.numeric(as.character( dat$Runit )), order.by = as.POSIXct(dat$thisdate));
 
 #boxplot(as.numeric(dat$Runit) ~ dat$year, ylim=c(0,3))
 # get feature attached to this element id using REST
