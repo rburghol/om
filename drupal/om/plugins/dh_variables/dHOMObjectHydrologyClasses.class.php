@@ -157,14 +157,26 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
     parent::getDefaults($entity, $defaults);
     $defaults = array(
       'area' => array(
+        'embed' => FALSE,
         'entity_type' => $entity->entityType(),
         'propcode_default' => NULL,
         'propvalue_default' => 0.0,
         'propname' => 'area',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'Noermal Pool Area (ac)',
-        'vardesc' => 'Used for area calculations as needed (ustabe full_surface_area).',
+        'varname' => 'Area of feature',
+        'vardesc' => 'Area in sqmi (should be derived from full_surface_area).',
+        'varid' => dh_varkey2varid('om_class_Constant', TRUE),
+      ),
+      'full_surface_area' => array(
+        'entity_type' => $entity->entityType(),
+        'propcode_default' => NULL,
+        'propvalue_default' => 0.0,
+        'propname' => 'full_surface_area',
+        'singularity' => 'name_singular',
+        'featureid' => $entity->identifier(),
+        'varname' => 'Normal Pool Area (ac)',
+        'vardesc' => 'Used for area calculations as needed.',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'initstorage' => array(
