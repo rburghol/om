@@ -1,0 +1,28 @@
+# Startup As of 6/6/2019 use this:
+pg_version=12
+/usr/lib/postgresql/$pg_version/bin/pg_ctl -D /data/postgres/$pg_version/sessiondata restart -l logfile
+
+# shell
+pg_version=12
+pgpath="/data/postgres/$pg_version"
+bindir="/usr/lib/postgresql/$pg_version/bin"
+pguser="postgres"
+db_port=5433
+
+mkdir $pgpath/sessiondata
+$bindir/initdb -D $pgpath/sessiondata
+cp $pgpath/postgresql.conf $pgpath/sessiondata/
+cp $pgpath/pg_hba.conf $pgpath/sessiondata/
+# edit the postgresql.conf file and set the new port
+# to 5433
+nano $pgpath/sessiondata/postgresql.conf
+# start it up
+$bindir/pg_ctl -D $pgpath/sessiondata start -l "logfile.sessiondata"
+
+$bindir/createdb model_sessiondata -p 5433
+echo "CREATE EXTENSION postgis;" | psql model_sessiondata -p 5433
+
+cat msdef.sql | psql model_sessiondata -p 5433
+plr_sql='/home/rob/src/plr/plr.sql'
+cat $plr_sql | psql --username=$pguser -d model_sessiondata -p $db_port
+cat /home/rob/working/database/R/sql/r_functions.sql |  psql --username=$pguser $dbname -p $db_port

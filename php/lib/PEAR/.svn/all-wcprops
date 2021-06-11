@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 27
+/svn/!svn/ver/13/trunk/PEAR
+END
+Serializer.php
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/13/trunk/PEAR/Serializer.php
+END
+Unserializer.php
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/13/trunk/PEAR/Unserializer.php
+END
+IMAPv2.php
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/13/trunk/PEAR/IMAPv2.php
+END
+template.spec
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/13/trunk/PEAR/template.spec
+END
+package.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/13/trunk/PEAR/package.dtd
+END
+INSTALL
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/13/trunk/PEAR/INSTALL
+END
+Mail.php
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/13/trunk/PEAR/Mail.php
+END
+package.xml
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/13/trunk/PEAR/package.xml
+END
+System.php
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/13/trunk/PEAR/System.php
+END
+DB.php
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/13/trunk/PEAR/DB.php
+END
+Tar.php
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/13/trunk/PEAR/Tar.php
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/13/trunk/PEAR/README
+END
+PEAR.php
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/13/trunk/PEAR/PEAR.php
+END

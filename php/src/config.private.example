@@ -1,0 +1,12 @@
+<?php
+
+$dbpass = 'XXXX';
+$dbuser = 'db_admin';
+$session_dbpass = 'YYYY';
+$session_dbuser = 'postgres';
+$runtime_dbpass = 'ZZZZ';
+$runtime_dbuser = 'postgres';
+$vwuds_dbpass = 'WWWW';
+$vwuds_dbuser = 'wsp_ro';
+
+?>
