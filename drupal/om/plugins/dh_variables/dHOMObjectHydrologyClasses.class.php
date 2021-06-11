@@ -163,8 +163,8 @@ class dHOMHydroImpoundment extends dHOMHydroObject {
         'propname' => 'area',
         'singularity' => 'name_singular',
         'featureid' => $entity->identifier(),
-        'varname' => 'Noermal Pool Area (ac)',
-        'vardesc' => 'Used for area calculations as needed (ustabe full_surface_area).',
+        'varname' => 'Noermal Pool Area (sqmi)',
+        'vardesc' => 'Used for area calculations as needed (see also full_surface_area for acres).',
         'varid' => dh_varkey2varid('om_class_Constant', TRUE),
       ),
       'initstorage' => array(
