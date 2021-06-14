@@ -439,7 +439,8 @@ class XML_Parser extends PEAR
             return true;
         }
         // see if it's an absolute URL (has a scheme at the beginning)
-        elseif (eregi('^[a-z]+://', substr($fp, 0, 10))) {
+        //elseif (eregi('^[a-z]+://', substr($fp, 0, 10))) {
+        elseif (preg_match('^[a-z]+:///i', substr($fp, 0, 10))) {
             return $this->setInputFile($fp);
         }
         // see if it's a local file
