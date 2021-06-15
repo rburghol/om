@@ -455,6 +455,7 @@ class vwudsUserGroup extends dynamicWaterUsers {
 
 
 class wsp_flowby extends modelSubObject {
+  var $json2d = TRUE;
    // this is a general purpose class for a simple flow-by
    // other, more complicated flow-bys will inherit this class
    

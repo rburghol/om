@@ -312,6 +312,7 @@ function om_formatCFB(&$form, $entity) {
 }
 
 class dHOMWaterSystemFlowBy extends dHOMSubComp {
+  var $json2d = TRUE;
   var $object_class = 'wsp_flowby';
   var $attach_method = 'contained';
   
