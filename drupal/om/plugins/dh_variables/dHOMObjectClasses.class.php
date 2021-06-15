@@ -1260,14 +1260,15 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
     foreach ($propnames as $propname) {
       // get property by name
       // save the property
-      $prop = om_load_dh_property($entity, $propname);
-      dpm($prop,'prop ' . $propname);
+      $prop = om_load_dh_property($parent, $propname);
+      //dpm($prop,'prop ' . $propname);
       if (is_object($prop)) {
         // check to see that property does *not* have it's own remote element 
         // omit if it does since it is an embedded virtual prop
         $elid = om_load_dh_property($prop, 'om_element_connection');
         if (!is_object($elid)) {
           dsm("Pushing property $prop->propname to remote");
+          error_log("Pushing property $prop->propname to remote");
           $prop->save();
         } else {
           dsm("Skipping stand-alone model object $prop->propname ");
