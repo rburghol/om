@@ -1270,6 +1270,7 @@ class dHOMElementConnect extends dHOMBaseObjectClass {
           $prop->save();
         } else {
           dsm("Skipping stand-alone model object $prop->propname ");
+        }
       }
     }
   }
