@@ -470,6 +470,11 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl3, 'fig.unmet
 
 # does this have an impoundment sub-comp and is imp_off = 0?
 cols <- names(dat)
+# check for local_impoundment, and if so, rename to impoundment for processing
+if("local_impoundment" %in% cols) {
+  dat$impoundment_use_remain_mg <- dat$local_impoundment_use_remain_mg
+  dat$impoundment_max_usable <- dat$impoundment_max_usable
+}
 if("impoundment" %in% cols) {
   # Plot and analyze impoundment sub-comps
   dat$storage_pct <- dat$impoundment_use_remain_mg * 3.07 / dat$impoundment_max_usable
