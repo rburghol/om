@@ -473,7 +473,12 @@ cols <- names(dat)
 # check for local_impoundment, and if so, rename to impoundment for processing
 if("local_impoundment" %in% cols) {
   dat$impoundment_use_remain_mg <- dat$local_impoundment_use_remain_mg
-  dat$impoundment_max_usable <- dat$impoundment_max_usable
+  dat$impoundment_max_usable <- dat$local_impoundment_max_usable
+  dat$impoundment_Qin <- dat$local_impoundment_Qin
+  dat$impoundment_Qout <- dat$local_impoundment_Qout
+  dat$impoundment_demand <- dat$local_impoundment_demand
+  dat$impoundment <- dat$local_impoundment
+  cols <- names(dat)
 }
 if("impoundment" %in% cols) {
   # Plot and analyze impoundment sub-comps
