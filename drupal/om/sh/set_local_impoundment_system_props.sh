@@ -28,5 +28,6 @@ drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_prop
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid refill_plus_demand
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid refill_pump_mgd
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid "Send to Parent"
+drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid "Listen on Parent"
 drush scr modules/om/src/om_copy_subcomp.php cmd dh_properties $template dh_properties $pid zero
 
