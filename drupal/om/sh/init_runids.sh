@@ -7,5 +7,5 @@ while IFS= read -r line; do
   read run_id run_name <<< "$line"
   propcode="runid_$run_id"
   echo "drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_class_AlphanumericConstant '$run_name' $run_id $propcode"
-  drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_class_AlphanumericConstant '$run_name' $run_id $propcode
+  drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_class_AlphanumericConstant "$run_name" $run_id $propcode
 done < /opt/model/om/drupal/om/data/run_ids.txt
