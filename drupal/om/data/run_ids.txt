@@ -1,57 +1,57 @@
-2	Current Conditions
-200	Current Conditions, full time period
-201	Current Conditions, 1998-2002
-2011	Current Conditions, 1998-2002, alt. 1
-2012	Current Conditions, 1998-2002, alt. 2
-4	Permit Term Max + Current
-400	Draft Permit Term Max + Current, full time period
-401	Draft Permit Term Max + Current, 1998-2002
-4011	Draft Permit Term Max + Current, 1998-2002, alt. 1
-4012	Draft Permit Term Max + Current, 1998-2002, alt. 2
-6	Permit Term Max w/Proposed
-600	Draft Permit Term Max w/Proposed, full time period
-601	Draft Permit Term Max w/Proposed - 1998-2002
-6011	Draft Permit Term Max w/Proposed - 1998-2002, alt. 1
-6012	Draft Permit Term Max w/Proposed - 1998-2002, alt. 2
-6013	Draft Permit Term Max w/Proposed - 1998-2002, alt. 3
-6014	Draft Permit Term Max w/Proposed - 1998-2002, alt. 4
-6015	Draft Permit Term Max w/Proposed - 1998-2002, alt. 5
-0	Pre-Condition
-1	Historical Conditions
-3	Permit Term Max
-5	tbd: Custom Admin Run
-7	tbd:
-8	tbd:
-9	Custom Admin Run	Custom 9
-10	Custom Admin Run Custom 10
-11	2020 Demand 2020 WSP 2020
-12	2020 Demand 2030 WSP 2030
-13	2020 Demand 2040 WSP 2040
-14	2020 Demand 2020, 2055 CC-1, 50/50	WSP 2020 Median CC
-15	2020 Demand 2020, 2055 CC-2, 10/10	WSP 2020 Dry CC
-16	2020 Demand 2020, 2055 CC-3, 90/90	WSP 2020 Wet CC
-17	2040 Demand 2040, 2055 CC-2 10/10	WSP 2040 Dry CC
-18	2020 Exempt User Runs	WSP 2020 Exempt
-19	2020 Demand 2040, 2055 CC-1, 50/50	WSP 2024 Median CC
-20	2020 Demand 2040, 2055 CC-3, 90/90	WSP 2040 Wet CC
-21	2015 Demand 2010	WSP 2015/2010
-22	2015 Demand 2040	WSP 2015/2040
-300	Draft Permit Term Max, full time period
-301	Draft Permit Term Max w/Prop + Exempt Max, 2000-2002
-1153	2020 Demand 2020, 3-hour, 1998-2002
-1253	2020 Demand 2030, 3-hour, 1998-2002
-1353	2020 Demand 2020, 3-hour, 1998-2002
-1753	2020 Demand 2020, 3-hour, 1998-2002
-1853	2020 Demand 2020, 3-hour, 1998-2002
-1163	2020 Demand 2020, 3-hour, full time period
-1263	2020 Demand 2030, 3-hour, full time period
-1363	2020 Demand 2040, 3-hour, full time period
-1763	2020 Demand 2020, 3-hour, full time period
-1863	2020 Exempt User Runs, 3-hour, full time period
-231	Draft Current Conditions, hourly, 2000-2002
-1131	2020 Current 2020, hourly, 1998-2002
-1141	2020 Current 2020, hourly, full time period
-1152	2020 Current 2020, 4-hour, 1998-2002
-1162	2020 Current 2020, 4-hour, full time period
-1151	2020 Current 2020, 6-hour, 1998-2002
-1161	2020 Current 2020, 6-hour, full time period
+2|Current Conditions
+200|Current Conditions, full time period
+201|Current Conditions, 1998-2002
+2011|Current Conditions, 1998-2002, alt. 1
+2012|Current Conditions, 1998-2002, alt. 2
+4|Permit Term Max + Current
+400|Draft Permit Term Max + Current, full time period
+401|Draft Permit Term Max + Current, 1998-2002
+4011|Draft Permit Term Max + Current, 1998-2002, alt. 1
+4012|Draft Permit Term Max + Current, 1998-2002, alt. 2
+6|Permit Term Max w/Proposed
+600|Draft Permit Term Max w/Proposed, full time period
+601|Draft Permit Term Max w/Proposed - 1998-2002
+6011|Draft Permit Term Max w/Proposed - 1998-2002, alt. 1
+6012|Draft Permit Term Max w/Proposed - 1998-2002, alt. 2
+6013|Draft Permit Term Max w/Proposed - 1998-2002, alt. 3
+6014|Draft Permit Term Max w/Proposed - 1998-2002, alt. 4
+6015|Draft Permit Term Max w/Proposed - 1998-2002, alt. 5
+0|Pre-Condition
+1|Historical Conditions
+3|Permit Term Max
+5|tbd: Custom Admin Run
+7|tbd:
+8|tbd:
+9|Custom Admin Run|Custom 9
+10|Custom Admin Run Custom 10
+11|2020 Demand 2020 WSP 2020
+12|2020 Demand 2030 WSP 2030
+13|2020 Demand 2040 WSP 2040
+14|2020 Demand 2020, 2055 CC-1, 50/50|WSP 2020 Median CC
+15|2020 Demand 2020, 2055 CC-2, 10/10|WSP 2020 Dry CC
+16|2020 Demand 2020, 2055 CC-3, 90/90|WSP 2020 Wet CC
+17|2040 Demand 2040, 2055 CC-2 10/10|WSP 2040 Dry CC
+18|2020 Exempt User Runs|WSP 2020 Exempt
+19|2020 Demand 2040, 2055 CC-1, 50/50|WSP 2024 Median CC
+20|2020 Demand 2040, 2055 CC-3, 90/90|WSP 2040 Wet CC
+21|2015 Demand 2010|WSP 2015/2010
+22|2015 Demand 2040|WSP 2015/2040
+300|Draft Permit Term Max, full time period
+301|Draft Permit Term Max w/Prop + Exempt Max, 2000-2002
+1153|2020 Demand 2020, 3-hour, 1998-2002
+1253|2020 Demand 2030, 3-hour, 1998-2002
+1353|2020 Demand 2020, 3-hour, 1998-2002
+1753|2020 Demand 2020, 3-hour, 1998-2002
+1853|2020 Demand 2020, 3-hour, 1998-2002
+1163|2020 Demand 2020, 3-hour, full time period
+1263|2020 Demand 2030, 3-hour, full time period
+1363|2020 Demand 2040, 3-hour, full time period
+1763|2020 Demand 2020, 3-hour, full time period
+1863|2020 Exempt User Runs, 3-hour, full time period
+231|Draft Current Conditions, hourly, 2000-2002
+1131|2020 Current 2020, hourly, 1998-2002
+1141|2020 Current 2020, hourly, full time period
+1152|2020 Current 2020, 4-hour, 1998-2002
+1162|2020 Current 2020, 4-hour, full time period
+1151|2020 Current 2020, 6-hour, 1998-2002
+1161|2020 Current 2020, 6-hour, full time period
