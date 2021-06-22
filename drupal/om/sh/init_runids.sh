@@ -2,7 +2,7 @@
 
 varid=`drush scr modules/om/src/om_getvardef.php om_scenario`
 variants_fid=`drush scr modules/om/src/om_getpid.php dh_variabledefinition $varid variants`
-while read -r line; do
+while IFS=$'\t' read -r line; do
   #echo "Text read from file: $line"
   read run_id run_name run_abbrev <<< "$line"
   propcode="runid_$run_id"
