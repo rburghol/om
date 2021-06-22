@@ -21,8 +21,8 @@ $q .= " where varkey = :varkey ";
 error_log($q . "vars " . print_r($vars,1));
 
 $rez = db_query($q, $vars);
-$varkey = $rez->fetchColumn();
-error_log("varkey:" . $varkey);
-echo $varkey;
+$varid = $rez->fetchColumn();
+error_log("varid:" . $varid);
+echo $varid;
 
 ?>
