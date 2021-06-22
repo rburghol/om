@@ -7,7 +7,7 @@ while read -r line; do
   IFS="|" read run_id run_name run_abbrev <<< "$line"
   propcode="runid_$run_id"
   echo "drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_class_AlphanumericConstant '$run_name' $run_id $propcode"
-  scen_pid=`drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_scenario "$run_name" $run_id $propcode`
+  scen_pid=`drush scr modules/om/src/om_setprop.php cmd dh_properties $variants_fid om_scenario $propcode $run_id "$run_name" `
   # now, add the basic meta-data on this for cia scenario 
   reports_pid=`drush scr modules/om/src/om_setprop.php cmd dh_properties $scen_pid om_class_AlphanumericConstant "reports" NULL "Report_Config"`
   # reports -> cia -> 
