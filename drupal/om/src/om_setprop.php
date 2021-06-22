@@ -82,7 +82,7 @@ foreach ($data as $element) {
     error_log("Failed to create property from " . print_r($values,1));
   }
 }
-
-
-
+if (is_object($prop)) {
+  echo $prop->pid;
+}
 ?>
