@@ -14,7 +14,7 @@ $remote = om_load_dh_property($obj, 'om_element_connection');
 if (is_object($remote)) {
   $plugin = dh_variables_getPlugins($remote);
   error_log("Trying to pushAllToRemote on plugin of type " . get_class($plugin));
-  $plugin->pushAllToRemote($obj);
+  $plugin->pushAllToRemote($remote);
 } else {
   error_log("No remtoe comnection found");
 }
