@@ -137,7 +137,7 @@ function deleteNHDMergedShape($dbobj, $comid, $debug = 0) {
 }
 
 function getMergedNHDShape($dbobj, $seglist, $cache_merge_list = array(), $debug = 0, $maxtol = 0.001, $pct = 0.9) {
-   $segs = join(',', $seglist);
+   $segs = implode(',', $seglist);
    $tol = 0.00001;
    $tolinc = 0.00001;
    $shp = false;
