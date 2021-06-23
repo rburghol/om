@@ -10,6 +10,6 @@ if (count($argv) < 2) {
 $name = $argv[1];
 $comids = $argv[2];
 $debug = $argv[3];
-$wktgeom = getMergedNHDShape($usgsdb, $seglist, array(), $debug);
+$wktgeom = getMergedNHDShape($usgsdb, $comids, array(), $debug);
 echo $wkt_geom;
 ?>
