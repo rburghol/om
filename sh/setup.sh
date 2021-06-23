@@ -51,6 +51,8 @@ rm /var/www/html/om/remote/get_modelData.php
 ln -s  /opt/model/om/php/src/remote/get_modelData.php /var/www/html/om/remote/get_modelData.php
 rm /var/www/html/om/set_elemNHDlanduse.php
 ln -s /opt/model/om/php/src/set_elemNHDlanduse.php /var/www/html/om/set_elemNHDlanduse.php
+rm /var/www/html/om/get_comids_shape.php
+ln -s /opt/model/om/php/src/get_comids_shape.php /var/www/html/om/get_comids_shape.php
 rm /var/www/html/om/get_nhd_basins.php
 ln -s /opt/model/om/php/src/get_nhd_basins.php /var/www/html/om/get_nhd_basins.php
 rm /var/www/html/om/fn_find_missing_subcomp.php
