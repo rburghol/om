@@ -11,5 +11,5 @@ $name = $argv[1];
 $comids = $argv[2];
 $debug = $argv[3];
 $wktgeom = getMergedNHDShape($usgsdb, $comids, array(), $debug);
-echo "WKT for $name = \n" . $wkt_geom;
+echo "WKT for $name ($comids) = \n" . $wkt_geom;
 ?>
