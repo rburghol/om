@@ -10,8 +10,12 @@ $pid = $args[0];
 
 error_log( "pid:" . $pid);
 $obj = entity_load_single('dh_properties', $pid);
-$plugin = $plugin = dh_variables_getPlugins($obj);
-error_log("Trying to pushAllToRemote on plugin of type " . get_class($plugin));
-$plugin->pushAllToRemote($obj);
-
+$remote = om_load_dh_property($obj, 'om_element_connection');
+if (is_object($remote)) {
+  $plugin = dh_variables_getPlugins($remote);
+  error_log("Trying to pushAllToRemote on plugin of type " . get_class($plugin));
+  $plugin->pushAllToRemote($obj);
+} else {
+  error_log("No remtoe comnection found");
+}
 ?>
