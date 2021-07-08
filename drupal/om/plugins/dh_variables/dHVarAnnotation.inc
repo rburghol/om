@@ -3,8 +3,8 @@
 $plugin = array(
   'label' => t('Annotation/Text'),
   'handler' =>  array(
-    'class' => 'dHVariablePluginNone',
-    'file' => 'dHVariablePluginNone.class.php',
+    'class' => 'dHVarAnnotation',
+    'file' => 'dHOMHelperClasses.class.php',
   ),
   'variable' =>  array(
     'varname' => 'Annotation/Text',
@@ -19,7 +19,7 @@ $plugin = array(
     'timeunits' => 'n/a',
     'nodataval' => 0,
     'data_entry' => 'text',
-    'plugin' => 'dHVariablePluginNone',
+    'plugin' => 'dHVarAnnotation',
     'options' => '',
     'varabbrev' => 'text',
   ),
