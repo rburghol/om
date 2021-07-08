@@ -108,7 +108,7 @@ class dHVarAnnotation extends dHVariablePluginDefault {
   public function hiddenFields() {
     // this hides all field except name and code by default 
     // contained objects will dictate the display and edit visibility
-    return array('pid', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle', 'dh_link_admin_pr_condition', 'varname', 'propvalue');
+    return array('pid', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle', 'dh_link_admin_pr_condition', 'varname', 'propvalue', 'propcode');
   }
 }
 ?>
