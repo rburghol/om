@@ -4,7 +4,7 @@ $plugin = array(
   'label' => t('OM Component Class - USGSGageObject'),
   'handler' =>  array(
     'class' => 'dHOM_USGSGageObject',
-    'file' => 'dHOMObjectClasses.class.php',
+    'file' => 'dHOMHelperClasses.class.php',
   ),
   'variable' =>  array(
     'varname' => 'OM Object Class - USGSGageSubComp',
