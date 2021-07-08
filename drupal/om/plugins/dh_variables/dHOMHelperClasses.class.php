@@ -110,5 +110,14 @@ class dHVarAnnotation extends dHVariablePluginDefault {
     // contained objects will dictate the display and edit visibility
     return array('pid', 'startdate', 'enddate', 'varid', 'featureid', 'entity_type', 'bundle', 'dh_link_admin_pr_condition', 'varname', 'propvalue', 'propcode');
   }
+  public function formRowEdit(&$form, $entity) {
+    parent::formRowEdit($form, $entity);
+    // @todo: implement a method to show editable entries for linked
+    //        props of varkey = propcode 
+    //        use linked props edit form 
+    //        var $attach_method = 'contained';
+    $form['propname']['#weight'] = 1;
+    $form['proptext']['#weight'] = 2;
+  }
 }
 ?>
