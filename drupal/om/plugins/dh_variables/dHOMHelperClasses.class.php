@@ -134,5 +134,4 @@ class dHVarAnnotation extends dHVariablePluginDefault {
     return $export;
   }
 }
-}
 ?>
