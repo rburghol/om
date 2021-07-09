@@ -117,7 +117,7 @@ class dHVarAnnotation extends dHVariablePluginDefault {
     //        use linked props edit form 
     //        var $attach_method = 'contained';
     $form['propname']['#weight'] = 1;
-    $form['proptext']['#weight'] = 2;
+    $form['proptext']['#weight'] = 5;
   }
 }
 ?>
