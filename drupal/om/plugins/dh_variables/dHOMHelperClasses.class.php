@@ -105,6 +105,7 @@ class dHVariablePluginVarGroup extends dHVariablePluginDefault {
 
 class dHVarAnnotation extends dHVariablePluginDefault {
   // propcode = varkey of item to group 
+  
   public function hiddenFields() {
     // this hides all field except name and code by default 
     // contained objects will dictate the display and edit visibility
@@ -119,5 +120,19 @@ class dHVarAnnotation extends dHVariablePluginDefault {
     $form['propname']['#weight'] = 1;
     $form['proptext']['#weight'] = 5;
   }
+  
+  public function exportOpenMIBase($entity) {
+    // creates the base properties for this class
+    $export = array(
+      $entity->propname => array(
+        'id' => $entity->pid, 
+        'name' => $entity->propname, 
+        'object_class' => 'textField', 
+        'value' => $entity->proptext['und'][0]['value'], 
+      )
+    );
+    return $export;
+  }
+}
 }
 ?>
