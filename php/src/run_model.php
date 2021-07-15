@@ -125,8 +125,8 @@ switch ($runtype) {
 }
 
 pg_close($modeldb);//boot the model db to prevent temp name collisions?
+if (!$runVars['test_only']) {
 // handle post-processing
-//if ($runtype == 'cached2') {
   $runid = intval(trim($runVars['runid']));
   $elementid = $runVars['elementid'];
   $manifest = $outdir . "/manifest.$runid" . "." . $elementid . ".log";
@@ -140,5 +140,5 @@ pg_close($modeldb);//boot the model db to prevent temp name collisions?
     error_log("Executing Summary : $cmd");
     $forkout = exec( $cmd, $cmd_output );
   }
-//}
+}
 ?>
