@@ -472,7 +472,6 @@ vahydro_post_metric_to_scenprop(scenprop$pid, 'dh_image_file', furl3, 'fig.unmet
 cols <- names(dat)
 # check for local_impoundment, and if so, rename to impoundment for processing
 if("local_impoundment" %in% cols) {
-  dat$impoundment_days_remaining <- dat$local_impoundment_days_remaining
   dat$impoundment_use_remain_mg <- dat$local_impoundment_use_remain_mg
   dat$impoundment_max_usable <- dat$local_impoundment_max_usable
   dat$impoundment_Qin <- dat$local_impoundment_Qin
