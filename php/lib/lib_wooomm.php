@@ -798,6 +798,7 @@ function verifyRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $ti
    } else {
       //error_log ($listobject->querystring);
       $status_flag = NULL;
+      $last_updated = NULL;
    }
    $return_vals['elemname'] = $elemname;
    $return_vals['status_flag'] = $status_flag;
