@@ -8554,7 +8554,7 @@ function getElementCacheable($listobject, $elementid) {
    
 }
 
-function unSerializeModelObject($elementid, $input_props = array(), $model_listobj = '', $cache_level = -1, $cache_id = -1, $current_level = -1) {
+function unSerializeModelObject($elementid, $input_props = array(), $model_listobj = '', $cache_level = -1, $cache_id = -1, $current_level = -1, $set_status = TRUE) {
    global $listobject, $tmpdir, $shellcopy, $ucitables, $scenarioid, $debug, $outdir, $outurl, $goutdir, $gouturl, $unserobjects, $adminsetuparray, $wdm_messagefile, $wdimex_exe, $basedir, $model_startdate, $model_enddate, $serverip, $modeldb, $modelcontainerid, $modelcontainername;
    
    //error_log("unSerializeModelObject called for $elementid <br>");
@@ -8704,7 +8704,7 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
             }
             $params = 
             //error_log("Unserializing child $src_id of parent $elementid");
-            $linkobjarray = unSerializeModelObject($src_id, array(), $model_listobj, $child_cache_level, $cache_id, $current_level + 1);
+            $linkobjarray = unSerializeModelObject($src_id, array(), $model_listobj, $child_cache_level, $cache_id, $current_level + 1, $set_status);
             $linkerror = $linkobjarray['error'];
             $linkdebug = $linkobjarray['debug'];
             foreach ($linkobjarray['complist'] as $thiselement) {
@@ -8797,7 +8797,7 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
                   // from a previous model run, allowing us a more economical way of running objects that rely on inputs 
                   // from other model containers, external to this one.
                   // could force cacheing with a switch at cache_level
-                  $linkobjarray = unSerializeModelObject($src_id, array(), $model_listobj, $cache_level, $cache_id, $current_level);
+                  $linkobjarray = unSerializeModelObject($src_id, array(), $model_listobj, $cache_level, $cache_id, $current_level, $set_status);
                   $linkerror = $linkobjarray['error'];
                   $linkdebug = $linkobjarray['debug'];
                   $returnArray['debug'] .= $linkdebug;
