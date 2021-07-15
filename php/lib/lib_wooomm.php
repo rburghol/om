@@ -8931,11 +8931,17 @@ function checkObjectCacheStatus($listobject, $elementid, $order, $cache_level, $
          // BEGIN - new method
          // use new log file retrieval routine
          $file_host = $listobject->getRecordValue(1,'host');
+         $output_file = $listobject->getRecordValue(1,'output_file');
+         $remote_url = $listobject->getRecordValue(1,'remote_url');
          if ($file_host <> $serverip) {
-            $cache_file = $listobject->getRecordValue(1,'remote_url');
+            $cache_file = $remote_url;
          } else {
-            $cache_file = $listobject->getRecordValue(1,'output_file');
+            $cache_file = $output_file;
          }
+         $returnArray['file_host'] = $file_host;
+         $returnArray['cache_file'] = $cache_file;
+         $returnArray['remote_url'] = $remote_url;
+         $returnArray['output_file'] = $output_file;
          // END - new method
          // old method of file retrieval, broke when spanning hosts
          //$cache_file = $listobject->getRecordValue(1,'output_file');
