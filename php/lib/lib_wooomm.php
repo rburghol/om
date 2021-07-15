@@ -8622,7 +8622,7 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    $cache_file_exists = $cache_res['cache_file_exists'];
    $cacheable = $cache_res['cacheable'];
    $returnArray['error'] .= $cache_res['error'];
-   //error_log("Element $elementid: Cache Type: $cache_type - Cacheable - $cacheable <br>");
+   error_log("Element $elementid: Cache Type: $cache_type - Cacheable - $cacheable <br>");
    //error_log("Element $elementid: Cache Settings: " . print_r($cache_res,1));
    
    if ( ($cache_type <> 'disabled') and (count($unserobjects) >= 1) ) {
