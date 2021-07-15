@@ -803,6 +803,7 @@ function verifyRunStatus($listobject, $elementid, $qrunid = '', $qhost = '', $ti
    $return_vals['status_flag'] = $status_flag;
    $return_vals['status_mesg'] = $status_mesg;
    $return_vals['interval'] = $interval;
+   $return_vals['last_updated'] = $last_updated;
    $return_vals['runid'] = isset($runid) ? $runid : $qrunid;
    
    return $return_vals;
@@ -866,7 +867,7 @@ function removeTreeCache($listobject, $recid, $run_id, $debug=0) {
 }
    
 
-function setStatus($listobject, $elementid, $mesg, $sip, $status_flag=1, $runid = -1, $pid = -1, $debug = 0) {
+function setStatus($listobject, $elementid, $mesg, $sip, $status_flag=1, $runid = -1, $pid = -1, $debug = 0, $force_time = FALSE) {
    //$pid = -1; // do not set a valid pid here, since we can not know it (I don't think)
    if (is_object($listobject)) {
    
@@ -877,18 +878,22 @@ function setStatus($listobject, $elementid, $mesg, $sip, $status_flag=1, $runid 
       $listobject->querystring .= "    and runid = '$runid' ";
       $listobject->performQuery();
       $syslogrec = $listobject->getRecordValue(1,'numrecs');
-
+      if ($force_time === FALSE) {
+        $lu_str = 'now()';
+      } else {
+        $lu_str = "'$force_time'";
+      }
       if ($syslogrec == 0) {
          $listobject->querystring = " insert into system_status (element_name, element_key, ";
          $listobject->querystring .= "    status_mesg, status_flag, pid, last_updated, host, runid ) ";
-         $listobject->querystring .= " values ('model_run', $elementid, '$mesg', $status_flag, $pid, now(), '$sip', $runid) ";
+         $listobject->querystring .= " values ('model_run', $elementid, '$mesg', $status_flag, $pid, $lu_str, '$sip', $runid) ";
          $listobject->performQuery();
       } else {
          $listobject->querystring = " update system_status ";
          $listobject->querystring .= " set status_mesg = '$mesg', ";
          $listobject->querystring .= "    status_flag = $status_flag, ";
          $listobject->querystring .= "    pid = $pid, ";
-         $listobject->querystring .= "    last_updated = now(), ";
+         $listobject->querystring .= "    last_updated = $lu_str, ";
          $listobject->querystring .= "    host = '$sip', ";
          $listobject->querystring .= "    runid = '$runid' ";
          $listobject->querystring .= " where element_name = 'model_run' ";
@@ -1739,7 +1744,12 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
        $input_props['model_enddate'] = $enddate;
     }
     
-    setStatus($listobject, $firstel, "Initiating Model Run for Elementid $firstel with runCached() function", $serverip, 1, $runid, -1, 1);
+    if (!$test_only) {
+      setStatus($listobject, $firstel, "Initiating Model Run for Elementid $firstel with runCached() function", $serverip, 1, $runid, -1, 1);
+    } else {
+      // stash the old status 
+      $test_status = verifyRunStatus($listobject, $firstel, $runid);
+    }
     
     // load up all of the things that are in the base model, with caching specified
     error_log("Calling loadModelUsingCached(modeldb, $elementid, $runid, $cache_runid with cache_level = $cache_level");
@@ -1807,6 +1817,9 @@ function runCached($elementid, $runid, $cache_runid, $startdate, $enddate, $cach
        // @todo: this was disabled for some reason?
       createModelRunSummaryFiles($listobject, $summarize, $runid);
       summarizeRun($listobject, $elementid, $runid, $startdate, $enddate, 0, 0);
+    } else {
+      // restore the previous status
+      setStatus($listobject, $firstel, $test_status['status_mesg'], $serverip, 1, $runid, -1, 1, 0, $test_status['last_updated']);
     }
     return;
   }
