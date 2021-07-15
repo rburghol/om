@@ -26,7 +26,7 @@ if (isset($_GET['runtype'])) {
       $formValues = $_POST;
    } else {
       if (!isset($argv[1])) {
-         print("Usage: php run_model.php elementid [runid=-1] [runtype(normal,cached,cached_cova)=normal] [startdate] [enddate] [cacheid=-1] [cachelist=elid1,elid2,...] [cache_level=-1] [test_only=0] [scenarioid=$scenarioid] [sumdir=$sumdir]\\n");
+         error_log("Usage: php run_model.php elementid [runid=-1] [runtype(normal,cached,cached_cova)=normal] [startdate] [enddate] [cacheid=-1] [cachelist=elid1,elid2,...] [cache_level=-1] [test_only=0] [scenarioid=$scenarioid] [sumdir=$sumdir]");
          die;
       }
       if (isset($argv[3])) {
