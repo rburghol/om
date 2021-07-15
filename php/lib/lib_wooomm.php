@@ -8636,7 +8636,7 @@ function unSerializeModelObject($elementid, $input_props = array(), $model_listo
    $cache_file_exists = $cache_res['cache_file_exists'];
    $cacheable = $cache_res['cacheable'];
    $returnArray['error'] .= $cache_res['error'];
-   error_log("Element $elementid: checkObjectCacheStatus(order = $order, cache_level = $cache_level, cache_id = $cache_id) :: Cache Type: $cache_type - Cacheable - $cacheable ");
+   error_log("Element $elementid: checkObjectCacheStatus(order = $order, cache_level = $cache_level, cache_id = $cache_id, current_level = $current_level) :: Cache Type: $cache_type - Cacheable - $cacheable ");
    //error_log("Element $elementid: Cache Settings: " . print_r($cache_res,1));
    
    if ( ($cache_type <> 'disabled') and (count($unserobjects) >= 1) ) {
